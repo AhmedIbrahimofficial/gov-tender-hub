@@ -1,0 +1,17 @@
+{
+  "name": "APPIIOMS",
+  "short_name": "APPIIOMS",
+  "description": "AI-Powered Public Procurement Integrity & Intelligence Oversight Management System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

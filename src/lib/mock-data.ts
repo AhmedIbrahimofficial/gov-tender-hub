@@ -114,20 +114,80 @@ export const roles = [
   "Contract Officer", "Vendor User", "Citizen", "Public Auditor",
 ];
 
+import { Users, Activity, DollarSign, type LucideIcon } from "lucide-react";
+
+export const monthlyTransactions = [
+  { month: "Jan", volume: 1200000, share: 32 },
+  { month: "Feb", volume: 1540000, share: 28 },
+  { month: "Mar", volume: 1820000, share: 31 },
+  { month: "Apr", volume: 1480000, share: 25 },
+  { month: "May", volume: 2100000, share: 33 },
+  { month: "Jun", volume: 1960000, share: 22 },
+  { month: "Jul", volume: 2340000, share: 27 },
+  { month: "Aug", volume: 2180000, share: 20 },
+  { month: "Sep", volume: 2640000, share: 35 },
+  { month: "Oct", volume: 2480000, share: 29 },
+  { month: "Nov", volume: 2820000, share: 31 },
+  { month: "Dec", volume: 3100000, share: 38 },
+];
+
+export const dailyReport: { label: string; today: string; total: string; color: string; icon: LucideIcon }[] = [
+  { label: "Customers (T+1)", today: "248", total: "325,678", color: "#f59e0b", icon: Users },
+  { label: "Transactions (T+1)", today: "664,657", total: "5,691,234", color: "#3b82f6", icon: Activity },
+  { label: "Commission (T+1)", today: "912", total: "6,312", color: "#10b981", icon: DollarSign },
+];
+
+export const riskLoanData = [
+  { type: "Housing loan", risk: "7.31%", amount: 280 },
+  { type: "Second-hand", risk: "7.65%", amount: 310 },
+  { type: "Other loans", risk: "9.97%", amount: 420 },
+  { type: "House net worth", risk: "10.42%", amount: 380 },
+  { type: "Mixed interest", risk: "12.05%", amount: 510 },
+];
+
+export const hrTurnoverData = {
+  projectNumbers: [
+    { projects: 2, turnover: 1567 },
+    { projects: 3, turnover: 72 },
+    { projects: 4, turnover: 409 },
+    { projects: 5, turnover: 612 },
+    { projects: 6, turnover: 655 },
+    { projects: 7, turnover: 256 },
+  ],
+  positions: [
+    { pos: "hr", rate: 15, count: 800 },
+    { pos: "accounting", rate: 12, count: 600 },
+    { pos: "technical", rate: 8, count: 1200 },
+    { pos: "support", rate: 18, count: 400 },
+    { pos: "sales", rate: 22, count: 1400 },
+    { pos: "marketing", rate: 14, count: 700 },
+    { pos: "IT", rate: 9, count: 900 },
+  ],
+};
+
 export const navSections = [
   {
     label: "Command",
     items: [
-      { to: "/", label: "Command Center", icon: "LayoutDashboard" },
+      { to: "/dashboard", label: "Command Center", icon: "LayoutDashboard" },
       { to: "/analytics", label: "Analytics & BI", icon: "BarChart3" },
       { to: "/ai-agents", label: "AI Operations", icon: "Sparkles" },
+    ],
+  },
+  {
+    label: "Procurement Instruments",
+    items: [
+      { to: "/tenders-lifecycle", label: "Tender Management", icon: "FileText" },
+      { to: "/rfq", label: "RFQ Management", icon: "ShoppingCart" },
+      { to: "/rfp-eoi", label: "RFP & EOI", icon: "BarChart3" },
+      { to: "/auctions", label: "Live Auctions", icon: "Gavel" },
     ],
   },
   {
     label: "Procurement Lifecycle",
     items: [
       { to: "/planning", label: "Planning & Demand", icon: "ClipboardList" },
-      { to: "/tenders", label: "Tenders", icon: "FileText" },
+      { to: "/tenders", label: "Tenders Register", icon: "FileText" },
       { to: "/evaluations", label: "Evaluations", icon: "ScaleIcon" },
       { to: "/awards", label: "Awards & Appeals", icon: "Trophy" },
     ],
