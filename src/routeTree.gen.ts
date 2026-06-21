@@ -13,8 +13,16 @@ import { Route as VendorsRouteImport } from './routes/vendors'
 import { Route as TendersRouteImport } from './routes/tenders'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as PortalRouteImport } from './routes/portal'
+import { Route as PlanningRouteImport } from './routes/planning'
+import { Route as PerformanceRouteImport } from './routes/performance'
+import { Route as GovernanceRouteImport } from './routes/governance'
+import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as EvaluationsRouteImport } from './routes/evaluations'
 import { Route as ContractsRouteImport } from './routes/contracts'
+import { Route as AwardsRouteImport } from './routes/awards'
+import { Route as AuditRouteImport } from './routes/audit'
+import { Route as AntiCorruptionRouteImport } from './routes/anti-corruption'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AiAgentsRouteImport } from './routes/ai-agents'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -38,6 +46,26 @@ const PortalRoute = PortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlanningRoute = PlanningRouteImport.update({
+  id: '/planning',
+  path: '/planning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerformanceRoute = PerformanceRouteImport.update({
+  id: '/performance',
+  path: '/performance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GovernanceRoute = GovernanceRouteImport.update({
+  id: '/governance',
+  path: '/governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinanceRoute = FinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EvaluationsRoute = EvaluationsRouteImport.update({
   id: '/evaluations',
   path: '/evaluations',
@@ -46,6 +74,26 @@ const EvaluationsRoute = EvaluationsRouteImport.update({
 const ContractsRoute = ContractsRouteImport.update({
   id: '/contracts',
   path: '/contracts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AwardsRoute = AwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditRoute = AuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AntiCorruptionRoute = AntiCorruptionRouteImport.update({
+  id: '/anti-corruption',
+  path: '/anti-corruption',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiAgentsRoute = AiAgentsRouteImport.update({
@@ -62,8 +110,16 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-agents': typeof AiAgentsRoute
+  '/analytics': typeof AnalyticsRoute
+  '/anti-corruption': typeof AntiCorruptionRoute
+  '/audit': typeof AuditRoute
+  '/awards': typeof AwardsRoute
   '/contracts': typeof ContractsRoute
   '/evaluations': typeof EvaluationsRoute
+  '/finance': typeof FinanceRoute
+  '/governance': typeof GovernanceRoute
+  '/performance': typeof PerformanceRoute
+  '/planning': typeof PlanningRoute
   '/portal': typeof PortalRoute
   '/roles': typeof RolesRoute
   '/tenders': typeof TendersRoute
@@ -72,8 +128,16 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-agents': typeof AiAgentsRoute
+  '/analytics': typeof AnalyticsRoute
+  '/anti-corruption': typeof AntiCorruptionRoute
+  '/audit': typeof AuditRoute
+  '/awards': typeof AwardsRoute
   '/contracts': typeof ContractsRoute
   '/evaluations': typeof EvaluationsRoute
+  '/finance': typeof FinanceRoute
+  '/governance': typeof GovernanceRoute
+  '/performance': typeof PerformanceRoute
+  '/planning': typeof PlanningRoute
   '/portal': typeof PortalRoute
   '/roles': typeof RolesRoute
   '/tenders': typeof TendersRoute
@@ -83,8 +147,16 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai-agents': typeof AiAgentsRoute
+  '/analytics': typeof AnalyticsRoute
+  '/anti-corruption': typeof AntiCorruptionRoute
+  '/audit': typeof AuditRoute
+  '/awards': typeof AwardsRoute
   '/contracts': typeof ContractsRoute
   '/evaluations': typeof EvaluationsRoute
+  '/finance': typeof FinanceRoute
+  '/governance': typeof GovernanceRoute
+  '/performance': typeof PerformanceRoute
+  '/planning': typeof PlanningRoute
   '/portal': typeof PortalRoute
   '/roles': typeof RolesRoute
   '/tenders': typeof TendersRoute
@@ -95,8 +167,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ai-agents'
+    | '/analytics'
+    | '/anti-corruption'
+    | '/audit'
+    | '/awards'
     | '/contracts'
     | '/evaluations'
+    | '/finance'
+    | '/governance'
+    | '/performance'
+    | '/planning'
     | '/portal'
     | '/roles'
     | '/tenders'
@@ -105,8 +185,16 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ai-agents'
+    | '/analytics'
+    | '/anti-corruption'
+    | '/audit'
+    | '/awards'
     | '/contracts'
     | '/evaluations'
+    | '/finance'
+    | '/governance'
+    | '/performance'
+    | '/planning'
     | '/portal'
     | '/roles'
     | '/tenders'
@@ -115,8 +203,16 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ai-agents'
+    | '/analytics'
+    | '/anti-corruption'
+    | '/audit'
+    | '/awards'
     | '/contracts'
     | '/evaluations'
+    | '/finance'
+    | '/governance'
+    | '/performance'
+    | '/planning'
     | '/portal'
     | '/roles'
     | '/tenders'
@@ -126,8 +222,16 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiAgentsRoute: typeof AiAgentsRoute
+  AnalyticsRoute: typeof AnalyticsRoute
+  AntiCorruptionRoute: typeof AntiCorruptionRoute
+  AuditRoute: typeof AuditRoute
+  AwardsRoute: typeof AwardsRoute
   ContractsRoute: typeof ContractsRoute
   EvaluationsRoute: typeof EvaluationsRoute
+  FinanceRoute: typeof FinanceRoute
+  GovernanceRoute: typeof GovernanceRoute
+  PerformanceRoute: typeof PerformanceRoute
+  PlanningRoute: typeof PlanningRoute
   PortalRoute: typeof PortalRoute
   RolesRoute: typeof RolesRoute
   TendersRoute: typeof TendersRoute
@@ -164,6 +268,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/planning': {
+      id: '/planning'
+      path: '/planning'
+      fullPath: '/planning'
+      preLoaderRoute: typeof PlanningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/performance': {
+      id: '/performance'
+      path: '/performance'
+      fullPath: '/performance'
+      preLoaderRoute: typeof PerformanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/governance': {
+      id: '/governance'
+      path: '/governance'
+      fullPath: '/governance'
+      preLoaderRoute: typeof GovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/finance': {
+      id: '/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof FinanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/evaluations': {
       id: '/evaluations'
       path: '/evaluations'
@@ -176,6 +308,34 @@ declare module '@tanstack/react-router' {
       path: '/contracts'
       fullPath: '/contracts'
       preLoaderRoute: typeof ContractsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/awards': {
+      id: '/awards'
+      path: '/awards'
+      fullPath: '/awards'
+      preLoaderRoute: typeof AwardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit': {
+      id: '/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/anti-corruption': {
+      id: '/anti-corruption'
+      path: '/anti-corruption'
+      fullPath: '/anti-corruption'
+      preLoaderRoute: typeof AntiCorruptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-agents': {
@@ -198,8 +358,16 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiAgentsRoute: AiAgentsRoute,
+  AnalyticsRoute: AnalyticsRoute,
+  AntiCorruptionRoute: AntiCorruptionRoute,
+  AuditRoute: AuditRoute,
+  AwardsRoute: AwardsRoute,
   ContractsRoute: ContractsRoute,
   EvaluationsRoute: EvaluationsRoute,
+  FinanceRoute: FinanceRoute,
+  GovernanceRoute: GovernanceRoute,
+  PerformanceRoute: PerformanceRoute,
+  PlanningRoute: PlanningRoute,
   PortalRoute: PortalRoute,
   RolesRoute: RolesRoute,
   TendersRoute: TendersRoute,
