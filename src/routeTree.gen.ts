@@ -9,8 +9,50 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VendorsRouteImport } from './routes/vendors'
+import { Route as TendersRouteImport } from './routes/tenders'
+import { Route as RolesRouteImport } from './routes/roles'
+import { Route as PortalRouteImport } from './routes/portal'
+import { Route as EvaluationsRouteImport } from './routes/evaluations'
+import { Route as ContractsRouteImport } from './routes/contracts'
+import { Route as AiAgentsRouteImport } from './routes/ai-agents'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VendorsRoute = VendorsRouteImport.update({
+  id: '/vendors',
+  path: '/vendors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TendersRoute = TendersRouteImport.update({
+  id: '/tenders',
+  path: '/tenders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RolesRoute = RolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvaluationsRoute = EvaluationsRouteImport.update({
+  id: '/evaluations',
+  path: '/evaluations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContractsRoute = ContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiAgentsRoute = AiAgentsRouteImport.update({
+  id: '/ai-agents',
+  path: '/ai-agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +61,130 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-agents': typeof AiAgentsRoute
+  '/contracts': typeof ContractsRoute
+  '/evaluations': typeof EvaluationsRoute
+  '/portal': typeof PortalRoute
+  '/roles': typeof RolesRoute
+  '/tenders': typeof TendersRoute
+  '/vendors': typeof VendorsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-agents': typeof AiAgentsRoute
+  '/contracts': typeof ContractsRoute
+  '/evaluations': typeof EvaluationsRoute
+  '/portal': typeof PortalRoute
+  '/roles': typeof RolesRoute
+  '/tenders': typeof TendersRoute
+  '/vendors': typeof VendorsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-agents': typeof AiAgentsRoute
+  '/contracts': typeof ContractsRoute
+  '/evaluations': typeof EvaluationsRoute
+  '/portal': typeof PortalRoute
+  '/roles': typeof RolesRoute
+  '/tenders': typeof TendersRoute
+  '/vendors': typeof VendorsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/ai-agents'
+    | '/contracts'
+    | '/evaluations'
+    | '/portal'
+    | '/roles'
+    | '/tenders'
+    | '/vendors'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/ai-agents'
+    | '/contracts'
+    | '/evaluations'
+    | '/portal'
+    | '/roles'
+    | '/tenders'
+    | '/vendors'
+  id:
+    | '__root__'
+    | '/'
+    | '/ai-agents'
+    | '/contracts'
+    | '/evaluations'
+    | '/portal'
+    | '/roles'
+    | '/tenders'
+    | '/vendors'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiAgentsRoute: typeof AiAgentsRoute
+  ContractsRoute: typeof ContractsRoute
+  EvaluationsRoute: typeof EvaluationsRoute
+  PortalRoute: typeof PortalRoute
+  RolesRoute: typeof RolesRoute
+  TendersRoute: typeof TendersRoute
+  VendorsRoute: typeof VendorsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vendors': {
+      id: '/vendors'
+      path: '/vendors'
+      fullPath: '/vendors'
+      preLoaderRoute: typeof VendorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tenders': {
+      id: '/tenders'
+      path: '/tenders'
+      fullPath: '/tenders'
+      preLoaderRoute: typeof TendersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roles': {
+      id: '/roles'
+      path: '/roles'
+      fullPath: '/roles'
+      preLoaderRoute: typeof RolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal': {
+      id: '/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evaluations': {
+      id: '/evaluations'
+      path: '/evaluations'
+      fullPath: '/evaluations'
+      preLoaderRoute: typeof EvaluationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contracts': {
+      id: '/contracts'
+      path: '/contracts'
+      fullPath: '/contracts'
+      preLoaderRoute: typeof ContractsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-agents': {
+      id: '/ai-agents'
+      path: '/ai-agents'
+      fullPath: '/ai-agents'
+      preLoaderRoute: typeof AiAgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +197,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiAgentsRoute: AiAgentsRoute,
+  ContractsRoute: ContractsRoute,
+  EvaluationsRoute: EvaluationsRoute,
+  PortalRoute: PortalRoute,
+  RolesRoute: RolesRoute,
+  TendersRoute: TendersRoute,
+  VendorsRoute: VendorsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
