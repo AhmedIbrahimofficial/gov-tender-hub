@@ -31,28 +31,28 @@ export default function CPODashboard() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title={`Good morning, ${user?.name?.split(" ")[0]}`}
           description="Chief Procurement Officer · APPIIOMS Command Center"
           actions={
             <div className="flex gap-2">
-              <Link to="/analytics" className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
-                <Activity className="h-4 w-4" /> Analytics
+              <Link to="/analytics" className="h-9 px-3 sm:px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
+                <Activity className="h-4 w-4" /> <span className="hidden sm:inline">Analytics</span>
               </Link>
               <button onClick={() => setShowNewTender(true)}
-                className="h-9 px-4 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 flex items-center gap-1.5 transition-colors">
-                <Plus className="h-4 w-4" /> New Tender
+                className="h-9 px-3 sm:px-4 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 flex items-center gap-1.5 transition-colors">
+                <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New Tender</span>
               </button>
             </div>
           }
         />
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 border-b border-black/10">
+        <div className="flex gap-1 mb-6 border-b border-black/10 overflow-x-auto">
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+              className={`px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex-shrink-0 ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
               {t}
             </button>
           ))}

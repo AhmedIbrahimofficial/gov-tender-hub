@@ -27,7 +27,7 @@ export default function MinisterDashboard() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title={`Executive Briefing — ${user?.name}`}
           description="Strategic procurement intelligence · Cabinet Level · FY2026 Year-to-Date"
@@ -54,7 +54,7 @@ export default function MinisterDashboard() {
           <KpiCard label="Budget Utilization" value="67.8%" delta="On track" icon={Zap} />
         </div>
 
-        <div className="flex gap-1 mb-6 border-b border-black/10">
+        <div className="flex gap-1 mb-6 border-b border-black/10 overflow-x-auto">
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>{t}</button>

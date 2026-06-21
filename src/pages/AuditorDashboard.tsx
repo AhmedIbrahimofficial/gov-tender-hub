@@ -59,7 +59,7 @@ export default function AuditorDashboard() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title={`Auditor: ${user?.name}`}
           description="Compliance & Audit Command — Office of Auditor-General"

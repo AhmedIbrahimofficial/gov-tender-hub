@@ -112,17 +112,18 @@ export default function AIAssistantPanel({ agentName, agentRole, context, sugges
     return (
       <button
         onClick={() => setOpen(true)}
-        className={`fixed bottom-6 right-6 ${c.bg} text-white rounded-full px-4 py-3 flex items-center gap-2 shadow-elevated hover:opacity-90 transition-all z-50 text-sm font-medium`}
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 ${c.bg} text-white rounded-full px-4 py-3 flex items-center gap-2 shadow-elevated hover:opacity-90 transition-all z-50 text-sm font-medium`}
       >
         <Sparkles className="h-4 w-4" />
-        {agentName}
+        <span className="hidden sm:inline">{agentName}</span>
+        <span className="sm:hidden">AI</span>
         <span className={`h-2 w-2 rounded-full bg-white opacity-80 animate-pulse`} />
       </button>
     );
   }
 
   return (
-    <div className={`fixed bottom-6 right-6 w-[380px] rounded-xl shadow-elevated border border-border bg-card z-50 flex flex-col overflow-hidden`} style={{ maxHeight: minimized ? "56px" : "560px" }}>
+    <div className={`fixed bottom-0 right-0 sm:bottom-6 sm:right-6 w-full sm:w-[380px] rounded-none sm:rounded-xl shadow-elevated border-t sm:border border-border bg-card z-50 flex flex-col overflow-hidden`} style={{ maxHeight: minimized ? "56px" : "min(560px, 80vh)" }}>
       {/* Header */}
       <div className={`${c.bg} px-4 py-3 flex items-center justify-between flex-shrink-0`}>
         <div className="flex items-center gap-2.5">

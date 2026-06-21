@@ -51,8 +51,8 @@ export default function RFPEOIPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="violet">RFP · EOI · Complex Services</Badge>
           <Badge tone="muted">QCBS · QBS · Fixed Budget · Government of Zimbabwe</Badge>
         </div>
@@ -76,10 +76,10 @@ export default function RFPEOIPage() {
           <KpiCard label="Avg Evaluation Time" value="18 days" delta="-4 days vs manual" icon={Clock} />
         </div>
 
-        <div className="flex gap-1 mb-6 border-b border-border flex-wrap">
+        <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto">
           {([["dashboard","Dashboard"],["workflow","25-Stage Workflow"],["evaluation","QCBS Evaluation"],["agents","AI Agents"]] as const).map(([k, label]) => (
             <button key={k} onClick={() => setActiveTab(k)}
-              className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === k ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+              className={`px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex-shrink-0 ${activeTab === k ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
               {label}
             </button>
           ))}

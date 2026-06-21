@@ -106,17 +106,17 @@ export default function NewTenderModal({ open, onClose }: Props) {
   const ai = AI_SUGGESTIONS[step];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
-      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-3xl my-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4 overflow-y-auto">
+      <div className="bg-card rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-3xl sm:my-4">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border">
           <div>
             <h2 className="text-base font-bold text-foreground">Create New Tender</h2>
             <div className="text-xs text-muted-foreground">Step {step} of {STEPS.length} — {STEPS[step - 1].label}</div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowAI(!showAI)} className="h-7 px-2 rounded-md bg-violet-50 border border-violet-200 text-xs text-violet-700 flex items-center gap-1 hover:bg-violet-100">
-              <Sparkles className="h-3 w-3" /> AI Assistant {showAI ? "On" : "Off"}
+              <Sparkles className="h-3 w-3" /> <span className="hidden sm:inline">AI Assistant</span> {showAI ? "On" : "Off"}
             </button>
             <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
               <X className="h-5 w-5" />
@@ -144,7 +144,7 @@ export default function NewTenderModal({ open, onClose }: Props) {
           </div>
         </div>
 
-        <div className="flex gap-4 p-6">
+        <div className="flex gap-4 p-4 sm:p-6 max-h-[55vh] sm:max-h-none overflow-y-auto sm:overflow-visible">
           {/* Form */}
           <div className="flex-1 min-w-0">
             {step === 1 && (
@@ -153,7 +153,7 @@ export default function NewTenderModal({ open, onClose }: Props) {
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tender Title *</label>
                   <input value={form.title} onChange={e => set("title", e.target.value)} placeholder="e.g. Supply of Solar Mini-Grids — 12 Rural Clinics" className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Procuring Entity *</label>
                     <select value={form.entity} onChange={e => set("entity", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring">
@@ -175,8 +175,8 @@ export default function NewTenderModal({ open, onClose }: Props) {
                     {METHODS.map(m => <option key={m}>{m}</option>)}
                   </select>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="col-span-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="col-span-1 sm:col-span-2">
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estimated Value *</label>
                     <div className="relative mt-1">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted-foreground">{form.currency}</span>
@@ -190,7 +190,7 @@ export default function NewTenderModal({ open, onClose }: Props) {
                     </select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Funding Source</label>
                     <select value={form.fundingSource} onChange={e => set("fundingSource", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm">
@@ -218,7 +218,7 @@ export default function NewTenderModal({ open, onClose }: Props) {
                     rows={8} placeholder="Paste or describe your technical specifications here. The AI can generate these from your description…"
                     className="mt-1 w-full px-3 py-2 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none font-mono text-xs" />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tender Type</label>
                     <select className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm">
@@ -319,7 +319,7 @@ export default function NewTenderModal({ open, onClose }: Props) {
                     <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                     <span className="text-sm font-semibold text-emerald-700">Tender Summary — Ready to Submit</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {[
                       ["Reference", tenderRef],
                       ["Title", form.title || "(not set)"],
@@ -365,9 +365,9 @@ export default function NewTenderModal({ open, onClose }: Props) {
             )}
           </div>
 
-          {/* AI Panel */}
+          {/* AI Panel — hidden on mobile */}
           {showAI && ai && (
-            <div className="w-52 flex-shrink-0">
+            <div className="hidden sm:block w-52 flex-shrink-0">
               <div className="bg-violet-50 border border-violet-200 rounded-xl p-3 sticky top-0">
                 <div className="flex items-center gap-1.5 mb-2">
                   <div className="h-5 w-5 rounded-full bg-violet-600 grid place-items-center">
@@ -391,7 +391,7 @@ export default function NewTenderModal({ open, onClose }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 pb-5">
+        <div className="flex items-center justify-between px-4 sm:px-6 pb-5 pt-2">
           <button onClick={() => setStep(s => Math.max(1, s - 1))} disabled={step === 1}
             className="h-9 px-4 rounded-md border border-border text-sm hover:bg-secondary disabled:opacity-40 transition-colors">
             ← Back

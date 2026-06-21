@@ -46,8 +46,8 @@ export default function RFQPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">RFQ · Below Threshold Procurement</Badge>
           <Badge tone="muted">Max USD 10,000 · Government of Zimbabwe</Badge>
         </div>

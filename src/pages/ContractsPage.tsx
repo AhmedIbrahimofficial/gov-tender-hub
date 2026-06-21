@@ -6,8 +6,8 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 export default function ContractsPage() {
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">Phases 18 – 19, 25</Badge>
           <Badge tone="muted">Government of Zimbabwe</Badge>
         </div>
@@ -16,7 +16,7 @@ export default function ContractsPage() {
           description="Full contract lifecycle: drafting, signature, milestones, variations, performance monitoring, deliverables, payments tracking, and closeout."
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <KpiCard label="Active Contracts" value="964" delta="+8 new" />
           <KpiCard label="On Track" value="821" delta="85.2%" />
           <KpiCard label="At Risk" value="103" delta="10.7%" positive={false} />
@@ -28,22 +28,26 @@ export default function ContractsPage() {
             <CardHeader title="Active Contracts" subtitle={`${contracts.length} contracts in progress`} />
             <div className="divide-y divide-border">
               {contracts.map((c) => (
-                <div key={c.id} className="px-5 py-4 flex items-center gap-4 hover:bg-secondary/40">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-foreground">{c.title}</div>
-                    <div className="text-[11px] text-muted-foreground font-mono">{c.id} · {c.vendor}</div>
+                <div key={c.id} className="px-4 sm:px-5 py-3 sm:py-4 hover:bg-secondary/40">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-foreground leading-tight">{c.title}</div>
+                      <div className="text-[11px] text-muted-foreground font-mono mt-0.5">{c.id} · {c.vendor}</div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="text-sm font-medium text-foreground whitespace-nowrap hidden sm:block">{c.value}</div>
+                      <Badge tone={c.status === "Completed" ? "green" : c.status === "At Risk" ? "amber" : "blue"}>{c.status}</Badge>
+                    </div>
                   </div>
-                  <div className="text-sm font-medium text-foreground whitespace-nowrap">{c.value}</div>
-                  <div className="w-32">
-                    <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${c.progress >= 100 ? "bg-emerald-500" : c.status === "At Risk" ? "bg-amber-500" : "bg-primary"}`}
                         style={{ width: `${c.progress}%` }}
                       />
                     </div>
-                    <div className="text-[11px] text-muted-foreground mt-0.5">{c.progress}% · ends {c.end}</div>
+                    <div className="text-[11px] text-muted-foreground whitespace-nowrap">{c.progress}% · ends {c.end}</div>
                   </div>
-                  <Badge tone={c.status === "Completed" ? "green" : c.status === "At Risk" ? "amber" : "blue"}>{c.status}</Badge>
                 </div>
               ))}
             </div>

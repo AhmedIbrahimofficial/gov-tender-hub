@@ -21,7 +21,7 @@ const PIE_COLORS = ["#3b82f6", "#6366f1", "#8b5cf6", "#ec4899", "#f59e0b", "#10b
 export default function CommandCenter() {
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title="National Procurement Command Center"
           description="Real-time oversight of all national procurement activity, spend, compliance, and AI agent operations across all Government of Zimbabwe entities."

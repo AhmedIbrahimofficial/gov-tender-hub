@@ -16,7 +16,7 @@ export default function PortalPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title="Public Transparency Portal"
           description="Citizens, journalists, civil society, and businesses can browse every published tender, award, contract, and supplier statistic of the Government of Zimbabwe."

@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./lib/auth-context";
 import LandingPage from "./pages/LandingPage";
 import SignInPage from "./pages/SignInPage";
 import DashboardRouter from "./pages/DashboardRouter";
+import SupplierPortalPage from "./pages/SupplierPortalPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import AiAgentsPage from "./pages/AiAgentsPage";
 import PlanningPage from "./pages/PlanningPage";
@@ -37,6 +38,9 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/portal" element={<PortalPage />} />
+
+      {/* Supplier Portal (public users) */}
+      <Route path="/supplier-portal" element={<ProtectedRoute><SupplierPortalPage /></ProtectedRoute>} />
 
       {/* Protected */}
       <Route path="/dashboard" element={<ProtectedRoute><DashboardRouter /></ProtectedRoute>} />

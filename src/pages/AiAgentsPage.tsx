@@ -18,7 +18,7 @@ export default function AiAgentsPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title="AI Operations Center"
           description="Real-time status of every AI agent operating across the national procurement lifecycle."
@@ -41,10 +41,12 @@ export default function AiAgentsPage() {
           {/* Agent Cards */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
             {aiAgents.map((a) => (
-              <Card
+              <div
                 key={a.name}
-                className={`p-4 cursor-pointer transition-all hover:border-primary/40 ${selectedAgent.name === a.name ? "border-primary ring-1 ring-primary" : ""}`}
                 onClick={() => setSelectedAgent(a)}
+              >
+              <Card
+                className={`p-4 cursor-pointer transition-all hover:border-primary/40 ${selectedAgent.name === a.name ? "border-primary ring-1 ring-primary" : ""}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-2">
@@ -74,6 +76,7 @@ export default function AiAgentsPage() {
                   <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${a.confidence}%` }} />
                 </div>
               </Card>
+              </div>
             ))}
           </div>
 

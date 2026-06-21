@@ -30,8 +30,8 @@ export default function FinancePage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">Phases 20 – 21</Badge>
           <Badge tone="muted">Government of Zimbabwe</Badge>
         </div>
@@ -47,12 +47,12 @@ export default function FinancePage() {
           <KpiCard label="Exceptions" value="23" delta="Needs review" positive={false} icon={AlertTriangle} />
         </div>
 
-        <div className="flex gap-1 mb-6 border-b border-border">
+        <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto">
           {(["Invoices", "Payments", "Analytics"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setActiveTab(t)}
-              className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${activeTab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+              className={`px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex-shrink-0 ${activeTab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
             >
               {t}
             </button>

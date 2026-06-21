@@ -31,8 +31,8 @@ export default function TendersPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">Phases 3 – 10</Badge>
           <Badge tone="muted">Government of Zimbabwe</Badge>
         </div>
@@ -55,8 +55,8 @@ export default function TendersPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2 mb-4">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-4">
+          <div className="relative flex-1 sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               value={search}
@@ -65,18 +65,18 @@ export default function TendersPage() {
               className="w-full h-9 pl-9 pr-3 rounded-md border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 flex-shrink-0">
             {["All", "Published", "Bidding", "Evaluation", "Awarded", "Draft"].map((s) => (
               <button
                 key={s}
                 onClick={() => setFilterStatus(s)}
-                className={`h-8 px-3 rounded-md text-xs font-medium transition-colors ${filterStatus === s ? "bg-primary text-primary-foreground" : "border border-border bg-card hover:bg-secondary"}`}
+                className={`h-8 px-3 rounded-md text-xs font-medium transition-colors whitespace-nowrap flex-shrink-0 ${filterStatus === s ? "bg-primary text-primary-foreground" : "border border-border bg-card hover:bg-secondary"}`}
               >
                 {s}
               </button>
             ))}
           </div>
-          <button className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary ml-auto">
+          <button className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary sm:ml-auto">
             <Download className="h-4 w-4" /> Export
           </button>
         </div>

@@ -14,7 +14,7 @@ export function ModulePage({
 }) {
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <div className="mb-4 flex items-center gap-2">
           {phase && <Badge tone="blue">{phase}</Badge>}
           <Badge tone="muted">Government of Zimbabwe</Badge>

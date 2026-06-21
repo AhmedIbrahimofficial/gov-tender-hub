@@ -4,7 +4,7 @@ import {
   LayoutDashboard, BarChart3, Sparkles, ClipboardList, FileText, Trophy,
   Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
   Landmark, UsersRound, Globe2, Search, Bell, Inbox, MessageSquare,
-  ChevronDown, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2,
+  ChevronDown, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2, Menu,
 } from "lucide-react";
 import { navSections } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
@@ -32,6 +32,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const { notifications, unread, refresh: refreshNotifs } = useNotifications();
   const [showNotifs, setShowNotifs] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { tenders } = useTenders();
 
@@ -44,17 +46,29 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-foreground">
       {/* Top nav */}
-      <header className="h-14 border-b border-black/10 bg-white flex items-center px-4 gap-4 sticky top-0 z-30 shadow-sm">
-        <Link to="/dashboard" className="flex items-center gap-2 min-w-[220px]">
+      <header className="h-14 border-b border-black/10 bg-white flex items-center px-3 md:px-4 gap-2 md:gap-4 sticky top-0 z-30 shadow-sm">
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="md:hidden h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors flex-shrink-0"
+          aria-label="Open navigation"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+
+        <Link to="/dashboard" className="flex items-center gap-2 flex-shrink-0">
           <LogoIcon className="h-6 w-6 text-black" />
-          <div className="leading-tight">
+          <div className="leading-tight hidden sm:block">
             <div className="text-sm font-semibold text-black tracking-tight">APPIIOMS</div>
             <div className="text-[9px] text-black/40 uppercase tracking-wider">Procurement Intelligence</div>
           </div>
+          <div className="leading-tight sm:hidden">
+            <div className="text-sm font-semibold text-black tracking-tight">APPIIOMS</div>
+          </div>
         </Link>
 
-        {/* Search */}
-        <div className="flex-1 max-w-2xl relative">
+        {/* Desktop Search */}
+        <div className="flex-1 max-w-2xl relative hidden md:block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
           <input
             value={search}
@@ -75,8 +89,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
         </div>
 
+        {/* Spacer for mobile */}
+        <div className="flex-1 md:hidden" />
+
+        {/* Mobile search toggle */}
+        <button
+          onClick={() => setShowSearch(!showSearch)}
+          className="md:hidden h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors flex-shrink-0"
+          aria-label="Toggle search"
+        >
+          <Search className="h-4 w-4" />
+        </button>
+
         {/* Notifications bell */}
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <button onClick={() => { setShowNotifs(!showNotifs); if (!showNotifs) { markNotificationsRead(); setTimeout(refreshNotifs, 200); } }}
             className="relative h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors">
             <Bell className="h-4 w-4" />
@@ -85,7 +111,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             )}
           </button>
           {showNotifs && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl border border-black/10 shadow-xl z-50 overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-1rem)] bg-white rounded-2xl border border-black/10 shadow-xl z-50 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-black/10">
                 <span className="text-sm font-semibold text-black">Notifications</span>
                 <button onClick={() => setShowNotifs(false)}><X className="h-4 w-4 text-black/30" /></button>
@@ -108,14 +134,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
 
         {/* User menu */}
-        <div className="relative group">
-          <button className="flex items-center gap-2 pl-2 pr-1 h-9 rounded-lg hover:bg-[#F5F5F5] transition-colors">
+        <div className="relative group flex-shrink-0">
+          <button className="flex items-center gap-1.5 pl-2 pr-1 h-9 rounded-lg hover:bg-[#F5F5F5] transition-colors">
             <div className="h-7 w-7 rounded-full bg-black text-white text-xs font-semibold grid place-items-center">{user?.avatar ?? "U"}</div>
             <div className="text-left leading-tight hidden md:block">
               <div className="text-xs font-medium text-black">{user?.name ?? "Guest"}</div>
               <div className="text-[10px] text-black/40">{user?.department ?? ""}</div>
             </div>
-            <ChevronDown className="h-3.5 w-3.5 text-black/30" />
+            <ChevronDown className="h-3.5 w-3.5 text-black/30 hidden md:block" />
           </button>
           <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-black/10 bg-white shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-50 overflow-hidden">
             <div className="px-3 py-2.5 border-b border-black/10">
@@ -132,9 +158,87 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
+      {/* Mobile search bar (slide-down) */}
+      {showSearch && (
+        <div className="md:hidden px-3 py-2 bg-white border-b border-black/10 sticky top-14 z-20">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+            <input
+              autoFocus
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search tenders, vendors, contracts…"
+              className="w-full h-9 pl-9 pr-8 rounded-lg border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+            />
+            <button onClick={() => { setShowSearch(false); setSearch(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-black/30">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          {searchResults.length > 0 && (
+            <div className="mt-1 bg-white rounded-xl border border-black/10 shadow-lg overflow-hidden">
+              {searchResults.map(t => (
+                <button key={t.id} onClick={() => { navigate("/tenders"); setSearch(""); setShowSearch(false); }}
+                  className="w-full text-left px-4 py-2.5 hover:bg-[#F5F5F5] transition-colors border-b border-black/5 last:border-0">
+                  <div className="text-sm font-medium text-black truncate">{t.title}</div>
+                  <div className="text-xs text-black/40">{t.id} · {t.status}</div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile sidebar drawer */}
+      <aside className={`
+        fixed top-0 left-0 h-full w-72 bg-white border-r border-black/10 z-50 overflow-y-auto
+        transform transition-transform duration-300 ease-in-out md:hidden
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      `}>
+        <div className="flex items-center justify-between px-4 h-14 border-b border-black/10">
+          <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
+            <LogoIcon className="h-6 w-6 text-black" />
+            <span className="text-sm font-semibold text-black">APPIIOMS</span>
+          </Link>
+          <button onClick={() => setSidebarOpen(false)} className="h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <nav className="px-3 py-4 space-y-5">
+          {navSections.map((section) => (
+            <div key={section.label}>
+              <div className="px-2 mb-1.5 text-[10px] uppercase tracking-wider text-black/30 font-semibold">{section.label}</div>
+              <div className="space-y-0.5">
+                {section.items.map((item) => {
+                  const Icon = iconMap[item.icon] ?? LayoutDashboard;
+                  const active = pathname === item.to;
+                  return (
+                    <Link key={item.to} to={item.to} onClick={() => setSidebarOpen(false)}
+                      className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
+                        active ? "bg-black text-white" : "text-black/60 hover:bg-[#F5F5F5] hover:text-black"
+                      }`}>
+                      <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={active ? 2.5 : 1.75} />
+                      <span className="truncate">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+      </aside>
+
       <div className="flex flex-1 min-h-0">
-        {/* Sidebar */}
-        <aside className="w-[240px] border-r border-black/10 bg-white overflow-y-auto py-4 flex-shrink-0">
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:block w-[240px] border-r border-black/10 bg-white overflow-y-auto py-4 flex-shrink-0">
           <nav className="px-3 space-y-5">
             {navSections.map((section) => (
               <div key={section.label}>
@@ -171,12 +275,12 @@ export function AppShell({ children }: { children: ReactNode }) {
 /* ─── Shared UI primitives ──────────────────────────────────────────────── */
 export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4 mb-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-black" style={{ letterSpacing: "-0.02em" }}>{title}</h1>
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+      <div className="min-w-0">
+        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-black" style={{ letterSpacing: "-0.02em" }}>{title}</h1>
         {description && <p className="text-sm text-black/50 mt-1 max-w-2xl">{description}</p>}
       </div>
-      {actions && <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>}
+      {actions && <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">{actions}</div>}
     </div>
   );
 }
@@ -187,12 +291,12 @@ export function Card({ children, className = "" }: { children: ReactNode; classN
 
 export function CardHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-3 px-5 pt-4 pb-3 border-b border-black/10">
-      <div>
+    <div className="flex items-start justify-between gap-3 px-4 sm:px-5 pt-4 pb-3 border-b border-black/10">
+      <div className="min-w-0">
         <h3 className="text-sm font-semibold text-black">{title}</h3>
         {subtitle && <p className="text-xs text-black/40 mt-0.5">{subtitle}</p>}
       </div>
-      {action}
+      {action && <div className="flex-shrink-0">{action}</div>}
     </div>
   );
 }
@@ -221,7 +325,7 @@ export function KpiCard({ label, value, delta, positive = true, icon: Icon, colo
           </div>
         )}
       </div>
-      <div className="mt-2 text-2xl font-bold text-black tracking-tight" style={{ letterSpacing: "-0.02em" }}>{value}</div>
+      <div className="mt-2 text-xl sm:text-2xl font-bold text-black tracking-tight" style={{ letterSpacing: "-0.02em" }}>{value}</div>
       {delta && (
         <div className={`mt-1 text-xs font-semibold flex items-center gap-1 ${positive ? "text-emerald-600" : "text-red-500"}`}>
           <span>{positive ? "▲" : "▼"}</span> {delta}
@@ -231,7 +335,7 @@ export function KpiCard({ label, value, delta, positive = true, icon: Icon, colo
   );
 }
 
-export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "blue" | "green" | "amber" | "red" | "muted" }) {
+export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "blue" | "green" | "amber" | "red" | "muted" | "violet" }) {
   const tones: Record<string, string> = {
     default: "bg-gray-100 text-gray-600 border border-gray-200",
     blue:    "bg-blue-100 text-blue-700 border border-blue-200",
@@ -239,6 +343,7 @@ export function Badge({ children, tone = "default" }: { children: ReactNode; ton
     amber:   "bg-amber-100 text-amber-700 border border-amber-200",
     red:     "bg-red-100 text-red-700 border border-red-200",
     muted:   "bg-gray-50 text-gray-400 border border-gray-100",
+    violet:  "bg-violet-100 text-violet-700 border border-violet-200",
   };
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold ${tones[tone]}`}>{children}</span>;
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap ${tones[tone]}`}>{children}</span>;
 }

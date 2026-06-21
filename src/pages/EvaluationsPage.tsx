@@ -30,8 +30,8 @@ export default function EvaluationsPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">Phases 11 – 14</Badge>
           <Badge tone="muted">Government of Zimbabwe</Badge>
         </div>
@@ -50,10 +50,12 @@ export default function EvaluationsPage() {
         {/* Phase tabs */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-6">
           {phases.map((p, i) => (
-            <Card
+            <div
               key={p.title}
-              className={`p-4 cursor-pointer transition-all hover:border-primary/40 ${activePhase === i ? "border-primary bg-primary/5" : ""}`}
               onClick={() => setActivePhase(i)}
+            >
+            <Card
+              className={`p-4 cursor-pointer transition-all hover:border-primary/40 ${activePhase === i ? "border-primary bg-primary/5" : ""}`}
             >
               <div className="flex items-center gap-2 mb-2">
                 <p.icon className="h-4 w-4 text-primary" />
@@ -62,6 +64,7 @@ export default function EvaluationsPage() {
               <div className="text-sm font-semibold text-foreground">{p.title} Evaluation</div>
               <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{p.desc}</div>
             </Card>
+            </div>
           ))}
         </div>
 
@@ -70,12 +73,12 @@ export default function EvaluationsPage() {
           <CardHeader title="Active Evaluations" />
           <div className="divide-y divide-border">
             {EVAL_SAMPLES.map((s, i) => (
-              <div key={i} className="px-5 py-3 flex items-center justify-between gap-4">
-                <div>
+              <div key={i} className="px-4 sm:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div className="min-w-0">
                   <div className="text-sm font-medium text-foreground">{s.tender}</div>
                   <div className="text-[11px] text-muted-foreground">{s.phase} · {s.method} · {s.bidders} bidders</div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <Badge tone={s.status === "Award Recommendation" ? "green" : s.status === "Moderation" ? "amber" : "blue"}>{s.status}</Badge>
                   <button className="h-7 px-2.5 rounded-md border border-border text-xs hover:bg-secondary transition-colors">Open</button>
                 </div>

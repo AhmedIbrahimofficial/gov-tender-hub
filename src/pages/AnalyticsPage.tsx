@@ -21,29 +21,29 @@ export default function AnalyticsPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title="Analytics & Business Intelligence"
           description="National procurement analytics — drillable from USD billions down to individual transactions."
           actions={
             <>
               <button className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary transition-colors">
-                <Filter className="h-4 w-4" /> Filter
+                <Filter className="h-4 w-4" /> <span className="hidden sm:inline">Filter</span>
               </button>
               <button className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary transition-colors">
-                <Download className="h-4 w-4" /> Export
+                <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export</span>
               </button>
             </>
           }
         />
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 border-b border-border">
+        <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto">
           {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              className={`px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex-shrink-0 ${
                 activeTab === tab
                   ? "border-primary text-primary"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -277,7 +277,7 @@ function RiskTab() {
         <Card>
           <CardHeader title="Risk of Loan Default — Write-off Forecast" subtitle="By loan type, estimated 24-month write-off" />
           <div className="p-5">
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <table className="w-full text-sm">
                   <thead className="text-xs text-muted-foreground">

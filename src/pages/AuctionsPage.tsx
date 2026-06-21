@@ -67,8 +67,8 @@ export default function AuctionsPage() {
 
   return (
     <AppShell>
-      <div className="p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="amber">Live Online Auctions · Asset Disposal</Badge>
           <Badge tone="muted">Government of Zimbabwe · Public Asset Management</Badge>
           <Badge tone="green"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse" />1 Auction Live Now</Badge>
