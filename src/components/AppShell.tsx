@@ -7,9 +7,112 @@ import {
   ChevronDown, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2, Menu,
 } from "lucide-react";
 import { navSections } from "@/lib/mock-data";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth, type UserRole } from "@/lib/auth-context";
 import { useNotifications, useTenders } from "@/hooks/use-store";
 import { markNotificationsRead } from "@/lib/local-store";
+
+/* ─── Role-based nav whitelist ─────────────────────────────────────────────
+   Each role gets only the routes relevant to their duties.
+   Roles not listed here fall back to the full nav (CPO / minister / admin).
+─────────────────────────────────────────────────────────────────────────── */
+const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
+  // Procurement officer — manages tenders, RFQs, lifecycle
+  procurement_officer: ["/dashboard", "/tenders", "/tenders-lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors"],
+
+  // Evaluator — only evaluation-related pages
+  evaluator: ["/dashboard", "/tenders", "/evaluations", "/awards"],
+
+  // Finance officer — payments, invoices, budget
+  finance_officer: ["/dashboard", "/finance"],
+
+  // Auditor — audit, anti-corruption, compliance
+  auditor: ["/dashboard", "/audit", "/anti-corruption", "/analytics"],
+
+  // Contract manager / officer
+  contract_manager:  ["/dashboard", "/contracts", "/vendors", "/performance", "/finance"],
+  contract_officer:  ["/dashboard", "/contracts", "/vendors"],
+
+  // Budget / treasury officer
+  budget_officer:    ["/dashboard", "/finance", "/analytics"],
+  treasury_officer:  ["/dashboard", "/finance"],
+
+  // Planning officer
+  planning_officer:  ["/dashboard", "/planning", "/tenders"],
+
+  // Compliance officer
+  compliance_officer:["/dashboard", "/audit", "/anti-corruption", "/governance"],
+
+  // Legal officer
+  legal_officer:     ["/dashboard", "/contracts", "/audit", "/governance"],
+
+  // Stores officer
+  stores_officer:    ["/dashboard", "/contracts"],
+
+  // Project manager
+  project_manager:   ["/dashboard", "/contracts", "/performance", "/vendors"],
+
+  // Anti-corruption / ethics
+  anti_corruption_officer: ["/dashboard", "/anti-corruption", "/audit", "/vendors"],
+  ethics_officer:          ["/dashboard", "/anti-corruption", "/governance"],
+
+  // Performance officer
+  performance_officer: ["/dashboard", "/performance", "/vendors", "/contracts", "/analytics"],
+
+  // IT officer / system admin — full access
+  it_officer:   ["/dashboard", "/analytics", "/ai-agents", "/roles", "/governance"],
+  system_admin: ["/dashboard", "/analytics", "/ai-agents", "/roles", "/governance"],
+
+  // Risk officer
+  risk_officer: ["/dashboard", "/audit", "/anti-corruption", "/analytics", "/contracts"],
+
+  // Adjudication officer
+  adjudication_officer: ["/dashboard", "/evaluations", "/awards", "/tenders"],
+
+  // Audit officer / public auditor
+  audit_officer:  ["/dashboard", "/audit", "/anti-corruption", "/analytics"],
+  public_auditor: ["/dashboard", "/audit", "/portal"],
+
+  // Records officer
+  records_officer: ["/dashboard", "/audit", "/governance"],
+
+  // Inspection / QA
+  inspection_officer: ["/dashboard", "/contracts", "/performance"],
+  qa_officer:         ["/dashboard", "/contracts", "/vendors", "/performance"],
+
+  // Asset manager
+  asset_manager: ["/dashboard", "/contracts", "/governance"],
+
+  // Logistics officer
+  logistics_officer: ["/dashboard", "/contracts", "/vendors"],
+
+  // Supplier / vendor
+  supplier:     ["/dashboard", "/portal"],
+  sme_supplier: ["/dashboard", "/portal"],
+  vendor_user:  ["/dashboard", "/portal"],
+
+  // Communications officer
+  communications_officer: ["/dashboard", "/tenders", "/portal", "/governance"],
+
+  // HSE / environment
+  health_safety_officer: ["/dashboard", "/contracts", "/governance"],
+  environment_officer:   ["/dashboard", "/contracts", "/governance"],
+
+  // Citizen / end user
+  citizen:  ["/dashboard", "/portal"],
+  end_user: ["/dashboard", "/tenders", "/planning"],
+
+  // Board / executive director — strategic overview only
+  executive_director: ["/dashboard", "/analytics", "/contracts", "/finance"],
+  board_member:       ["/dashboard", "/analytics", "/governance"],
+
+  // Regulator
+  regulator: ["/dashboard", "/analytics", "/audit", "/anti-corruption", "/governance", "/vendors", "/tenders"],
+
+  // AI governance
+  ai_governance_officer:  ["/dashboard", "/ai-agents", "/analytics", "/governance"],
+  data_analytics_officer: ["/dashboard", "/analytics", "/ai-agents"],
+};
+
 
 function LogoIcon({ className = "" }: { className?: string }) {
   return (
@@ -38,6 +141,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { tenders } = useTenders();
 
   const handleLogout = () => { logout(); navigate("/"); };
+
+  // Filter nav items based on the user's role whitelist
+  const allowedRoutes = user?.role ? ROLE_NAV_WHITELIST[user.role] : undefined;
+  const filteredNavSections = navSections.map(section => ({
+    ...section,
+    items: section.items.filter(item =>
+      !allowedRoutes || allowedRoutes.includes(item.to)
+    ),
+  })).filter(section => section.items.length > 0);
 
   const searchResults = search.length > 1
     ? tenders.filter(t => t.title.toLowerCase().includes(search.toLowerCase())).slice(0, 5)
@@ -213,7 +325,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </button>
         </div>
         <nav className="px-3 py-4 space-y-5">
-          {navSections.map((section) => (
+          {filteredNavSections.map((section) => (
             <div key={section.label}>
               <div className="px-2 mb-1.5 text-[10px] uppercase tracking-wider text-black/30 font-semibold">{section.label}</div>
               <div className="space-y-0.5">
@@ -240,7 +352,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Desktop Sidebar */}
         <aside className="hidden md:block w-[240px] border-r border-black/10 bg-white overflow-y-auto py-4 flex-shrink-0">
           <nav className="px-3 space-y-5">
-            {navSections.map((section) => (
+            {filteredNavSections.map((section) => (
               <div key={section.label}>
                 <div className="px-2 mb-1.5 text-[10px] uppercase tracking-wider text-black/30 font-semibold">{section.label}</div>
                 <div className="space-y-0.5">
