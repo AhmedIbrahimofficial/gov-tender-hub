@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider, useAuth } from "./lib/auth-context";
 import LandingPage from "./pages/LandingPage";
 import SignInPage from "./pages/SignInPage";
@@ -144,6 +145,7 @@ export default function App() {
   return (
     <AuthProvider>
       <AppRoutes />
+      <Analytics />
     </AuthProvider>
   );
 }
