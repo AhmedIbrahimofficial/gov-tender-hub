@@ -122,10 +122,10 @@ export default function StaffProductivityPage() {
           description="Monitor productivity, performance, accountability, training, and workforce optimisation across the organisation."
           actions={
             <>
-              <button className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleAction("Staff filter opened — filter by department, role or score range to narrow results.")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
                 <Filter className="h-4 w-4" /><span className="hidden sm:inline">Filter</span>
               </button>
-              <button className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleAction("Staff productivity report exported — check your downloads folder for the PDF/Excel file.")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
                 <Download className="h-4 w-4" /><span className="hidden sm:inline">Export</span>
               </button>
               <button onClick={() => handleAction("Productivity data refreshed")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">

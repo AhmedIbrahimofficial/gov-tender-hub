@@ -9,6 +9,7 @@ import AiAgentsPage from "./pages/AiAgentsPage";
 import PlanningPage from "./pages/PlanningPage";
 import TendersPage from "./pages/TendersPage";
 import TenderLifecyclePage from "./pages/TenderLifecyclePage";
+import ProcurementLifecyclePage from "./pages/ProcurementLifecyclePage";
 import RFQPage from "./pages/RFQPage";
 import RFPEOIPage from "./pages/RFPEOIPage";
 import AuctionsPage from "./pages/AuctionsPage";
@@ -60,6 +61,9 @@ function AppRoutes() {
       <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
       <Route path="/ai-agents" element={<ProtectedRoute><AiAgentsPage /></ProtectedRoute>} />
       <Route path="/planning" element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
+
+      {/* Procurement Lifecycle Control Tower */}
+      <Route path="/lifecycle" element={<ProtectedRoute><ProcurementLifecyclePage /></ProtectedRoute>} />
 
       {/* 4 Procurement Pillars */}
       <Route path="/tenders-lifecycle" element={<ProtectedRoute><TenderLifecyclePage /></ProtectedRoute>} />

@@ -359,10 +359,11 @@ export const navSections = [
   {
     label: "Procurement Instruments",
     items: [
-      { to: "/tenders-lifecycle", label: "Tender Management", icon: "FileText" },
-      { to: "/rfq", label: "RFQ Management", icon: "ShoppingCart" },
-      { to: "/rfp-eoi", label: "RFP & EOI", icon: "BarChart3" },
-      { to: "/auctions", label: "Live Auctions", icon: "Gavel" },
+      { to: "/lifecycle",         label: "Lifecycle Control Tower", icon: "BarChart3"   },
+      { to: "/tenders-lifecycle", label: "Tender Management",       icon: "FileText"    },
+      { to: "/rfq",               label: "RFQ Management",          icon: "ShoppingCart"},
+      { to: "/rfp-eoi",           label: "RFP & EOI",               icon: "BarChart3"   },
+      { to: "/auctions",          label: "Live Auctions",           icon: "Gavel"       },
     ],
   },
   {

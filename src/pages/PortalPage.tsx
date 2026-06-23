@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import { tenders, contracts, kpis } from "@/lib/mock-data";
 import { Search, Download, Globe2, FileText, Users, Star } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
 
 export default function PortalPage() {
   const [search, setSearch] = useState("");
@@ -29,7 +30,14 @@ export default function PortalPage() {
             <div className="text-xl font-semibold text-white mt-1">{kpis.totalSpend.value} total national procurement spend disclosed YTD</div>
             <div className="text-sm text-blue-200 mt-1">All government procurement published under Zimbabwe Open Data Initiative</div>
           </div>
-          <button className="h-9 px-4 rounded-md bg-white text-primary text-sm font-semibold flex items-center gap-1.5 hover:bg-blue-50 transition-colors">
+          <button
+            onClick={() => {
+              const rows = ["ID,Title,Entity,Category,Value,Method,Status,Closing", ...tenders.map(t => `${t.id},"${t.title}","${t.entity}","${t.category}","${t.value}","${t.method}","${t.status}","${t.closing}"`)].join("\n");
+              const blob = new Blob([rows], { type: "text/csv" });
+              const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "zimbabwe-procurement-open-data.csv"; a.click(); URL.revokeObjectURL(url);
+              pushNotification("Open Dataset downloaded — zimbabwe-procurement-open-data.csv ready.", "success");
+            }}
+            className="h-9 px-4 rounded-md bg-white text-primary text-sm font-semibold flex items-center gap-1.5 hover:bg-blue-50 transition-colors">
             <Download className="h-4 w-4" /> Download Open Dataset
           </button>
         </div>

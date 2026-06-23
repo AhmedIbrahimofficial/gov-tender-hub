@@ -276,7 +276,7 @@ function InboxPanel({ onClose }: { onClose: () => void }) {
 /* ─── Role-based nav whitelist ──────────────────────────────────────────── */
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
-  procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
+  procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
 
   // Evaluator — only evaluation-related pages
   evaluator: ["/dashboard", "/teams", "/tenders", "/evaluations", "/awards", "/certificates"],
@@ -399,9 +399,22 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [showMessages, setShowMessages] = useState(false);
   const [showInbox, setShowInbox]     = useState(false);
   const [showSearch, setShowSearch]   = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Mobile drawer open/close
+  const [mobileOpen, setMobileOpen]   = useState(false);
+  // Desktop sidebar collapsed/expanded (persisted in localStorage)
+  const [collapsed, setCollapsed]     = useState(() => {
+    try { return localStorage.getItem("sidebar-collapsed") === "true"; } catch { return false; }
+  });
   const [search, setSearch] = useState("");
   const { tenders } = useTenders();
+
+  const toggleCollapsed = () => {
+    setCollapsed(v => {
+      const next = !v;
+      try { localStorage.setItem("sidebar-collapsed", String(next)); } catch {}
+      return next;
+    });
+  };
 
   const handleLogout = () => { logout(); navigate("/"); };
 
@@ -419,15 +432,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Filter nav items based on the user's role whitelist
   const allowedRoutes = user?.role ? ROLE_NAV_WHITELIST[user.role] : undefined;
 
-  /**
-   * An item is visible when ANY allowed route either:
-   *  a) exactly matches the item's `to`, OR
-   *  b) starts with the item's `to` + "/" (allowed route is a sub-path of item), OR
-   *  c) the item's `to` starts with allowed route + "/" (item is a sub-path of an allowed route)
-   *
-   * This lets "/utility" in the whitelist unlock all "/utility/*" nav items,
-   * and lets "/utility/catalogue" in the whitelist unlock the "/utility" nav item.
-   */
   const isRouteAllowed = (itemTo: string) => {
     if (!allowedRoutes) return true;
     return allowedRoutes.some(
@@ -447,17 +451,74 @@ export function AppShell({ children }: { children: ReactNode }) {
     ? tenders.filter(t => t.title.toLowerCase().includes(search.toLowerCase())).slice(0, 5)
     : [];
 
+  // Sidebar width tokens
+  const sidebarW = collapsed ? "w-[52px]" : "w-[240px]";
+
+  // ── Shared nav content renderer ──────────────────────────────────────────
+  const NavContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
+    <nav className="px-2 py-3 space-y-4">
+      {filteredNavSections.map((section) => (
+        <div key={section.label}>
+          {!collapsed && (
+            <div className="px-2 mb-1 text-[10px] uppercase tracking-wider text-black/30 font-semibold">{section.label}</div>
+          )}
+          <div className="space-y-0.5">
+            {section.items.map((item) => {
+              const Icon = iconMap[item.icon] ?? LayoutDashboard;
+              const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={onLinkClick}
+                  title={collapsed ? item.label : undefined}
+                  className={`flex items-center gap-2.5 rounded-lg transition-colors group relative
+                    ${collapsed ? "px-0 py-2 justify-center h-9 w-9 mx-auto" : "px-2.5 py-1.5"}
+                    ${active ? "bg-black text-white" : "text-black/60 hover:bg-[#F5F5F5] hover:text-black"}`}
+                >
+                  <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={active ? 2.5 : 1.75} />
+                  {!collapsed && <span className="truncate text-sm">{item.label}</span>}
+                  {/* Tooltip when collapsed */}
+                  {collapsed && (
+                    <span className="absolute left-full ml-2 px-2 py-1 rounded-md bg-black text-white text-xs whitespace-nowrap
+                      opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-lg">
+                      {item.label}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </nav>
+  );
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F5F5] text-foreground">
-      {/* Top nav */}
-      <header className="h-14 border-b border-black/10 bg-white flex items-center px-3 md:px-4 gap-2 md:gap-4 sticky top-0 z-30 shadow-sm">
+    <div className="h-screen flex flex-col bg-[#F5F5F5] text-foreground overflow-hidden">
+
+      {/* ── Top nav ─────────────────────────────────────────────────────── */}
+      <header className="h-14 border-b border-black/10 bg-white flex items-center px-3 md:px-4 gap-2 md:gap-3 flex-shrink-0 z-30 shadow-sm">
+
         {/* Mobile hamburger */}
         <button
-          onClick={() => setSidebarOpen(true)}
+          onClick={() => setMobileOpen(true)}
           className="md:hidden h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors flex-shrink-0"
           aria-label="Open navigation"
         >
           <Menu className="h-5 w-5" />
+        </button>
+
+        {/* Desktop sidebar toggle */}
+        <button
+          onClick={toggleCollapsed}
+          className="hidden md:grid h-9 w-9 place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors flex-shrink-0"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed
+            ? <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+            : <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+          }
         </button>
 
         <Link to="/dashboard" className="flex items-center gap-2 flex-shrink-0">
@@ -493,7 +554,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
         </div>
 
-        {/* Spacer for mobile */}
         <div className="flex-1 md:hidden" />
 
         {/* Mobile search toggle */}
@@ -508,7 +568,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Action Inbox */}
         <div className="relative flex-shrink-0">
           <button onClick={toggleInbox}
-            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors flex-shrink-0 ${showInbox ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showInbox ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
             aria-label="Action inbox">
             <Inbox className="h-4 w-4" />
             <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold grid place-items-center">4</span>
@@ -519,7 +579,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Messages */}
         <div className="relative flex-shrink-0">
           <button onClick={toggleMessages}
-            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors flex-shrink-0 ${showMessages ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showMessages ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
             aria-label="Messages">
             <MessageSquare className="h-4 w-4" />
             <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-black text-white text-[9px] font-bold grid place-items-center">2</span>
@@ -527,10 +587,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           {showMessages && <MessagesPanel user={user} onClose={() => setShowMessages(false)} />}
         </div>
 
-        {/* Notifications bell */}
+        {/* Notifications */}
         <div className="relative flex-shrink-0">
           <button onClick={toggleNotifs}
-            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors flex-shrink-0 ${showNotifs ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showNotifs ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
             aria-label="Notifications">
             <Bell className="h-4 w-4" />
             {unread > 0 && (
@@ -571,9 +631,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {/* Mobile search bar (slide-down) */}
+      {/* ── Mobile search bar ────────────────────────────────────────────── */}
       {showSearch && (
-        <div className="md:hidden px-3 py-2 bg-white border-b border-black/10 sticky top-14 z-20">
+        <div className="md:hidden px-3 py-2 bg-white border-b border-black/10 flex-shrink-0 z-20">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
             <input
@@ -601,88 +661,77 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      {/* Mobile sidebar backdrop */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden="true"
-        />
-      )}
+      {/* ── Body row (sidebar + main) ────────────────────────────────────── */}
+      {/* Key: flex row fills remaining height, both children overflow-y-auto independently */}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
 
-      {/* Mobile sidebar drawer */}
-      <aside className={`
-        fixed top-0 left-0 h-full w-72 bg-white border-r border-black/10 z-50 overflow-y-auto
-        transform transition-transform duration-300 ease-in-out md:hidden
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      `}>
-        <div className="flex items-center justify-between px-4 h-14 border-b border-black/10">
-          <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
-            <LogoIcon className="h-6 w-6 text-black" />
-            <span className="text-sm font-semibold text-black">APPIIOMS</span>
-          </Link>
-          <button onClick={() => setSidebarOpen(false)} className="h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-        <nav className="px-3 py-4 space-y-5">
-          {filteredNavSections.map((section) => (
-            <div key={section.label}>
-              <div className="px-2 mb-1.5 text-[10px] uppercase tracking-wider text-black/30 font-semibold">{section.label}</div>
-              <div className="space-y-0.5">
-                {section.items.map((item) => {
-                  const Icon = iconMap[item.icon] ?? LayoutDashboard;
-                  const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
-                  return (
-                    <Link key={item.to} to={item.to} onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-                        active ? "bg-black text-white" : "text-black/60 hover:bg-[#F5F5F5] hover:text-black"
-                      }`}>
-                      <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={active ? 2.5 : 1.75} />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </nav>
-      </aside>
+        {/* ── Desktop sidebar ───────────────────────────────────────────── */}
+        <aside className={`
+          hidden md:flex flex-col flex-shrink-0
+          border-r border-black/10 bg-white
+          transition-[width] duration-200 ease-in-out
+          overflow-hidden
+          ${sidebarW}
+        `}>
+          {/* Scrollable nav — only this column scrolls when hovering sidebar */}
+          <div className="sidebar-scroll flex-1 overflow-y-auto overflow-x-hidden py-2 min-h-0">
+            <NavContent />
+          </div>
 
-      <div className="flex flex-1 min-h-0">
-        {/* Desktop Sidebar */}
-        <aside className="hidden md:block w-[240px] border-r border-black/10 bg-white overflow-y-auto py-4 flex-shrink-0">
-          <nav className="px-3 space-y-5">
-            {filteredNavSections.map((section) => (
-              <div key={section.label}>
-                <div className="px-2 mb-1.5 text-[10px] uppercase tracking-wider text-black/30 font-semibold">{section.label}</div>
-                <div className="space-y-0.5">
-                  {section.items.map((item) => {
-                    const Icon = iconMap[item.icon] ?? LayoutDashboard;
-                    const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
-                    return (
-                      <Link key={item.to} to={item.to}
-                        className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm transition-colors ${
-                          active ? "bg-black text-white" : "text-black/60 hover:bg-[#F5F5F5] hover:text-black"
-                        }`}>
-                        <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={active ? 2.5 : 1.75} />
-                        <span className="truncate">{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </nav>
+          {/* Collapse toggle pinned at bottom of sidebar */}
+          <div className="flex-shrink-0 border-t border-black/8 p-2">
+            <button
+              onClick={toggleCollapsed}
+              className="w-full h-8 flex items-center justify-center gap-2 rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black transition-colors text-xs"
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {collapsed
+                ? <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                : <>
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    <span>Collapse</span>
+                  </>
+              }
+            </button>
+          </div>
         </aside>
 
-        {/* Main */}
-        <main className="flex-1 min-w-0 overflow-x-hidden bg-[#F5F5F5] overflow-y-auto">
+        {/* ── Mobile sidebar backdrop ──────────────────────────────────── */}
+        {mobileOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* ── Mobile sidebar drawer ────────────────────────────────────── */}
+        <aside className={`
+          fixed top-0 left-0 h-full w-72 bg-white border-r border-black/10 z-50 flex flex-col
+          transform transition-transform duration-300 ease-in-out md:hidden
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+        `}>
+          <div className="flex items-center justify-between px-4 h-14 border-b border-black/10 flex-shrink-0">
+            <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+              <LogoIcon className="h-6 w-6 text-black" />
+              <span className="text-sm font-semibold text-black">APPIIOMS</span>
+            </Link>
+            <button onClick={() => setMobileOpen(false)} className="h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="sidebar-scroll flex-1 overflow-y-auto min-h-0">
+            <NavContent onLinkClick={() => setMobileOpen(false)} />
+          </div>
+        </aside>
+
+        {/* ── Main content ─────────────────────────────────────────────── */}
+        {/* overflow-y-auto here means only this column scrolls when hovering page */}
+        <main className="main-scroll flex-1 min-w-0 min-h-0 overflow-y-auto overflow-x-hidden bg-[#F5F5F5]">
           {children}
         </main>
       </div>
 
-      {/* Global toast container — replaces browser alert() */}
       <ToastContainer />
     </div>
   );

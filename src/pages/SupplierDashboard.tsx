@@ -200,8 +200,8 @@ export default function SupplierDashboard() {
                   <span>Next: {c.nextMilestone} · {c.due}</span>
                 </div>
                 <div className="flex gap-2 mt-3">
-                  <button className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Submit Deliverable</button>
-                  <button className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">View Contract</button>
+                  <button onClick={() => { pushNotification(`Deliverable submitted for ${c.title} — awaiting acceptance by client.`, "success"); }} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Submit Deliverable</button>
+                  <button onClick={() => toast(`${c.id} — ${c.title} | ${c.value} | ${c.progress}% complete | Next: ${c.nextMilestone} · ${c.due}`, "info")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">View Contract</button>
                   <button onClick={handleSubmitInvoice} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Submit Invoice</button>
                 </div>
               </div>
