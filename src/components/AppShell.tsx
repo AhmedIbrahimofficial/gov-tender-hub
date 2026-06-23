@@ -243,10 +243,10 @@ function InboxPanel({ onClose }: { onClose: () => void }) {
 /* ─── Role-based nav whitelist ──────────────────────────────────────────── */
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
-  procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
+  procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
 
   // Evaluator — only evaluation-related pages
-  evaluator: ["/dashboard", "/teams", "/tenders", "/evaluations", "/awards"],
+  evaluator: ["/dashboard", "/teams", "/tenders", "/evaluations", "/awards", "/certificates"],
 
   // Finance officer — payments, invoices, budget
   finance_officer: ["/dashboard", "/teams", "/finance", "/budget", "/budget/execution", "/budget/expenditure", "/budget/commitments", "/budget/revenue", "/budget/treasury", "/utility/catalogue"],
@@ -255,8 +255,8 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   auditor: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/bi-dashboards", "/utility/public-records", "/budget", "/budget/fraud", "/budget/execution"],
 
   // Contract manager / officer
-  contract_manager:  ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance", "/utility/catalogue", "/utility/communications"],
-  contract_officer:  ["/dashboard", "/teams", "/contracts", "/vendors"],
+  contract_manager:  ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance", "/certificates", "/utility/catalogue", "/utility/communications"],
+  contract_officer:  ["/dashboard", "/teams", "/contracts", "/vendors", "/certificates"],
 
   // Budget / treasury officer
   budget_officer:    ["/dashboard", "/teams", "/budget", "/budget/centres", "/budget/formulation", "/budget/execution", "/budget/commitments", "/budget/expenditure", "/budget/revenue", "/budget/treasury", "/budget/fraud", "/budget/ai-agents", "/finance", "/analytics", "/utility/catalogue"],
@@ -292,7 +292,7 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
 
   // Adjudication officer
-  adjudication_officer: ["/dashboard", "/teams", "/evaluations", "/awards", "/tenders", "/utility/announcements"],
+  adjudication_officer: ["/dashboard", "/teams", "/evaluations", "/awards", "/tenders", "/certificates", "/utility/announcements"],
 
   // Audit officer / public auditor
   audit_officer:  ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics"],
@@ -311,7 +311,7 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Logistics officer
   logistics_officer: ["/dashboard", "/teams", "/inventory", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/contracts", "/vendors", "/utility/catalogue"],
 
-  // Supplier / vendor
+  // Vendor / supplier access
   supplier:     ["/dashboard", "/portal"],
   sme_supplier: ["/dashboard", "/portal"],
   vendor_user:  ["/dashboard", "/portal"],

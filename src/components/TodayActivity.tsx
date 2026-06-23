@@ -100,7 +100,7 @@ export default function TodayActivity() {
   return (
     <Card>
       <CardHeader
-        title="Today's Activity"
+        title="My Activity"
         subtitle={`${todayDate} · ${user.name}`}
         action={
           <div className="flex items-center gap-2">

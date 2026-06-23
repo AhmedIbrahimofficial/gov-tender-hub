@@ -35,6 +35,7 @@ import StaffProductivityPage from "./pages/StaffProductivityPage";
 import DepartmentActivitiesPage from "./pages/DepartmentActivitiesPage";
 import BudgetManagementPage from "./pages/BudgetManagementPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
+import CertificatesPage from "./pages/CertificatesPage";
 import NotFound from "./pages/NotFound";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -130,6 +131,9 @@ function AppRoutes() {
 
       {/* Organisation Registration & Mapping */}
       <Route path="/organisations" element={<ProtectedRoute><OrganisationsPage /></ProtectedRoute>} />
+
+      {/* Certificates, Notices & Acknowledgements */}
+      <Route path="/certificates" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -368,10 +368,11 @@ export const navSections = [
   {
     label: "Procurement Lifecycle",
     items: [
-      { to: "/planning", label: "Planning & Demand", icon: "ClipboardList" },
-      { to: "/tenders", label: "Tenders Register", icon: "FileText" },
-      { to: "/evaluations", label: "Evaluations", icon: "ScaleIcon" },
-      { to: "/awards", label: "Awards & Appeals", icon: "Trophy" },
+      { to: "/planning",      label: "Planning & Demand",              icon: "ClipboardList" },
+      { to: "/tenders",       label: "Tenders Register",               icon: "FileText" },
+      { to: "/evaluations",   label: "Evaluations",                    icon: "ScaleIcon" },
+      { to: "/awards",        label: "Awards & Appeals",               icon: "Trophy" },
+      { to: "/certificates",  label: "Certificates & Notices",         icon: "BookOpen" },
     ],
   },
   {
