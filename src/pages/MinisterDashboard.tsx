@@ -5,6 +5,7 @@ import AIAssistantPanel from "@/components/AIAssistantPanel";
 import TodayActivity from "@/components/TodayActivity";
 import { DollarSign, TrendingUp, Shield, AlertTriangle, BarChart3, Zap, Download } from "lucide-react";
 import { generateDailyReportPDF } from "@/lib/pdf-report";
+import { toast } from "@/lib/toast";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   BarChart, Bar, PieChart, Pie, Cell, Legend,
@@ -118,7 +119,7 @@ export default function MinisterDashboard() {
                       <div className={`h-2 w-2 rounded-full flex-shrink-0 ${a.sev === "Critical" ? "bg-red-600" : a.sev === "High" ? "bg-red-400" : "bg-amber-400"}`} />
                       <span className="text-sm text-black">{a.msg}</span>
                     </div>
-                    <button onClick={() => alert(`Action initiated: ${a.action}`)}
+                    <button onClick={() => toast(`Action initiated: ${a.action}`, "info")}
                       className="h-7 px-3 rounded-lg bg-black text-white text-xs font-medium whitespace-nowrap hover:bg-gray-800 transition-colors flex-shrink-0">{a.action}</button>
                   </div>
                 ))}
@@ -181,7 +182,7 @@ export default function MinisterDashboard() {
                 <div className="flex items-center gap-2">
                   <Badge tone={a.sev === "Critical" || a.sev === "High" ? "red" : "amber"}>{a.sev}</Badge>
                   <Badge tone={a.status.includes("ZACC") ? "red" : a.status === "Escalated" ? "amber" : "muted"}>{a.status}</Badge>
-                  <button onClick={() => alert(`Ministerial directive issued for: ${a.type}`)}
+                  <button onClick={() => toast(`Ministerial directive issued for: ${a.type}`, "warning")}
                     className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Act</button>
                 </div>
               </div>

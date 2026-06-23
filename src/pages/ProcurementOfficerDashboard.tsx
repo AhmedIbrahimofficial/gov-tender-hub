@@ -9,6 +9,7 @@ import { FileText, Plus, Clock, CheckCircle2, Sparkles, AlertTriangle, ArrowRigh
 import { Link } from "react-router-dom";
 import { generateDailyReportPDF } from "@/lib/pdf-report";
 import { Download } from "lucide-react";
+import { toast } from "@/lib/toast";
 
 const TABS = ["My Tenders", "My RFQs", "Pending Actions", "AI Tools", "Today"] as const;
 type Tab = typeof TABS[number];
@@ -138,7 +139,7 @@ export default function ProcurementOfficerDashboard() {
                   <div className="text-sm font-semibold text-black">{tool.name}</div>
                   <div className="text-xs text-black/40 mt-1">{tool.desc}</div>
                 </div>
-                <button onClick={() => alert(tool.msg)} className="mt-auto h-8 px-3 rounded-lg bg-black text-white text-xs font-medium hover:bg-gray-800 transition-colors self-start">{tool.action}</button>
+                <button onClick={() => toast(tool.msg, "info")} className="mt-auto h-8 px-3 rounded-lg bg-black text-white text-xs font-medium hover:bg-gray-800 transition-colors self-start">{tool.action}</button>
               </div>
             ))}
           </div>

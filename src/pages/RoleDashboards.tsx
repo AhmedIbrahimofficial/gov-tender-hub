@@ -19,7 +19,8 @@ import {
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 /* ─── Shared helpers ─────────────────────────────────────────────────────── */
-function act(msg: string) { pushNotification(msg, "success"); alert("✅ " + msg); }
+import { toast } from "@/lib/toast";
+function act(msg: string) { pushNotification(msg, "success"); toast(msg, "success"); }
 
 /* ════════════════════════════════════════════════════════════════════════════
    CONTRACT MANAGER — manage active contracts, milestones, variations

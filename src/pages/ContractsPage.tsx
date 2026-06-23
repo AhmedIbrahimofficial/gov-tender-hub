@@ -3,6 +3,7 @@ import { FeatureGrid } from "@/components/ModulePage";
 import { contracts } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { Eye, Download, FileText, AlertTriangle } from "lucide-react";
 
@@ -12,9 +13,7 @@ export default function ContractsPage() {
   const { user } = useAuth();
 
   const openContract = (c: Contract) => {
-    alert(
-      `CONTRACT DETAIL\n\nID: ${c.id}\nTitle: ${c.title}\nVendor: ${c.vendor}\nValue: ${c.value}\nProgress: ${c.progress}%\nStatus: ${c.status}\nEnd Date: ${c.end}\n\nKey Clauses:\n• Performance bond: 10% of contract value\n• Liquidated damages: 0.1% per day of delay\n• Dispute resolution: UNCITRAL arbitration rules\n• Governing law: Zimbabwe PPDPA 2018`
-    );
+    toast(`Contract ${c.id} opened — ${c.title} | ${c.vendor} | ${c.value} | ${c.progress}% complete`, "info");
   };
 
   const updateMilestone = (c: Contract) => {
@@ -24,7 +23,7 @@ export default function ContractsPage() {
       { from: user?.name, fromRole: user?.role ?? "officer", category: "action", ref: c.id }
     );
     pushNotification(`Milestone updated for ${c.id}`, "success");
-    alert(`✅ Milestone updated for ${c.id}\n\nProgress: ${c.progress}%\nRecorded in audit trail.\nCPO has been notified.`);
+    toast(`Milestone updated for ${c.id} — ${c.progress}% complete. Recorded in audit trail.`, "success");
   };
 
   const raiseVariation = (c: Contract) => {
@@ -34,7 +33,7 @@ export default function ContractsPage() {
       { from: user?.name, fromRole: user?.role ?? "officer", category: "action", ref: c.id }
     );
     pushNotification(`Variation request submitted for ${c.id}`, "info");
-    alert(`📋 Variation Request Submitted\n\nContract: ${c.title} (${c.id})\n\nSent for approval:\nLegal Officer → Finance Officer → CPO\nExpected decision: 3–5 business days`);
+    toast(`Variation request submitted for ${c.title}. Sent for approval: Legal → Finance → CPO.`, "warning");
   };
 
   const downloadContract = (c: Contract) => {

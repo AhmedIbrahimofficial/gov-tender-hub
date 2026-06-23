@@ -4,6 +4,7 @@ import { FeatureGrid } from "@/components/ModulePage";
 import { useAssets } from "@/hooks/use-store";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import type { StoredAsset } from "@/lib/local-store";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import {
@@ -50,7 +51,7 @@ function RegisterAssetModal({ onClose, onSave }: { onClose: () => void; onSave: 
 
   const save = () => {
     if (!form.name.trim() || !form.location.trim()) {
-      alert("Asset Name and Location are required."); return;
+      toast("Asset Name and Location are required.", "error"); return;
     }
     const id = `AST-${new Date().getFullYear()}-${String(Date.now()).slice(-5)}`;
     onSave({
@@ -222,7 +223,7 @@ function AssetRegisterTab({ assets, onUpdate }: { assets: StoredAsset[]; onUpdat
   });
 
   const viewAsset = (a: StoredAsset) => {
-    alert(`ASSET DETAIL\n\nID: ${a.id}\nName: ${a.name}\nClass: ${a.assetClass}\nCategory: ${a.category}\nStatus: ${a.status}\nCondition: ${a.condition}\n\nLocation: ${a.location}\nDepartment: ${a.department}\nCustodian: ${a.custodian}\n\nSerial No: ${a.serialNumber}\nManufacturer: ${a.manufacturer}\nModel: ${a.model}\n\nPurchase Date: ${a.purchaseDate}\nAcquisition Cost: ${a.acquisitionCost}\nCurrent Value: ${a.currentValue}\nDepreciation: ${a.depreciationMethod} · ${a.usefulLifeYears} yrs\n\nWarranty Expiry: ${a.warrantyExpiry}\nLast Inspection: ${a.lastInspectionDate}\nNext Maintenance: ${a.nextMaintenanceDate}\n\nBarcode: ${a.barcode}\n\nNotes: ${a.notes}`);
+    toast(`${a.id} — ${a.name} | ${a.assetClass} | ${a.status} | ${a.condition} | ${a.location} | Cost: ${a.acquisitionCost}`, "info");
   };
 
   const updateStatus = (a: StoredAsset, status: StoredAsset["status"]) => {

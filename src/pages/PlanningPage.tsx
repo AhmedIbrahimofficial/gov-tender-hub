@@ -2,6 +2,7 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { FeatureGrid } from "@/components/ModulePage";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { ClipboardList, DollarSign, Calendar, CheckCircle2 } from "lucide-react";
+import { toast } from "@/lib/toast";
 
 const planItems = [
   { id: "PR-2026-1284", title: "ICT Equipment — Ministry of Education", category: "ICT & Digital", budget: "USD 2,400,000", quarter: "Q3 2026", status: "Approved" },
@@ -104,7 +105,7 @@ export default function PlanningPage() {
                     </td>
                     <td className="px-5 py-3">
                       <button
-                        onClick={() => alert(`PROCUREMENT REQUISITION\n\nID: ${p.id}\nTitle: ${p.title}\nCategory: ${p.category}\nBudget: ${p.budget}\nQuarter: ${p.quarter}\nStatus: ${p.status}\n\nClick Approve to move to Budget Validation, or send back for revision.`)}
+                        onClick={() => toast(`${p.id} — ${p.title} | ${p.category} | ${p.budget} | ${p.quarter} | Status: ${p.status}`, "info")}
                         className="h-7 px-2.5 rounded-md border border-border text-xs hover:bg-secondary transition-colors">Open</button>
                     </td>
                   </tr>

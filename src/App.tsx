@@ -33,6 +33,8 @@ import UtilityPage from "./pages/UtilityPage";
 import TeamsPage from "./pages/TeamsPage";
 import StaffProductivityPage from "./pages/StaffProductivityPage";
 import DepartmentActivitiesPage from "./pages/DepartmentActivitiesPage";
+import BudgetManagementPage from "./pages/BudgetManagementPage";
+import OrganisationsPage from "./pages/OrganisationsPage";
 import NotFound from "./pages/NotFound";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -113,6 +115,21 @@ function AppRoutes() {
 
       {/* Department Activities Workbench */}
       <Route path="/department-activities" element={<ProtectedRoute><DepartmentActivitiesPage /></ProtectedRoute>} />
+
+      {/* Budget Management */}
+      <Route path="/budget"             element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/centres"     element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/formulation" element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/execution"   element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/commitments" element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/expenditure" element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/revenue"     element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/treasury"    element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/fraud"       element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/ai-agents"   element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+
+      {/* Organisation Registration & Mapping */}
+      <Route path="/organisations" element={<ProtectedRoute><OrganisationsPage /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

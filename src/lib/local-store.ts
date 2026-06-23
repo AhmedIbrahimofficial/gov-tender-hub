@@ -203,6 +203,86 @@ export type StoredStockCount = {
   createdAt: string;
 };
 
+// ── Organisation Hierarchy Types ─────────────────────────────────────────────
+
+/** Level 1 — Ministry (root / mother entity) */
+export type StoredMinistry = {
+  id: string;
+  name: string;
+  code: string;           // e.g. MOF, MOH
+  description: string;
+  minister: string;
+  phone: string;
+  email: string;
+  address: string;
+  status: "Active" | "Inactive" | "Suspended";
+  createdBy: string;
+  createdAt: string;
+};
+
+/** Level 2a — Department (child of Ministry) */
+export type StoredDepartment = {
+  id: string;
+  ministryId: string;     // FK → StoredMinistry.id
+  name: string;
+  code: string;
+  description: string;
+  head: string;
+  phone: string;
+  email: string;
+  status: "Active" | "Inactive";
+  createdBy: string;
+  createdAt: string;
+};
+
+/** Level 2b — State-Owned Entity (child of Ministry) */
+export type StoredStateEntity = {
+  id: string;
+  ministryId: string;     // FK → StoredMinistry.id
+  name: string;
+  code: string;
+  entityType: "State Enterprise" | "Revenue Authority" | "Parastatal" | "Local Authority" | "Regulatory Body" | "Development Agency";
+  description: string;
+  ceo: string;
+  phone: string;
+  email: string;
+  status: "Active" | "Inactive" | "Suspended";
+  createdBy: string;
+  createdAt: string;
+};
+
+/** Level 3 — Branch (grandchild — can belong to Department or StateEntity) */
+export type StoredBranch = {
+  id: string;
+  parentId: string;       // FK → StoredDepartment.id OR StoredStateEntity.id
+  parentType: "department" | "state_entity";
+  ministryId: string;     // denormalised for fast lookups
+  name: string;
+  code: string;
+  location: string;
+  province: string;
+  manager: string;
+  phone: string;
+  email: string;
+  status: "Active" | "Inactive";
+  createdBy: string;
+  createdAt: string;
+};
+
+/** User ↔ Org mapping — links a user (by id/name/role) to an org node */
+export type StoredOrgUser = {
+  id: string;
+  orgId: string;          // FK to any of the four levels
+  orgType: "ministry" | "department" | "state_entity" | "branch";
+  userId: string;         // AuthUser.id or custom id
+  userName: string;
+  userEmail: string;
+  userRole: string;       // UserRole label
+  department: string;
+  assignedBy: string;
+  assignedAt: string;
+};
+
 export type StoredAuditLog = {
   id: string; event: string; user: string; role: string;
   timestamp: string; risk: string;
@@ -240,6 +320,11 @@ type Store = {
   inventoryRequests: StoredInventoryRequest[];
   stockAdjustments: StoredStockAdjustment[];
   stockCounts: StoredStockCount[];
+  ministries: StoredMinistry[];
+  departments: StoredDepartment[];
+  stateEntities: StoredStateEntity[];
+  branches: StoredBranch[];
+  orgUsers: StoredOrgUser[];
 };
 
 export type AIReport = {
@@ -276,6 +361,7 @@ function load(): Store {
         aiReports: [], awardNotices: [], assets: [], workOrders: [], assetTransfers: [],
         inventoryItems: [], inventoryReceipts: [], inventoryRequests: [],
         stockAdjustments: [], stockCounts: [],
+        ministries: [], departments: [], stateEntities: [], branches: [], orgUsers: [],
         ...parsed
       };
     }
@@ -285,6 +371,7 @@ function load(): Store {
     notifications: [], aiReports: [], awardNotices: [], assets: [], workOrders: [],
     assetTransfers: [], inventoryItems: [], inventoryReceipts: [], inventoryRequests: [],
     stockAdjustments: [], stockCounts: [],
+    ministries: [], departments: [], stateEntities: [], branches: [], orgUsers: [],
   };
 }
 

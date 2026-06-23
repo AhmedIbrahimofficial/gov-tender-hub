@@ -4,6 +4,7 @@ import AIAssistantPanel from "@/components/AIAssistantPanel";
 import WorkflowStepper from "@/components/WorkflowStepper";
 import { Gavel, TrendingUp, Users, Clock, Sparkles, AlertTriangle, CheckCircle2, DollarSign } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { toast } from "@/lib/toast";
 
 const AUCTION_STAGES = [
   { id: 1,  label: "Disposal Planning",  status: "completed" as const, aiRole: "Disposal Advisor" },
@@ -69,7 +70,7 @@ export default function AuctionsPage() {
 
   const handleBid = () => {
     if (bidAmount <= selectedLot.current) {
-      alert(`❌ Invalid Bid\n\nYour bid of USD ${bidAmount.toLocaleString()} must be higher than the current bid of USD ${selectedLot.current.toLocaleString()}.\n\nMinimum bid: USD ${(selectedLot.current + 500).toLocaleString()}`);
+      toast(`Invalid bid — USD ${bidAmount.toLocaleString()} must exceed current bid of USD ${selectedLot.current.toLocaleString()}. Minimum: USD ${(selectedLot.current + 500).toLocaleString()}.`, "error");
       return;
     }
     setLots(prev => prev.map(l =>
@@ -97,7 +98,7 @@ export default function AuctionsPage() {
           description="Real-time asset disposal with 19-stage automated workflow, AI fraud detection, and instant settlement. Transparent public asset management."
           actions={
             <button
-              onClick={() => alert("🔨 Create Auction Event\n\nThis opens the 19-stage auction setup wizard.\n\nRequired:\n• Disposal approval from Asset Manager\n• PRAZ notification (if value > threshold)\n• Asset valuation certificates\n• AI catalog generation\n\nIn this demo, navigate to the 19-Stage Workflow tab to see the full process.")}
+              onClick={() => toast("Create Auction Event — 19-stage setup wizard. Required: Disposal approval, PRAZ notification, asset valuation certificates, AI catalog generation. Navigate to 19-Stage Workflow tab.", "info")}
               className="h-9 px-3 rounded-md bg-amber-500 text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5"
             >
               <Gavel className="h-4 w-4" /> Create Auction Event

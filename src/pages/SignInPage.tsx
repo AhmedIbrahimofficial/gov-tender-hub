@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, ALL_ROLES, type UserRole } from "@/lib/auth-context";
-import { Eye, EyeOff, ArrowRight, Shield, Building2, ChevronLeft, X, Phone, User, Mail, Lock, Briefcase } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Shield, Building2, ChevronLeft, X, Phone, User, Mail, Lock, Briefcase, Landmark, GitBranch, ChevronRight, Building } from "lucide-react";
 import { seedIfEmpty } from "@/lib/local-store";
 
 function LogoIcon({ className = "" }: { className?: string }) {
@@ -9,6 +9,90 @@ function LogoIcon({ className = "" }: { className?: string }) {
     <svg className={className} viewBox="0 0 256 256" fill="currentColor">
       <path d="M 128.005 191.173 C 128.448 156.208 156.93 128 192 128 L 192 64 L 128 64 C 128 99.346 99.346 128 64 128 L 64 192 L 128 192 Z M 192 256 L 64 256 C 28.654 256 0 227.346 0 192 L 0 64 L 64 64 L 64 0 L 192 0 C 227.346 0 256 28.654 256 64 L 256 192 L 192 192 Z" />
     </svg>
+  );
+}
+
+/* ─── Organisation Hierarchy Display ────────────────────────────────────── */
+const ORG_HIERARCHY = [
+  {
+    id: "m1", label: "Ministry of Finance & IP", code: "MOF", color: "bg-blue-600",
+    children: [
+      { id: "d1", label: "Budget & Finance Dept", type: "dept", branches: ["Bulawayo Regional Office", "Mutare Office"] },
+      { id: "s1", label: "ZIMRA", type: "soe",  branches: ["Masvingo Branch", "Beitbridge Branch"] },
+    ],
+  },
+  {
+    id: "m2", label: "Ministry of Health & CC", code: "MOH", color: "bg-emerald-600",
+    children: [
+      { id: "d2", label: "Procurement & Supply Dept", type: "dept", branches: ["Masvingo Store", "Bulawayo Store"] },
+    ],
+  },
+  {
+    id: "m3", label: "Ministry of Transport", code: "MOT", color: "bg-violet-600",
+    children: [
+      { id: "d3", label: "Roads & Bridges Dept", type: "dept", branches: ["Beitbridge Site"] },
+      { id: "s2", label: "ZINARA", type: "soe", branches: ["Harare Weigh Station"] },
+    ],
+  },
+];
+
+function OrgHierarchyTree() {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(["m1"]));
+  const toggle = (id: string) => setExpanded(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+
+  return (
+    <div className="space-y-2">
+      {ORG_HIERARCHY.map(ministry => (
+        <div key={ministry.id}>
+          {/* Level 1 — Ministry */}
+          <button onClick={() => toggle(ministry.id)}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/8 transition-colors group text-left">
+            <div className={`h-7 w-7 rounded-lg ${ministry.color} grid place-items-center flex-shrink-0`}>
+              <Landmark className="h-3.5 w-3.5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold text-white/90 truncate">{ministry.label}</div>
+              <div className="text-[10px] text-white/40">{ministry.code} · Ministry</div>
+            </div>
+            <ChevronRight className={`h-3.5 w-3.5 text-white/30 transition-transform flex-shrink-0 ${expanded.has(ministry.id) ? "rotate-90" : ""}`} />
+          </button>
+
+          {/* Level 2 — Departments & SOEs */}
+          {expanded.has(ministry.id) && (
+            <div className="ml-4 pl-3 border-l border-white/10 space-y-1 mb-1">
+              {ministry.children.map(child => (
+                <div key={child.id}>
+                  <button onClick={() => toggle(child.id)}
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/8 transition-colors text-left">
+                    <div className={`h-5 w-5 rounded-md grid place-items-center flex-shrink-0 ${child.type === "dept" ? "bg-emerald-600/40" : "bg-amber-600/40"}`}>
+                      {child.type === "dept" ? <Building2 className="h-3 w-3 text-white/80" /> : <Building className="h-3 w-3 text-white/80" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] font-medium text-white/80 truncate">{child.label}</div>
+                      <div className="text-[10px] text-white/35">{child.type === "dept" ? "Department" : "State Entity"}</div>
+                    </div>
+                    <ChevronRight className={`h-3 w-3 text-white/20 transition-transform flex-shrink-0 ${expanded.has(child.id) ? "rotate-90" : ""}`} />
+                  </button>
+
+                  {/* Level 3 — Branches */}
+                  {expanded.has(child.id) && (
+                    <div className="ml-3 pl-2.5 border-l border-white/8 space-y-0.5 mb-1">
+                      {child.branches.map(branch => (
+                        <div key={branch} className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-white/5 transition-colors">
+                          <GitBranch className="h-3 w-3 text-white/25 flex-shrink-0" />
+                          <span className="text-[10px] text-white/50 truncate">{branch}</span>
+                          <span className="text-[9px] text-white/20 flex-shrink-0">Branch</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -232,6 +316,30 @@ function StaffLoginForm({ role, onBack }: { role: typeof ALL_ROLES[number]; onBa
           </div>
         </div>
         {error && <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</div>}
+
+        {/* Org hierarchy breadcrumb */}
+        <div className="rounded-xl border border-black/8 bg-[#fafafa] px-3 py-2.5">
+          <div className="text-[10px] text-black/40 uppercase tracking-wider font-semibold mb-2">Organisation Hierarchy</div>
+          <div className="flex items-center gap-1.5 flex-wrap text-[11px]">
+            <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-medium">
+              <Landmark className="h-3 w-3" /> Ministry
+            </div>
+            <ChevronRight className="h-3 w-3 text-black/25" />
+            <div className="flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md font-medium">
+              <Building2 className="h-3 w-3" /> Department
+            </div>
+            <span className="text-black/25 text-[10px]">or</span>
+            <div className="flex items-center gap-1 bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md font-medium">
+              <Building className="h-3 w-3" /> State Entity
+            </div>
+            <ChevronRight className="h-3 w-3 text-black/25" />
+            <div className="flex items-center gap-1 bg-violet-100 text-violet-700 px-2 py-0.5 rounded-md font-medium">
+              <GitBranch className="h-3 w-3" /> Branch
+            </div>
+          </div>
+          <p className="text-[10px] text-black/35 mt-1.5">Enter the Ministry or Entity you belong to above. Your account will be mapped to that org node.</p>
+        </div>
+
         <button type="submit" disabled={loading}
           className={`w-full h-11 rounded-xl text-white text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2 mt-1 ${role.color} hover:opacity-90`}>
           {loading ? "Signing in…" : <><Shield className="h-4 w-4" /> Enter as {role.label}</>}
@@ -352,36 +460,58 @@ export default function SignInPage() {
           <span className="text-xl font-medium tracking-tight text-white">APPIIOMS</span>
         </Link>
         <div>
-          <h2 className="text-4xl font-medium text-white mb-4" style={{ letterSpacing: "-0.03em" }}>
+          <h2 className="text-3xl font-medium text-white mb-3" style={{ letterSpacing: "-0.03em" }}>
             Transparent.<br />Fast. Intelligent.
           </h2>
-          <p className="text-white/50 text-base mb-8">
-            AI-Powered Public Procurement Integrity & Intelligence Oversight Management System.
+          <p className="text-white/50 text-sm mb-6">
+            AI-Powered Public Procurement Integrity & Intelligence Oversight Management System — Government of Zimbabwe.
           </p>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: "Tender Management", val: "25 phases" },
-              { label: "RFQ Automation",    val: "18 stages" },
-              { label: "RFP & EOI",         val: "25 stages" },
-              { label: "Live Auctions",     val: "19 stages" },
-              { label: "AI Agents",         val: "8 active"  },
-              { label: "Compliance",        val: "94.2%"     },
-            ].map((f) => (
-              <div key={f.label} className="rounded-xl p-4" style={{ background: "#1f1f1f" }}>
-                <div className="text-xs text-white/40 mb-1">{f.label}</div>
-                <div className="text-lg font-medium text-white">{f.val}</div>
+
+          {/* Org Hierarchy */}
+          <div className="rounded-2xl overflow-hidden mb-5" style={{ background: "#1a1a1a" }}>
+            <div className="px-4 py-3 border-b border-white/8 flex items-center justify-between">
+              <div>
+                <div className="text-xs font-semibold text-white/80">Organisation Hierarchy</div>
+                <div className="text-[10px] text-white/35 mt-0.5">Ministry → Department / State Entity → Branch</div>
               </div>
-            ))}
+              <div className="flex gap-1.5 items-center">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="text-[10px] text-white/35">Live</span>
+              </div>
+            </div>
+            <div className="p-3 max-h-[260px] overflow-y-auto scrollbar-none">
+              <OrgHierarchyTree />
+            </div>
+            <div className="px-4 py-2.5 border-t border-white/8 grid grid-cols-3 gap-2">
+              {[
+                { label: "Ministries", val: "3", color: "text-blue-400" },
+                { label: "Depts & SOEs", val: "5", color: "text-emerald-400" },
+                { label: "Branches", val: "8", color: "text-violet-400" },
+              ].map(s => (
+                <div key={s.label} className="text-center">
+                  <div className={`text-base font-bold ${s.color}`}>{s.val}</div>
+                  <div className="text-[10px] text-white/30">{s.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-6 p-4 rounded-xl border border-white/10">
-            <div className="text-xs text-white/40 mb-2 uppercase tracking-wider">Two access types</div>
-            <div className="flex items-center gap-3 mb-2">
+
+          {/* Access types */}
+          <div className="p-4 rounded-xl border border-white/10">
+            <div className="text-[10px] text-white/40 mb-2.5 uppercase tracking-wider font-semibold">Platform Access</div>
+            <div className="flex items-center gap-3 mb-2.5">
               <div className="h-7 w-7 rounded-lg bg-blue-600 grid place-items-center flex-shrink-0"><Building2 className="h-3.5 w-3.5 text-white" /></div>
-              <div className="text-sm text-white/70">Companies & suppliers — tender portal</div>
+              <div>
+                <div className="text-xs text-white/80 font-medium">Companies & Suppliers</div>
+                <div className="text-[10px] text-white/40">Tender portal — browse, bid, track</div>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="h-7 w-7 rounded-lg bg-white/10 grid place-items-center flex-shrink-0"><Shield className="h-3.5 w-3.5 text-white" /></div>
-              <div className="text-sm text-white/70">Government staff — 42 role management system</div>
+              <div>
+                <div className="text-xs text-white/80 font-medium">Government Staff</div>
+                <div className="text-[10px] text-white/40">42 roles — CPO, Officers, Auditors, Ministers</div>
+              </div>
             </div>
           </div>
         </div>

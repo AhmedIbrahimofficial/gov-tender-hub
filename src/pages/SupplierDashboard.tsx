@@ -7,6 +7,7 @@ import { FileText, Clock, CheckCircle2, DollarSign, Bell, ArrowRight, Plus } fro
 import { Link } from "react-router-dom";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 
 const TABS = ["Overview", "My Bids", "Contracts", "Invoices", "Today"] as const;
 type Tab = typeof TABS[number];
@@ -39,12 +40,12 @@ export default function SupplierDashboard() {
 
   const handleSubmitInvoice = () => {
     pushNotification("Invoice submitted for 3-way matching", "success");
-    alert("Invoice submitted! It will go through 3-way matching (PO → GRN → Invoice) automatically.");
+    toast("Invoice submitted — 3-way matching (PO → GRN → Invoice) in progress.", "success");
   };
 
   const handleAskClarification = (id: string) => {
     pushNotification(`Clarification request sent for ${id}`, "info");
-    alert(`Clarification request submitted for ${id}. You'll receive a response within 2 business days.`);
+    toast(`Clarification request submitted for ${id}. Response expected within 2 business days.`, "info");
   };
 
   return (
@@ -142,10 +143,10 @@ export default function SupplierDashboard() {
                 <div className="text-xs font-semibold text-black mb-3">Quick Actions</div>
                 <div className="space-y-2">
                   {[
-                    { label: "Submit a New Bid", action: () => alert("Navigate to open tenders to submit a bid.") },
+                    { label: "Submit a New Bid", action: () => toast("Navigate to open tenders to submit a bid.", "info") },
                     { label: "Submit Invoice", action: handleSubmitInvoice },
-                    { label: "Request Clarification", action: () => alert("Select a tender from My Bids to request clarification.") },
-                    { label: "Update Company Profile", action: () => alert("Company profile updated successfully!") },
+                    { label: "Request Clarification", action: () => toast("Select a tender from My Bids to request clarification.", "info") },
+                    { label: "Update Company Profile", action: () => { pushNotification("Company profile updated", "success"); toast("Company profile updated successfully.", "success"); } },
                   ].map(q => (
                     <button key={q.label} onClick={q.action}
                       className="w-full text-left px-3 py-2 rounded-lg border border-black/10 text-xs font-medium text-black hover:bg-[#F5F5F5] hover:border-black/20 transition-all flex items-center justify-between group">

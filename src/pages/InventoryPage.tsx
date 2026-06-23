@@ -5,6 +5,7 @@ import { FeatureGrid } from "@/components/ModulePage";
 import { useInventoryItems, useInventoryReceipts, useInventoryRequests, useStockAdjustments, useStockCounts } from "@/hooks/use-store";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import type { StoredInventoryItem, StoredInventoryRequest } from "@/lib/local-store";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import {
@@ -44,7 +45,7 @@ function AddItemModal({ onClose, onSave }: { onClose: () => void; onSave: (i: St
   });
 
   const save = () => {
-    if (!form.name.trim()) { alert("Item name is required."); return; }
+    if (!form.name.trim()) { toast("Item name is required.", "error"); return; }
     const id = `INV-${new Date().getFullYear()}-${String(Date.now()).slice(-5)}`;
     const sku = form.sku.trim() || `SKU-${String(Date.now()).slice(-6)}`;
     onSave({
@@ -137,7 +138,7 @@ function IssueRequestModal({ items, onClose, onSave }: {
   const selectedItem = items.find(i => i.id === form.itemId);
 
   const save = () => {
-    if (!form.itemId || Number(form.quantity) < 1) { alert("Select item and enter a valid quantity."); return; }
+    if (!form.itemId || Number(form.quantity) < 1) { toast("Select item and enter a valid quantity.", "error"); return; }
     const id = `IRQ-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`;
     onSave({
       id, itemId: form.itemId, itemName: selectedItem?.name ?? "",
@@ -396,7 +397,7 @@ function ItemMasterTab({ items, onUpdate }: { items: StoredInventoryItem[]; onUp
                 {i.currentStock <= i.reorderPoint && i.currentStock > i.minStockLevel && <span className="text-amber-600 font-semibold flex items-center gap-1"><Clock className="h-3 w-3" />NEAR REORDER</span>}
               </div>
               <div className="flex gap-2 flex-wrap">
-                <button onClick={() => alert(`ITEM: ${i.name}\n\nID: ${i.id}\nSKU: ${i.sku}\nCategory: ${i.category}\nClassification: ${i.classification}\n\nStock Levels:\n  Current: ${i.currentStock} ${i.unitOfMeasure}\n  Available: ${i.availableStock}\n  Reserved: ${i.reservedStock}\n  Damaged: ${i.damagedStock}\n  Quarantine: ${i.quarantineStock}\n\nPolicy:\n  Min: ${i.minStockLevel} | Max: ${i.maxStockLevel}\n  Reorder: ${i.reorderPoint} | Safety: ${i.safetyStock}\n\nSupplier: ${i.supplierName}\nLead Time: ${i.leadTimeDays} days\nUnit Cost: ${i.unitCost}\nTotal Value: ${i.totalValue}\n\nLocation: ${i.warehouse} — ${i.location} — ${i.bin}\nBarcode: ${i.barcode}\n\nNotes: ${i.notes}`)}
+                <button onClick={() => toast(`${i.name} | ${i.id} | ${i.category} | Stock: ${i.currentStock} ${i.unitOfMeasure} (avail: ${i.availableStock}) | Min: ${i.minStockLevel} | Reorder: ${i.reorderPoint} | ${i.unitCost} | ${i.warehouse} — ${i.location}`, "info")}
                   className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1 transition-colors">
                   <Eye className="h-3 w-3" /> View
                 </button>
@@ -953,7 +954,7 @@ function AIAgentsTab() {
             <p className="text-xs text-black/60 leading-relaxed mb-3">{ag.role}</p>
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-black/40">{ag.actions.toLocaleString()} actions logged</span>
-              <button onClick={() => alert(`${ag.name}\n\nRole: ${ag.role}\n\nStatus: ${ag.status}\nConfidence: ${ag.confidence}%\nActions: ${ag.actions.toLocaleString()}\n\nClick to open full agent console.`)}
+              <button onClick={() => toast(`${ag.name} — ${ag.status} | Confidence: ${ag.confidence}% | ${ag.actions.toLocaleString()} actions logged`, "info")}
                 className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Consult</button>
             </div>
           </Card>

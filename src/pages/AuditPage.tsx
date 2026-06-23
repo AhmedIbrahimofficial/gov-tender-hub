@@ -3,6 +3,7 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { FeatureGrid } from "@/components/ModulePage";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { Shield, AlertTriangle, CheckCircle2, FileText, Download } from "lucide-react";
 
@@ -28,13 +29,13 @@ export default function AuditPage() {
     setLog(prev => prev.map(e => e.id === id ? { ...e, resolved: true } : e));
     pushSeniorAlert(`Audit exception resolved: ${id}`, "success", { from: user?.name, fromRole: user?.role ?? "officer", category: "action", ref: id });
     pushNotification(`Exception ${id} resolved`, "success");
-    alert(`✅ Exception Resolved\n\nID: ${id}\nResolution recorded in audit trail.\nCPO has been notified.`);
+    toast(`Exception ${id} resolved. Recorded in audit trail. CPO notified.`, "success");
   };
 
   const escalate = (id: string, event: string) => {
     pushSeniorAlert(`Audit exception escalated: ${id} — ${event}`, "error", { from: user?.name, fromRole: user?.role ?? "officer", category: "action", ref: id });
     pushNotification(`Exception ${id} escalated`, "warning");
-    alert(`⚠️ Escalated\n\n${id}: ${event}\n\nNotified: Compliance Officer · CPO · OAG\nExpected response: 48 hours`);
+    toast(`Escalated: ${id} — ${event}. Notified: Compliance Officer, CPO, OAG.`, "warning");
   };
 
   const downloadReport = () => {

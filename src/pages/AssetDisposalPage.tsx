@@ -4,6 +4,7 @@ import { FeatureGrid } from "@/components/ModulePage";
 import { useAssets } from "@/hooks/use-store";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import type { StoredAsset } from "@/lib/local-store";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import {
@@ -59,7 +60,7 @@ function DisposalModal({ asset, onClose, onDispose }: {
         </div>
         <div className="flex justify-end gap-2 px-6 py-4 border-t border-black/10">
           <button onClick={onClose} className="h-9 px-4 rounded-xl border border-black/10 text-sm hover:bg-gray-50 transition-colors">Cancel</button>
-          <button onClick={() => { if (!reason.trim()) { alert("Reason is required."); return; } onDispose(method, recoveryValue, reason); }}
+          <button onClick={() => { if (!reason.trim()) { toast("Reason is required.", "error"); return; } onDispose(method, recoveryValue, reason); }}
             className="h-9 px-4 rounded-xl bg-red-600 text-white text-sm hover:bg-red-700 transition-colors">Confirm Disposal</button>
         </div>
       </div>

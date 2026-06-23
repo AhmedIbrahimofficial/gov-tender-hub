@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import TodayActivity from "@/components/TodayActivity";
 import { pushNotification, pushSeniorAlert, saveAIReport } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { generateDailyReportPDF } from "@/lib/pdf-report";
 import {
   DollarSign, Clock, CheckCircle2, AlertTriangle, Sparkles, Plus,
@@ -556,7 +557,7 @@ export default function FinanceDashboard() {
                 body: "USD 48.2M due across 6 approved invoices in the next 14 days. Recommend initiating treasury batch transfer by June 28 to meet all due dates.",
                 action: "Generate Schedule",
                 actionColor: "bg-blue-600 hover:bg-blue-700",
-                fn: () => { pushNotification("Payment schedule generated", "success"); alert("📊 Payment Batch — Next 14 Days:\n\nHighveld Engineering — USD 2.84M (due Jul 15)\nBulawayo Civil Works — USD 5.6M (due Jul 10)\nZim Pharma — USD 980K (due Jul 09)\n\nTotal Net Disbursement: USD 8.27M\nWithholding Tax to ZIMRA: USD 1.01M\n\nBatch ready for treasury submission."); }
+                fn: () => { pushNotification("Payment schedule generated", "success"); toast("Payment batch ready — Highveld USD 2.84M (Jul 15), Bulawayo Civil USD 5.6M (Jul 10), Zim Pharma USD 980K (Jul 09). Net disbursement: USD 8.27M. WHT to ZIMRA: USD 1.01M.", "success"); }
               },
               {
                 icon: AlertTriangle, color: "text-amber-500", bg: "border-amber-200 bg-amber-50",
@@ -572,7 +573,7 @@ export default function FinanceDashboard() {
                 body: "INV-2026-4820 cannot be approved until Stores Officer issues GRN-2026-0891. Payment auto-hold active. Estimated GRN clearance: 2 business days.",
                 action: "Notify Stores",
                 actionColor: "bg-violet-600 hover:bg-violet-700",
-                fn: () => { pushNotification("Stores Officer notified to issue GRN-2026-0891", "info"); alert("✉️ Notification sent to Stores Officer.\n\nRequest: Please issue GRN-2026-0891 for Zimbabwe Pharma Holdings delivery (ARV Medicines Batch 7).\n\nPayment of USD 1,200,000 is on hold until GRN is confirmed."); }
+                fn: () => { pushNotification("Stores Officer notified to issue GRN-2026-0891", "info"); toast("Notification sent to Stores Officer — please issue GRN-2026-0891 for Zimbabwe Pharma Holdings (ARV Batch 7). Payment of USD 1.2M on hold until GRN confirmed.", "info"); }
               },
             ].map((a, i) => (
               <div key={i} className={`border rounded-2xl px-5 py-4 flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row ${a.bg}`}>

@@ -4,6 +4,7 @@ import { FeatureGrid } from "@/components/ModulePage";
 import { useTenders } from "@/hooks/use-store";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { Plus, Download, Search, FileText, Clock, CheckCircle2, XCircle } from "lucide-react";
 import NewTenderModal from "@/components/NewTenderModal";
 
@@ -44,7 +45,7 @@ export default function TendersPage() {
   };
 
   const openTender = (t: typeof tenders[0]) => {
-    alert(`TENDER DETAIL\n\nReference: ${t.id}\nTitle: ${t.title}\nEntity: ${t.entity}\nCategory: ${t.category}\nMethod: ${t.method}\nValue: ${t.value}\nStatus: ${t.status}\nClosing: ${t.closing}\nBids Received: ${t.bids}\nCreated By: ${t.createdBy || "System"}`);
+    toast(`${t.id} — ${t.title} | ${t.entity} | ${t.value} | Status: ${t.status} | Closing: ${t.closing} | Bids: ${t.bids}`, "info");
   };
 
   return (

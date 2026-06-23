@@ -5,6 +5,7 @@ import { tenders } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
 import AwardNoticeModal from "@/components/AwardNoticeModal";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { Trophy, Clock, CheckCircle2, Scale, AlertTriangle, Send, Eye, FileText, Download } from "lucide-react";
 
 const CANDIDATE_AWARDS = [
@@ -104,7 +105,7 @@ export default function AwardsPage() {
                       className="h-8 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
                       <Download className="h-3.5 w-3.5" /> Download LOA
                     </button>
-                    <button onClick={() => alert(`Evaluation Summary\n\nTender: ${c.title}\nRecommended Vendor: ${c.vendor}\nWeighted Score: ${c.score}/100\nMethod: QCBS (70/30)\nEvaluators: 4 panel members\nAI Confidence: 93%\n\nAI Recommendation: Proceed with award. No conflict of interest detected. References verified.`)}
+                    <button onClick={() => toast(`${c.tenderId} — ${c.title} | ${c.vendor} | Score: ${c.score}/100 | QCBS 70/30. AI: No conflict detected. Proceed with award.`, "info")}
                       className="h-8 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
                       <Eye className="h-3.5 w-3.5" /> View Evaluation
                     </button>
@@ -132,7 +133,7 @@ export default function AwardsPage() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge tone="green">Awarded</Badge>
                     <span className="text-[11px] text-black/40 hidden sm:inline">14d standstill</span>
-                    <button onClick={() => alert(`Award Record\n\nTender: ${t.title}\nEntity: ${t.entity}\nValue: ${t.value}\nStatus: Awarded\nStandstill: 14 working days from award date`)}
+                    <button onClick={() => toast(`Award Record: ${t.title} | ${t.entity} | ${t.value} | Status: Awarded | 14-day standstill applies.`, "info")}
                       className="h-6 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] transition-colors">View</button>
                   </div>
                 </div>
@@ -158,7 +159,7 @@ export default function AwardsPage() {
                         className="h-7 px-2.5 rounded-lg bg-emerald-600 text-white text-xs hover:bg-emerald-700 transition-colors">Uphold</button>
                       <button onClick={() => handleAppealAction(a.ref, "Dismissed")}
                         className="h-7 px-2.5 rounded-lg bg-red-600 text-white text-xs hover:bg-red-700 transition-colors">Dismiss</button>
-                      <button onClick={() => alert(`Appeal Detail\n\nRef: ${a.ref}\nTender: ${a.tender}\nBidder: ${a.bidder}\nGrounds: ${a.grounds}\nFiled: ${a.filed}\nStatus: ${a.status}\n\nReview supporting documents and hear both parties before deciding.`)}
+                      <button onClick={() => toast(`Appeal ${a.ref} — ${a.tender} | ${a.bidder} | Grounds: ${a.grounds} | Filed: ${a.filed} | Status: ${a.status}`, "info")}
                         className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Review</button>
                     </div>
                   )}

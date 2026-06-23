@@ -7,6 +7,7 @@ import NewTenderModal from "@/components/NewTenderModal";
 import TodayActivity from "@/components/TodayActivity";
 import SeniorFeed from "@/components/SeniorFeed";
 import { useTenders, useRFQs, useVendors } from "@/hooks/use-store";
+import { toast } from "@/lib/toast";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   BarChart, Bar, PieChart, Pie, Cell, Legend,
@@ -44,7 +45,7 @@ export default function CPODashboard() {
       ],
       sentToCPO: true,
     });
-    alert("✅ AI daily summary compiled and saved to Senior Feed.\n\nKey findings:\n• 94.2% overall compliance\n• 23 fraud alerts — 3 critical\n• USD 2.84B spend YTD (+6.2%)\n• 1,287 active tenders\n• 8 AI agents active at 92.5% avg confidence");
+    toast("AI daily summary compiled and saved to Senior Feed. Key findings: 94.2% compliance, 23 fraud alerts (3 critical), USD 2.84B spend YTD, 1,287 active tenders, 8 AI agents at 92.5% avg confidence.", "success");
   };
 
   return (
@@ -145,7 +146,7 @@ export default function CPODashboard() {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <Badge tone={t.status === "Awarded" ? "green" : t.status === "Evaluation" ? "amber" : t.status === "Bidding" ? "blue" : "muted"}>{t.status}</Badge>
-                        <button onClick={() => { pushSeniorAlert(`CPO reviewed tender ${t.id}`, "info", { from: user?.name, fromRole: "CPO", category: "action", ref: t.id }); alert(`Tender ${t.id} opened.\n\nTitle: ${t.title}\nEntity: ${t.entity}\nValue: ${t.value}\nStatus: ${t.status}\nClosing: ${t.closing}\nBids: ${t.bids}`); }}
+                        <button onClick={() => { pushSeniorAlert(`CPO reviewed tender ${t.id}`, "info", { from: user?.name, fromRole: "CPO", category: "action", ref: t.id }); toast(`${t.id} — ${t.title} | ${t.entity} | ${t.value} | ${t.status} | Closing: ${t.closing} | Bids: ${t.bids}`, "info"); }}
                           className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Open</button>
                       </div>
                     </div>
@@ -175,7 +176,7 @@ export default function CPODashboard() {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="text-sm font-bold text-black">{a.conf}%</div>
-                        <button onClick={() => alert(`${a.name}\n\nLast action: ${a.action}\nConfidence: ${a.conf}%\nStatus: Active\n\nClick "Open Agent Console" in AI Operations to see full detail.`)}
+                        <button onClick={() => toast(`${a.name} — Last action: ${a.action} | Confidence: ${a.conf}% | Status: Active`, "info")}
                           className="h-6 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] transition-colors">View</button>
                       </div>
                     </div>
@@ -217,7 +218,7 @@ export default function CPODashboard() {
                         <td className="px-5 py-3 text-black/60">{t.bids}</td>
                         <td className="px-5 py-3 text-black/60 whitespace-nowrap">{t.closing}</td>
                         <td className="px-5 py-3">
-                          <button onClick={() => alert(`${t.title}\n\nID: ${t.id}\nEntity: ${t.entity}\nValue: ${t.value}\nMethod: ${t.method}\nBids: ${t.bids}\nClosing: ${t.closing}\nStatus: ${t.status}`)}
+                          <button onClick={() => toast(`${t.title} | ${t.id} | ${t.entity} | ${t.value} | ${t.method} | Bids: ${t.bids} | Closing: ${t.closing} | ${t.status}`, "info")}
                             className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Open</button>
                         </td>
                       </tr>
@@ -242,7 +243,7 @@ export default function CPODashboard() {
                   <div className="flex items-center gap-2">
                     <div className="w-20 h-1.5 rounded-full bg-[#F5F5F5] overflow-hidden"><div className="h-full rounded-full bg-black" style={{ width: `${(r.stage / 18) * 100}%` }} /></div>
                     <Badge tone={r.status === "Active" ? "blue" : r.status === "Awarded" ? "green" : "amber"}>{r.status}</Badge>
-                    <button onClick={() => alert(`RFQ: ${r.title}\n\nID: ${r.id}\nDept: ${r.dept}\nValue: ${r.value}\nStage: ${r.stage}/18\nDeadline: ${r.deadline}\nStatus: ${r.status}`)}
+                    <button onClick={() => toast(`RFQ: ${r.title} | ${r.id} | ${r.dept} | ${r.value} | Stage: ${r.stage}/18 | Deadline: ${r.deadline} | ${r.status}`, "info")}
                       className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Open</button>
                   </div>
                 </div>
@@ -269,7 +270,7 @@ export default function CPODashboard() {
                       <td className="px-5 py-3"><Badge tone={v.risk === "High" ? "red" : v.risk === "Medium" ? "amber" : "green"}>{v.risk}</Badge></td>
                       <td className="px-5 py-3"><Badge tone={v.status === "Approved" ? "green" : "amber"}>{v.status}</Badge></td>
                       <td className="px-5 py-3">
-                        <button onClick={() => alert(`Vendor: ${v.name}\n\nID: ${v.id}\nCategory: ${v.category}\nRating: ${v.rating}/5\nRisk: ${v.risk}\nStatus: ${v.status}`)}
+                        <button onClick={() => toast(`Vendor: ${v.name} | ${v.id} | ${v.category} | Rating: ${v.rating}/5 | Risk: ${v.risk} | ${v.status}`, "info")}
                           className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">View</button>
                       </td>
                     </tr>

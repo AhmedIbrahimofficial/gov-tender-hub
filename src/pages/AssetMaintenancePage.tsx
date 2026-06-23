@@ -4,6 +4,7 @@ import { FeatureGrid } from "@/components/ModulePage";
 import { useAssets, useWorkOrders } from "@/hooks/use-store";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import type { StoredWorkOrder } from "@/lib/local-store";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import {
@@ -39,7 +40,7 @@ function NewWorkOrderModal({ onClose, onSave, assets }: {
 
   const save = () => {
     if (!form.description.trim() || !form.scheduledDate) {
-      alert("Description and Scheduled Date are required."); return;
+      toast("Description and Scheduled Date are required.", "error"); return;
     }
     const id = `WO-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`;
     onSave({ ...form, id, assetName,
@@ -124,7 +125,7 @@ function WorkOrdersTab({ workOrders, assets, onUpdate }: {
   };
 
   const viewWO = (w: StoredWorkOrder) => {
-    alert(`WORK ORDER\n\nID: ${w.id}\nAsset: ${w.assetName} (${w.assetId})\nType: ${w.type}\nPriority: ${w.priority}\nStatus: ${w.status}\n\nDescription:\n${w.description}\n\nAssigned To: ${w.assignedTo || "Unassigned"}\nScheduled: ${w.scheduledDate}\nCompleted: ${w.completedDate || "—"}\n\nLabor Hours: ${w.laborHours}h\nParts Cost: ${w.partsCost}\nTotal Cost: ${w.totalCost}\n\nCreated By: ${w.createdBy}`);
+    toast(`${w.id} — ${w.assetName} | ${w.type} | ${w.priority} | ${w.status} | ${w.description.substring(0, 60)}… | Assigned: ${w.assignedTo || "Unassigned"} | Scheduled: ${w.scheduledDate} | Cost: ${w.totalCost}`, "info");
   };
 
   const byStatus = ["Open", "In Progress", "Completed", "Cancelled"].map(s => ({ name: s, value: workOrders.filter(w => w.status === s).length }));

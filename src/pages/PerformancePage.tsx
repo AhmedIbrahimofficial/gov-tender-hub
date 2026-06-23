@@ -1667,7 +1667,6 @@ export default function PerformancePage() {
   const handleAction = (msg: string) => {
     pushSeniorAlert(msg, "info", { from: user?.name, fromRole: user?.role ?? "officer", category: "action" });
     pushNotification(msg, "success");
-    alert(`✅ ${msg}`);
   };
 
   const renderTab = () => {

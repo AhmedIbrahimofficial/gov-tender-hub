@@ -3,6 +3,7 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { FeatureGrid } from "@/components/ModulePage";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { AlertOctagon, ShieldCheck, Eye, MessageSquare, Send, Download } from "lucide-react";
 
 const INITIAL_ALERTS = [
@@ -26,14 +27,14 @@ export default function AntiCorruptionPage() {
     ));
     pushSeniorAlert(`Anti-Corruption investigation opened: ${id}`, "warning", { from: user?.name, fromRole: user?.role ?? "officer", category: "fraud", ref: id });
     pushNotification(`Investigation opened: ${id}`, "warning");
-    alert(`🔍 Investigation Opened\n\nAlert: ${id}\nStatus: Under Investigation\n\nNext steps:\n• Gather evidence from procurement records\n• Cross-check vendor relationships\n• Prepare ZACC referral if evidence confirmed\n\nCPO has been notified.`);
+    toast(`Investigation opened for ${id}. Gather evidence, cross-check vendor relationships, prepare ZACC referral if confirmed. CPO notified.`, "warning");
   };
 
   const referToZACC = (id: string, type: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: "Referred to ZACC" } : a));
     pushSeniorAlert(`ZACC Referral submitted: ${id} — ${type}`, "error", { from: user?.name, fromRole: user?.role ?? "officer", category: "fraud", ref: id });
     pushNotification(`${id} referred to ZACC`, "error");
-    alert(`🚨 ZACC Referral Submitted\n\nCase: ${id}\nType: ${type}\n\nEvidence package sent to ZACC.\nCase ref: ZACC-2026-${id.slice(-3)}\n\nAll related procurement suspended pending investigation.\nCPO and Minister notified.`);
+    toast(`ZACC Referral submitted for ${id} (${type}). Case ref: ZACC-2026-${id.slice(-3)}. Related procurement suspended. CPO and Minister notified.`, "error");
   };
 
   const downloadEvidence = (id: string) => {
@@ -50,7 +51,7 @@ export default function AntiCorruptionPage() {
     pushSeniorAlert("Anonymous whistleblower report received — review required", "warning", { from: "Anonymous", fromRole: "Public", category: "fraud" });
     pushNotification("Whistleblower report submitted securely", "success");
     const ref = "WB-2026-" + Math.floor(Math.random() * 900 + 100);
-    alert(`✅ Report Submitted Securely\n\nYour report has been encrypted and submitted anonymously.\nReference: ${ref}\n\nYou are protected under the Zimbabwe Whistleblower Protection Act.\nExpected response: within 10 business days.`);
+    toast(`Report submitted securely. Reference: ${ref}. You are protected under the Zimbabwe Whistleblower Protection Act. Response within 10 business days.`, "success");
     setWhistleMsg(""); setShowWhistle(false);
   };
 

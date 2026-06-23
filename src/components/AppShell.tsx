@@ -1,22 +1,246 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import ToastContainer from "@/components/ToastContainer";
 import {
   LayoutDashboard, BarChart3, Sparkles, ClipboardList, FileText, Trophy,
   Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
   Landmark, UsersRound, Globe2, Search, Bell, Inbox, MessageSquare,
   ChevronDown, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2, Menu,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
-  Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio,
+  Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio, DollarSign,
+  Mail, Send, Clock, AlertTriangle, Settings,
 } from "lucide-react";
 import { navSections } from "@/lib/mock-data";
 import { useAuth, type UserRole } from "@/lib/auth-context";
 import { useNotifications, useTenders } from "@/hooks/use-store";
 import { markNotificationsRead } from "@/lib/local-store";
 
-/* ─── Role-based nav whitelist ─────────────────────────────────────────────
-   Each role gets only the routes relevant to their duties.
-   Roles not listed here fall back to the full nav (CPO / minister / admin).
-─────────────────────────────────────────────────────────────────────────── */
+/* ─── Click-outside hook ────────────────────────────────────────────────── */
+function useClickOutside(ref: React.RefObject<HTMLElement | null>, cb: () => void) {
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) cb();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [ref, cb]);
+}
+
+/* ─── Notifications Panel ───────────────────────────────────────────────── */
+const NOTIF_ICONS: Record<string, { cls: string; Icon: React.ElementType }> = {
+  success: { cls: "text-emerald-500 bg-emerald-50", Icon: CheckCircle2 },
+  error:   { cls: "text-red-500 bg-red-50",         Icon: AlertTriangle },
+  warning: { cls: "text-amber-500 bg-amber-50",     Icon: AlertTriangle },
+  info:    { cls: "text-blue-500 bg-blue-50",        Icon: Bell },
+};
+
+function NotificationsPanel({ notifications, onClose }: {
+  notifications: { id: string; msg: string; type: string; time: string; read: boolean }[];
+  onClose: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useClickOutside(ref, onClose);
+  const unread = notifications.filter(n => !n.read);
+  const read   = notifications.filter(n => n.read);
+
+  return (
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-96 max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl border border-black/10 shadow-2xl z-50 overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-black/8">
+        <div>
+          <span className="text-sm font-semibold text-black">Notifications</span>
+          {unread.length > 0 && (
+            <span className="ml-2 text-[10px] font-bold bg-black text-white px-1.5 py-0.5 rounded-full">{unread.length} new</span>
+          )}
+        </div>
+        <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black transition-colors">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="overflow-y-auto max-h-[420px] divide-y divide-black/5">
+        {notifications.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 text-black/30">
+            <Bell className="h-8 w-8 mb-2 opacity-30" />
+            <p className="text-sm">No notifications yet</p>
+          </div>
+        )}
+        {unread.length > 0 && (
+          <>
+            <div className="px-5 py-2 bg-[#F5F5F5]">
+              <span className="text-[10px] font-semibold text-black/40 uppercase tracking-wider">New</span>
+            </div>
+            {unread.slice(0, 8).map(n => {
+              const { cls, Icon } = NOTIF_ICONS[n.type] ?? NOTIF_ICONS.info;
+              return (
+                <div key={n.id} className="flex items-start gap-3 px-5 py-3.5 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer">
+                  <div className={`h-8 w-8 rounded-full grid place-items-center flex-shrink-0 mt-0.5 ${cls}`}>
+                    <Icon className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-black leading-relaxed">{n.msg}</p>
+                    <p className="text-[10px] text-black/35 mt-1 flex items-center gap-1"><Clock className="h-2.5 w-2.5" />{n.time}</p>
+                  </div>
+                  <div className="h-2 w-2 rounded-full bg-black mt-1.5 flex-shrink-0" />
+                </div>
+              );
+            })}
+          </>
+        )}
+        {read.length > 0 && (
+          <>
+            <div className="px-5 py-2 bg-[#F5F5F5]">
+              <span className="text-[10px] font-semibold text-black/40 uppercase tracking-wider">Earlier</span>
+            </div>
+            {read.slice(0, 5).map(n => {
+              const { cls, Icon } = NOTIF_ICONS[n.type] ?? NOTIF_ICONS.info;
+              return (
+                <div key={n.id} className="flex items-start gap-3 px-5 py-3 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer opacity-60">
+                  <div className={`h-7 w-7 rounded-full grid place-items-center flex-shrink-0 mt-0.5 ${cls}`}>
+                    <Icon className="h-3 w-3" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-black leading-relaxed">{n.msg}</p>
+                    <p className="text-[10px] text-black/35 mt-1">{n.time}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
+      </div>
+      <div className="border-t border-black/8 px-5 py-3 flex items-center justify-between bg-[#fafafa]">
+        <span className="text-xs text-black/40">{notifications.length} total notifications</span>
+        <button className="text-xs font-medium text-black hover:underline transition-colors">Mark all read</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Messages Panel ────────────────────────────────────────────────────── */
+const DEMO_MESSAGES = [
+  { id: "m1", from: "T. Moyo",       avatar: "TM", role: "CPO",               subject: "Solar Mini-Grids — Evaluation Update",      preview: "Please review the updated scoresheet before the committee meeting at 14:00.",  time: "09:14", unread: true  },
+  { id: "m2", from: "R. Chikwanda",  avatar: "RC", role: "Finance Officer",    subject: "INV-2026-4821 Approved",                     preview: "Invoice approved and queued for payment. EFT reference will follow.",            time: "08:42", unread: true  },
+  { id: "m3", from: "P. Dube",       avatar: "PD", role: "Evaluator",          subject: "ARV Framework — Technical Scores",           preview: "Attached are the consolidated technical evaluation scores for your review.",       time: "Yesterday", unread: false },
+  { id: "m4", from: "S. Nkosi",      avatar: "SN", role: "Auditor",            subject: "Audit Finding — FA-2026-041",                preview: "Ghost vendor pattern detected in Transport Dept. Immediate action required.",      time: "Yesterday", unread: false },
+  { id: "m5", from: "A. Mpofu",      avatar: "AM", role: "Procurement Officer",subject: "Infrastructure Working Group — Agenda",      preview: "Agenda for Thursday's working group meeting is now available on the shared drive.", time: "Mon",       unread: false },
+];
+
+function MessagesPanel({ user, onClose }: { user: { name?: string; avatar?: string } | null; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [compose, setCompose] = useState(false);
+  const [to, setTo] = useState(""); const [subject, setSubject] = useState(""); const [body, setBody] = useState("");
+  useClickOutside(ref, onClose);
+
+  return (
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-[420px] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl border border-black/10 shadow-2xl z-50 overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-black/8">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-black">Messages</span>
+          <span className="text-[10px] font-bold bg-black text-white px-1.5 py-0.5 rounded-full">2 unread</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setCompose(c => !c)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs font-medium flex items-center gap-1 hover:bg-gray-800 transition-colors">
+            <Send className="h-3 w-3" /> Compose
+          </button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 transition-colors"><X className="h-4 w-4" /></button>
+        </div>
+      </div>
+
+      {compose && (
+        <div className="border-b border-black/8 bg-[#fafafa] p-4 space-y-2">
+          <input value={to} onChange={e => setTo(e.target.value)} placeholder="To: name@gov.zw" className="w-full h-8 px-3 rounded-lg border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10" />
+          <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject" className="w-full h-8 px-3 rounded-lg border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10" />
+          <textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Message…" rows={3} className="w-full px-3 py-2 rounded-lg border border-black/10 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-black/10" />
+          <div className="flex justify-end gap-2">
+            <button onClick={() => setCompose(false)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">Discard</button>
+            <button onClick={() => { setCompose(false); setTo(""); setSubject(""); setBody(""); }} className="h-7 px-3 rounded-lg bg-black text-white text-xs flex items-center gap-1 hover:bg-gray-800"><Send className="h-3 w-3" /> Send</button>
+          </div>
+        </div>
+      )}
+
+      <div className="overflow-y-auto max-h-[360px] divide-y divide-black/5">
+        {DEMO_MESSAGES.map(m => (
+          <div key={m.id} className={`flex items-start gap-3 px-5 py-3.5 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer ${m.unread ? "" : "opacity-60"}`}>
+            <div className="h-8 w-8 rounded-full bg-black text-white text-xs font-bold grid place-items-center flex-shrink-0">{m.avatar}</div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-1">
+                <span className={`text-xs ${m.unread ? "font-semibold text-black" : "font-medium text-black/70"} truncate`}>{m.from}</span>
+                <span className="text-[10px] text-black/35 flex-shrink-0">{m.time}</span>
+              </div>
+              <p className={`text-xs truncate ${m.unread ? "text-black" : "text-black/60"}`}>{m.subject}</p>
+              <p className="text-[11px] text-black/40 truncate mt-0.5">{m.preview}</p>
+            </div>
+            {m.unread && <div className="h-2 w-2 rounded-full bg-black flex-shrink-0 mt-1.5" />}
+          </div>
+        ))}
+      </div>
+      <div className="border-t border-black/8 px-5 py-2.5 bg-[#fafafa]">
+        <button className="text-xs font-medium text-black hover:underline">View all messages →</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Inbox Panel ───────────────────────────────────────────────────────── */
+const DEMO_INBOX = [
+  { id: "i1", title: "Solar Mini-Grids Tender — Awaiting Approval",  type: "Approval",  priority: "High",   from: "P. Dube",       time: "09:30", status: "Pending"   },
+  { id: "i2", title: "INV-2026-4821 — Payment Authorisation Request", type: "Payment",   priority: "High",   from: "R. Chikwanda",  time: "08:55", status: "Pending"   },
+  { id: "i3", title: "Contract Variation — Beitbridge Sect 3",        type: "Variation", priority: "Medium", from: "A. Mpofu",      time: "Yesterday", status: "Pending" },
+  { id: "i4", title: "Vendor Registration — VEN-00489",               type: "Review",    priority: "Low",    from: "System",        time: "Yesterday", status: "Pending" },
+  { id: "i5", title: "Budget Reallocation Request — Transport",       type: "Approval",  priority: "Medium", from: "F. Mutanga",    time: "Mon",    status: "Approved"  },
+];
+const ITEM_COLORS: Record<string, string> = {
+  Approval: "bg-blue-100 text-blue-700", Payment: "bg-emerald-100 text-emerald-700",
+  Variation: "bg-amber-100 text-amber-700", Review: "bg-violet-100 text-violet-700",
+};
+
+function InboxPanel({ onClose }: { onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useClickOutside(ref, onClose);
+  const pending = DEMO_INBOX.filter(i => i.status === "Pending");
+
+  return (
+    <div ref={ref} className="absolute right-0 top-full mt-2 w-[400px] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl border border-black/10 shadow-2xl z-50 overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-black/8">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-black">Action Inbox</span>
+          {pending.length > 0 && <span className="text-[10px] font-bold bg-black text-white px-1.5 py-0.5 rounded-full">{pending.length} pending</span>}
+        </div>
+        <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 transition-colors"><X className="h-4 w-4" /></button>
+      </div>
+      <div className="overflow-y-auto max-h-[380px] divide-y divide-black/5">
+        {DEMO_INBOX.map(item => (
+          <div key={item.id} className="px-5 py-3.5 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer">
+            <div className="flex items-start gap-3">
+              <div className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md flex-shrink-0 mt-0.5 ${ITEM_COLORS[item.type] ?? "bg-gray-100 text-gray-600"}`}>{item.type}</div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-xs font-medium truncate ${item.status === "Pending" ? "text-black" : "text-black/50"}`}>{item.title}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[10px] text-black/40">From: {item.from}</span>
+                  <span className="text-[10px] text-black/25">·</span>
+                  <span className="text-[10px] text-black/40">{item.time}</span>
+                </div>
+              </div>
+              {item.status === "Pending" && (
+                <div className="flex gap-1 flex-shrink-0">
+                  <button className="h-6 px-2 rounded-md bg-black text-white text-[10px] font-medium hover:bg-gray-800 transition-colors">Approve</button>
+                  <button className="h-6 px-2 rounded-md border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] transition-colors">Review</button>
+                </div>
+              )}
+              {item.status === "Approved" && (
+                <span className="text-[10px] font-semibold text-emerald-600 flex-shrink-0">✓ Done</span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="border-t border-black/8 px-5 py-2.5 bg-[#fafafa]">
+        <button className="text-xs font-medium text-black hover:underline">View full inbox →</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Role-based nav whitelist ──────────────────────────────────────────── */
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
   procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
@@ -25,18 +249,18 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   evaluator: ["/dashboard", "/teams", "/tenders", "/evaluations", "/awards"],
 
   // Finance officer — payments, invoices, budget
-  finance_officer: ["/dashboard", "/teams", "/finance", "/utility/catalogue"],
+  finance_officer: ["/dashboard", "/teams", "/finance", "/budget", "/budget/execution", "/budget/expenditure", "/budget/commitments", "/budget/revenue", "/budget/treasury", "/utility/catalogue"],
 
   // Auditor — audit, anti-corruption, compliance
-  auditor: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/bi-dashboards", "/utility/public-records"],
+  auditor: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/bi-dashboards", "/utility/public-records", "/budget", "/budget/fraud", "/budget/execution"],
 
   // Contract manager / officer
   contract_manager:  ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance", "/utility/catalogue", "/utility/communications"],
   contract_officer:  ["/dashboard", "/teams", "/contracts", "/vendors"],
 
   // Budget / treasury officer
-  budget_officer:    ["/dashboard", "/teams", "/finance", "/analytics", "/utility/catalogue"],
-  treasury_officer:  ["/dashboard", "/teams", "/finance"],
+  budget_officer:    ["/dashboard", "/teams", "/budget", "/budget/centres", "/budget/formulation", "/budget/execution", "/budget/commitments", "/budget/expenditure", "/budget/revenue", "/budget/treasury", "/budget/fraud", "/budget/ai-agents", "/finance", "/analytics", "/utility/catalogue"],
+  treasury_officer:  ["/dashboard", "/teams", "/budget", "/budget/treasury", "/budget/revenue", "/budget/execution", "/finance"],
 
   // Planning officer
   planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue"],
@@ -61,8 +285,8 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics"],
 
   // IT officer / system admin — full access
-  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/utility"],
-  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/utility"],
+  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility"],
+  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility"],
 
   // Risk officer
   risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
@@ -129,7 +353,7 @@ const iconMap: Record<string, React.ElementType> = {
   Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
   Landmark, UsersRound, Globe2, ScaleIcon: Scale, ShoppingCart, Gavel,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
-  BookOpen, MessageSquare, Newspaper, Megaphone, Radio,
+  BookOpen, MessageSquare, Newspaper, Megaphone, Radio, DollarSign,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -138,13 +362,26 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = location.pathname;
   const { user, logout } = useAuth();
   const { notifications, unread, refresh: refreshNotifs } = useNotifications();
-  const [showNotifs, setShowNotifs] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
+  const [showNotifs, setShowNotifs]   = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [showInbox, setShowInbox]     = useState(false);
+  const [showSearch, setShowSearch]   = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { tenders } = useTenders();
 
   const handleLogout = () => { logout(); navigate("/"); };
+
+  const closeAll = () => { setShowNotifs(false); setShowMessages(false); setShowInbox(false); };
+
+  const toggleNotifs = () => {
+    const next = !showNotifs;
+    closeAll();
+    setShowNotifs(next);
+    if (next) { markNotificationsRead(); setTimeout(refreshNotifs, 200); }
+  };
+  const toggleMessages = () => { closeAll(); setShowMessages(v => !v); };
+  const toggleInbox    = () => { closeAll(); setShowInbox(v => !v); };
 
   // Filter nav items based on the user's role whitelist
   const allowedRoutes = user?.role ? ROLE_NAV_WHITELIST[user.role] : undefined;
@@ -235,35 +472,43 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Search className="h-4 w-4" />
         </button>
 
+        {/* Action Inbox */}
+        <div className="relative flex-shrink-0">
+          <button onClick={toggleInbox}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors flex-shrink-0 ${showInbox ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            aria-label="Action inbox">
+            <Inbox className="h-4 w-4" />
+            <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold grid place-items-center">4</span>
+          </button>
+          {showInbox && <InboxPanel onClose={() => setShowInbox(false)} />}
+        </div>
+
+        {/* Messages */}
+        <div className="relative flex-shrink-0">
+          <button onClick={toggleMessages}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors flex-shrink-0 ${showMessages ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            aria-label="Messages">
+            <MessageSquare className="h-4 w-4" />
+            <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-black text-white text-[9px] font-bold grid place-items-center">2</span>
+          </button>
+          {showMessages && <MessagesPanel user={user} onClose={() => setShowMessages(false)} />}
+        </div>
+
         {/* Notifications bell */}
         <div className="relative flex-shrink-0">
-          <button onClick={() => { setShowNotifs(!showNotifs); if (!showNotifs) { markNotificationsRead(); setTimeout(refreshNotifs, 200); } }}
-            className="relative h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors">
+          <button onClick={toggleNotifs}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors flex-shrink-0 ${showNotifs ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            aria-label="Notifications">
             <Bell className="h-4 w-4" />
             {unread > 0 && (
               <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-black text-white text-[9px] font-bold grid place-items-center">{unread > 9 ? "9+" : unread}</span>
             )}
           </button>
           {showNotifs && (
-            <div className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-1rem)] bg-white rounded-2xl border border-black/10 shadow-xl z-50 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-black/10">
-                <span className="text-sm font-semibold text-black">Notifications</span>
-                <button onClick={() => setShowNotifs(false)}><X className="h-4 w-4 text-black/30" /></button>
-              </div>
-              <div className="max-h-72 overflow-y-auto divide-y divide-black/5">
-                {notifications.length === 0
-                  ? <div className="px-4 py-6 text-center text-sm text-black/30">No notifications</div>
-                  : notifications.slice(0, 10).map((n) => (
-                    <div key={n.id} className={`px-4 py-3 flex items-start gap-3 ${n.read ? "opacity-60" : ""}`}>
-                      <CheckCircle2 className={`h-4 w-4 mt-0.5 flex-shrink-0 ${n.type === "success" ? "text-emerald-500" : n.type === "error" ? "text-red-500" : "text-black/30"}`} />
-                      <div>
-                        <div className="text-xs text-black">{n.msg}</div>
-                        <div className="text-[10px] text-black/30 mt-0.5">{n.time}</div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
+            <NotificationsPanel
+              notifications={notifications as { id: string; msg: string; type: string; time: string; read: boolean }[]}
+              onClose={() => setShowNotifs(false)}
+            />
           )}
         </div>
 
@@ -402,6 +647,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           {children}
         </main>
       </div>
+
+      {/* Global toast container — replaces browser alert() */}
+      <ToastContainer />
     </div>
   );
 }
@@ -469,7 +717,7 @@ export function KpiCard({ label, value, delta, positive = true, icon: Icon, colo
   );
 }
 
-export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "blue" | "green" | "amber" | "red" | "muted" | "violet" }) {
+export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "blue" | "green" | "amber" | "red" | "muted" | "violet" | "purple" | "yellow" }) {
   const tones: Record<string, string> = {
     default: "bg-gray-100 text-gray-600 border border-gray-200",
     blue:    "bg-blue-100 text-blue-700 border border-blue-200",
@@ -478,6 +726,8 @@ export function Badge({ children, tone = "default" }: { children: ReactNode; ton
     red:     "bg-red-100 text-red-700 border border-red-200",
     muted:   "bg-gray-50 text-gray-400 border border-gray-100",
     violet:  "bg-violet-100 text-violet-700 border border-violet-200",
+    purple:  "bg-purple-100 text-purple-700 border border-purple-200",
+    yellow:  "bg-yellow-100 text-yellow-700 border border-yellow-200",
   };
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap ${tones[tone]}`}>{children}</span>;
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap ${tones[tone] ?? tones.default}`}>{children}</span>;
 }

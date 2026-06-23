@@ -1395,60 +1395,58 @@ export default function TeamsPage() {
 
   return (
     <AppShell>
-      <PageHeader
-        title="My Workspace"
-        description={`Welcome back, ${userName} — your personal activity hub and team collaboration centre`}
-        actions={
-          <div className="flex gap-2">
-            <button onClick={() => handleAction("Notifications viewed")}
-              className="h-8 w-8 rounded-xl border border-black/10 grid place-items-center hover:bg-[#F5F5F5] relative">
-              <Bell className="h-4 w-4 text-black/50" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold grid place-items-center">12</span>
-            </button>
-            <button onClick={() => handleAction("Settings opened")}
-              className="h-8 w-8 rounded-xl border border-black/10 grid place-items-center hover:bg-[#F5F5F5]">
-              <Settings className="h-4 w-4 text-black/50" />
-            </button>
+      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+        <PageHeader
+          title="My Workspace"
+          description={`Welcome back, ${userName} — your personal activity hub and team collaboration centre`}
+          actions={
+            <div className="flex gap-2">
+              <button
+                className="h-8 px-3 rounded-xl border border-black/10 text-xs font-medium flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors text-black/60 hover:text-black"
+                onClick={() => handleAction("Settings opened")}>
+                <Settings className="h-3.5 w-3.5" /> Settings
+              </button>
+            </div>
+          }
+        />
+
+        {/* Toast */}
+        {toast && (
+          <div className="fixed bottom-6 right-6 z-50 bg-black text-white text-xs px-4 py-2.5 rounded-xl shadow-lg animate-in slide-in-from-bottom-4 duration-200">
+            {toast}
           </div>
-        }
-      />
+        )}
 
-      {/* Toast */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-black text-white text-xs px-4 py-2.5 rounded-xl shadow-lg animate-in slide-in-from-bottom-4 duration-200">
-          {toast}
+        {/* Main tab bar */}
+        <div className="flex gap-1 border-b border-black/8 mb-6 overflow-x-auto scrollbar-none">
+          {MAIN_TABS.map(tab => (
+            <button key={tab} onClick={() => setMainTab(tab)}
+              className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                mainTab === tab ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
+              }`}>
+              {tab}
+            </button>
+          ))}
         </div>
-      )}
 
-      {/* Main tab bar */}
-      <div className="flex gap-1 border-b border-black/8 mb-6 overflow-x-auto scrollbar-none">
-        {MAIN_TABS.map(tab => (
-          <button key={tab} onClick={() => setMainTab(tab)}
-            className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              mainTab === tab ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
-            }`}>
-            {tab}
-          </button>
-        ))}
+        {/* MY ACTIVITY tab */}
+        {mainTab === "MY ACTIVITY" && (
+          <div>
+            <SubTabBar tabs={ACT_TABS} active={actSubTab} onChange={setActSubTab} />
+            {actSubTab === "Dashboard" && <ActivityDashboard onAction={handleAction} userName={userName} />}
+            {actSubTab === "Tasks" && <ActivityTasks onAction={handleAction} />}
+            {actSubTab === "Time & Attendance" && <ActivityTimeAttendance onAction={handleAction} />}
+            {actSubTab === "Work Execution" && <ActivityWorkExecution onAction={handleAction} />}
+            {actSubTab === "Communication" && <ActivityCommunication onAction={handleAction} />}
+            {actSubTab === "Reporting" && <ActivityReporting onAction={handleAction} />}
+            {actSubTab === "AI Assistant" && <ActivityAI onAction={handleAction} />}
+            {actSubTab === "Files" && <ActivityFiles onAction={handleAction} />}
+          </div>
+        )}
+
+        {/* MY TEAM tab */}
+        {mainTab === "MY TEAM" && <MyTeamTab onAction={handleAction} />}
       </div>
-
-      {/* MY ACTIVITY tab */}
-      {mainTab === "MY ACTIVITY" && (
-        <div>
-          <SubTabBar tabs={ACT_TABS} active={actSubTab} onChange={setActSubTab} />
-          {actSubTab === "Dashboard" && <ActivityDashboard onAction={handleAction} userName={userName} />}
-          {actSubTab === "Tasks" && <ActivityTasks onAction={handleAction} />}
-          {actSubTab === "Time & Attendance" && <ActivityTimeAttendance onAction={handleAction} />}
-          {actSubTab === "Work Execution" && <ActivityWorkExecution onAction={handleAction} />}
-          {actSubTab === "Communication" && <ActivityCommunication onAction={handleAction} />}
-          {actSubTab === "Reporting" && <ActivityReporting onAction={handleAction} />}
-          {actSubTab === "AI Assistant" && <ActivityAI onAction={handleAction} />}
-          {actSubTab === "Files" && <ActivityFiles onAction={handleAction} />}
-        </div>
-      )}
-
-      {/* MY TEAM tab */}
-      {mainTab === "MY TEAM" && <MyTeamTab onAction={handleAction} />}
     </AppShell>
   );
 }

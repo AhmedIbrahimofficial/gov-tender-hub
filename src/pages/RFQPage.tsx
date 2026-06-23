@@ -3,6 +3,7 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import WorkflowStepper from "@/components/WorkflowStepper";
 import { ShoppingCart, Plus, CheckCircle2, Clock, Sparkles, AlertTriangle, DollarSign } from "lucide-react";
+import { toast } from "@/lib/toast";
 
 const RFQ_STAGES = [
   { id: 1,  label: "Requisition",      status: "completed" as const, aiRole: "Demand AI" },
@@ -112,7 +113,7 @@ export default function RFQPage() {
                         </td>
                         <td className="px-4 py-3">
                           <button
-                            onClick={() => alert(`RFQ DETAIL\n\nID: ${r.id}\nTitle: ${r.title}\nDept: ${r.dept}\nValue: ${r.value}\nStage: ${r.stage}/18 — ${r.stageLabel}\nSuppliers Invited: ${r.suppliers}\nDeadline: ${r.deadline}\nStatus: ${r.status}`)}
+                            onClick={() => toast(`${r.id} — ${r.title} | ${r.dept} | ${r.value} | Stage ${r.stage}/18 | Status: ${r.status}`, "info")}
                             className="h-7 px-2 rounded border border-border text-xs hover:bg-secondary transition-colors"
                           >Open</button>
                         </td>
@@ -208,7 +209,7 @@ export default function RFQPage() {
                           {q.rank === 1 && (
                             <button
                               onClick={() => {
-                                alert(`✅ Purchase Order Issued!\n\nPO-2026-0893 issued to ${q.supplier}\nValue: USD ${q.price.toLocaleString()}\nDelivery expected within ${q.delivery}\n\nSupplier has been notified via email.\nAI Report sent to CPO.`);
+                                toast(`Purchase Order PO-2026-0893 issued to ${q.supplier} — USD ${q.price.toLocaleString()}. Supplier notified. AI Report sent to CPO.`, "success");
                               }}
                               className="h-7 px-2 rounded-md bg-emerald-600 text-white text-xs font-semibold hover:opacity-90 transition-opacity"
                             >Issue PO</button>
@@ -350,7 +351,7 @@ function NewRFQWizard({ step, setStep }: { step: number; setStep: (n: number) =>
               ? <button onClick={() => setStep(step + 1)} className="h-9 px-4 rounded-md bg-primary text-white text-sm font-medium hover:opacity-90">Continue →</button>
               : <button
                   onClick={() => {
-                    alert("✅ RFQ Issued!\n\nRFQ-2026-0893 has been issued to 4 suppliers.\n\nNotifications sent:\n• Stationery World Ltd\n• Office Direct Zim\n• Zim Supplies Co.\n• Metro Office Pvt\n\nSubmission deadline: 2026-06-28 16:00\nAI will track responses automatically.");
+                    toast("RFQ-2026-0893 issued to 4 suppliers. Submission deadline: 2026-06-28 16:00. AI tracking enabled.", "success");
                     setStep(1);
                   }}
                   className="h-9 px-4 rounded-md bg-emerald-600 text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5"

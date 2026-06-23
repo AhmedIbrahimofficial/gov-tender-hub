@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { Sparkles, Brain, FileSearch, ScanLine, CheckCircle2, AlertTriangle, Download, Send } from "lucide-react";
 
 const EVAL_SAMPLES = [
@@ -27,7 +28,7 @@ export default function EvaluationsPage() {
   const { user } = useAuth();
 
   const handleOpen = (tender: string, phase: string) => {
-    alert(`EVALUATION WORKBENCH\n\nTender: ${tender}\nPhase: ${phase}\n\nClick the "Evaluator Workbench" section below to score bids for this evaluation.`);
+    toast(`Evaluation Workbench — ${tender} | Phase: ${phase}. Use the Evaluator Workbench below to score bids.`, "info");
   };
 
   const handleSubmitScores = () => {

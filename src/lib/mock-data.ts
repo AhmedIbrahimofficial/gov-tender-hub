@@ -342,6 +342,21 @@ export const navSections = [
     ],
   },
   {
+    label: "Budget Management",
+    items: [
+      { to: "/budget",                 label: "Budget Command Centre",  icon: "Wallet"       },
+      { to: "/budget/centres",         label: "Budget Centres",         icon: "Building2"    },
+      { to: "/budget/formulation",     label: "Formulation",            icon: "ClipboardList"},
+      { to: "/budget/execution",       label: "Budget Execution",       icon: "TrendingUp"   },
+      { to: "/budget/commitments",     label: "Commitments",            icon: "FileSignature"},
+      { to: "/budget/expenditure",     label: "Expenditure",            icon: "DollarSign"   },
+      { to: "/budget/revenue",         label: "Revenue",                icon: "PiggyBank"    },
+      { to: "/budget/treasury",        label: "Treasury & Cash",        icon: "Landmark"     },
+      { to: "/budget/fraud",           label: "Fraud Detection",        icon: "AlertOctagon" },
+      { to: "/budget/ai-agents",       label: "Budget AI Agents",       icon: "Sparkles"     },
+    ],
+  },
+  {
     label: "Procurement Instruments",
     items: [
       { to: "/tenders-lifecycle", label: "Tender Management", icon: "FileText" },
@@ -411,6 +426,7 @@ export const navSections = [
   {
     label: "Governance",
     items: [
+      { to: "/organisations", label: "Organisation Registry", icon: "Building2" },
       { to: "/governance", label: "Governance & Master Data", icon: "Landmark" },
       { to: "/roles", label: "Role Management", icon: "UsersRound" },
       { to: "/portal", label: "Public Transparency", icon: "Globe2" },

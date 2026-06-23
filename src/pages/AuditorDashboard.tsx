@@ -5,6 +5,7 @@ import AIAssistantPanel from "@/components/AIAssistantPanel";
 import TodayActivity from "@/components/TodayActivity";
 import { generateDailyReportPDF } from "@/lib/pdf-report";
 import { getAll, pushNotification } from "@/lib/local-store";
+import { toast } from "@/lib/toast";
 import { Shield, AlertTriangle, CheckCircle2, FileText, Eye, Download } from "lucide-react";
 import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar, Cell,
@@ -54,7 +55,7 @@ export default function AuditorDashboard() {
 
   const handleFraudAction = (id: string, action: string) => {
     pushNotification(`Fraud alert ${id}: ${action}`, "warning");
-    alert(`✅ Action taken: ${action}\n\nAlert ID: ${id}\nStatus updated and relevant authorities notified.`);
+    toast(`Action taken: ${action} — Alert ${id}. Relevant authorities notified.`, "success");
   };
 
   return (
@@ -245,7 +246,7 @@ export default function AuditorDashboard() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => alert(`📄 ${r.name}\n\nOpening report viewer…\n\nThis report covers FY2026 procurement audit findings, compiled from 8,421 audit events.`)}
+                    onClick={() => toast(`${r.name} — Opening report viewer. FY2026 procurement audit findings compiled from 8,421 audit events.`, "info")}
                     className="h-7 px-2.5 rounded-lg border border-black/10 bg-white text-xs hover:bg-[#F5F5F5] transition-colors"
                   >View</button>
                   <button
