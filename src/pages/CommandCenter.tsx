@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppShell, PageHeader, Card, CardHeader, KpiCard, Badge } from "@/components/AppShell";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -12,6 +12,8 @@ import {
   Sparkles, ArrowUpRight, AlertTriangle, TrendingUp, DollarSign,
   FileText, Users, Zap, Activity, Shield, Clock,
 } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
+import { useState } from "react";
 
 const BLUE = "#3b82f6";
 const BLUE_SOFT = "#93c5fd";
@@ -19,6 +21,21 @@ const GREEN = "#10b981";
 const PIE_COLORS = ["#3b82f6", "#6366f1", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981"];
 
 export default function CommandCenter() {
+  const navigate = useNavigate();
+  const [fyLabel, setFyLabel] = useState("FY 2026");
+  const fyOptions = ["FY 2024", "FY 2025", "FY 2026"];
+
+  const handleFYToggle = () => {
+    const next = fyOptions[(fyOptions.indexOf(fyLabel) + 1) % fyOptions.length];
+    setFyLabel(next);
+    pushNotification(`Dashboard filtered to ${next} data.`, "info");
+  };
+
+  const handleAskAI = () => {
+    navigate("/ai-agents");
+    pushNotification("Opening AI Operations Center — AI Advisor ready for your query.", "info");
+  };
+
   return (
     <AppShell>
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
@@ -27,8 +44,8 @@ export default function CommandCenter() {
           description="Real-time oversight of all national procurement activity, spend, compliance, and AI agent operations across all Government of Zimbabwe entities."
           actions={
             <>
-              <button className="h-9 px-3 rounded-md border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors">FY 2026</button>
-              <button className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 flex items-center gap-1.5 transition-opacity">
+              <button onClick={handleFYToggle} className="h-9 px-3 rounded-md border border-border bg-card text-sm font-medium hover:bg-secondary transition-colors">{fyLabel}</button>
+              <button onClick={handleAskAI} className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 flex items-center gap-1.5 transition-opacity">
                 <Sparkles className="h-4 w-4" /> Ask AI Advisor
               </button>
             </>

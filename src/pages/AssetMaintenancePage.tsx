@@ -281,7 +281,11 @@ function PredictiveAITab({ assets }: { assets: { id: string; name: string; condi
                   <span className={a.failureProbability >= 70 ? "text-red-600 font-semibold" : "text-amber-600 font-semibold"}>{a.failureProbability}%</span>
                 </div>
                 <div><span className="font-medium text-black">RUL:</span> {a.rul}</div>
-                <button className="ml-auto h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Schedule Maintenance</button>
+                <button
+                  onClick={() => {
+                    pushNotification(`Maintenance scheduled for ${a.name} (${a.id}) — failure probability ${a.failureProbability}%. Work order created and assigned to maintenance team.`, "success");
+                  }}
+                  className="ml-auto h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Schedule Maintenance</button>
               </div>
             </div>
           ))}

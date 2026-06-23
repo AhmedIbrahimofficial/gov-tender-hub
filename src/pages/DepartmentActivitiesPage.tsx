@@ -121,6 +121,9 @@ export default function DepartmentActivitiesPage() {
     pushSeniorAlert(msg, "info");
   };
 
+  const handleFilter = () => handleAction("Department filter panel opened — select department, period or category to narrow results.");
+  const handleExport = () => handleAction("Department activities report exported — PDF/Excel will download shortly.");
+
   return (
     <AppShell>
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
@@ -132,10 +135,10 @@ export default function DepartmentActivitiesPage() {
               <button onClick={() => handleAction("New task created")} className="h-9 px-4 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-1.5">
                 <Plus className="h-4 w-4" /> New Task
               </button>
-              <button className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleFilter()} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
                 <Filter className="h-4 w-4" /><span className="hidden sm:inline">Filter</span>
               </button>
-              <button className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleExport()} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
                 <Download className="h-4 w-4" /><span className="hidden sm:inline">Export</span>
               </button>
             </>

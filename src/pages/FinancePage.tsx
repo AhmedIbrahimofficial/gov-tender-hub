@@ -3,6 +3,7 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { FeatureGrid } from "@/components/ModulePage";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from "recharts";
 import { DollarSign, Clock, CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
 
 const invoices = [
   { id: "INV-2026-4821", vendor: "Highveld Engineering", po: "PO-2026-0411", amount: "USD 2,840,000", submitted: "2026-06-15", due: "2026-07-15", status: "Approved" },
@@ -82,7 +83,9 @@ export default function FinancePage() {
                       <td className="px-5 py-3 text-foreground">{inv.due}</td>
                       <td className="px-5 py-3"><Badge tone={STATUS_TONE[inv.status] ?? "default"}>{inv.status}</Badge></td>
                       <td className="px-5 py-3">
-                        <button className="h-7 px-2.5 rounded-md border border-border text-xs hover:bg-secondary">Review</button>
+                        <button
+                          onClick={() => pushNotification(`Reviewing ${inv.id} — ${inv.vendor}: ${inv.amount} | Status: ${inv.status} | PO: ${inv.po} | Due: ${inv.due}. Three-way match check initiated.`, inv.status === "Exception" ? "error" : "info")}
+                          className="h-7 px-2.5 rounded-md border border-border text-xs hover:bg-secondary">Review</button>
                       </td>
                     </tr>
                   ))}

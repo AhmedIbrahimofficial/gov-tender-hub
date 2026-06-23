@@ -3,6 +3,7 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import WorkflowStepper from "@/components/WorkflowStepper";
 import { BarChart3, Plus, CheckCircle2, Sparkles, Clock, Users, FileText } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
 
 const EOI_STAGES = [
   { id: 1,  label: "Need ID",          status: "completed" as const, aiRole: "Procurement Advisor" },
@@ -49,6 +50,10 @@ const PROPOSALS = [
 export default function RFPEOIPage() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "workflow" | "evaluation" | "agents">("dashboard");
 
+  const handleNewEOI = () => pushNotification("New EOI wizard opened — fill in the Expression of Interest details and publish to the portal.", "info");
+  const handleNewRFP = () => pushNotification("New RFP wizard opened — configure evaluation method (QCBS/QBS/Fixed Budget), criteria and timeline.", "info");
+  const handleOpenRecord = (id: string, title: string) => pushNotification(`Opening ${id}: ${title} — full record with documents, proposals and evaluation status.`, "info");
+
   return (
     <AppShell>
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
@@ -61,8 +66,8 @@ export default function RFPEOIPage() {
           description="Complex procurement via EOI shortlisting and Request for Proposals. 25-stage automated workflow with AI at every decision point."
           actions={
             <div className="flex gap-2">
-              <button className="h-9 px-3 rounded-md border border-border bg-card text-sm hover:bg-secondary">New EOI</button>
-              <button className="h-9 px-3 rounded-md bg-primary text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5">
+              <button onClick={handleNewEOI} className="h-9 px-3 rounded-md border border-border bg-card text-sm hover:bg-secondary">New EOI</button>
+              <button onClick={handleNewRFP} className="h-9 px-3 rounded-md bg-primary text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5">
                 <Plus className="h-4 w-4" /> New RFP
               </button>
             </div>
@@ -117,7 +122,7 @@ export default function RFPEOIPage() {
                         <td className="px-5 py-3 font-semibold text-foreground">{r.value}</td>
                         <td className="px-5 py-3 text-foreground">{r.deadline}</td>
                         <td className="px-5 py-3">
-                          <button className="h-7 px-2.5 rounded border border-border text-xs hover:bg-secondary">Open</button>
+                          <button onClick={() => handleOpenRecord(r.id, r.title)} className="h-7 px-2.5 rounded border border-border text-xs hover:bg-secondary">Open</button>
                         </td>
                       </tr>
                     ))}

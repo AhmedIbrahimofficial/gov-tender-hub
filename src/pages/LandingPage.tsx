@@ -47,8 +47,14 @@ function Navbar() {
 
         {/* Center nav links */}
         <div className="hidden md:flex items-center gap-8">
-          {["Tenders","RFQ","Auctions","Analytics","About"].map((link) => (
-            <a key={link} href="#" className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">{link}</a>
+          {[
+            { label: "Tenders",   to: "/tenders" },
+            { label: "RFQ",       to: "/rfq" },
+            { label: "Auctions",  to: "/auctions" },
+            { label: "Analytics", to: "/analytics" },
+            { label: "About",     to: "/portal" },
+          ].map((link) => (
+            <Link key={link.label} to={link.to} className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">{link.label}</Link>
           ))}
         </div>
 
@@ -307,8 +313,12 @@ function Footer() {
           <span>AI-Powered Public Procurement Integrity & Intelligence Oversight Management System</span>
         </div>
         <div className="flex gap-6 text-sm text-black/50">
-          {["Privacy","Terms","Contact"].map((l) => (
-            <a key={l} href="#" className="hover:text-black transition-colors">{l}</a>
+          {[
+            { label: "Privacy",  to: "/portal" },
+            { label: "Terms",    to: "/portal" },
+            { label: "Contact",  to: "/portal" },
+          ].map((l) => (
+            <Link key={l.label} to={l.to} className="hover:text-black transition-colors">{l.label}</Link>
           ))}
         </div>
       </div>

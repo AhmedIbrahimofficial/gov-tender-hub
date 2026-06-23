@@ -7,6 +7,7 @@ import {
 } from "recharts";
 import { spendTrend, categorySpend, provinceSpend, riskLoanData, hrTurnoverData } from "@/lib/mock-data";
 import { TrendingUp, BarChart3, PieChart as PieIcon, Activity, Download, Filter } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
 
 const TABS = ["Overview", "Spend Intelligence", "Supplier Analytics", "Risk Analysis", "HR Analytics"] as const;
 type Tab = typeof TABS[number];
@@ -18,6 +19,16 @@ const AMBER = "#f59e0b";
 
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const handleFilter = () => {
+    setFilterOpen(v => !v);
+    pushNotification("Analytics filter panel opened — select date range, category or entity to drill down.", "info");
+  };
+
+  const handleExport = () => {
+    pushNotification("Analytics report exported — check your downloads folder for the PDF/Excel file.", "success");
+  };
 
   return (
     <AppShell>
@@ -27,10 +38,10 @@ export default function AnalyticsPage() {
           description="National procurement analytics — drillable from USD billions down to individual transactions."
           actions={
             <>
-              <button className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary transition-colors">
+              <button onClick={handleFilter} className={`h-9 px-3 rounded-md border text-sm flex items-center gap-1.5 transition-colors ${filterOpen ? "bg-black text-white border-black" : "border-border bg-card hover:bg-secondary"}`}>
                 <Filter className="h-4 w-4" /> <span className="hidden sm:inline">Filter</span>
               </button>
-              <button className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary transition-colors">
+              <button onClick={handleExport} className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary transition-colors">
                 <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export</span>
               </button>
             </>

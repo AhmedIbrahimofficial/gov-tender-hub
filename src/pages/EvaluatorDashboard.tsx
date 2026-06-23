@@ -4,7 +4,8 @@ import { useAuth } from "@/lib/auth-context";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import TodayActivity from "@/components/TodayActivity";
 import { generateDailyReportPDF } from "@/lib/pdf-report";
-import { Scale, CheckCircle2, Clock, Sparkles, AlertTriangle, Download } from "lucide-react";
+import { Scale, CheckCircle2, Clock, Sparkles, AlertTriangle, Download, RotateCcw } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
 
 const TABS = ["My Evaluations", "Scoring Workbench", "AI Assistance", "Reports", "Today"] as const;
 type Tab = typeof TABS[number];
@@ -131,9 +132,13 @@ export default function EvaluatorDashboard() {
                   </button>
                 </div>
               ) : (
-                <div className="px-5 py-4 border-t border-black/10 bg-emerald-50 flex items-center gap-2">
+                <div className="px-5 py-4 border-t border-black/10 bg-emerald-50 flex items-center gap-2 flex-wrap">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span className="text-sm text-emerald-700 font-medium">Scores submitted successfully. Awaiting moderation.</span>
+                  <span className="text-sm text-emerald-700 font-medium flex-1">Scores submitted successfully. Awaiting moderation.</span>
+                  <button onClick={() => { setSubmitted(false); pushNotification("Score submission reopened for editing. Changes will need to be resubmitted.", "info"); }}
+                    className="h-7 px-3 rounded-lg border border-emerald-300 text-xs text-emerald-700 hover:bg-emerald-100 flex items-center gap-1">
+                    <RotateCcw className="h-3 w-3" /> Re-edit
+                  </button>
                 </div>
               )}
             </Card>
@@ -158,7 +163,9 @@ export default function EvaluatorDashboard() {
                 <div className="text-sm font-semibold text-black mb-1">{tool.name}</div>
                 <div className="text-xs text-black/40 mb-3">{tool.desc}</div>
                 <div className="h-1 rounded-full bg-[#F5F5F5] mb-3"><div className="h-full rounded-full bg-black" style={{ width: `${tool.conf}%` }} /></div>
-                <button className="h-8 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Activate</button>
+                <button
+                  onClick={() => pushNotification(`${tool.name} activated — running analysis on ZW-PRA-2026-00183 ARV Medicines Framework. ${tool.conf}% confidence. Results will appear in Scoring Workbench.`, "success")}
+                  className="h-8 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Activate</button>
               </div>
             ))}
           </div>

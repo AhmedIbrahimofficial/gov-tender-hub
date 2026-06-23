@@ -3,6 +3,8 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import WorkflowStepper from "@/components/WorkflowStepper";
 import { FileText, Plus, CheckCircle2, Clock, Sparkles, AlertTriangle, Users, Download } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
+import { useNavigate } from "react-router-dom";
 
 const PHASES = [
   { id: 0,  label: "Governance",     status: "completed" as const, description: "Policies, roles, thresholds configured", aiRole: "Policy Advisor" },
@@ -62,9 +64,21 @@ const PHASE_DETAIL: Record<string, { title: string; features: string[]; automati
 };
 
 export default function TenderLifecyclePage() {
+  const navigate = useNavigate();
   const [selectedPhase, setSelectedPhase] = useState<string>("3");
   const [activeTab, setActiveTab] = useState<"overview" | "workflow" | "evaluation" | "ai">("overview");
+  const [resolvedAlerts, setResolvedAlerts] = useState<string[]>([]);
   const detail = PHASE_DETAIL[selectedPhase];
+
+  const handleNewTender = () => {
+    navigate("/tenders");
+    pushNotification("Redirecting to Tenders Register — click 'New Tender' to create a procurement.", "info");
+  };
+
+  const handleResolveAlert = (tenderId: string, alert: string) => {
+    setResolvedAlerts(prev => [...prev, tenderId]);
+    pushNotification(`Alert resolved for ${tenderId}: ${alert} — assigned to evaluation committee for action.`, "success");
+  };
 
   return (
     <AppShell>
@@ -78,7 +92,7 @@ export default function TenderLifecyclePage() {
           title="Tender Management — Full Lifecycle"
           description="End-to-end tender lifecycle from Governance setup through Contract Closeout. Every phase automated with AI assistants."
           actions={
-            <button className="h-9 px-3 rounded-md bg-primary text-white text-sm font-medium flex items-center gap-1.5 hover:opacity-90">
+            <button onClick={handleNewTender} className="h-9 px-3 rounded-md bg-primary text-white text-sm font-medium flex items-center gap-1.5 hover:opacity-90">
               <Plus className="h-4 w-4" /> New Tender
             </button>
           }
@@ -118,11 +132,17 @@ export default function TenderLifecyclePage() {
                         <Badge tone={t.status === "Evaluation" ? "amber" : t.status === "Bidding" ? "blue" : "muted"}>{t.phaseLabel}</Badge>
                       </div>
                     </div>
-                    {t.aiAlert && (
+                    {t.aiAlert && !resolvedAlerts.includes(t.id) && (
                       <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2">
                         <AlertTriangle className="h-3.5 w-3.5 text-amber-600 flex-shrink-0" />
                         <span className="text-xs text-amber-700 font-medium">AI Alert: {t.aiAlert}</span>
-                        <button className="ml-auto text-[10px] text-amber-700 font-semibold hover:underline">Resolve</button>
+                        <button onClick={() => handleResolveAlert(t.id, t.aiAlert!)} className="ml-auto text-[10px] text-amber-700 font-semibold hover:underline bg-amber-100 px-2 py-0.5 rounded-md hover:bg-amber-200 transition-colors">Resolve</button>
+                      </div>
+                    )}
+                    {t.aiAlert && resolvedAlerts.includes(t.id) && (
+                      <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 mt-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
+                        <span className="text-xs text-emerald-700 font-medium">Alert resolved — committee notified.</span>
                       </div>
                     )}
                   </div>
@@ -348,6 +368,7 @@ function AIAgentsOverview() {
     { name: "Financial Evaluation AI", phase: "Phase 13", color: "amber", action: "Running arithmetic checks — 3 BOQs", conf: 93 },
     { name: "Award Recommendation AI", phase: "Phase 14–16", color: "emerald", action: "Preparing award package — ZW-PRA-00180", conf: 90 },
   ];
+  const [activeConsole, setActiveConsole] = useState<string | null>(null);
 
   const colorMap: Record<string, string> = {
     blue: "bg-blue-600", emerald: "bg-emerald-600", violet: "bg-violet-600", amber: "bg-amber-500", rose: "bg-rose-600",
@@ -379,7 +400,14 @@ function AIAgentsOverview() {
           <div className="h-1 rounded-full bg-secondary overflow-hidden">
             <div className={`h-full rounded-full ${colorMap[a.color]}`} style={{ width: `${a.conf}%` }} />
           </div>
-          <button className="mt-2 w-full h-7 rounded-md bg-secondary text-xs font-medium hover:bg-primary/10 hover:text-primary transition-colors">View Agent Console</button>
+          <button
+            onClick={() => {
+              setActiveConsole(a.name);
+              pushNotification(`${a.name} console opened — currently: ${a.action} Confidence: ${a.conf}%.`, "info");
+            }}
+            className={`mt-2 w-full h-7 rounded-md text-xs font-medium transition-colors ${activeConsole === a.name ? "bg-primary/10 text-primary border border-primary/20" : "bg-secondary hover:bg-primary/10 hover:text-primary"}`}>
+            {activeConsole === a.name ? "Console Active ✓" : "View Agent Console"}
+          </button>
         </Card>
       ))}
     </div>

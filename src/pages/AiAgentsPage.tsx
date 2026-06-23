@@ -3,12 +3,19 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from "recharts";
 import { aiAgents } from "@/lib/mock-data";
 import { Sparkles, CheckCircle2, Clock, Activity, Zap, AlertTriangle, TrendingUp } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
 
 const BLUE = "#3b82f6";
 const GREEN = "#10b981";
 
 export default function AiAgentsPage() {
   const [selectedAgent, setSelectedAgent] = useState(aiAgents[0]);
+  const [consoleOpen, setConsoleOpen] = useState(false);
+
+  const handleOpenConsole = () => {
+    setConsoleOpen(true);
+    pushNotification(`${selectedAgent.name} console opened — ${selectedAgent.actions.toLocaleString()} actions logged, ${selectedAgent.pending} pending review.`, "info");
+  };
 
   const agentActivityData = Array.from({ length: 12 }, (_, i) => ({
     time: `${String(i * 2).padStart(2, "0")}:00`,
@@ -119,8 +126,8 @@ export default function AiAgentsPage() {
               </ResponsiveContainer>
             </div>
 
-            <button className="mt-4 w-full h-9 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity">
-              Open Agent Console
+            <button onClick={handleOpenConsole} className="mt-4 w-full h-9 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity">
+              {consoleOpen ? "Console Active ✓" : "Open Agent Console"}
             </button>
           </Card>
         </div>

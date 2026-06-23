@@ -34,9 +34,10 @@ const NOTIF_ICONS: Record<string, { cls: string; Icon: React.ElementType }> = {
   info:    { cls: "text-blue-500 bg-blue-50",        Icon: Bell },
 };
 
-function NotificationsPanel({ notifications, onClose }: {
+function NotificationsPanel({ notifications, onClose, onMarkAllRead }: {
   notifications: { id: string; msg: string; type: string; time: string; read: boolean }[];
   onClose: () => void;
+  onMarkAllRead: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, onClose);
@@ -109,7 +110,7 @@ function NotificationsPanel({ notifications, onClose }: {
       </div>
       <div className="border-t border-black/8 px-5 py-3 flex items-center justify-between bg-[#fafafa]">
         <span className="text-xs text-black/40">{notifications.length} total notifications</span>
-        <button className="text-xs font-medium text-black hover:underline transition-colors">Mark all read</button>
+        <button onClick={onMarkAllRead} className="text-xs font-medium text-black hover:underline transition-colors">Mark all read</button>
       </div>
     </div>
   );
@@ -126,9 +127,24 @@ const DEMO_MESSAGES = [
 
 function MessagesPanel({ user, onClose }: { user: { name?: string; avatar?: string } | null; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const [compose, setCompose] = useState(false);
   const [to, setTo] = useState(""); const [subject, setSubject] = useState(""); const [body, setBody] = useState("");
+  const [sentMsg, setSentMsg] = useState<string | null>(null);
   useClickOutside(ref, onClose);
+
+  const handleSend = () => {
+    if (!to.trim() || !subject.trim()) return;
+    setSentMsg(`Message sent to ${to} — Subject: "${subject}"`);
+    setCompose(false); setTo(""); setSubject(""); setBody("");
+    setTimeout(() => setSentMsg(null), 3000);
+  };
+
+  const handleViewAll = () => { navigate("/teams"); onClose(); };
+  const handleOpenMessage = (m: typeof DEMO_MESSAGES[0]) => {
+    navigate("/teams");
+    onClose();
+  };
 
   return (
     <div ref={ref} className="absolute right-0 top-full mt-2 w-[420px] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl border border-black/10 shadow-2xl z-50 overflow-hidden flex flex-col">
@@ -145,6 +161,10 @@ function MessagesPanel({ user, onClose }: { user: { name?: string; avatar?: stri
         </div>
       </div>
 
+      {sentMsg && (
+        <div className="px-5 py-2 bg-emerald-50 border-b border-emerald-100 text-xs text-emerald-700 font-medium">{sentMsg}</div>
+      )}
+
       {compose && (
         <div className="border-b border-black/8 bg-[#fafafa] p-4 space-y-2">
           <input value={to} onChange={e => setTo(e.target.value)} placeholder="To: name@gov.zw" className="w-full h-8 px-3 rounded-lg border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10" />
@@ -152,14 +172,14 @@ function MessagesPanel({ user, onClose }: { user: { name?: string; avatar?: stri
           <textarea value={body} onChange={e => setBody(e.target.value)} placeholder="Message…" rows={3} className="w-full px-3 py-2 rounded-lg border border-black/10 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-black/10" />
           <div className="flex justify-end gap-2">
             <button onClick={() => setCompose(false)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">Discard</button>
-            <button onClick={() => { setCompose(false); setTo(""); setSubject(""); setBody(""); }} className="h-7 px-3 rounded-lg bg-black text-white text-xs flex items-center gap-1 hover:bg-gray-800"><Send className="h-3 w-3" /> Send</button>
+            <button onClick={handleSend} disabled={!to.trim() || !subject.trim()} className="h-7 px-3 rounded-lg bg-black text-white text-xs flex items-center gap-1 hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed"><Send className="h-3 w-3" /> Send</button>
           </div>
         </div>
       )}
 
       <div className="overflow-y-auto max-h-[360px] divide-y divide-black/5">
         {DEMO_MESSAGES.map(m => (
-          <div key={m.id} className={`flex items-start gap-3 px-5 py-3.5 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer ${m.unread ? "" : "opacity-60"}`}>
+          <div key={m.id} onClick={() => handleOpenMessage(m)} className={`flex items-start gap-3 px-5 py-3.5 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer ${m.unread ? "" : "opacity-60"}`}>
             <div className="h-8 w-8 rounded-full bg-black text-white text-xs font-bold grid place-items-center flex-shrink-0">{m.avatar}</div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-1">
@@ -174,7 +194,7 @@ function MessagesPanel({ user, onClose }: { user: { name?: string; avatar?: stri
         ))}
       </div>
       <div className="border-t border-black/8 px-5 py-2.5 bg-[#fafafa]">
-        <button className="text-xs font-medium text-black hover:underline">View all messages →</button>
+        <button onClick={handleViewAll} className="text-xs font-medium text-black hover:underline">View all messages →</button>
       </div>
     </div>
   );
@@ -195,8 +215,19 @@ const ITEM_COLORS: Record<string, string> = {
 
 function InboxPanel({ onClose }: { onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   useClickOutside(ref, onClose);
-  const pending = DEMO_INBOX.filter(i => i.status === "Pending");
+  const [approvedItems, setApprovedItems] = useState<string[]>(["i5"]);
+  const pending = DEMO_INBOX.filter(i => !approvedItems.includes(i.id));
+
+  const handleApprove = (id: string, title: string) => {
+    setApprovedItems(prev => [...prev, id]);
+    markNotificationsRead();
+  };
+
+  const handleReview = (id: string, title: string) => {
+    // navigate to relevant page based on item type
+  };
 
   return (
     <div ref={ref} className="absolute right-0 top-full mt-2 w-[400px] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl border border-black/10 shadow-2xl z-50 overflow-hidden flex flex-col">
@@ -208,33 +239,35 @@ function InboxPanel({ onClose }: { onClose: () => void }) {
         <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 transition-colors"><X className="h-4 w-4" /></button>
       </div>
       <div className="overflow-y-auto max-h-[380px] divide-y divide-black/5">
-        {DEMO_INBOX.map(item => (
-          <div key={item.id} className="px-5 py-3.5 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer">
-            <div className="flex items-start gap-3">
-              <div className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md flex-shrink-0 mt-0.5 ${ITEM_COLORS[item.type] ?? "bg-gray-100 text-gray-600"}`}>{item.type}</div>
-              <div className="flex-1 min-w-0">
-                <p className={`text-xs font-medium truncate ${item.status === "Pending" ? "text-black" : "text-black/50"}`}>{item.title}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] text-black/40">From: {item.from}</span>
-                  <span className="text-[10px] text-black/25">·</span>
-                  <span className="text-[10px] text-black/40">{item.time}</span>
+        {DEMO_INBOX.map(item => {
+          const isApproved = approvedItems.includes(item.id);
+          return (
+            <div key={item.id} className="px-5 py-3.5 hover:bg-[#F5F5F5]/60 transition-colors cursor-pointer">
+              <div className="flex items-start gap-3">
+                <div className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md flex-shrink-0 mt-0.5 ${ITEM_COLORS[item.type] ?? "bg-gray-100 text-gray-600"}`}>{item.type}</div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs font-medium truncate ${!isApproved ? "text-black" : "text-black/50"}`}>{item.title}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] text-black/40">From: {item.from}</span>
+                    <span className="text-[10px] text-black/25">·</span>
+                    <span className="text-[10px] text-black/40">{item.time}</span>
+                  </div>
                 </div>
+                {!isApproved ? (
+                  <div className="flex gap-1 flex-shrink-0">
+                    <button onClick={() => handleApprove(item.id, item.title)} className="h-6 px-2 rounded-md bg-black text-white text-[10px] font-medium hover:bg-gray-800 transition-colors">Approve</button>
+                    <button onClick={() => handleReview(item.id, item.title)} className="h-6 px-2 rounded-md border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] transition-colors">Review</button>
+                  </div>
+                ) : (
+                  <span className="text-[10px] font-semibold text-emerald-600 flex-shrink-0">✓ Done</span>
+                )}
               </div>
-              {item.status === "Pending" && (
-                <div className="flex gap-1 flex-shrink-0">
-                  <button className="h-6 px-2 rounded-md bg-black text-white text-[10px] font-medium hover:bg-gray-800 transition-colors">Approve</button>
-                  <button className="h-6 px-2 rounded-md border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] transition-colors">Review</button>
-                </div>
-              )}
-              {item.status === "Approved" && (
-                <span className="text-[10px] font-semibold text-emerald-600 flex-shrink-0">✓ Done</span>
-              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div className="border-t border-black/8 px-5 py-2.5 bg-[#fafafa]">
-        <button className="text-xs font-medium text-black hover:underline">View full inbox →</button>
+        <button onClick={() => { navigate("/tenders"); onClose(); }} className="text-xs font-medium text-black hover:underline">View full inbox →</button>
       </div>
     </div>
   );
@@ -508,6 +541,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <NotificationsPanel
               notifications={notifications as { id: string; msg: string; type: string; time: string; read: boolean }[]}
               onClose={() => setShowNotifs(false)}
+              onMarkAllRead={() => { markNotificationsRead(); setTimeout(refreshNotifs, 200); setShowNotifs(false); }}
             />
           )}
         </div>
