@@ -2,6 +2,8 @@ import { useState } from "react";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import { FeatureGrid } from "@/components/ModulePage";
 import { useTenders } from "@/hooks/use-store";
+import { useAuth } from "@/lib/auth-context";
+import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
 import { Plus, Download, Search, FileText, Clock, CheckCircle2, XCircle } from "lucide-react";
 import NewTenderModal from "@/components/NewTenderModal";
 
@@ -14,7 +16,8 @@ export default function TendersPage() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [showNewTender, setShowNewTender] = useState(false);
-  const { tenders } = useTenders();
+  const { tenders, update } = useTenders();
+  const { user } = useAuth();
 
   const filtered = tenders.filter((t) => {
     const matchSearch = t.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -28,6 +31,21 @@ export default function TendersPage() {
     acc[t.status] = (acc[t.status] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+
+  const exportCSV = () => {
+    const rows = ["ID,Title,Entity,Category,Method,Value,Status,Closing,Bids",
+      ...filtered.map(t => `${t.id},"${t.title}","${t.entity}","${t.category}","${t.method}","${t.value}","${t.status}","${t.closing}","${t.bids}"`)
+    ].join("\n");
+    const blob = new Blob([rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "tenders-register.csv"; a.click();
+    URL.revokeObjectURL(url);
+    pushNotification("Tenders exported to CSV", "success");
+  };
+
+  const openTender = (t: typeof tenders[0]) => {
+    alert(`TENDER DETAIL\n\nReference: ${t.id}\nTitle: ${t.title}\nEntity: ${t.entity}\nCategory: ${t.category}\nMethod: ${t.method}\nValue: ${t.value}\nStatus: ${t.status}\nClosing: ${t.closing}\nBids Received: ${t.bids}\nCreated By: ${t.createdBy || "System"}`);
+  };
 
   return (
     <AppShell>
@@ -76,7 +94,7 @@ export default function TendersPage() {
               </button>
             ))}
           </div>
-          <button className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary sm:ml-auto">
+          <button onClick={exportCSV} className="h-9 px-3 rounded-md border border-border bg-card text-sm flex items-center gap-1.5 hover:bg-secondary sm:ml-auto">
             <Download className="h-4 w-4" /> Export
           </button>
         </div>
@@ -96,7 +114,7 @@ export default function TendersPage() {
                 {filtered.length === 0 ? (
                   <tr><td colSpan={9} className="px-5 py-8 text-center text-muted-foreground text-sm">No tenders match your search.</td></tr>
                 ) : filtered.map((t) => (
-                  <tr key={t.id} className="hover:bg-secondary/40 cursor-pointer">
+                  <tr key={t.id} onClick={() => openTender(t)} className="hover:bg-secondary/40 cursor-pointer">
                     <td className="px-5 py-3 font-mono text-[11px] text-muted-foreground whitespace-nowrap">{t.id}</td>
                     <td className="px-5 py-3 max-w-[260px]"><div className="truncate text-foreground font-medium">{t.title}</div></td>
                     <td className="px-5 py-3 text-foreground whitespace-nowrap">{t.entity}</td>

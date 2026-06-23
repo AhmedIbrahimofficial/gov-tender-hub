@@ -64,6 +64,25 @@ export default function AuctionsPage() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "live" | "workflow" | "agents">("dashboard");
   const [selectedLot, setSelectedLot] = useState(LIVE_LOTS[0]);
   const [bidAmount, setBidAmount] = useState(selectedLot.current + 500);
+  const [bidPlaced, setBidPlaced] = useState(false);
+  const [lots, setLots] = useState(LIVE_LOTS);
+
+  const handleBid = () => {
+    if (bidAmount <= selectedLot.current) {
+      alert(`❌ Invalid Bid\n\nYour bid of USD ${bidAmount.toLocaleString()} must be higher than the current bid of USD ${selectedLot.current.toLocaleString()}.\n\nMinimum bid: USD ${(selectedLot.current + 500).toLocaleString()}`);
+      return;
+    }
+    setLots(prev => prev.map(l =>
+      l.lot === selectedLot.lot
+        ? { ...l, current: bidAmount, bids: l.bids + 1, bidder: "B-YOUR" }
+        : l
+    ));
+    const updated = { ...selectedLot, current: bidAmount, bids: selectedLot.bids + 1, bidder: "B-YOUR" };
+    setSelectedLot(updated);
+    setBidAmount(bidAmount + 500);
+    setBidPlaced(true);
+    setTimeout(() => setBidPlaced(false), 3000);
+  };
 
   return (
     <AppShell>
@@ -77,7 +96,10 @@ export default function AuctionsPage() {
           title="Live Online Auction Platform"
           description="Real-time asset disposal with 19-stage automated workflow, AI fraud detection, and instant settlement. Transparent public asset management."
           actions={
-            <button className="h-9 px-3 rounded-md bg-amber-500 text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5">
+            <button
+              onClick={() => alert("🔨 Create Auction Event\n\nThis opens the 19-stage auction setup wizard.\n\nRequired:\n• Disposal approval from Asset Manager\n• PRAZ notification (if value > threshold)\n• Asset valuation certificates\n• AI catalog generation\n\nIn this demo, navigate to the 19-Stage Workflow tab to see the full process.")}
+              className="h-9 px-3 rounded-md bg-amber-500 text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5"
+            >
               <Gavel className="h-4 w-4" /> Create Auction Event
             </button>
           }
@@ -123,7 +145,10 @@ export default function AuctionsPage() {
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground mb-3">Reserve: <span className="font-semibold text-foreground">{a.reserve}</span></div>
-                  <button onClick={() => setActiveTab("live")} className={`w-full h-8 rounded-md text-xs font-semibold transition-colors ${a.status === "Live Now" ? "bg-amber-500 text-white hover:opacity-90" : "border border-border hover:bg-secondary"}`}>
+                  <button
+                    onClick={() => setActiveTab("live")}
+                    className={`w-full h-8 rounded-md text-xs font-semibold transition-colors ${a.status === "Live Now" ? "bg-amber-500 text-white hover:opacity-90" : "border border-border hover:bg-secondary"}`}
+                  >
                     {a.status === "Live Now" ? "Enter Auction Room →" : "View Details"}
                   </button>
                 </Card>
@@ -138,7 +163,7 @@ export default function AuctionsPage() {
             <Card>
               <CardHeader title="Active Lots" subtitle="AUC-2026-012 · Office Furniture" action={<Badge tone="red">Live</Badge>} />
               <div className="divide-y divide-border max-h-[600px] overflow-y-auto">
-                {LIVE_LOTS.map((lot) => (
+                {lots.map((lot) => (
                   <div key={lot.lot} onClick={() => { setSelectedLot(lot); setBidAmount(lot.current + 500); }}
                     className={`px-4 py-3 cursor-pointer hover:bg-secondary/40 transition-colors ${selectedLot.lot === lot.lot ? "bg-amber-50 border-l-2 border-amber-400" : ""}`}>
                     <div className="flex justify-between items-start mb-1">
@@ -217,8 +242,11 @@ export default function AuctionsPage() {
                         className="w-full h-10 pl-12 pr-3 rounded-lg border border-amber-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-400"
                       />
                     </div>
-                    <button className="h-10 px-5 rounded-lg bg-amber-500 text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center gap-1.5">
-                      <Gavel className="h-4 w-4" /> Bid Now
+                    <button
+                      onClick={handleBid}
+                      className="h-10 px-5 rounded-lg bg-amber-500 text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center gap-1.5"
+                    >
+                      <Gavel className="h-4 w-4" /> {bidPlaced ? "✓ Bid Placed!" : "Bid Now"}
                     </button>
                   </div>
                   <div className="mt-2 text-[11px] text-amber-700">Min increment: USD 500 · Your deposit: USD 5,000 (confirmed)</div>

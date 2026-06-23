@@ -103,7 +103,9 @@ export default function PlanningPage() {
                       <Badge tone={p.status === "Approved" ? "green" : p.status === "Draft" ? "muted" : "amber"}>{p.status}</Badge>
                     </td>
                     <td className="px-5 py-3">
-                      <button className="h-7 px-2.5 rounded-md border border-border text-xs hover:bg-secondary">Open</button>
+                      <button
+                        onClick={() => alert(`PROCUREMENT REQUISITION\n\nID: ${p.id}\nTitle: ${p.title}\nCategory: ${p.category}\nBudget: ${p.budget}\nQuarter: ${p.quarter}\nStatus: ${p.status}\n\nClick Approve to move to Budget Validation, or send back for revision.`)}
+                        className="h-7 px-2.5 rounded-md border border-border text-xs hover:bg-secondary transition-colors">Open</button>
                     </td>
                   </tr>
                 ))}

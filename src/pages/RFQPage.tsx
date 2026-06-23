@@ -111,7 +111,10 @@ export default function RFQPage() {
                           <Badge tone={r.status === "Awarded" ? "green" : r.status === "Evaluating" ? "amber" : r.status === "Payment" ? "blue" : "muted"}>{r.status}</Badge>
                         </td>
                         <td className="px-4 py-3">
-                          <button className="h-7 px-2 rounded border border-border text-xs hover:bg-secondary">Open</button>
+                          <button
+                            onClick={() => alert(`RFQ DETAIL\n\nID: ${r.id}\nTitle: ${r.title}\nDept: ${r.dept}\nValue: ${r.value}\nStage: ${r.stage}/18 — ${r.stageLabel}\nSuppliers Invited: ${r.suppliers}\nDeadline: ${r.deadline}\nStatus: ${r.status}`)}
+                            className="h-7 px-2 rounded border border-border text-xs hover:bg-secondary transition-colors"
+                          >Open</button>
                         </td>
                       </tr>
                     ))}
@@ -202,7 +205,14 @@ export default function RFQPage() {
                           <Badge tone={q.aiRec === "Best Value" ? "green" : q.aiRec === "Faster Delivery" ? "blue" : q.aiRec === "Acceptable" ? "muted" : "amber"}>{q.aiRec}</Badge>
                         </td>
                         <td className="px-4 py-3">
-                          {q.rank === 1 && <button className="h-7 px-2 rounded-md bg-emerald-600 text-white text-xs font-semibold hover:opacity-90">Issue PO</button>}
+                          {q.rank === 1 && (
+                            <button
+                              onClick={() => {
+                                alert(`✅ Purchase Order Issued!\n\nPO-2026-0893 issued to ${q.supplier}\nValue: USD ${q.price.toLocaleString()}\nDelivery expected within ${q.delivery}\n\nSupplier has been notified via email.\nAI Report sent to CPO.`);
+                              }}
+                              className="h-7 px-2 rounded-md bg-emerald-600 text-white text-xs font-semibold hover:opacity-90 transition-opacity"
+                            >Issue PO</button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -338,7 +348,15 @@ function NewRFQWizard({ step, setStep }: { step: number; setStep: (n: number) =>
             <button onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1} className="h-9 px-4 rounded-md border border-border text-sm hover:bg-secondary disabled:opacity-40">← Back</button>
             {step < 4
               ? <button onClick={() => setStep(step + 1)} className="h-9 px-4 rounded-md bg-primary text-white text-sm font-medium hover:opacity-90">Continue →</button>
-              : <button className="h-9 px-4 rounded-md bg-emerald-600 text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4" />Issue RFQ</button>
+              : <button
+                  onClick={() => {
+                    alert("✅ RFQ Issued!\n\nRFQ-2026-0893 has been issued to 4 suppliers.\n\nNotifications sent:\n• Stationery World Ltd\n• Office Direct Zim\n• Zim Supplies Co.\n• Metro Office Pvt\n\nSubmission deadline: 2026-06-28 16:00\nAI will track responses automatically.");
+                    setStep(1);
+                  }}
+                  className="h-9 px-4 rounded-md bg-emerald-600 text-white text-sm font-medium hover:opacity-90 flex items-center gap-1.5"
+                >
+                  <CheckCircle2 className="h-4 w-4" /> Issue RFQ
+                </button>
             }
           </div>
         </div>

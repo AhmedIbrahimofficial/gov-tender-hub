@@ -220,11 +220,11 @@ export default function DashboardRouter() {
         roleLabel="Logistics Officer" roleDesc="Delivery coordination, dispatch, and warehousing"
         aiName="Logistics AI" aiRole="Route optimisation, delivery tracking"
         features={[
-          { icon: Package,    title: "Delivery Tracker",       desc: "Track all in-transit deliveries and shipments in real time.", action: "Track Deliveries" },
-          { icon: Settings,   title: "Dispatch Management",    desc: "Plan and coordinate dispatch of goods to recipient entities.", action: "Manage Dispatch" },
-          { icon: Archive,    title: "Warehouse Inventory",    desc: "View current warehouse stock levels and locations.", action: "View Inventory" },
+          { icon: Package,    title: "Delivery Tracker",       desc: "Track all in-transit deliveries and shipments in real time.", action: "Track Deliveries", link: "/inventory/receiving" },
+          { icon: Settings,   title: "Dispatch Management",    desc: "Plan and coordinate dispatch of goods to recipient entities.", action: "Manage Dispatch", link: "/inventory/requests" },
+          { icon: Archive,    title: "Warehouse Inventory",    desc: "View current warehouse stock levels, zones, and locations.", action: "View Inventory", link: "/inventory/warehouse" },
           { icon: Activity,   title: "Delivery Performance",   desc: "On-time delivery rate by vendor and contract.", action: "View Performance" },
-          { icon: AlertTriangle, title: "Delivery Issues",     desc: "Log and escalate delivery delays, damages, and shortfalls.", action: "Log Issue" },
+          { icon: AlertTriangle, title: "Delivery Issues",     desc: "Log and escalate delivery delays, damages, and shortfalls.", action: "Log Issue", link: "/inventory" },
           { icon: FileText,   title: "Logistics Report",       desc: "Monthly logistics performance and cost report.", action: "Generate Report" },
         ]} />;
 

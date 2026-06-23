@@ -44,7 +44,7 @@ export default function GovernancePage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {orgs.map((o) => (
-                  <tr key={o.name} className="hover:bg-secondary/40">
+                  <tr key={o.name} className="hover:bg-secondary/40 cursor-pointer" onClick={() => alert(`ORGANISATION DETAIL\n\n${o.name}\n\nType: ${o.type}\nBusiness Units: ${o.units}\nUsers: ${o.users}\nStatus: ${o.status}\n\nThis entity has ${o.units} procurement units and ${o.users} registered users on APPIIOMS.`)}>
                     <td className="px-5 py-3 font-medium text-foreground">{o.name}</td>
                     <td className="px-5 py-3 text-muted-foreground">{o.type}</td>
                     <td className="px-5 py-3 text-foreground">{o.units}</td>

@@ -3,6 +3,7 @@
  * Each dashboard shows ONLY what that role needs — no senior-level data visible.
  */
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth-context";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
@@ -227,62 +228,61 @@ export function LegalOfficerDashboard() {
 ════════════════════════════════════════════════════════════════════════════ */
 export function StoresOfficerDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   return (
     <AppShell>
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
-        <PageHeader title={`Stores Officer — ${user?.name}`} description="Goods received, inventory custody, and delivery verification." />
+        <PageHeader title={`Stores Officer — ${user?.name}`} description="Inventory &amp; Warehouse Management — full lifecycle from demand planning to reconciliation." />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <KpiCard label="Pending GRNs" value="6" delta="Today" icon={Package} color="amber" />
           <KpiCard label="GRNs Issued Today" value="3" delta="Verified" icon={CheckCircle2} color="green" />
           <KpiCard label="Rejected Deliveries" value="1" delta="Non-conforming" positive={false} icon={AlertTriangle} color="red" />
           <KpiCard label="Stock Items" value="1,284" delta="In custody" icon={Archive} color="blue" />
         </div>
-        <Card className="mb-4">
-          <CardHeader title="Pending Goods Receipt Notes" action={<Badge tone="amber">6 pending</Badge>} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+          {[
+            { label: "Open Inventory Module", desc: "Full inventory dashboard — stock levels, alerts, KPIs", path: "/inventory", icon: "📦", color: "bg-blue-50 border-blue-200" },
+            { label: "Item Master", desc: "Browse, add, and manage all inventory items and SKUs", path: "/inventory/items", icon: "🏷️", color: "bg-violet-50 border-violet-200" },
+            { label: "Receiving & GRN", desc: "Process goods received notes and quality inspection", path: "/inventory/receiving", icon: "✅", color: "bg-emerald-50 border-emerald-200" },
+            { label: "Issue Requests", desc: "Manage department requests for stock issuance", path: "/inventory/requests", icon: "📋", color: "bg-amber-50 border-amber-200" },
+            { label: "Warehouse & Storage", desc: "Zone management, locations, capacity utilization", path: "/inventory/warehouse", icon: "🏭", color: "bg-cyan-50 border-cyan-200" },
+            { label: "Stock Count", desc: "Schedule and manage cycle counts and stock takes", path: "/inventory/stock-count", icon: "🔍", color: "bg-orange-50 border-orange-200" },
+            { label: "Reconciliation", desc: "Variance investigation and adjustment workflows", path: "/inventory/reconciliation", icon: "⚖️", color: "bg-rose-50 border-rose-200" },
+            { label: "AI Agents", desc: "14 specialized AI agents for inventory intelligence", path: "/inventory/ai-agents", icon: "🤖", color: "bg-slate-50 border-slate-200" },
+          ].map(m => (
+            <button key={m.path} onClick={() => navigate(m.path)}
+              className={`${m.color} border rounded-2xl px-4 py-3 text-left hover:shadow-md transition-all flex items-center gap-3`}>
+              <span className="text-2xl">{m.icon}</span>
+              <div>
+                <div className="text-sm font-semibold text-black">{m.label}</div>
+                <div className="text-xs text-black/50 mt-0.5">{m.desc}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+        <Card>
+          <CardHeader title="Quick Stock Status" subtitle="Critical alerts requiring attention" />
           <div className="divide-y divide-black/5">
-            {contracts.map((c, i) => (
-              <div key={c.id} className="px-5 py-4 flex items-center justify-between gap-4">
+            {[
+              { item: "ARV Tenofovir/Lamivudine Tablets", status: "Critical", stock: "1,240 packs", alert: "Below reorder point — replenishment needed", color: "text-red-600" },
+              { item: "Portland Cement 42.5N", status: "Damaged", stock: "680 bags", alert: "15 bags damaged — write-off pending approval", color: "text-amber-600" },
+              { item: "Dell Latitude 5540 Laptops", status: "Quarantine", stock: "2 units", alert: "Quarantine pending IT inspection clearance", color: "text-blue-600" },
+            ].map((s, i) => (
+              <div key={i} className="px-5 py-3 flex items-center justify-between gap-4">
                 <div>
-                  <div className="text-sm font-semibold text-black">{c.title}</div>
-                  <div className="text-xs text-black/40">{c.id} · Delivery expected: {i === 0 ? "Today" : "2026-07-0" + (i + 1)}</div>
+                  <div className="text-sm font-semibold">{s.item}</div>
+                  <div className={`text-xs mt-0.5 ${s.color} font-medium`}>{s.alert}</div>
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={() => act(`GRN issued for ${c.id}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800">Issue GRN</button>
-                  <button onClick={() => act(`Delivery rejected for ${c.id}`)} className="h-7 px-2.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50">Reject</button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className="text-xs text-black/50">{s.stock}</span>
+                  <Badge tone={s.status === "Critical" ? "red" : s.status === "Damaged" ? "amber" : "blue"}>{s.status}</Badge>
                 </div>
               </div>
             ))}
           </div>
         </Card>
-        <Card>
-          <CardHeader title="Stock Register" subtitle="Current custody items" />
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-xs text-black/40"><tr>
-                {["Item","Category","Qty","Unit","Location","Status"].map(h => <th key={h} className="text-left px-5 py-2.5 font-medium">{h}</th>)}
-              </tr></thead>
-              <tbody className="divide-y divide-black/5">
-                {[
-                  ["ARV Medicines Batch 7","Health",2400,"Units","Harare Pharmacy","In Stock"],
-                  ["Road Aggregate — Type B","Construction",1840,"Tonnes","Beitbridge Site","In Use"],
-                  ["Server Hardware Pack","ICT",12,"Sets","ZIMRA Data Centre","Received"],
-                  ["Fertiliser — Compound D","Agriculture",8400,"50kg Bags","Gweru Depot","Issued"],
-                ].map(([name,cat,qty,unit,loc,status], i) => (
-                  <tr key={i} className="hover:bg-gray-50/50">
-                    <td className="px-5 py-3 font-medium text-black">{name}</td>
-                    <td className="px-5 py-3 text-black/60">{cat}</td>
-                    <td className="px-5 py-3 font-semibold text-black">{qty}</td>
-                    <td className="px-5 py-3 text-black/60">{unit}</td>
-                    <td className="px-5 py-3 text-black/60">{loc}</td>
-                    <td className="px-5 py-3"><Badge tone={status === "In Stock" ? "green" : status === "Received" ? "blue" : "muted"}>{status}</Badge></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
       </div>
-      <AIAssistantPanel agentName="Inventory AI" agentRole="Stock management, GRN verification" context="stores management" color="blue" suggestedPrompts={["Check delivery against PO","Generate GRN","Flag non-conforming goods","Stock reorder alert"]} />
+      <AIAssistantPanel agentName="Inventory Chief Intelligence Agent" agentRole="Full inventory lifecycle intelligence — demand forecasting, shortage prevention, warehouse optimization" context="stores officer dashboard" color="emerald" suggestedPrompts={["Which items need immediate replenishment?","Show pending GRNs","List quarantine items","Generate daily stock report"]} />
     </AppShell>
   );
 }
@@ -681,12 +681,13 @@ export function ITOfficerDashboard() {
 export function GenericRoleDashboard({ roleLabel, roleDesc, features, aiName, aiRole, color }: {
   roleLabel: string;
   roleDesc: string;
-  features: { icon: React.ElementType; title: string; desc: string; action: string }[];
+  features: { icon: React.ElementType; title: string; desc: string; action: string; link?: string }[];
   aiName: string;
   aiRole: string;
   color?: "blue" | "violet" | "emerald" | "amber" | "rose";
 }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   return (
     <AppShell>
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
@@ -701,7 +702,10 @@ export function GenericRoleDashboard({ roleLabel, roleDesc, features, aiName, ai
                 <div className="text-sm font-semibold text-black">{f.title}</div>
                 <div className="text-xs text-black/40 mt-1 leading-relaxed">{f.desc}</div>
               </div>
-              <button onClick={() => act(`${f.action} initiated`)} className="mt-auto h-8 px-4 rounded-lg bg-black text-white text-xs font-medium hover:bg-gray-800 transition-colors self-start">{f.action}</button>
+              <button
+                onClick={() => f.link ? navigate(f.link) : act(`${f.action} initiated`)}
+                className="mt-auto h-8 px-4 rounded-lg bg-black text-white text-xs font-medium hover:bg-gray-800 transition-colors self-start"
+              >{f.action}</button>
             </div>
           ))}
         </div>

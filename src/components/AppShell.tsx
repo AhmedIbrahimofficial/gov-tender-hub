@@ -5,6 +5,8 @@ import {
   Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
   Landmark, UsersRound, Globe2, Search, Bell, Inbox, MessageSquare,
   ChevronDown, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2, Menu,
+  Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
+  Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio,
 } from "lucide-react";
 import { navSections } from "@/lib/mock-data";
 import { useAuth, type UserRole } from "@/lib/auth-context";
@@ -17,100 +19,100 @@ import { markNotificationsRead } from "@/lib/local-store";
 ─────────────────────────────────────────────────────────────────────────── */
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
-  procurement_officer: ["/dashboard", "/tenders", "/tenders-lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors"],
+  procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
 
   // Evaluator — only evaluation-related pages
-  evaluator: ["/dashboard", "/tenders", "/evaluations", "/awards"],
+  evaluator: ["/dashboard", "/teams", "/tenders", "/evaluations", "/awards"],
 
   // Finance officer — payments, invoices, budget
-  finance_officer: ["/dashboard", "/finance"],
+  finance_officer: ["/dashboard", "/teams", "/finance", "/utility/catalogue"],
 
   // Auditor — audit, anti-corruption, compliance
-  auditor: ["/dashboard", "/audit", "/anti-corruption", "/analytics"],
+  auditor: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/bi-dashboards", "/utility/public-records"],
 
   // Contract manager / officer
-  contract_manager:  ["/dashboard", "/contracts", "/vendors", "/performance", "/finance"],
-  contract_officer:  ["/dashboard", "/contracts", "/vendors"],
+  contract_manager:  ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance", "/utility/catalogue", "/utility/communications"],
+  contract_officer:  ["/dashboard", "/teams", "/contracts", "/vendors"],
 
   // Budget / treasury officer
-  budget_officer:    ["/dashboard", "/finance", "/analytics"],
-  treasury_officer:  ["/dashboard", "/finance"],
+  budget_officer:    ["/dashboard", "/teams", "/finance", "/analytics", "/utility/catalogue"],
+  treasury_officer:  ["/dashboard", "/teams", "/finance"],
 
   // Planning officer
-  planning_officer:  ["/dashboard", "/planning", "/tenders"],
+  planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue"],
 
   // Compliance officer
-  compliance_officer:["/dashboard", "/audit", "/anti-corruption", "/governance"],
+  compliance_officer:["/dashboard", "/teams", "/audit", "/anti-corruption", "/governance", "/utility/public-records", "/utility/announcements"],
 
   // Legal officer
-  legal_officer:     ["/dashboard", "/contracts", "/audit", "/governance"],
+  legal_officer:     ["/dashboard", "/teams", "/contracts", "/audit", "/governance", "/utility/announcements"],
 
   // Stores officer
-  stores_officer:    ["/dashboard", "/contracts"],
+  stores_officer:    ["/dashboard", "/teams", "/inventory", "/inventory/items", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/inventory/stock-count", "/inventory/reconciliation", "/inventory/ai-agents", "/contracts", "/utility/catalogue"],
 
   // Project manager
-  project_manager:   ["/dashboard", "/contracts", "/performance", "/vendors"],
+  project_manager:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/contracts", "/performance", "/vendors", "/utility/catalogue"],
 
   // Anti-corruption / ethics
-  anti_corruption_officer: ["/dashboard", "/anti-corruption", "/audit", "/vendors"],
-  ethics_officer:          ["/dashboard", "/anti-corruption", "/governance"],
+  anti_corruption_officer: ["/dashboard", "/teams", "/anti-corruption", "/audit", "/vendors"],
+  ethics_officer:          ["/dashboard", "/teams", "/anti-corruption", "/governance"],
 
   // Performance officer
-  performance_officer: ["/dashboard", "/performance", "/vendors", "/contracts", "/analytics"],
+  performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics"],
 
   // IT officer / system admin — full access
-  it_officer:   ["/dashboard", "/analytics", "/ai-agents", "/roles", "/governance"],
-  system_admin: ["/dashboard", "/analytics", "/ai-agents", "/roles", "/governance"],
+  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/utility"],
+  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/utility"],
 
   // Risk officer
-  risk_officer: ["/dashboard", "/audit", "/anti-corruption", "/analytics", "/contracts"],
+  risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
 
   // Adjudication officer
-  adjudication_officer: ["/dashboard", "/evaluations", "/awards", "/tenders"],
+  adjudication_officer: ["/dashboard", "/teams", "/evaluations", "/awards", "/tenders", "/utility/announcements"],
 
   // Audit officer / public auditor
-  audit_officer:  ["/dashboard", "/audit", "/anti-corruption", "/analytics"],
-  public_auditor: ["/dashboard", "/audit", "/portal"],
+  audit_officer:  ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics"],
+  public_auditor: ["/dashboard", "/audit", "/portal", "/utility/public-records"],
 
   // Records officer
-  records_officer: ["/dashboard", "/audit", "/governance"],
+  records_officer: ["/dashboard", "/teams", "/audit", "/governance", "/utility/public-records"],
 
   // Inspection / QA
-  inspection_officer: ["/dashboard", "/contracts", "/performance"],
-  qa_officer:         ["/dashboard", "/contracts", "/vendors", "/performance"],
+  inspection_officer: ["/dashboard", "/teams", "/contracts", "/performance"],
+  qa_officer:         ["/dashboard", "/teams", "/contracts", "/vendors", "/performance"],
 
   // Asset manager
-  asset_manager: ["/dashboard", "/contracts", "/governance"],
+  asset_manager: ["/dashboard", "/teams", "/assets", "/assets/maintenance", "/assets/financials", "/assets/disposal", "/contracts", "/governance", "/utility/catalogue"],
 
   // Logistics officer
-  logistics_officer: ["/dashboard", "/contracts", "/vendors"],
+  logistics_officer: ["/dashboard", "/teams", "/inventory", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/contracts", "/vendors", "/utility/catalogue"],
 
   // Supplier / vendor
   supplier:     ["/dashboard", "/portal"],
   sme_supplier: ["/dashboard", "/portal"],
   vendor_user:  ["/dashboard", "/portal"],
 
-  // Communications officer
-  communications_officer: ["/dashboard", "/tenders", "/portal", "/governance"],
+  // Communications officer — gets full utility access
+  communications_officer: ["/dashboard", "/teams", "/tenders", "/portal", "/governance", "/utility", "/utility/communications", "/utility/gazette", "/utility/announcements", "/utility/public-records", "/utility/media"],
 
   // HSE / environment
-  health_safety_officer: ["/dashboard", "/contracts", "/governance"],
-  environment_officer:   ["/dashboard", "/contracts", "/governance"],
+  health_safety_officer: ["/dashboard", "/teams", "/contracts", "/governance"],
+  environment_officer:   ["/dashboard", "/teams", "/contracts", "/governance"],
 
   // Citizen / end user
   citizen:  ["/dashboard", "/portal"],
-  end_user: ["/dashboard", "/tenders", "/planning"],
+  end_user: ["/dashboard", "/teams", "/tenders", "/planning"],
 
   // Board / executive director — strategic overview only
-  executive_director: ["/dashboard", "/analytics", "/contracts", "/finance"],
+  executive_director: ["/dashboard", "/teams", "/analytics", "/contracts", "/finance", "/utility/announcements"],
   board_member:       ["/dashboard", "/analytics", "/governance"],
 
   // Regulator
-  regulator: ["/dashboard", "/analytics", "/audit", "/anti-corruption", "/governance", "/vendors", "/tenders"],
+  regulator: ["/dashboard", "/teams", "/analytics", "/audit", "/anti-corruption", "/governance", "/vendors", "/tenders", "/utility/public-records", "/utility/gazette"],
 
   // AI governance
-  ai_governance_officer:  ["/dashboard", "/ai-agents", "/analytics", "/governance"],
-  data_analytics_officer: ["/dashboard", "/analytics", "/ai-agents"],
+  ai_governance_officer:  ["/dashboard", "/teams", "/ai-agents", "/analytics", "/governance"],
+  data_analytics_officer: ["/dashboard", "/teams", "/staff-productivity", "/analytics", "/bi-dashboards", "/ai-agents"],
 };
 
 
@@ -126,6 +128,8 @@ const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, BarChart3, Sparkles, ClipboardList, FileText, Trophy,
   Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
   Landmark, UsersRound, Globe2, ScaleIcon: Scale, ShoppingCart, Gavel,
+  Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
+  BookOpen, MessageSquare, Newspaper, Megaphone, Radio,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -144,11 +148,29 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   // Filter nav items based on the user's role whitelist
   const allowedRoutes = user?.role ? ROLE_NAV_WHITELIST[user.role] : undefined;
+
+  /**
+   * An item is visible when ANY allowed route either:
+   *  a) exactly matches the item's `to`, OR
+   *  b) starts with the item's `to` + "/" (allowed route is a sub-path of item), OR
+   *  c) the item's `to` starts with allowed route + "/" (item is a sub-path of an allowed route)
+   *
+   * This lets "/utility" in the whitelist unlock all "/utility/*" nav items,
+   * and lets "/utility/catalogue" in the whitelist unlock the "/utility" nav item.
+   */
+  const isRouteAllowed = (itemTo: string) => {
+    if (!allowedRoutes) return true;
+    return allowedRoutes.some(
+      allowed =>
+        allowed === itemTo ||
+        allowed.startsWith(itemTo + "/") ||
+        itemTo.startsWith(allowed + "/")
+    );
+  };
+
   const filteredNavSections = navSections.map(section => ({
     ...section,
-    items: section.items.filter(item =>
-      !allowedRoutes || allowedRoutes.includes(item.to)
-    ),
+    items: section.items.filter(item => isRouteAllowed(item.to)),
   })).filter(section => section.items.length > 0);
 
   const searchResults = search.length > 1
@@ -331,7 +353,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div className="space-y-0.5">
                 {section.items.map((item) => {
                   const Icon = iconMap[item.icon] ?? LayoutDashboard;
-                  const active = pathname === item.to;
+                  const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
                   return (
                     <Link key={item.to} to={item.to} onClick={() => setSidebarOpen(false)}
                       className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
@@ -358,7 +380,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <div className="space-y-0.5">
                   {section.items.map((item) => {
                     const Icon = iconMap[item.icon] ?? LayoutDashboard;
-                    const active = pathname === item.to;
+                    const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
                     return (
                       <Link key={item.to} to={item.to}
                         className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm transition-colors ${

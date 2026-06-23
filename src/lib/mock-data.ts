@@ -165,13 +165,180 @@ export const hrTurnoverData = {
   ],
 };
 
+// ── Project Management Data ────────────────────────────────────────────────
+
+export type ProjectStatus = "Initiation" | "Planning" | "In Progress" | "On Hold" | "Completed" | "Cancelled" | "Troubled";
+export type ProjectPriority = "Low" | "Medium" | "High" | "Critical";
+export type RiskLevel = "Low" | "Medium" | "High" | "Critical";
+
+export type Project = {
+  id: string;
+  title: string;
+  entity: string;
+  manager: string;
+  status: ProjectStatus;
+  priority: ProjectPriority;
+  budget: string;
+  budgetNum: number;
+  spent: string;
+  spentNum: number;
+  progress: number;
+  startDate: string;
+  endDate: string;
+  phase: string;
+  riskLevel: RiskLevel;
+  spi: number;
+  cpi: number;
+  daysDelay: number;
+  category: string;
+  healthScore: number;
+};
+
+export const projects: Project[] = [
+  { id: "PROJ-2026-00041", title: "Beitbridge–Harare Highway Rehabilitation (Section 4)", entity: "Ministry of Transport", manager: "T. Moyo", status: "In Progress", priority: "Critical", budget: "USD 88,000,000", budgetNum: 88000000, spent: "USD 32,400,000", spentNum: 32400000, progress: 37, startDate: "2025-09-01", endDate: "2027-12-31", phase: "Construction", riskLevel: "Medium", spi: 0.94, cpi: 0.96, daysDelay: 12, category: "Infrastructure", healthScore: 72 },
+  { id: "PROJ-2026-00040", title: "National Hospital Information System", entity: "Ministry of Health", manager: "P. Dube", status: "In Progress", priority: "High", budget: "USD 24,000,000", budgetNum: 24000000, spent: "USD 18,200,000", spentNum: 18200000, progress: 76, startDate: "2024-04-01", endDate: "2026-09-30", phase: "UAT & Training", riskLevel: "Low", spi: 1.02, cpi: 0.98, daysDelay: 0, category: "ICT & Digital", healthScore: 91 },
+  { id: "PROJ-2026-00039", title: "Solar Mini-Grid — 12 Rural Clinics", entity: "Ministry of Energy", manager: "A. Mpofu", status: "In Progress", priority: "High", budget: "USD 14,800,000", budgetNum: 14800000, spent: "USD 4,200,000", spentNum: 4200000, progress: 28, startDate: "2026-01-15", endDate: "2027-06-30", phase: "Procurement & Design", riskLevel: "Low", spi: 1.05, cpi: 1.02, daysDelay: 0, category: "Infrastructure", healthScore: 88 },
+  { id: "PROJ-2026-00038", title: "Harare Water Treatment Plant Upgrade", entity: "Ministry of Water", manager: "J. Banda", status: "Troubled", priority: "Critical", budget: "USD 56,000,000", budgetNum: 56000000, spent: "USD 48,200,000", spentNum: 48200000, progress: 58, startDate: "2023-06-01", endDate: "2026-08-31", phase: "Construction", riskLevel: "Critical", spi: 0.72, cpi: 0.79, daysDelay: 94, category: "Infrastructure", healthScore: 38 },
+  { id: "PROJ-2026-00037", title: "Primary School Textbook Programme 2026/27", entity: "Ministry of Education", manager: "R. Chikwanda", status: "Planning", priority: "High", budget: "USD 6,700,000", budgetNum: 6700000, spent: "USD 280,000", spentNum: 280000, progress: 8, startDate: "2026-06-01", endDate: "2026-11-30", phase: "Planning", riskLevel: "Low", spi: 1.0, cpi: 1.0, daysDelay: 0, category: "Education", healthScore: 85 },
+  { id: "PROJ-2026-00036", title: "ZIMRA Tax System Phase II", entity: "ZIMRA", manager: "A. Mpofu", status: "In Progress", priority: "High", budget: "USD 9,200,000", budgetNum: 9200000, spent: "USD 6,800,000", spentNum: 6800000, progress: 74, startDate: "2025-01-10", endDate: "2026-08-30", phase: "Development", riskLevel: "High", spi: 0.88, cpi: 0.91, daysDelay: 28, category: "ICT & Digital", healthScore: 61 },
+  { id: "PROJ-2026-00035", title: "Pfumvudza Programme — 2026/27 Season", entity: "Ministry of Agriculture", manager: "T. Moyo", status: "Initiation", priority: "Critical", budget: "USD 31,400,000", budgetNum: 31400000, spent: "USD 0", spentNum: 0, progress: 0, startDate: "2026-08-01", endDate: "2027-04-30", phase: "Initiation", riskLevel: "Low", spi: 1.0, cpi: 1.0, daysDelay: 0, category: "Agriculture", healthScore: 95 },
+  { id: "PROJ-2026-00034", title: "4 District Hospitals Construction", entity: "Ministry of Health", manager: "P. Dube", status: "Initiation", priority: "Critical", budget: "USD 56,000,000", budgetNum: 56000000, spent: "USD 1,400,000", spentNum: 1400000, progress: 3, startDate: "2026-09-15", endDate: "2029-12-31", phase: "Design & Approvals", riskLevel: "Medium", spi: 1.0, cpi: 0.97, daysDelay: 0, category: "Infrastructure", healthScore: 78 },
+];
+
+export type ProjectMilestone = {
+  id: string; projectId: string; title: string;
+  plannedDate: string; actualDate: string;
+  status: "Pending" | "On Track" | "At Risk" | "Delayed" | "Completed";
+  progress: number; owner: string;
+};
+
+export const projectMilestones: ProjectMilestone[] = [
+  { id: "MS-001", projectId: "PROJ-2026-00041", title: "Site Establishment Complete", plannedDate: "2026-01-31", actualDate: "2026-02-14", status: "Completed", progress: 100, owner: "T. Moyo" },
+  { id: "MS-002", projectId: "PROJ-2026-00041", title: "Earthworks 50% Complete", plannedDate: "2026-04-30", actualDate: "", status: "Delayed", progress: 38, owner: "J. Banda" },
+  { id: "MS-003", projectId: "PROJ-2026-00041", title: "Bridge Structures Complete", plannedDate: "2026-09-30", actualDate: "", status: "At Risk", progress: 12, owner: "J. Banda" },
+  { id: "MS-004", projectId: "PROJ-2026-00041", title: "Surfacing & Markings", plannedDate: "2027-06-30", actualDate: "", status: "Pending", progress: 0, owner: "T. Moyo" },
+  { id: "MS-005", projectId: "PROJ-2026-00040", title: "System Architecture Approved", plannedDate: "2024-07-31", actualDate: "2024-07-28", status: "Completed", progress: 100, owner: "A. Mpofu" },
+  { id: "MS-006", projectId: "PROJ-2026-00040", title: "Core Modules Developed", plannedDate: "2025-12-31", actualDate: "2026-01-15", status: "Completed", progress: 100, owner: "P. Dube" },
+  { id: "MS-007", projectId: "PROJ-2026-00040", title: "UAT Sign-off", plannedDate: "2026-07-31", actualDate: "", status: "On Track", progress: 65, owner: "P. Dube" },
+  { id: "MS-008", projectId: "PROJ-2026-00040", title: "Go-Live", plannedDate: "2026-09-01", actualDate: "", status: "Pending", progress: 0, owner: "P. Dube" },
+  { id: "MS-009", projectId: "PROJ-2026-00038", title: "Phase 1 Civil Works", plannedDate: "2024-06-30", actualDate: "2024-11-30", status: "Completed", progress: 100, owner: "J. Banda" },
+  { id: "MS-010", projectId: "PROJ-2026-00038", title: "Mechanical & Electrical Installation", plannedDate: "2025-09-30", actualDate: "", status: "Delayed", progress: 42, owner: "J. Banda" },
+  { id: "MS-011", projectId: "PROJ-2026-00038", title: "Commissioning & Testing", plannedDate: "2026-05-31", actualDate: "", status: "Delayed", progress: 0, owner: "J. Banda" },
+];
+
+export type ProjectRisk = {
+  id: string; projectId: string; title: string; category: string;
+  likelihood: number; impact: number; riskScore: number; level: RiskLevel;
+  status: "Open" | "Mitigating" | "Escalated" | "Closed";
+  owner: string; mitigation: string; dateLogged: string;
+};
+
+export const projectRisks: ProjectRisk[] = [
+  { id: "RSK-001", projectId: "PROJ-2026-00038", title: "Contractor cash flow leading to work stoppages", category: "Financial", likelihood: 4, impact: 5, riskScore: 20, level: "Critical", status: "Escalated", owner: "J. Banda", mitigation: "Weekly cash flow monitoring; mobilisation advance reviewed", dateLogged: "2026-03-10" },
+  { id: "RSK-002", projectId: "PROJ-2026-00038", title: "Geological surprises increasing excavation costs", category: "Technical", likelihood: 3, impact: 4, riskScore: 12, level: "High", status: "Mitigating", owner: "J. Banda", mitigation: "Additional geotechnical borings commissioned", dateLogged: "2026-02-20" },
+  { id: "RSK-003", projectId: "PROJ-2026-00041", title: "Delayed procurement of bitumen — global supply issue", category: "Procurement", likelihood: 3, impact: 4, riskScore: 12, level: "High", status: "Mitigating", owner: "T. Moyo", mitigation: "Pre-order placed; alternative supplier identified", dateLogged: "2026-04-05" },
+  { id: "RSK-004", projectId: "PROJ-2026-00041", title: "Community disputes over land access", category: "Stakeholder", likelihood: 2, impact: 3, riskScore: 6, level: "Medium", status: "Open", owner: "T. Moyo", mitigation: "Community liaison officer engaged", dateLogged: "2026-05-01" },
+  { id: "RSK-005", projectId: "PROJ-2026-00036", title: "ZIMRA data migration complexity", category: "Technical", likelihood: 3, impact: 4, riskScore: 12, level: "High", status: "Open", owner: "A. Mpofu", mitigation: "Parallel run scheduled for 3 months before cutover", dateLogged: "2026-04-12" },
+  { id: "RSK-006", projectId: "PROJ-2026-00040", title: "Connectivity at remote rural facilities", category: "Infrastructure", likelihood: 2, impact: 3, riskScore: 6, level: "Medium", status: "Mitigating", owner: "P. Dube", mitigation: "Offline-first module design approved", dateLogged: "2026-01-15" },
+];
+
+export type ProjectTask = {
+  id: string; projectId: string; title: string; assignee: string;
+  startDate: string; endDate: string; progress: number;
+  status: "Not Started" | "In Progress" | "Completed" | "Overdue" | "On Hold";
+  priority: ProjectPriority; wbsCode: string;
+};
+
+export const projectTasks: ProjectTask[] = [
+  { id: "TSK-001", projectId: "PROJ-2026-00041", title: "Detailed Engineering Design", assignee: "J. Banda", startDate: "2025-09-01", endDate: "2025-11-30", progress: 100, status: "Completed", priority: "High", wbsCode: "1.1" },
+  { id: "TSK-002", projectId: "PROJ-2026-00041", title: "Site Preparation & Clearing", assignee: "J. Banda", startDate: "2025-12-01", endDate: "2026-02-28", progress: 100, status: "Completed", priority: "High", wbsCode: "1.2" },
+  { id: "TSK-003", projectId: "PROJ-2026-00041", title: "Earthworks & Grading", assignee: "J. Banda", startDate: "2026-03-01", endDate: "2026-07-31", progress: 38, status: "In Progress", priority: "Critical", wbsCode: "1.3" },
+  { id: "TSK-004", projectId: "PROJ-2026-00041", title: "Drainage & Culverts", assignee: "T. Moyo", startDate: "2026-04-01", endDate: "2026-08-31", progress: 22, status: "In Progress", priority: "High", wbsCode: "1.4" },
+  { id: "TSK-005", projectId: "PROJ-2026-00041", title: "Bridge Structures — Limpopo Crossing", assignee: "J. Banda", startDate: "2026-06-01", endDate: "2026-12-31", progress: 5, status: "In Progress", priority: "Critical", wbsCode: "1.5" },
+  { id: "TSK-006", projectId: "PROJ-2026-00041", title: "Asphalt Surfacing", assignee: "T. Moyo", startDate: "2027-01-01", endDate: "2027-08-31", progress: 0, status: "Not Started", priority: "High", wbsCode: "1.6" },
+  { id: "TSK-007", projectId: "PROJ-2026-00040", title: "Requirements Gathering", assignee: "P. Dube", startDate: "2024-04-01", endDate: "2024-06-30", progress: 100, status: "Completed", priority: "High", wbsCode: "2.1" },
+  { id: "TSK-008", projectId: "PROJ-2026-00040", title: "System Architecture & Design", assignee: "A. Mpofu", startDate: "2024-07-01", endDate: "2024-09-30", progress: 100, status: "Completed", priority: "High", wbsCode: "2.2" },
+  { id: "TSK-009", projectId: "PROJ-2026-00040", title: "Core Module Development", assignee: "A. Mpofu", startDate: "2024-10-01", endDate: "2025-12-31", progress: 100, status: "Completed", priority: "Critical", wbsCode: "2.3" },
+  { id: "TSK-010", projectId: "PROJ-2026-00040", title: "User Acceptance Testing", assignee: "P. Dube", startDate: "2026-03-01", endDate: "2026-07-31", progress: 65, status: "In Progress", priority: "Critical", wbsCode: "2.4" },
+  { id: "TSK-011", projectId: "PROJ-2026-00040", title: "Staff Training", assignee: "R. Chikwanda", startDate: "2026-07-01", endDate: "2026-08-31", progress: 0, status: "Not Started", priority: "High", wbsCode: "2.5" },
+  { id: "TSK-012", projectId: "PROJ-2026-00038", title: "Phase 1 Civil Works", assignee: "J. Banda", startDate: "2023-06-01", endDate: "2024-11-30", progress: 100, status: "Completed", priority: "Critical", wbsCode: "3.1" },
+  { id: "TSK-013", projectId: "PROJ-2026-00038", title: "M&E Installation", assignee: "J. Banda", startDate: "2024-09-01", endDate: "2026-05-31", progress: 42, status: "Overdue", priority: "Critical", wbsCode: "3.2" },
+  { id: "TSK-014", projectId: "PROJ-2026-00038", title: "Commissioning & Testing", assignee: "J. Banda", startDate: "2026-06-01", endDate: "2026-08-31", progress: 0, status: "Not Started", priority: "Critical", wbsCode: "3.3" },
+];
+
+export const projectSpendTrend = [
+  { month: "Jan", planned: 42, actual: 38, forecast: 42 },
+  { month: "Feb", planned: 67, actual: 60, forecast: 67 },
+  { month: "Mar", planned: 98, actual: 91, forecast: 98 },
+  { month: "Apr", planned: 132, actual: 128, forecast: 132 },
+  { month: "May", planned: 168, actual: 161, forecast: 170 },
+  { month: "Jun", planned: 210, actual: 198, forecast: 215 },
+  { month: "Jul", planned: 248, actual: 0, forecast: 255 },
+  { month: "Aug", planned: 290, actual: 0, forecast: 302 },
+  { month: "Sep", planned: 335, actual: 0, forecast: 350 },
+];
+
+export const projectsByStatus = [
+  { name: "In Progress", value: 4 },
+  { name: "Initiation", value: 2 },
+  { name: "Planning", value: 1 },
+  { name: "Troubled", value: 1 },
+];
+
+export const projectAIAgents = [
+  { name: "Portfolio Intelligence Agent", status: "Active", confidence: 94, actions: 842, pending: 3 },
+  { name: "Schedule Control Agent", status: "Active", confidence: 91, actions: 1204, pending: 8 },
+  { name: "Cost Control Agent", status: "Active", confidence: 96, actions: 621, pending: 2 },
+  { name: "Risk Intelligence Agent", status: "Active", confidence: 89, actions: 384, pending: 14 },
+  { name: "Contractor Evaluation Agent", status: "Active", confidence: 93, actions: 472, pending: 5 },
+  { name: "Quality Inspector Agent", status: "Active", confidence: 88, actions: 284, pending: 9 },
+  { name: "Document Intelligence Agent", status: "Active", confidence: 95, actions: 1082, pending: 1 },
+  { name: "Chief Project Intelligence Agent", status: "Active", confidence: 92, actions: 213, pending: 4 },
+];
+
+export const contractorPerformance = [
+  { name: "Highveld Engineering", quality: 4.6, schedule: 4.2, safety: 4.8, overall: 4.5, projects: 3, defects: 2 },
+  { name: "Sable ICT Solutions", quality: 4.1, schedule: 3.8, safety: 4.9, overall: 4.0, projects: 2, defects: 5 },
+  { name: "Zimbabwe Pharma Holdings", quality: 4.7, schedule: 4.5, safety: 4.9, overall: 4.7, projects: 2, defects: 1 },
+  { name: "Mashonaland Agri Supplies", quality: 4.3, schedule: 4.6, safety: 4.8, overall: 4.5, projects: 2, defects: 3 },
+  { name: "Bulawayo Civil Works", quality: 3.4, schedule: 3.1, safety: 3.8, overall: 3.3, projects: 1, defects: 12 },
+];
+
+export const projectCostData = [
+  { category: "Infrastructure", budgeted: 204, actual: 163, variance: 41 },
+  { category: "ICT & Digital", budgeted: 33, actual: 25, variance: 8 },
+  { category: "Health", budgeted: 80, actual: 19, variance: 61 },
+  { category: "Agriculture", budgeted: 31, actual: 0, variance: 31 },
+  { category: "Education", budgeted: 7, actual: 0.3, variance: 6.7 },
+];
+
 export const navSections = [
   {
     label: "Command",
     items: [
-      { to: "/dashboard", label: "Command Center", icon: "LayoutDashboard" },
-      { to: "/analytics", label: "Analytics & BI", icon: "BarChart3" },
-      { to: "/ai-agents", label: "AI Operations", icon: "Sparkles" },
+      { to: "/dashboard",             label: "Command Center",          icon: "LayoutDashboard" },
+      { to: "/teams",                 label: "My Activities & Teams",   icon: "UsersRound" },
+      { to: "/staff-productivity",    label: "Staff Productivity",      icon: "TrendingUp" },
+      { to: "/department-activities", label: "Department Activities",   icon: "Building2" },
+      { to: "/analytics",             label: "Analytics & BI",          icon: "BarChart3" },
+      { to: "/bi-dashboards",         label: "BI Dashboards",           icon: "BarChart3" },
+      { to: "/ai-agents",             label: "AI Operations",           icon: "Sparkles" },
+    ],
+  },
+  {
+    label: "Project Management",
+    items: [
+      { to: "/projects",              label: "PM Control Tower",      icon: "LayoutDashboard" },
+      { to: "/projects/portfolio",    label: "Project Portfolio",     icon: "Briefcase" },
+      { to: "/projects/planning",     label: "Planning & WBS",        icon: "ClipboardList" },
+      { to: "/projects/schedule",     label: "Schedule & Gantt",      icon: "BarChart3" },
+      { to: "/projects/costs",        label: "Cost & Finance",        icon: "Wallet" },
+      { to: "/projects/risks",        label: "Risk & Issues",         icon: "ShieldCheck" },
+      { to: "/projects/quality",      label: "Quality & Compliance",  icon: "CheckCircle" },
+      { to: "/projects/resources",    label: "Resources",             icon: "UsersRound" },
+      { to: "/projects/contractors",  label: "Contractors",           icon: "Building2" },
+      { to: "/projects/documents",    label: "Documents",             icon: "FileText" },
+      { to: "/projects/ai-tower",     label: "AI Control Tower",      icon: "Sparkles" },
     ],
   },
   {
@@ -206,6 +373,39 @@ export const navSections = [
       { to: "/finance", label: "Invoices & Payments", icon: "Wallet" },
       { to: "/audit", label: "Audit & Compliance", icon: "ShieldCheck" },
       { to: "/anti-corruption", label: "Anti-Corruption", icon: "AlertOctagon" },
+    ],
+  },
+  {
+    label: "Asset Management",
+    items: [
+      { to: "/assets", label: "Asset Register", icon: "Package" },
+      { to: "/assets/maintenance", label: "Maintenance", icon: "Wrench" },
+      { to: "/assets/financials", label: "Asset Financials", icon: "PiggyBank" },
+      { to: "/assets/disposal", label: "Disposal & Retirement", icon: "Trash2" },
+    ],
+  },
+  {
+    label: "Inventory & Warehouse",
+    items: [
+      { to: "/inventory", label: "Inventory Dashboard", icon: "Boxes" },
+      { to: "/inventory/items", label: "Item Master", icon: "Tag" },
+      { to: "/inventory/receiving", label: "Receiving & GRN", icon: "PackageCheck" },
+      { to: "/inventory/requests", label: "Issue Requests", icon: "ClipboardList" },
+      { to: "/inventory/warehouse", label: "Warehouse & Storage", icon: "Warehouse" },
+      { to: "/inventory/stock-count", label: "Stock Count", icon: "ScanLine" },
+      { to: "/inventory/reconciliation", label: "Reconciliation", icon: "RefreshCcw" },
+      { to: "/inventory/ai-agents", label: "Inventory AI Agents", icon: "Sparkles" },
+    ],
+  },
+  {
+    label: "Utility Services",
+    items: [
+      { to: "/utility",                label: "Catalogue Management",  icon: "BookOpen" },
+      { to: "/utility/communications", label: "Communications",        icon: "MessageSquare" },
+      { to: "/utility/gazette",        label: "Tender Gazette",        icon: "Newspaper" },
+      { to: "/utility/announcements",  label: "Announcements",         icon: "Megaphone" },
+      { to: "/utility/public-records", label: "Public Records",        icon: "Globe2" },
+      { to: "/utility/media",          label: "Media Briefing",        icon: "Radio" },
     ],
   },
   {

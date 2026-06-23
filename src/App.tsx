@@ -23,6 +23,16 @@ import AntiCorruptionPage from "./pages/AntiCorruptionPage";
 import GovernancePage from "./pages/GovernancePage";
 import RolesPage from "./pages/RolesPage";
 import PortalPage from "./pages/PortalPage";
+import AssetManagementPage from "./pages/AssetManagementPage";
+import AssetMaintenancePage from "./pages/AssetMaintenancePage";
+import AssetFinancialsPage from "./pages/AssetFinancialsPage";
+import AssetDisposalPage from "./pages/AssetDisposalPage";
+import InventoryPage from "./pages/InventoryPage";
+import BIDashboardPage from "./pages/BIDashboardPage";
+import UtilityPage from "./pages/UtilityPage";
+import TeamsPage from "./pages/TeamsPage";
+import StaffProductivityPage from "./pages/StaffProductivityPage";
+import DepartmentActivitiesPage from "./pages/DepartmentActivitiesPage";
 import NotFound from "./pages/NotFound";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -66,6 +76,43 @@ function AppRoutes() {
       <Route path="/anti-corruption" element={<ProtectedRoute><AntiCorruptionPage /></ProtectedRoute>} />
       <Route path="/governance" element={<ProtectedRoute><GovernancePage /></ProtectedRoute>} />
       <Route path="/roles" element={<ProtectedRoute><RolesPage /></ProtectedRoute>} />
+
+      {/* Asset Management */}
+      <Route path="/assets" element={<ProtectedRoute><AssetManagementPage /></ProtectedRoute>} />
+      <Route path="/assets/maintenance" element={<ProtectedRoute><AssetMaintenancePage /></ProtectedRoute>} />
+      <Route path="/assets/financials" element={<ProtectedRoute><AssetFinancialsPage /></ProtectedRoute>} />
+      <Route path="/assets/disposal" element={<ProtectedRoute><AssetDisposalPage /></ProtectedRoute>} />
+
+      {/* Inventory & Warehouse Management */}
+      <Route path="/inventory" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/inventory/items" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/inventory/receiving" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/inventory/requests" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/inventory/warehouse" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/inventory/stock-count" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/inventory/reconciliation" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/inventory/ai-agents" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+
+      {/* Business Intelligence */}
+      <Route path="/bi-dashboards" element={<ProtectedRoute><BIDashboardPage /></ProtectedRoute>} />
+
+      {/* Utility Services */}
+      <Route path="/utility" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
+      <Route path="/utility/catalogue" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
+      <Route path="/utility/communications" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
+      <Route path="/utility/gazette" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
+      <Route path="/utility/announcements" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
+      <Route path="/utility/public-records" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
+      <Route path="/utility/media" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
+
+      {/* Teams & Collaboration */}
+      <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
+
+      {/* Staff Productivity & Performance */}
+      <Route path="/staff-productivity" element={<ProtectedRoute><StaffProductivityPage /></ProtectedRoute>} />
+
+      {/* Department Activities Workbench */}
+      <Route path="/department-activities" element={<ProtectedRoute><DepartmentActivitiesPage /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
