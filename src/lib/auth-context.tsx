@@ -13,6 +13,7 @@ export type UserRole =
   | "planning_officer" | "communications_officer" | "performance_officer"
   | "it_officer" | "logistics_officer" | "security_officer"
   | "health_safety_officer" | "environment_officer" | "gender_officer"
+  | "president"
   | "public"; // public portal user (company/bidder)
 
 export type AuthUser = {
@@ -109,6 +110,7 @@ export const DEMO_USERS_LIST = DEMO_USERS;
 
 // All 42 management roles
 export const ALL_ROLES: { role: UserRole; label: string; desc: string; color: string }[] = [
+  { role: "president",             label: "President / Head of State",  desc: "Whole-of-government super-executive",color: "bg-gradient-to-r from-blue-700 to-blue-900" },
   { role: "cpo",                   label: "Chief Procurement Officer",  desc: "Full platform authority",            color: "bg-slate-900" },
   { role: "procurement_officer",   label: "Procurement Officer",        desc: "Tenders · RFQs · Lifecycle",         color: "bg-blue-700" },
   { role: "evaluator",             label: "Evaluation Officer",         desc: "Bid scoring workbench",              color: "bg-indigo-600" },

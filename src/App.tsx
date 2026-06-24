@@ -53,6 +53,8 @@ import DrillDownPage from "./pages/DrillDownPage";
 import TenderDetailPage from "./pages/TenderDetailPage";
 import TenderStagePage from "./pages/TenderStagePage";
 import PrimeEntityDashboard from "./pages/PrimeEntityDashboard";
+import PresidentDashboard from "./pages/PresidentDashboard";
+import ProjectsPage from "./pages/ProjectsPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -129,6 +131,22 @@ function AppRoutes() {
 
       {/* Prime Entity Super Admin */}
       <Route path="/prime-entity" element={<ProtectedRoute><PrimeEntityDashboard /></ProtectedRoute>} />
+
+      {/* Office of the President — global super-executive */}
+      <Route path="/president" element={<ProtectedRoute><PresidentDashboard /></ProtectedRoute>} />
+
+      {/* Project Management module — handles 11 sub-routes */}
+      <Route path="/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/portfolio"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/planning"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/schedule"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/costs"       element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/risks"       element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/quality"     element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/resources"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/contractors" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/documents"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/ai-tower"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
 
       {/* Utility Services */}
       <Route path="/utility" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
