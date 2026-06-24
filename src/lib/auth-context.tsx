@@ -13,6 +13,7 @@ export type UserRole =
   | "planning_officer" | "communications_officer" | "performance_officer"
   | "it_officer" | "logistics_officer" | "security_officer"
   | "health_safety_officer" | "environment_officer" | "gender_officer"
+  | "permanent_secretary" | "procurement_director"
   | "public"; // public portal user (company/bidder)
 
 export type AuthUser = {
@@ -107,8 +108,10 @@ export function useAuth() {
 
 export const DEMO_USERS_LIST = DEMO_USERS;
 
-// All 42 management roles
+// All 44 management roles
 export const ALL_ROLES: { role: UserRole; label: string; desc: string; color: string }[] = [
+  { role: "permanent_secretary",   label: "Permanent Secretary",        desc: "Institutional head · Strategic oversight", color: "bg-slate-950" },
+  { role: "procurement_director",  label: "Procurement Director",       desc: "Procurement division leadership",    color: "bg-slate-800" },
   { role: "cpo",                   label: "Chief Procurement Officer",  desc: "Full platform authority",            color: "bg-slate-900" },
   { role: "procurement_officer",   label: "Procurement Officer",        desc: "Tenders · RFQs · Lifecycle",         color: "bg-blue-700" },
   { role: "evaluator",             label: "Evaluation Officer",         desc: "Bid scoring workbench",              color: "bg-indigo-600" },

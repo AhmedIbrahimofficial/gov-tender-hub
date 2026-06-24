@@ -404,7 +404,7 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
           <LogoIcon className="h-10 w-10 text-black" />
         </div>
         <h1 className="text-2xl font-semibold text-black" style={{ letterSpacing: "-0.02em" }}>Welcome to APPIIOMS</h1>
-        <p className="text-sm text-black/50 mt-1">Choose how you want to access the platform</p>
+        <p className="text-sm text-black/50 mt-1">AI-Powered Electronic Public Procurement and Oversight Intelligence System</p>
       </div>
 
       <div className="space-y-3">
@@ -431,7 +431,7 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
           <div className="flex-1 min-w-0">
             <div className="text-base font-semibold text-white">Government Staff Portal</div>
             <div className="text-sm text-white/60">Full management system access</div>
-            <div className="text-xs text-white/40 mt-1">42 roles · CPO · Officers · Auditors · Ministers</div>
+            <div className="text-xs text-white/40 mt-1">44 roles · PS · CPO · Directors · Officers · Auditors</div>
           </div>
           <ArrowRight className="h-5 w-5 text-white/30 group-hover:text-white transition-colors flex-shrink-0" />
         </button>
@@ -461,10 +461,10 @@ export default function SignInPage() {
         </Link>
         <div>
           <h2 className="text-3xl font-medium text-white mb-3" style={{ letterSpacing: "-0.03em" }}>
-            Transparent.<br />Fast. Intelligent.
+            Integrity.<br />Public Trust.<br />Clean Procurement.
           </h2>
           <p className="text-white/50 text-sm mb-6">
-            AI-Powered Public Procurement Integrity & Intelligence Oversight Management System — Government of Zimbabwe.
+            AI-Powered Electronic Public Procurement and Oversight Intelligence System — Government of Zimbabwe.
           </p>
 
           {/* Org Hierarchy */}
@@ -510,7 +510,7 @@ export default function SignInPage() {
               <div className="h-7 w-7 rounded-lg bg-white/10 grid place-items-center flex-shrink-0"><Shield className="h-3.5 w-3.5 text-white" /></div>
               <div>
                 <div className="text-xs text-white/80 font-medium">Government Staff</div>
-                <div className="text-[10px] text-white/40">42 roles — CPO, Officers, Auditors, Ministers</div>
+                <div className="text-[10px] text-white/40">44 roles — PS, CPO, Directors, Officers, Auditors</div>
               </div>
             </div>
           </div>

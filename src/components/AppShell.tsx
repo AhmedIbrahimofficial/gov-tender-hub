@@ -4,7 +4,7 @@ import ToastContainer from "@/components/ToastContainer";
 import {
   LayoutDashboard, BarChart3, Sparkles, ClipboardList, FileText, Trophy,
   Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
-  Landmark, UsersRound, Globe2, Search, Bell, Inbox, MessageSquare,
+  Landmark, UsersRound, Globe2, Globe, Image, Search, Bell, Inbox, MessageSquare,
   ChevronDown, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2, Menu,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio, DollarSign,
@@ -391,6 +391,7 @@ const iconMap: Record<string, React.ElementType> = {
   // Corporate Module icons
   Crown, Target, Headphones, Monitor, Users, Settings, Scale,
   OfficeBuildingIcon: Building2,
+  Globe, Image,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {

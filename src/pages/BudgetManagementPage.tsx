@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import { FeatureGrid } from "@/components/ModulePage";
+import LifecycleTower from "@/components/LifecycleTower";
+import { BUDGET_STAGES } from "@/lib/lifecycle-stages";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
 import { toast } from "@/lib/toast";
@@ -37,6 +39,7 @@ const TABS = [
   "Audit",
   "Hazard Breakers",
   "AI Agents",
+  "Lifecycle Tower",
 ] as const;
 type Tab = typeof TABS[number];
 
@@ -46,23 +49,23 @@ const TIP = { contentStyle: { background: "white", border: "1px solid #e2e8f0", 
 
 // ── Mock budget data ───────────────────────────────────────────────────────
 const MINISTRY_BUDGETS = [
-  { ministry: "Health & Child Care",   approved: 820, spent: 542, committed: 124, available: 154, pct: 81 },
-  { ministry: "Transport",             approved: 640, spent: 381, committed: 98,  available: 161, pct: 75 },
-  { ministry: "Education",             approved: 510, spent: 289, committed: 72,  available: 149, pct: 71 },
-  { ministry: "Agriculture",           approved: 430, spent: 198, committed: 88,  available: 144, pct: 66 },
-  { ministry: "Energy",                approved: 380, spent: 201, committed: 55,  available: 124, pct: 67 },
-  { ministry: "Finance",               approved: 290, spent: 167, committed: 41,  available: 82,  pct: 72 },
-  { ministry: "Water & Sanitation",    approved: 260, spent: 142, committed: 38,  available: 80,  pct: 69 },
-  { ministry: "ICT & Digital",         approved: 180, spent: 88,  committed: 28,  available: 64,  pct: 64 },
+  { ministry: "Clinical Services Dept",     approved: 280, spent: 186, committed: 42, available: 52, pct: 81 },
+  { ministry: "Pharmacy & Medical Stores",  approved: 120, spent: 72,  committed: 24, available: 24, pct: 80 },
+  { ministry: "Infrastructure Division",    approved: 320, spent: 214, committed: 68, available: 38, pct: 88 },
+  { ministry: "Roads & Bridges Dept",       approved: 200, spent: 118, committed: 40, available: 42, pct: 79 },
+  { ministry: "Primary Education Dept",     approved: 210, spent: 122, committed: 32, available: 56, pct: 73 },
+  { ministry: "ZIMRA Operations",           approved: 180, spent: 98,  committed: 28, available: 54, pct: 70 },
+  { ministry: "Treasury Operations",        approved: 140, spent: 98,  committed: 20, available: 22, pct: 83 },
+  { ministry: "ICT & Digital Services",     approved: 180, spent: 88,  committed: 28, available: 64, pct: 64 },
 ];
 
 const DEPT_BUDGETS = [
-  { dept: "Clinical Services",      ministry: "Health",     approved: 280, spent: 186, pct: 82, status: "On Track" },
-  { dept: "Infrastructure Div",     ministry: "Transport",  approved: 320, spent: 214, pct: 87, status: "At Risk" },
-  { dept: "Primary Education",      ministry: "Education",  approved: 210, spent: 122, pct: 71, status: "On Track" },
-  { dept: "Irrigation Projects",    ministry: "Agriculture",approved: 180, spent: 74,  pct: 51, status: "On Track" },
-  { dept: "Rural Electrification",  ministry: "Energy",     approved: 190, spent: 108, pct: 70, status: "On Track" },
-  { dept: "Treasury Operations",    ministry: "Finance",    approved: 140, spent: 98,  pct: 83, status: "Warning" },
+  { dept: "Clinical Services",        ministry: "Health",     approved: 280, spent: 186, pct: 82, status: "On Track" },
+  { dept: "Pharmacy & Medical Stores",ministry: "Health",     approved: 120, spent: 96,  pct: 80, status: "Warning"  },
+  { dept: "Infrastructure Division",  ministry: "Transport",  approved: 320, spent: 214, pct: 87, status: "At Risk"  },
+  { dept: "Roads & Bridges",          ministry: "Transport",  approved: 200, spent: 118, pct: 79, status: "On Track" },
+  { dept: "Primary Education",        ministry: "Education",  approved: 210, spent: 122, pct: 71, status: "On Track" },
+  { dept: "Treasury Operations",      ministry: "Finance",    approved: 140, spent: 98,  pct: 83, status: "Warning"  },
 ];
 
 const BURN_TREND = [
@@ -87,21 +90,27 @@ const REVENUE_DATA = [
 ];
 
 const CATEGORY_SPEND = [
-  { name: "Salaries & Benefits", value: 38 },
-  { name: "Capital Projects",    value: 24 },
-  { name: "Goods & Services",    value: 19 },
-  { name: "Transfers & Grants",  value: 12 },
-  { name: "Debt Servicing",      value: 7  },
+  { name: "Staff Costs",             value: 28 },
+  { name: "Capital Projects",        value: 22 },
+  { name: "Allowances & Travel",     value: 12 },
+  { name: "Goods & Services",        value: 14 },
+  { name: "ICT & Technology",        value: 8  },
+  { name: "Rent & Facilities",       value: 7  },
+  { name: "Legal & Consulting",      value: 5  },
+  { name: "Fuel & Vehicle Maint.",   value: 4  },
 ];
 
 const BUDGET_CENTRES = [
-  { id: "BC-MIN-001", name: "Ministry of Health & Child Care", type: "Ministry",   units: 6,  budget: "USD 820M", status: "Active" },
-  { id: "BC-MIN-002", name: "Ministry of Transport",           type: "Ministry",   units: 4,  budget: "USD 640M", status: "Active" },
-  { id: "BC-MIN-003", name: "Ministry of Education",           type: "Ministry",   units: 5,  budget: "USD 510M", status: "Active" },
-  { id: "BC-DEP-001", name: "Clinical Services Dept",          type: "Department", units: 0,  budget: "USD 280M", status: "Active", parent: "BC-MIN-001" },
-  { id: "BC-DEP-002", name: "Infrastructure Division",         type: "Department", units: 0,  budget: "USD 320M", status: "Active", parent: "BC-MIN-002" },
-  { id: "BC-AUT-001", name: "ZIMRA",                           type: "Autonomous", units: 3,  budget: "USD 180M", status: "Active" },
-  { id: "BC-AUT-002", name: "ZINARA",                          type: "Autonomous", units: 2,  budget: "USD 95M",  status: "Active" },
+  { id: "BC-ENT-001", name: "Ministry of Health & Child Care",   type: "Entity",     units: 6,  budget: "USD 820M", status: "Active" },
+  { id: "BC-ENT-002", name: "Ministry of Transport",             type: "Entity",     units: 4,  budget: "USD 640M", status: "Active" },
+  { id: "BC-ENT-003", name: "Ministry of Education",             type: "Entity",     units: 5,  budget: "USD 510M", status: "Active" },
+  { id: "BC-DEP-001", name: "Clinical Services Dept",            type: "Department", units: 0,  budget: "USD 280M", status: "Active", parent: "BC-ENT-001" },
+  { id: "BC-DEP-002", name: "Pharmacy & Medical Stores",         type: "Department", units: 0,  budget: "USD 120M", status: "Active", parent: "BC-ENT-001" },
+  { id: "BC-DEP-003", name: "Infrastructure Division",           type: "Department", units: 0,  budget: "USD 320M", status: "Active", parent: "BC-ENT-002" },
+  { id: "BC-DEP-004", name: "Roads & Bridges Dept",              type: "Department", units: 0,  budget: "USD 200M", status: "Active", parent: "BC-ENT-002" },
+  { id: "BC-DEP-005", name: "Primary Education Dept",            type: "Department", units: 0,  budget: "USD 210M", status: "Active", parent: "BC-ENT-003" },
+  { id: "BC-SOE-001", name: "ZIMRA",                             type: "State Entity",units: 3, budget: "USD 180M", status: "Active" },
+  { id: "BC-SOE-002", name: "ZINARA",                            type: "State Entity",units: 2, budget: "USD 95M",  status: "Active" },
 ];
 
 const COMMITMENTS = [
@@ -238,11 +247,11 @@ function ExecutiveCommandTab() {
 
       {/* Ministry budget table */}
       <Card>
-        <CardHeader title="Ministry Budget Performance" subtitle="FY2026 — All ministries" />
+        <CardHeader title="Department Budget Performance" subtitle="FY2026 — All departments" />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-xs text-black/40 uppercase">
-              <tr>{["Ministry","Approved (USD M)","Spent","Committed","Available","Utilisation","Status"].map(h => <th key={h} className="px-4 py-2.5 text-left font-medium whitespace-nowrap">{h}</th>)}</tr>
+              <tr>{["Department / Unit","Approved (USD M)","Spent","Committed","Available","Utilisation","Status"].map(h => <th key={h} className="px-4 py-2.5 text-left font-medium whitespace-nowrap">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {MINISTRY_BUDGETS.map(m => (
@@ -308,7 +317,7 @@ function BudgetCentresTab({ onAction }: { onAction: (msg: string) => void }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm text-black/50">Manage the hierarchy: Ministries → Departments → Autonomous Bodies. Each centre formulates its own budget; the system auto-consolidates upward.</p>
+        <p className="text-sm text-black/50">Manage the hierarchy: Parent Entity → Departments → Sub-units. Each centre formulates its own budget; the system auto-consolidates upward.</p>
         <button onClick={() => setShowCreate(true)} className="h-9 px-4 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-2">
           <Plus className="h-4 w-4" /> New Budget Centre
         </button>
@@ -429,7 +438,7 @@ function BudgetExecutionTab() {
           </div>
         </Card>
         <Card>
-          <CardHeader title="Ministry Budget Comparison" subtitle="Approved vs Spent (USD M)" />
+          <CardHeader title="Department Budget Comparison" subtitle="Approved vs Spent (USD M)" />
           <div className="p-4 h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={MINISTRY_BUDGETS.slice(0,6)} layout="vertical">
@@ -953,6 +962,15 @@ export default function BudgetManagementPage() {
           { title: "OAG Preparation",              desc: "Automated preparation of audit files and responses for Office of the Auditor-General." },
           { title: "Repeat Finding Analytics",     desc: "Track and escalate systemic issues that produce repeat audit findings year over year." },
         ]} />
+      );
+      case "Lifecycle Tower":    return (
+        <LifecycleTower
+          title="Budget Lifecycle Tower — 10 Stages"
+          subtitle="From formulation through evaluation and learning. Click any stage for the full toolset."
+          stages={BUDGET_STAGES}
+          context="Budget Management"
+          badgeLabel="10 Stages · Full Lifecycle"
+        />
       );
       default:                   return <ExecutiveCommandTab />;
     }

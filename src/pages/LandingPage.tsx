@@ -91,7 +91,7 @@ function HeroSection() {
             className="text-black/70 text-base md:text-lg max-w-md mb-8 leading-relaxed"
             style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif" }}
           >
-            AI-Powered Public Procurement Integrity & Intelligence Oversight — the complete management system for transparent, automated government procurement.
+            AI-Powered Electronic Public Procurement and Oversight Intelligence System — where every procurement decision is transparent, automated, and incorruptible.
           </p>
 
           {/* CTA button */}
@@ -145,7 +145,7 @@ function InfoSection() {
           </div>
           <div>
             <p className="text-black/70 text-2xl md:text-3xl leading-relaxed">
-              AI-Powered Public Procurement Integrity & Intelligence Oversight Management System — where every procurement decision is transparent, automated, and incorruptible.
+              AI-Powered Electronic Public Procurement and Oversight Intelligence System — where every procurement decision is transparent, automated, and incorruptible.
             </p>
           </div>
         </div>

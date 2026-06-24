@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import WorkflowStepper from "@/components/WorkflowStepper";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
+import WorkstationTower from "@/components/WorkstationTower";
 import { DEPARTMENTS } from "./CorporatePage";
+import { getDepartmentById } from "@/lib/workstation-data";
 import { pushNotification } from "@/lib/local-store";
 import {
   ArrowLeft, Users, CheckCircle2, Clock, AlertTriangle, Sparkles,
@@ -315,7 +317,7 @@ const ACTIVITY_LOG = [
 ];
 
 // ─── Tab bar helper ───────────────────────────────────────────────────────────
-const TABS = ["Overview", "Process Flow", "Performance", "AI Assistant"] as const;
+const TABS = ["Overview", "Process Flow", "Workstations", "Performance", "AI Assistant"] as const;
 type Tab = typeof TABS[number];
 
 function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
@@ -595,8 +597,11 @@ function PerformanceTab({ dept }: { dept: typeof DEPARTMENTS[number] }) {
 export default function CorporateDepartmentPage() {
   const { deptId } = useParams<{ deptId: string }>();
   const navigate   = useNavigate();
-  const [tab, setTab] = useState<Tab>("Overview");
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab") === "workstations" ? "Workstations" : "Overview";
+  const [tab, setTab] = useState<Tab>(initialTab as Tab);
   const [showAI, setShowAI] = useState(false);
+  const [adminMode, setAdminMode] = useState(false);
 
   const dept = DEPARTMENTS.find(d => d.id === deptId);
 
@@ -660,6 +665,14 @@ export default function CorporateDepartmentPage() {
               <Download className="h-3.5 w-3.5" /> Report
             </button>
             <button
+              onClick={() => setAdminMode(v => !v)}
+              className={`h-8 px-3 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors ${
+                adminMode ? "bg-amber-500 text-white" : "border border-black/10 text-black/60 hover:bg-black/5"
+              }`}
+            >
+              Admin
+            </button>
+            <button
               onClick={() => setShowAI(v => !v)}
               className={`h-8 px-3 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors ${
                 showAI ? "bg-violet-600 text-white" : "bg-black text-white hover:bg-gray-800"
@@ -702,6 +715,33 @@ export default function CorporateDepartmentPage() {
         {/* Tab content */}
         {tab === "Overview"      && <OverviewTab     dept={dept} />}
         {tab === "Process Flow"  && <ProcessFlowTab  deptId={dept.id} deptName={dept.name} />}
+        {tab === "Workstations"  && (() => {
+          const wsDept = getDepartmentById(dept.id);
+          if (!wsDept) return (
+            <div className="py-12 text-center text-sm text-black/40">
+              Workstation data not yet configured for this department.
+            </div>
+          );
+          return (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-black">{wsDept.name} — Role Chain</p>
+                  <p className="text-xs text-black/50 mt-0.5">
+                    {wsDept.workstations.length} workstations · Roles flow from top to bottom.
+                    Click any workstation to open its full profile.
+                    {adminMode && <span className="ml-2 text-amber-600 font-semibold">Admin mode: hover cards to edit, hide, or remove.</span>}
+                  </p>
+                </div>
+              </div>
+              <WorkstationTower
+                department={wsDept}
+                adminMode={adminMode}
+                onSelectWorkstation={(ws) => navigate(`/corporate/${dept.id}/workstation/${ws.id}`)}
+              />
+            </div>
+          );
+        })()}
         {tab === "Performance"   && <PerformanceTab  dept={dept} />}
         {tab === "AI Assistant"  && (
           <div>

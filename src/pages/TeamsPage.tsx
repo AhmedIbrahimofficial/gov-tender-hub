@@ -1397,7 +1397,7 @@ export default function TeamsPage() {
     <AppShell>
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
-          title="My Workspace"
+          title="My Work Space"
           description={`Welcome back, ${userName} — your personal activity hub and team collaboration centre`}
           actions={
             <div className="flex gap-2">

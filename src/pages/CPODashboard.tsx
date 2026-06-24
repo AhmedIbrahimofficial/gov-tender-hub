@@ -4,7 +4,6 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { useAuth } from "@/lib/auth-context";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import NewTenderModal from "@/components/NewTenderModal";
-import TodayActivity from "@/components/TodayActivity";
 import SeniorFeed from "@/components/SeniorFeed";
 import { useTenders, useRFQs, useVendors } from "@/hooks/use-store";
 import { toast } from "@/lib/toast";
@@ -19,7 +18,7 @@ import {
 import { spendTrend, categorySpend, provinceSpend } from "@/lib/mock-data";
 import { pushSeniorAlert, saveAIReport } from "@/lib/local-store";
 
-const TABS = ["Overview", "Senior Feed", "Tenders", "RFQs", "Vendors", "Analytics", "Today"] as const;
+const TABS = ["Overview", "Senior Feed", "Tenders", "RFQs", "Vendors", "Analytics"] as const;
 type Tab = typeof TABS[number];
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4"];
@@ -319,8 +318,6 @@ export default function CPODashboard() {
             </Card>
           </div>
         )}
-
-        {tab === "Today" && <TodayActivity />}
       </div>
 
       <NewTenderModal open={showNewTender} onClose={() => setShowNewTender(false)} />
