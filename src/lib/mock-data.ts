@@ -428,10 +428,11 @@ export const navSections = [
   {
     label: "Governance",
     items: [
-      { to: "/organisations", label: "Organisation Registry", icon: "Building2" },
-      { to: "/governance", label: "Governance & Master Data", icon: "Landmark" },
-      { to: "/roles", label: "Role Management", icon: "UsersRound" },
-      { to: "/portal", label: "Public Transparency", icon: "Globe2" },
+      { to: "/prime-entity",  label: "Prime Entity Dashboard", icon: "Landmark"   },
+      { to: "/organisations", label: "Organisation Registry",  icon: "Building2"  },
+      { to: "/governance",    label: "Governance & Master Data", icon: "Landmark" },
+      { to: "/roles",         label: "Role Management",         icon: "UsersRound" },
+      { to: "/portal",        label: "Public Transparency",     icon: "Globe2"     },
     ],
   },
 ];
