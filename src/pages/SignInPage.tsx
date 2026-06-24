@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, ALL_ROLES, type UserRole } from "@/lib/auth-context";
+import { ZW_MINISTRIES } from "@/lib/zw-ministries";
 import { Eye, EyeOff, ArrowRight, Shield, Building2, ChevronLeft, X, Phone, User, Mail, Lock, Briefcase, Landmark, GitBranch, ChevronRight, Building } from "lucide-react";
 import { seedIfEmpty } from "@/lib/local-store";
 
@@ -218,7 +219,8 @@ function PublicLogin({ onBack }: { onBack: () => void }) {
 function StaffLoginForm({ role, onBack }: { role: typeof ALL_ROLES[number]; onBack: () => void }) {
   const { loginWithDetails } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "", phone: "", department: "", entity: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", phone: "", ministryId: "", department: "", entity: "" });
+  const selectedMinistry = ZW_MINISTRIES.find(m => m.id === form.ministryId);
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -287,21 +289,39 @@ function StaffLoginForm({ role, onBack }: { role: typeof ALL_ROLES[number]; onBa
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Department</label>
-            <div className="relative mt-1.5">
-              <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-              <input value={form.department} onChange={e => set("department", e.target.value)} placeholder="Procurement"
-                className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black/20" />
-            </div>
+        <div>
+          <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Ministry *</label>
+          <div className="relative mt-1.5">
+            <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30 z-10" />
+            <select value={form.ministryId}
+              onChange={e => set("ministryId", e.target.value) || set("department", "") || set("entity", ZW_MINISTRIES.find(m => m.id === e.target.value)?.name ?? "")}
+              className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black/20 appearance-none">
+              <option value="">Select your ministry…</option>
+              {ZW_MINISTRIES.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
           </div>
-          <div>
-            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Entity / Ministry</label>
-            <div className="relative mt-1.5">
-              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-              <input value={form.entity} onChange={e => set("entity", e.target.value)} placeholder="PRAZ"
-                className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black/20" />
-            </div>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Department / State Entity</label>
+          <div className="relative mt-1.5">
+            <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30 z-10" />
+            <select value={form.department} disabled={!selectedMinistry}
+              onChange={e => set("department", e.target.value)}
+              className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black/20 appearance-none disabled:bg-gray-50 disabled:text-black/30">
+              <option value="">{selectedMinistry ? "Select department / SOE…" : "Select ministry first"}</option>
+              {selectedMinistry && (
+                <>
+                  <optgroup label="Departments">
+                    {selectedMinistry.departments.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                  </optgroup>
+                  {selectedMinistry.stateEntities.length > 0 && (
+                    <optgroup label="State Entities">
+                      {selectedMinistry.stateEntities.map(s => <option key={s.id} value={s.name}>{s.name} ({s.code})</option>)}
+                    </optgroup>
+                  )}
+                </>
+              )}
+            </select>
           </div>
         </div>
         <div>
