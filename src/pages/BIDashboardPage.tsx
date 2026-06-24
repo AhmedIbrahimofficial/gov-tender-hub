@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
 import {
@@ -121,7 +122,7 @@ const profit2022 = [
   { month: "Mar", gp: 270000 }, { month: "Dec", gp: 0 },
 ];
 
-function BusinessAnalysisTab() {
+function BusinessAnalysisTab({ onChartClick }: { onChartClick?: (data: Record<string, unknown>, cat: string) => void }) {
   return (
     <div className="space-y-4">
       {/* KPIs */}
@@ -146,7 +147,8 @@ function BusinessAnalysisTab() {
                 <YAxis type="category" dataKey="lang" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={72} />
                 <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:12 }}
                   formatter={(v:number) => [`USD ${(v/1e6).toFixed(2)}M`, "Gross Profit"]} />
-                <Bar dataKey="profit" fill={C.orange} radius={[0,3,3,0]} name="Gross Profit" />
+                <Bar dataKey="profit" fill={C.orange} radius={[0,3,3,0]} name="Gross Profit"
+                  onClick={(d: Record<string, unknown>) => onChartClick?.(d, "gross-profit")} style={{ cursor: "pointer" }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -160,7 +162,8 @@ function BusinessAnalysisTab() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={grossProfitByCompany} cx="50%" cy="50%" innerRadius={45} outerRadius={72}
-                    dataKey="value" paddingAngle={2}>
+                    dataKey="value" paddingAngle={2}
+                    onClick={(d: Record<string, unknown>) => onChartClick?.(d, "company-profit")} style={{ cursor: "pointer" }}>
                     {grossProfitByCompany.map((_,i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
                   </Pie>
                   <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:11 }}
@@ -550,7 +553,7 @@ const receivablePayable = [
   {month:"Jul",recv: 600000,pay: 550000},{month:"Aug",recv: 400000,pay: 380000},
 ];
 
-function FinanceAnalysisTab() {
+function FinanceAnalysisTab({ onChartClick }: { onChartClick?: (data: Record<string, unknown>, cat: string) => void }) {
   return (
     <div className="space-y-4">
       {/* KPI row */}
@@ -748,7 +751,7 @@ const top10Sales = [
   {lang:"Korean",       cnt:16624 },{lang:"English",      cnt:16256 },
 ];
 
-function SalesAnalysisTab() {
+function SalesAnalysisTab({ onChartClick }: { onChartClick?: (data: Record<string, unknown>, cat: string) => void }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -1664,6 +1667,13 @@ function ExecutiveSummaryTab() {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function BIDashboardPage() {
   const [tab, setTab] = useState<Tab>("Business Analysis");
+  const navigate = useNavigate();
+
+  const handleChartClick = (data: Record<string, unknown>, category: string) => {
+    if (!data) return;
+    const value = (data.lang ?? data.name ?? data.year ?? data.coe ?? data.dept ?? data.cust ?? "segment") as string;
+    navigate(`/bi-dashboards/drill/${encodeURIComponent(category)}/${encodeURIComponent(String(value))}`);
+  };
 
   return (
     <AppShell>
@@ -1671,10 +1681,11 @@ export default function BIDashboardPage() {
         <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">Business Intelligence</Badge>
           <Badge tone="muted">Senstar Botswana · FY 31.12.22</Badge>
+          <Badge tone="muted">Click any chart segment for drill-down ↓</Badge>
         </div>
         <PageHeader
           title="Business Intelligence Dashboards"
-          description="Comprehensive BI suite: sales performance, finance analysis, stakeholder management, cohort tracking, investment analysis, and executive reporting."
+          description="Comprehensive BI suite. Click any chart bar or pie slice to drill into detailed data."
           actions={
             <>
               <button className="h-9 px-3 rounded-xl border border-black/10 text-sm flex items-center gap-1.5 hover:bg-gray-50 transition-colors">
@@ -1697,10 +1708,10 @@ export default function BIDashboardPage() {
           ))}
         </div>
 
-        {tab === "Business Analysis"   && <BusinessAnalysisTab />}
+        {tab === "Business Analysis"   && <BusinessAnalysisTab onChartClick={handleChartClick} />}
         {tab === "Performance Report"  && <PerformanceReportTab />}
-        {tab === "Finance Analysis"    && <FinanceAnalysisTab />}
-        {tab === "Sales Analysis"      && <SalesAnalysisTab />}
+        {tab === "Finance Analysis"    && <FinanceAnalysisTab onChartClick={handleChartClick} />}
+        {tab === "Sales Analysis"      && <SalesAnalysisTab onChartClick={handleChartClick} />}
         {tab === "Stakeholders"        && <StakeholdersTab />}
         {tab === "Incubatees"          && <IncubateesTab />}
         {tab === "Cohort Analysis"     && <CohortAnalysisTab />}

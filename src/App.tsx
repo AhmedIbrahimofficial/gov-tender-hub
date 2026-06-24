@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./lib/auth-context";
+import { MinistryProvider } from "./lib/ministry-context";
 import LandingPage from "./pages/LandingPage";
 import SignInPage from "./pages/SignInPage";
 import DashboardRouter from "./pages/DashboardRouter";
@@ -35,12 +36,28 @@ import TeamsPage from "./pages/TeamsPage";
 import StaffProductivityPage from "./pages/StaffProductivityPage";
 import DepartmentActivitiesPage from "./pages/DepartmentActivitiesPage";
 import BudgetManagementPage from "./pages/BudgetManagementPage";
+import BudgetCentresPage from "./pages/budget/BudgetCentresPage";
+import BudgetFormulationPage from "./pages/budget/BudgetFormulationPage";
+import BudgetExecutionPage from "./pages/budget/BudgetExecutionPage";
+import CommitmentsPage from "./pages/budget/CommitmentsPage";
+import ExpenditurePage from "./pages/budget/ExpenditurePage";
+import RevenuePage from "./pages/budget/RevenuePage";
+import TreasuryPage from "./pages/budget/TreasuryPage";
+import FraudDetectionPage from "./pages/budget/FraudDetectionPage";
+import MinistryDashboardPage from "./pages/MinistryDashboardPage";
+import DepartmentDashboardPage from "./pages/DepartmentDashboardPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
 import CertificatesPage from "./pages/CertificatesPage";
 import CorporatePage from "./pages/CorporatePage";
 import CorporateDepartmentPage from "./pages/CorporateDepartmentPage";
 import WorkstationDetailPage from "./pages/WorkstationDetailPage";
 import NotFound from "./pages/NotFound";
+import DrillDownPage from "./pages/DrillDownPage";
+import TenderDetailPage from "./pages/TenderDetailPage";
+import TenderStagePage from "./pages/TenderStagePage";
+import PrimeEntityDashboard from "./pages/PrimeEntityDashboard";
+import PresidentDashboard from "./pages/PresidentDashboard";
+import ProjectsPage from "./pages/ProjectsPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -105,6 +122,34 @@ function AppRoutes() {
 
       {/* Business Intelligence */}
       <Route path="/bi-dashboards" element={<ProtectedRoute><BIDashboardPage /></ProtectedRoute>} />
+      <Route path="/bi-dashboards/drill/:category/:value" element={<ProtectedRoute><DrillDownPage /></ProtectedRoute>} />
+
+      {/* Tender Detail & Stages */}
+      <Route path="/tenders/:id" element={<ProtectedRoute><TenderDetailPage /></ProtectedRoute>} />
+      <Route path="/tenders/:id/stage/:stage" element={<ProtectedRoute><TenderStagePage /></ProtectedRoute>} />
+
+      {/* Ministry & Department Dashboards */}
+      <Route path="/ministry/:ministryId/dashboard" element={<ProtectedRoute><MinistryDashboardPage /></ProtectedRoute>} />
+      <Route path="/ministry/:ministryId/department/:deptId" element={<ProtectedRoute><DepartmentDashboardPage /></ProtectedRoute>} />
+
+      {/* Prime Entity Super Admin */}
+      <Route path="/prime-entity" element={<ProtectedRoute><PrimeEntityDashboard /></ProtectedRoute>} />
+
+      {/* Office of the President — global super-executive */}
+      <Route path="/president" element={<ProtectedRoute><PresidentDashboard /></ProtectedRoute>} />
+
+      {/* Project Management module — handles 11 sub-routes */}
+      <Route path="/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/portfolio"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/planning"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/schedule"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/costs"       element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/risks"       element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/quality"     element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/resources"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/contractors" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/documents"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      <Route path="/projects/ai-tower"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
 
       {/* Utility Services */}
       <Route path="/utility" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
@@ -126,14 +171,14 @@ function AppRoutes() {
 
       {/* Budget Management */}
       <Route path="/budget"             element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/centres"     element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/formulation" element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/execution"   element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/commitments" element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/expenditure" element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/revenue"     element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/treasury"    element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
-      <Route path="/budget/fraud"       element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
+      <Route path="/budget/centres"     element={<ProtectedRoute><BudgetCentresPage /></ProtectedRoute>} />
+      <Route path="/budget/formulation" element={<ProtectedRoute><BudgetFormulationPage /></ProtectedRoute>} />
+      <Route path="/budget/execution"   element={<ProtectedRoute><BudgetExecutionPage /></ProtectedRoute>} />
+      <Route path="/budget/commitments" element={<ProtectedRoute><CommitmentsPage /></ProtectedRoute>} />
+      <Route path="/budget/expenditure" element={<ProtectedRoute><ExpenditurePage /></ProtectedRoute>} />
+      <Route path="/budget/revenue"     element={<ProtectedRoute><RevenuePage /></ProtectedRoute>} />
+      <Route path="/budget/treasury"    element={<ProtectedRoute><TreasuryPage /></ProtectedRoute>} />
+      <Route path="/budget/fraud"       element={<ProtectedRoute><FraudDetectionPage /></ProtectedRoute>} />
       <Route path="/budget/ai-agents"   element={<ProtectedRoute><BudgetManagementPage /></ProtectedRoute>} />
 
       {/* Organisation Registration & Mapping */}
@@ -155,7 +200,9 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <MinistryProvider>
+        <AppRoutes />
+      </MinistryProvider>
     </AuthProvider>
   );
 }

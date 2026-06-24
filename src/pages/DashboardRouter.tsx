@@ -12,6 +12,7 @@ import AuditorDashboard from "./AuditorDashboard";
 import SupplierDashboard from "./SupplierDashboard";
 import MinisterDashboard from "./MinisterDashboard";
 import CommandCenter from "./CommandCenter";
+import PresidentDashboard from "./PresidentDashboard";
 
 // Role-specific dashboards
 import {
@@ -46,6 +47,10 @@ export default function DashboardRouter() {
     // ── Public portal ───────────────────────────────────────────────────────
     case "public":
       return <Navigate to="/supplier-portal" replace />;
+
+    // ── President — whole-of-government super dashboard ──────────────────────
+    case "president":
+      return <PresidentDashboard />;
 
     // ── Full custom dashboards ───────────────────────────────────────────────
     case "cpo":

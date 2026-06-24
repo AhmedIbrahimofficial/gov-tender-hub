@@ -319,8 +319,13 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics", "/corporate"],
 
   // IT officer / system admin — full access
+<<<<<<< HEAD
   it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate"],
   system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate"],
+=======
+  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/prime-entity"],
+  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/prime-entity"],
+>>>>>>> 555a288eefb036184b9305d7d9e7582741de3012
 
   // Risk officer
   risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
@@ -366,7 +371,7 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   board_member:       ["/dashboard", "/analytics", "/governance", "/corporate"],
 
   // Regulator
-  regulator: ["/dashboard", "/teams", "/analytics", "/audit", "/anti-corruption", "/governance", "/vendors", "/tenders", "/utility/public-records", "/utility/gazette"],
+  regulator: ["/dashboard", "/teams", "/analytics", "/audit", "/anti-corruption", "/governance", "/vendors", "/tenders", "/utility/public-records", "/utility/gazette", "/prime-entity"],
 
   // AI governance
   ai_governance_officer:  ["/dashboard", "/teams", "/ai-agents", "/analytics", "/governance"],
@@ -743,12 +748,13 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 /* ─── Shared UI primitives ──────────────────────────────────────────────── */
-export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: ReactNode }) {
+export function PageHeader({ title, description, subtitle, actions }: { title: string; description?: string; subtitle?: string; actions?: ReactNode }) {
+  const desc = description ?? subtitle;
   return (
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
       <div className="min-w-0">
         <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-black" style={{ letterSpacing: "-0.02em" }}>{title}</h1>
-        {description && <p className="text-sm text-black/50 mt-1 max-w-2xl">{description}</p>}
+        {desc && <p className="text-sm text-black/50 mt-1 max-w-2xl">{desc}</p>}
       </div>
       {actions && <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">{actions}</div>}
     </div>
@@ -759,12 +765,13 @@ export function Card({ children, className = "" }: { children: ReactNode; classN
   return <div className={`bg-white border border-black/10 rounded-2xl shadow-sm ${className}`}>{children}</div>;
 }
 
-export function CardHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
+export function CardHeader({ title, subtitle, action, children }: { title: string; subtitle?: string; action?: ReactNode; children?: ReactNode }) {
   return (
     <div className="flex items-start justify-between gap-3 px-4 sm:px-5 pt-4 pb-3 border-b border-black/10">
       <div className="min-w-0">
         <h3 className="text-sm font-semibold text-black">{title}</h3>
         {subtitle && <p className="text-xs text-black/40 mt-0.5">{subtitle}</p>}
+        {children && <div className="mt-1">{children}</div>}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}
     </div>
