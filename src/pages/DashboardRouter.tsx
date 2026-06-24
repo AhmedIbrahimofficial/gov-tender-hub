@@ -48,6 +48,10 @@ export default function DashboardRouter() {
     case "public":
       return <Navigate to="/supplier-portal" replace />;
 
+    // ── President — whole-of-government super dashboard ──────────────────────
+    case "president":
+      return <PresidentDashboard />;
+
     // ── Full custom dashboards ───────────────────────────────────────────────
     case "cpo":
       return <CPODashboard />;
