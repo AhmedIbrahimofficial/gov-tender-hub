@@ -364,7 +364,7 @@ function BudgetCentresTab({ onAction }: { onAction: (msg: string) => void }) {
                 <tr key={c.id} className="hover:bg-gray-50/60">
                   <td className="px-4 py-3 font-mono text-[11px] text-black/50">{c.id}</td>
                   <td className="px-4 py-3 font-medium text-black">{c.name}</td>
-                  <td className="px-4 py-3"><span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${c.type === "Ministry" ? "bg-blue-100 text-blue-700" : c.type === "Department" ? "bg-emerald-100 text-emerald-700" : "bg-violet-100 text-violet-700"}`}>{c.type}</span></td>
+                  <td className="px-4 py-3"><span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${c.type === "Ministry" ? "bg-blue-100 text-blue-700" : c.type === "Entity" ? "bg-blue-100 text-blue-700" : c.type === "Department" ? "bg-emerald-100 text-emerald-700" : c.type === "State Entity" ? "bg-violet-100 text-violet-700" : "bg-gray-100 text-gray-600"}`}>{c.type}</span></td>
                   <td className="px-4 py-3 text-black/60">{c.units}</td>
                   <td className="px-4 py-3 font-medium text-black">{c.budget}</td>
                   <td className="px-4 py-3 text-black/50 text-xs">{(c as {parent?: string}).parent ?? "—"}</td>
