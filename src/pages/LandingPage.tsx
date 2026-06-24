@@ -334,7 +334,7 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col bg-[#F5F5F5]">
       {/* Hero wrapper */}
-      <div className="h-screen flex flex-col overflow-hidden">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
         <HeroSection />
       </div>

@@ -5,7 +5,7 @@ import {
   LayoutDashboard, BarChart3, Sparkles, ClipboardList, FileText, Trophy,
   Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
   Landmark, UsersRound, Globe2, Globe, Image, Search, Bell, Inbox, MessageSquare,
-  ChevronDown, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2, Menu,
+  ChevronDown, ChevronRight, Scale, ShoppingCart, Gavel, LogOut, User, X, CheckCircle2, Menu,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio, DollarSign,
   Mail, Send, Clock, AlertTriangle, Settings,
@@ -275,6 +275,9 @@ function InboxPanel({ onClose }: { onClose: () => void }) {
 }
 
 /* ─── Role-based nav whitelist ──────────────────────────────────────────── */
+// minister and system_admin get full access (no whitelist = all routes allowed)
+const FULL_ACCESS_ROLES = new Set<string>(["minister", "system_admin", "cpo", "permanent_secretary", "president", "procurement_director"]);
+
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
   procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
@@ -392,6 +395,8 @@ const iconMap: Record<string, React.ElementType> = {
   Crown, Target, Headphones, Monitor, Users, Settings, Scale,
   OfficeBuildingIcon: Building2,
   Globe, Image,
+  // Extra icons for grouped nav section headers
+  Briefcase, CheckCircle, Bell: Bell,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -438,6 +443,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const allowedRoutes = user?.role ? ROLE_NAV_WHITELIST[user.role] : undefined;
 
   const isRouteAllowed = (itemTo: string) => {
+    // Minister, System Admin, CPO, President, Permanent Secretary get full access
+    if (user?.role && FULL_ACCESS_ROLES.has(user.role)) return true;
     if (!allowedRoutes) return true;
     return allowedRoutes.some(
       allowed =>
@@ -459,45 +466,115 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Sidebar width tokens
   const sidebarW = collapsed ? "w-[52px]" : "w-[240px]";
 
+  // ── Expandable sidebar sections state ────────────────────────────────────
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
+    const initial = new Set<string>();
+    navSections.forEach(section => {
+      if (section.items.some(item =>
+        pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"))
+      )) {
+        initial.add(section.label);
+      }
+    });
+    if (initial.size === 0 && navSections.length > 0) initial.add(navSections[0].label);
+    return initial;
+  });
+
+  const toggleSection = (label: string) => {
+    setExpandedSections(prev => {
+      const next = new Set(prev);
+      next.has(label) ? next.delete(label) : next.add(label);
+      return next;
+    });
+  };
+
   // ── Shared nav content renderer ──────────────────────────────────────────
-  const NavContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
-    <nav className="px-2 py-3 space-y-4">
-      {filteredNavSections.map((section) => (
-        <div key={section.label}>
-          {!collapsed && (
-            <div className="px-2 mb-1 text-[10px] uppercase tracking-wider text-black/30 font-semibold">{section.label}</div>
-          )}
-          <div className="space-y-0.5">
-            {section.items.map((item) => {
-              const Icon = iconMap[item.icon] ?? LayoutDashboard;
-              const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={onLinkClick}
-                  title={collapsed ? item.label : undefined}
-                  className={`flex items-center gap-2.5 rounded-lg transition-colors group relative
-                    ${collapsed ? "px-0 py-2 justify-center h-9 w-9 mx-auto" : "px-2.5 py-1.5"}
-                    ${active ? "bg-black text-white" : "text-black/60 hover:bg-[#F5F5F5] hover:text-black"}`}
+  const NavContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
+    return (
+      <nav className="px-2 py-3 space-y-0.5">
+        {filteredNavSections.map((section) => {
+          const SectionIcon = iconMap[(section as any).icon ?? "LayoutDashboard"] ?? LayoutDashboard;
+          const isExpanded = expandedSections.has(section.label);
+          const hasActiveItem = section.items.some(item =>
+            pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"))
+          );
+
+          if (collapsed) {
+            return (
+              <div key={section.label} className="relative group/section">
+                <button
+                  onClick={() => toggleSection(section.label)}
+                  title={section.label}
+                  className={`w-9 h-9 mx-auto flex items-center justify-center rounded-lg transition-colors
+                    ${hasActiveItem ? "bg-black text-white" : "text-black/50 hover:bg-[#F5F5F5] hover:text-black"}`}
                 >
-                  <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={active ? 2.5 : 1.75} />
-                  {!collapsed && <span className="truncate text-sm">{item.label}</span>}
-                  {/* Tooltip when collapsed */}
-                  {collapsed && (
-                    <span className="absolute left-full ml-2 px-2 py-1 rounded-md bg-black text-white text-xs whitespace-nowrap
-                      opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-lg">
-                      {item.label}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-    </nav>
-  );
+                  <SectionIcon className="h-4 w-4 flex-shrink-0" strokeWidth={hasActiveItem ? 2.5 : 1.75} />
+                </button>
+                {/* Flyout menu when collapsed */}
+                <div className="absolute left-full top-0 ml-2 w-52 bg-white rounded-xl border border-black/10 shadow-xl z-50 opacity-0 pointer-events-none group-hover/section:opacity-100 group-hover/section:pointer-events-auto transition-opacity overflow-hidden">
+                  <div className="px-3 py-2 border-b border-black/8 bg-[#fafafa]">
+                    <span className="text-[10px] font-semibold text-black/50 uppercase tracking-wider">{section.label}</span>
+                  </div>
+                  <div className="py-1">
+                    {section.items.map(item => {
+                      const Icon = iconMap[item.icon] ?? LayoutDashboard;
+                      const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
+                      return (
+                        <Link key={item.to} to={item.to} onClick={onLinkClick}
+                          className={`flex items-center gap-2.5 px-3 py-2 text-xs transition-colors
+                            ${active ? "bg-black text-white" : "text-black/70 hover:bg-[#F5F5F5] hover:text-black"}`}>
+                          <Icon className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span>{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div key={section.label}>
+              <button
+                onClick={() => toggleSection(section.label)}
+                className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors group
+                  ${hasActiveItem && !isExpanded ? "bg-black/5 text-black" : "text-black/60 hover:bg-[#F5F5F5] hover:text-black"}`}
+              >
+                <SectionIcon className={`h-4 w-4 flex-shrink-0 ${hasActiveItem ? "text-black" : "text-black/40 group-hover:text-black"}`}
+                  strokeWidth={hasActiveItem ? 2.5 : 1.75} />
+                <span className="flex-1 text-left text-xs font-semibold truncate">{section.label}</span>
+                <ChevronRight className={`h-3.5 w-3.5 flex-shrink-0 text-black/30 transition-transform duration-200
+                  ${isExpanded ? "rotate-90" : ""}`} />
+              </button>
+
+              {isExpanded && (
+                <div className="ml-4 pl-2.5 border-l border-black/8 mt-0.5 mb-1 space-y-0.5">
+                  {section.items.map((item) => {
+                    const Icon = iconMap[item.icon] ?? LayoutDashboard;
+                    const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
+                    return (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={onLinkClick}
+                        className={`flex items-center gap-2 rounded-lg transition-colors px-2 py-1.5
+                          ${active ? "bg-black text-white" : "text-black/55 hover:bg-[#F5F5F5] hover:text-black"}`}
+                      >
+                        <Icon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={active ? 2.5 : 1.75} />
+                        <span className="truncate text-xs">{item.label}</span>
+                        {active && <div className="ml-auto h-1.5 w-1.5 rounded-full bg-white opacity-60 flex-shrink-0" />}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+    );
+  };
 
   return (
     <div className="h-screen flex flex-col bg-[#F5F5F5] text-foreground overflow-hidden">

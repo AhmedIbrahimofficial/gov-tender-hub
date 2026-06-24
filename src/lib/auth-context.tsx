@@ -14,7 +14,7 @@ export type UserRole =
   | "it_officer" | "logistics_officer" | "security_officer"
   | "health_safety_officer" | "environment_officer" | "gender_officer"
   | "permanent_secretary" | "procurement_director"
-  | "president"
+  | "president" | "chief_executive"
   | "public"; // public portal user (company/bidder)
 
 export type AuthUser = {
@@ -156,4 +156,5 @@ export const ALL_ROLES: { role: UserRole; label: string; desc: string; color: st
   { role: "logistics_officer",     label: "Logistics Officer",          desc: "Delivery, dispatch & warehousing",   color: "bg-sky-600" },
   { role: "health_safety_officer", label: "Health & Safety Officer",    desc: "HSE compliance in contracts",        color: "bg-red-600" },
   { role: "environment_officer",   label: "Environment Officer",        desc: "Environmental impact assessments",   color: "bg-green-800" },
+  { role: "chief_executive",       label: "Chief Executive Officer",    desc: "Entity-level strategic oversight and management", color: "bg-gray-900" },
 ];
