@@ -294,7 +294,7 @@ function StaffLoginForm({ role, onBack }: { role: typeof ALL_ROLES[number]; onBa
           <div className="relative mt-1.5">
             <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30 z-10" />
             <select value={form.ministryId}
-              onChange={e => set("ministryId", e.target.value) || set("department", "") || set("entity", ZW_MINISTRIES.find(m => m.id === e.target.value)?.name ?? "")}
+              onChange={e => { const id = e.target.value; setForm(f => ({ ...f, ministryId: id, department: "", entity: ZW_MINISTRIES.find(m => m.id === id)?.name ?? "" })); }}
               className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black/20 appearance-none">
               <option value="">Select your ministry…</option>
               {ZW_MINISTRIES.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
