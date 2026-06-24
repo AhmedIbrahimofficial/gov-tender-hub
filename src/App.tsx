@@ -53,6 +53,8 @@ import DrillDownPage from "./pages/DrillDownPage";
 import TenderDetailPage from "./pages/TenderDetailPage";
 import TenderStagePage from "./pages/TenderStagePage";
 import PrimeEntityDashboard from "./pages/PrimeEntityDashboard";
+import PresidentDashboard from "./pages/PresidentDashboard";
+import ProjectsPage from "./pages/ProjectsPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
