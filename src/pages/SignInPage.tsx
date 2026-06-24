@@ -324,6 +324,7 @@ function StaffLoginForm({ role, onBack }: { role: typeof ALL_ROLES[number]; onBa
             </select>
           </div>
         </div>
+        </div>
         <div>
           <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Password *</label>
           <div className="relative mt-1.5">
