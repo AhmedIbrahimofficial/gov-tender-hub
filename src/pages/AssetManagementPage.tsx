@@ -7,6 +7,8 @@ import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
 import { toast } from "@/lib/toast";
 import type { StoredAsset } from "@/lib/local-store";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
+import LifecycleTower from "@/components/LifecycleTower";
+import { ASSET_STAGES } from "@/lib/lifecycle-stages";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   PieChart, Pie, Cell, Legend, AreaChart, Area,
@@ -16,7 +18,7 @@ import {
   CheckCircle2, Clock, Wrench, MapPin, User, Building2, Tag, RefreshCw,
 } from "lucide-react";
 
-const TABS = ["Overview", "Asset Register", "Deployment", "Transfers", "Inspections", "AI Agents"] as const;
+const TABS = ["Overview", "Asset Register", "Deployment", "Transfers", "Inspections", "Lifecycle Tower", "AI Agents"] as const;
 type Tab = typeof TABS[number];
 
 const ASSET_CLASSES = [
@@ -582,6 +584,15 @@ export default function AssetManagementPage() {
         {tab === "Deployment" && <DeploymentTab assets={assets} />}
         {tab === "Transfers" && <TransfersTab assets={assets} />}
         {tab === "Inspections" && <InspectionsTab assets={assets} />}
+        {tab === "Lifecycle Tower" && (
+          <LifecycleTower
+            title="Asset Lifecycle Tower — 12 Stages"
+            subtitle="From planning through acquisition, operation, maintenance, disposal, and register closure."
+            stages={ASSET_STAGES}
+            context="Asset Management"
+            badgeLabel="12 Stages · Full Asset Lifecycle"
+          />
+        )}
         {tab === "AI Agents" && <AIAgentsTab />}
       </div>
 

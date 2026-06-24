@@ -37,6 +37,8 @@ import DepartmentActivitiesPage from "./pages/DepartmentActivitiesPage";
 import BudgetManagementPage from "./pages/BudgetManagementPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
 import CertificatesPage from "./pages/CertificatesPage";
+import CorporatePage from "./pages/CorporatePage";
+import CorporateDepartmentPage from "./pages/CorporateDepartmentPage";
 import NotFound from "./pages/NotFound";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -138,6 +140,10 @@ function AppRoutes() {
 
       {/* Certificates, Notices & Acknowledgements */}
       <Route path="/certificates" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
+
+      {/* Corporate Module */}
+      <Route path="/corporate" element={<ProtectedRoute><CorporatePage /></ProtectedRoute>} />
+      <Route path="/corporate/:deptId" element={<ProtectedRoute><CorporateDepartmentPage /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

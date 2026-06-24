@@ -170,7 +170,7 @@ function buildStages(record: ProcRecord): LifecycleStage[] {
   }));
 }
 
-// ── Stage detail data — tools per stage ──────────────────────────────────────
+// ── Stage detail data — tools per stage (all 26 stages) ──────────────────────
 const STAGE_TOOLS: Record<number, {
   documents: string[];
   workflow: string[];
@@ -181,6 +181,36 @@ const STAGE_TOOLS: Record<number, {
   riskFlags: string[];
   finance: string[];
 }> = {
+  0: {
+    documents: ["Procurement Policy Manual", "Regulatory Framework Document", "Threshold & Delegation Schedule", "User Role Matrix", "System Access Register"],
+    workflow: ["Configure procurement thresholds per method", "Set up delegation of authority levels", "Define role permissions & access controls", "Register approval workflows", "Activate compliance rule engine", "Enable audit trail logging"],
+    automation: ["System auto-enforces method thresholds", "Role-based access controls applied on login", "Audit trail starts automatically on record creation", "Compliance engine validates every action against policy"],
+    aiCapabilities: ["Recommend procurement method from value & complexity inputs", "Flag policy violations in real-time", "Auto-classify procurement by category & risk", "Generate governance health score"],
+    approvals: ["CPO policy sign-off", "Accounting Officer acknowledgement", "Regulator (PRAZ) compliance confirmation"],
+    communications: ["Policy update notice to all procurement staff", "System access credentials issued", "Compliance briefing scheduled"],
+    riskFlags: ["Outdated thresholds not aligned to current regulations", "Inactive user accounts with elevated permissions", "Missing conflict-of-interest declarations"],
+    finance: ["Financial delegation schedule configured in IFMIS", "Budget module integration verified", "Chart of accounts mapping confirmed"],
+  },
+  1: {
+    documents: ["Procurement Requisition Form", "Annual Procurement Plan", "Needs Assessment Report", "Budget Confirmation Letter", "Prior Year Spend Analysis"],
+    workflow: ["User department submits procurement request", "Procurement officer reviews and validates need", "Check against annual procurement plan", "Confirm budget availability in IFMIS", "Assign procurement reference number", "Route for demand aggregation if applicable"],
+    automation: ["Auto-check requisition against approved plan", "Budget balance queried from IFMIS in real-time", "Demand aggregation engine suggests consolidation", "Duplicate request detection across departments"],
+    aiCapabilities: ["Analyse historical demand to forecast future needs", "Detect off-plan procurement requests", "Recommend consolidation of similar requisitions", "Flag unusual spend patterns vs prior periods"],
+    approvals: ["Head of Department approval", "Budget Officer confirmation", "Procurement Officer acceptance"],
+    communications: ["PR acknowledgement to requesting department", "Budget officer budget confirmation request", "Procurement plan update notification"],
+    riskFlags: ["Procurement not in approved annual plan", "Insufficient budget available", "Request submitted without proper authorisation"],
+    finance: ["Budget availability confirmed", "IFMIS budget earmark created", "Preliminary cost estimate documented"],
+  },
+  2: {
+    documents: ["Procurement Method Justification", "Market Analysis Report", "Estimated Cost Summary", "Method Selection Checklist", "PRAZ Method Approval (if required)"],
+    workflow: ["Review procurement value against thresholds", "Assess market conditions and supplier landscape", "Select appropriate procurement method", "Document justification for method choice", "Obtain PRAZ approval for exceptions", "Record method decision in procurement file"],
+    automation: ["Method auto-suggested based on value & category", "Threshold compliance checked automatically", "Market intelligence pulled from vendor database", "Timeline auto-projected based on selected method"],
+    aiCapabilities: ["Recommend optimal method using historical outcomes", "Predict likely bidder pool by category", "Identify risk of single-source situations", "Generate method justification narrative"],
+    approvals: ["CPO method approval", "PRAZ approval for direct procurement above threshold"],
+    communications: ["Method decision recorded in procurement file", "Legal officer notified for complex methods"],
+    riskFlags: ["Method selected below applicable threshold to avoid competition", "Insufficient market analysis performed", "Method not aligned to regulatory requirements"],
+    finance: ["Value-for-money method confirmed", "Savings opportunity documented", "Framework agreement check completed"],
+  },
   3: {
     documents: ["Tender Notice Template", "Bill of Quantities", "Terms of Reference", "Instruction to Bidders", "Bid Forms", "Evaluation Criteria Matrix"],
     workflow: ["Create tender record & assign number", "Attach project documents", "Define evaluation stages & weights", "Assign committee members", "Collect COI declarations", "Submit for internal approval"],
@@ -190,6 +220,16 @@ const STAGE_TOOLS: Record<number, {
     communications: ["Internal draft sharing", "Stakeholder review invites", "Committee notification"],
     riskFlags: ["Specification too broad or too narrow", "Unrealistic timeline", "Missing mandatory documents"],
     finance: ["Budget code confirmed", "Estimated value approved", "IFMIS commitment raised"],
+  },
+  4: {
+    documents: ["Internal Review Checklist", "Legal Clearance Certificate", "Finance Endorsement Letter", "Compliance Sign-Off Form", "CPO Approval Memo"],
+    workflow: ["Submit complete procurement package for review", "Legal officer reviews terms, conditions & clauses", "Finance officer confirms budget & cost reasonableness", "Compliance officer checks regulatory conformity", "CPO reviews complete package and approves", "Record all approvals in procurement file"],
+    automation: ["Approval routing triggered automatically on submission", "SLA clock starts on receipt by each approver", "Escalation triggered if SLA breached", "Approval chain locks document version"],
+    aiCapabilities: ["Check completeness of submission package", "Flag legal or compliance gaps before submission", "Predict approval likelihood based on package quality", "Summarise package for approver review"],
+    approvals: ["Legal Officer clearance", "Finance Officer endorsement", "Compliance Officer sign-off", "CPO final approval"],
+    communications: ["Submission acknowledgement to procurement officer", "Approval request to each reviewer", "SLA reminder notifications", "Approval confirmation to procurement team"],
+    riskFlags: ["Missing mandatory documents in submission", "Legal issues flagged in review", "Budget not confirmed before advertisement"],
+    finance: ["Budget adequacy confirmed", "Cost reasonableness assessed", "Financial risk reviewed"],
   },
   5: {
     documents: ["Published Tender Notice", "Addendum Log", "Publication Proof", "Distribution List"],
@@ -201,6 +241,26 @@ const STAGE_TOOLS: Record<number, {
     riskFlags: ["Insufficient notice period", "Publication not reaching target suppliers"],
     finance: ["Advertisement cost authorised"],
   },
+  6: {
+    documents: ["Vendor Qualification Questionnaire", "KYC Checklist", "Tax Clearance Certificates", "PRAZ Registration Certificate", "Blacklist Check Report"],
+    workflow: ["Open vendor portal for registration", "Suppliers submit qualification documents", "Run KYC checks on all applicants", "Verify PRAZ registration status", "Screen against debarment & blacklist databases", "Issue qualification results to applicants"],
+    automation: ["PRAZ registration verified via API", "ZIMRA tax clearance checked in real-time", "Blacklist screening against PRAZ & OFAC databases", "Duplicate entity detection across subsidiaries"],
+    aiCapabilities: ["Score vendor financial strength from submitted accounts", "Detect related-party structures and beneficial ownership", "Flag politically exposed persons (PEPs)", "Predict default risk from financial ratios"],
+    approvals: ["Procurement Officer qualification review", "CPO approval of qualified vendor list"],
+    communications: ["Qualification invitation to prospective vendors", "Qualification outcome letters", "Appeals process notification"],
+    riskFlags: ["Vendor on national debarment register", "Expired tax clearance submitted", "Beneficial ownership not disclosed", "Front company indicators detected"],
+    finance: ["Vendor financial capacity threshold verified", "Bank account details validated", "Credit rating check completed"],
+  },
+  7: {
+    documents: ["Bidder Query Log", "Official Addendum / Clarification Notice", "Pre-Bid Meeting Minutes", "Site Visit Register", "Updated Tender Documents"],
+    workflow: ["Open Q&A portal for bidder queries", "Receive and log all questions", "Prepare consolidated responses", "Issue official addendum via portal", "Conduct pre-bid meeting if required", "Record site visit attendance", "Close clarification period"],
+    automation: ["All queries auto-logged with timestamp", "Addendum auto-distributed to all registered bidders", "Pre-bid meeting video recorded and archived", "Query deadline countdown visible to bidders"],
+    aiCapabilities: ["Classify queries by type and sensitivity", "Draft standard responses from previous addenda", "Detect queries hinting at inside information", "Flag queries from non-registered parties"],
+    approvals: ["CPO approval of all addenda before issue", "Legal review for scope-changing clarifications"],
+    communications: ["Query acknowledgement to bidder", "Addendum distribution to all registered bidders", "Pre-bid meeting invitation", "Site visit confirmation"],
+    riskFlags: ["Addendum issued within 48hrs of closing — insufficient time", "Query answered only to one bidder", "Scope substantially changed via addendum"],
+    finance: ["No financial impact — clarification stage only"],
+  },
   8: {
     documents: ["Encrypted Bid Package", "Bid Bond / Security", "Signed Declarations", "Technical Proposal", "Financial Proposal"],
     workflow: ["Electronic bid vault opens", "Bidder uploads encrypted package", "System validates completeness", "Acknowledgement receipt issued", "Vault locks at deadline"],
@@ -210,6 +270,26 @@ const STAGE_TOOLS: Record<number, {
     communications: ["Upload confirmation to bidder", "Deadline reminders (48h, 24h, 1h)", "Late bid rejection notice"],
     riskFlags: ["Bid security expiring before award", "Missing declarations", "Unusual formatting suggesting collusion"],
     finance: ["Bid bond amounts verified against tender value"],
+  },
+  9: {
+    documents: ["Bid Closing Certificate", "Late Bid Register", "Bid Opening Minutes", "Bid Register (number of bids received)", "Witness Signatures"],
+    workflow: ["System auto-closes bid vault at deadline", "Generate late bid log", "Convene bid opening ceremony", "Publicly announce number of bids received", "Open and read out bid prices aloud", "Record all bids in official register", "Witnesses and observers sign opening minutes"],
+    automation: ["Vault locked automatically at exact deadline", "Late bids flagged and rejected without manual intervention", "Bid count and values auto-recorded in minutes", "Livestream of opening ceremony auto-started"],
+    aiCapabilities: ["Detect statistically abnormal bid pricing", "Flag potential bid rigging through price clustering", "Identify bids from related entities", "Generate bid opening summary report"],
+    approvals: ["Bid Opening Committee chairperson signs minutes", "All witnesses countersign", "CPO receives certified copy"],
+    communications: ["Opening ceremony invitation to registered bidders", "Bid opening minutes distributed to all bidders", "Media briefing if public interest tender"],
+    riskFlags: ["Bid vault accessed before official opening", "Fewer bids than expected — possible collusion", "Bid prices identical across multiple bidders"],
+    finance: ["All bid prices officially recorded", "Reserve price comparison initiated", "Budget sufficiency confirmed vs lowest bid"],
+  },
+  10: {
+    documents: ["Administrative Compliance Matrix", "Responsiveness Checklist", "Mandatory Requirements Register", "Non-Responsive Bid Rejection Letters"],
+    workflow: ["Extract compliance criteria from tender documents", "Check each bid against mandatory requirements", "Mark bids responsive or non-responsive", "Document reasons for rejection", "Notify non-responsive bidders", "Prepare shortlist for technical evaluation"],
+    automation: ["Compliance matrix auto-populated from tender criteria", "Pass/fail scoring automated for binary criteria", "Rejection letters auto-generated with reasons", "Shortlist advanced to technical evaluation stage"],
+    aiCapabilities: ["Parse bid documents to extract compliance evidence", "Flag ambiguous compliance claims for human review", "Compare bid content against mandatory criteria", "Detect document tampering or post-submission modifications"],
+    approvals: ["Evaluation committee signs compliance matrix", "Chairperson approves non-responsive list"],
+    communications: ["Rejection notices to non-responsive bidders", "Appeals window notification", "Shortlist communicated to technical evaluators"],
+    riskFlags: ["Responsive bid count too low — consider re-tendering", "Inconsistent compliance decisions across evaluators", "Rejection reasons not adequately documented"],
+    finance: ["No financial evaluation at this stage — admin gate only"],
   },
   11: {
     documents: ["Evaluation Score Sheets", "Consensus Meeting Minutes", "Individual Evaluator Reports", "Clarification Requests", "Evaluation Narrative"],
@@ -221,6 +301,36 @@ const STAGE_TOOLS: Record<number, {
     riskFlags: ["Conflict of interest detected", "Score manipulation pattern", "Missing evaluator submissions"],
     finance: ["No financial data shared at this stage — blind evaluation"],
   },
+  12: {
+    documents: ["Financial Evaluation Scoresheet", "BOQ Arithmetic Check Report", "Price Normalisation Workings", "Life-Cycle Cost Analysis", "Currency Conversion Log"],
+    workflow: ["Open financial proposals after technical shortlist confirmed", "Run arithmetic check on all BOQs", "Normalise prices for comparison", "Apply life-cycle costing model if required", "Calculate QCBS combined score", "Generate financial ranking"],
+    automation: ["Arithmetic errors auto-corrected per PPDPA rules", "Price normalisation calculations automated", "QCBS weighted total auto-calculated", "Currency conversion applied at published rate"],
+    aiCapabilities: ["Flag unrealistically low bids for abnormality analysis", "Predict contractor financial risk from pricing patterns", "Identify price manipulation across related entities", "Model total cost of ownership scenarios"],
+    approvals: ["Finance evaluators sign financial scoresheet", "Chairperson approves ranking", "CPO reviews before combined scoring"],
+    communications: ["Clarification requests for arithmetic errors", "Bidder notification of error corrections made"],
+    riskFlags: ["Abnormally low bid — risk of non-performance", "Identical prices from multiple bidders", "Currency mismatches in BOQ items"],
+    finance: ["All financial proposals reviewed and ranked", "Total contract value validated", "Life-cycle cost premium assessed"],
+  },
+  13: {
+    documents: ["Combined Evaluation Report", "QCBS/LERB Ranking Table", "Award Recommendation Memo", "Minority Opinion (if any)", "Procurement Committee Endorsement"],
+    workflow: ["Merge technical and financial scores", "Apply method-specific weighting (QCBS/LERB)", "Produce ranked list of bidders", "Evaluation committee reviews combined report", "Record any minority opinions", "Chairperson endorses award recommendation"],
+    automation: ["Combined scores calculated automatically", "Ranking auto-generated and locked", "Report auto-drafted from scores and narratives", "Minority opinion workflow triggered if needed"],
+    aiCapabilities: ["Validate scoring consistency across all evaluators", "Detect bias patterns in scoring", "Generate executive summary of recommendation", "Compare outcome against historical similar awards"],
+    approvals: ["Full evaluation committee sign-off", "Procurement Officer review", "CPO acceptance before escalation to award approval"],
+    communications: ["Committee meeting notice for review", "Award recommendation memo to CPO", "Evaluation summary to accounting officer"],
+    riskFlags: ["Wide divergence between technical and financial rankings", "Recommended bidder has prior performance issues", "Evaluation completed by insufficient number of evaluators"],
+    finance: ["Recommended value vs budget confirmed", "Savings or cost escalation documented", "Contingency provision noted"],
+  },
+  14: {
+    documents: ["Reference Check Reports", "Site Visit Findings", "Financial Capacity Verification", "Company Search Certificate", "Past Performance Certificates"],
+    workflow: ["Contact references provided by preferred bidder", "Conduct site visit to bidder's premises", "Verify financial standing via bank confirmation", "Search company registry for ownership details", "Review track record on similar contracts", "Compile due diligence report"],
+    automation: ["Reference check questionnaires auto-sent", "Company registry searched via API", "Bank confirmation request auto-generated", "Due diligence report compiled from individual findings"],
+    aiCapabilities: ["Analyse reference patterns for coached responses", "Cross-reference declared assets vs company registry", "Score due diligence findings against risk matrix", "Predict delivery capability from resource base"],
+    approvals: ["Procurement officer signs due diligence report", "CPO accepts findings before award approval"],
+    communications: ["Reference check requests to nominated referees", "Site visit appointment notification", "Bank confirmation request"],
+    riskFlags: ["Reference provided by related party", "Site visit reveals capacity concerns", "Financial statements inconsistent with bid price", "Unresolved litigation disclosed"],
+    finance: ["Financial capacity confirmed vs contract value", "Advance payment risk assessed", "Performance bond quantum confirmed"],
+  },
   15: {
     documents: ["Award Recommendation Report", "Approval Package", "Committee Resolution", "Board Minutes", "Regulator Notification"],
     workflow: ["Submit award package to committee", "Committee review meeting", "Vote & resolution recorded", "Board approval if >threshold", "CPO countersigns", "Notify PRAZ"],
@@ -230,6 +340,26 @@ const STAGE_TOOLS: Record<number, {
     communications: ["Committee meeting notice", "Board papers circulation", "Regulator submission"],
     riskFlags: ["Approval threshold exceeded without escalation", "Missing committee quorum", "Regulator filing deadline missed"],
     finance: ["Final value confirmed for commitment", "VAT and withholding tax calculated"],
+  },
+  16: {
+    documents: ["Award Notice", "Regret Letters", "Standstill Period Notice", "Appeals Register", "PRAZ Publication Proof"],
+    workflow: ["Issue award notice to successful bidder", "Issue regret letters to unsuccessful bidders", "Publish award on portal and gazette", "Open 10-day standstill period", "Log and respond to any debriefs requested", "Handle any formal appeals within period", "Confirm no successful challenge before proceeding"],
+    automation: ["Award and regret notices auto-generated from template", "Standstill countdown timer activated", "PRAZ award publication submitted automatically", "Appeals window closes automatically after period"],
+    aiCapabilities: ["Draft personalised regret letters with scoring feedback", "Monitor for appeal filings across channels", "Summarise evaluation outcome for award notice", "Predict likelihood of challenge based on score spreads"],
+    approvals: ["CPO signs award notice", "Accounting Officer countersigns if above threshold", "Legal Officer clears standstill management"],
+    communications: ["Award notice to winner", "Regret notices to unsuccessful bidders", "PRAZ portal publication", "Gazette submission", "Debrief meeting invitations"],
+    riskFlags: ["Standstill period too short", "Award published before standstill ends", "Appeal filed — procurement must pause"],
+    finance: ["Commitment entered in IFMIS pending contract execution", "Performance bond quantum notified to winner"],
+  },
+  17: {
+    documents: ["Draft Contract", "Negotiation Record (if any)", "Final Signed Contract", "Performance Bond Certificate", "Insurance Policy Certificates", "Contract Repository Receipt"],
+    workflow: ["Prepare contract from approved template", "Negotiate special conditions if permitted", "Legal review of final draft", "Obtain signatures from both parties", "Register contract in repository", "Issue contract commencement notice", "Activate performance bond verification"],
+    automation: ["Contract auto-drafted from approved terms", "Signature workflow dispatched electronically", "Contract registered in repository automatically", "Performance bond expiry alert configured"],
+    aiCapabilities: ["Review contract for unusual or risky clauses", "Extract and index contract obligations and milestones", "Flag deviations from standard conditions", "Generate contract summary for management"],
+    approvals: ["Legal Officer reviews final draft", "CPO approves before signing", "Accounting Officer countersigns", "Supplier CEO signature"],
+    communications: ["Contract execution notice to all stakeholders", "Commencement notice to project team", "Finance team budget activation notification"],
+    riskFlags: ["Performance bond submitted from unrecognised institution", "Special conditions deviate significantly from tender terms", "Signing authority not verified"],
+    finance: ["Contract value registered in IFMIS", "Performance bond amount and validity confirmed", "Advance payment terms activated if applicable", "Retention percentage configured"],
   },
   18: {
     documents: ["Signed Contract", "Performance Bond", "Insurance Certificates", "Work Programme", "SLA Schedule", "Variation Order Log"],
@@ -241,6 +371,16 @@ const STAGE_TOOLS: Record<number, {
     riskFlags: ["Performance bond not submitted", "Work programme not approved", "Insurance lapse"],
     finance: ["IFMIS contract registered", "Advance payment processed if applicable", "Retention schedule configured"],
   },
+  19: {
+    documents: ["Delivery Schedule", "Goods Received Notes", "Completion Certificates", "Variation Order Log", "Milestone Achievement Reports", "Defect Notification Log"],
+    workflow: ["Receive and inspect deliverables per schedule", "Issue GRN or completion certificate on acceptance", "Log and process variation orders", "Track milestone achievements vs schedule", "Issue defect notices for non-conformance", "Manage extensions of time requests", "Update contract register with actuals"],
+    automation: ["Milestone due dates trigger automatic reminders", "Variation order value accumulates vs approved threshold", "GRN matched to delivery schedule automatically", "Defect liability period countdown tracked"],
+    aiCapabilities: ["Predict delay risk from progress data", "Flag scope creep from variation order patterns", "Auto-generate milestone achievement reports", "Monitor contractor performance against contract KPIs"],
+    approvals: ["Project Manager accepts deliverables", "Finance officer approves GRN for payment trigger", "CPO approves variation orders above threshold"],
+    communications: ["Delivery acceptance or rejection notice to supplier", "Milestone achievement certificate issued", "Variation order approval notification", "Defect notice to contractor"],
+    riskFlags: ["Milestone consistently missed — performance risk", "Variation orders exceed 15% of contract value", "Defect notices not responded to within SLA", "Contractor substituting specified materials"],
+    finance: ["Actuals tracked vs contract value in IFMIS", "Variation order budget provisions updated", "Retention releases linked to milestone certificates", "Advance payment recovery tracked"],
+  },
   20: {
     documents: ["Tax Invoice", "Goods Received Note", "Completion Certificate", "Purchase Order", "3-Way Match Report"],
     workflow: ["Invoice received in system", "Match invoice to PO & GRN", "Tax compliance check (ZIMRA)", "Route for payment approval", "Generate EFT batch", "Remittance sent to vendor"],
@@ -251,17 +391,56 @@ const STAGE_TOOLS: Record<number, {
     riskFlags: ["Invoice exceeds PO value", "ZIMRA clearance lapsed", "Duplicate invoice", "Bank details changed recently"],
     finance: ["Budget line debited", "IFMIS payment entry", "Withholding tax calculated & remitted", "EFT reference logged"],
   },
-};
-
-const DEFAULT_TOOLS = {
-  documents: ["Standard procurement documents", "Reference materials", "Templates"],
-  workflow: ["Review stage requirements", "Update status", "Assign tasks", "Record decisions"],
-  automation: ["Status auto-updated on action", "Notifications triggered on key events", "Audit trail maintained"],
-  aiCapabilities: ["Stage-specific AI assistant available", "Document analysis", "Risk flagging"],
-  approvals: ["Stage owner sign-off", "Supervisor review"],
-  communications: ["Email notifications to stakeholders", "In-system messages"],
-  riskFlags: ["Standard risk monitoring active"],
-  finance: ["Budget tracking active"],
+  21: {
+    documents: ["Payment Voucher", "EFT Batch File", "Treasury Authorization", "Remittance Advice", "Withholding Tax Certificate", "IFMIS Payment Entry"],
+    workflow: ["Finance officer prepares payment voucher", "Budget officer confirms expenditure code", "Accounting officer approves payment", "Treasury generates EFT batch", "Bank executes transfer", "Remittance advice sent to vendor", "Payment recorded in IFMIS", "Withholding tax remitted to ZIMRA"],
+    automation: ["Payment voucher auto-generated from approved invoice", "EFT batch auto-populated from queue", "ZIMRA WHT remittance scheduled automatically", "IFMIS payment entry auto-posted on bank confirmation"],
+    aiCapabilities: ["Detect payment anomalies vs contract schedule", "Flag payments to recently changed bank accounts", "Predict cash flow demand for upcoming payments", "Identify duplicate payment attempts across systems"],
+    approvals: ["Finance Officer signs payment voucher", "Budget Officer confirms budget code", "Accounting Officer authorises", "Treasury Officer releases EFT batch"],
+    communications: ["Remittance advice emailed to vendor", "Payment confirmation to contract manager", "WHT certificate issued to vendor", "IFMIS posting notification to finance team"],
+    riskFlags: ["Payment to bank account changed within last 30 days", "Payment exceeds contract value — overpayment risk", "WHT not remitted within statutory deadline", "Duplicate EFT entry detected"],
+    finance: ["Expenditure posted against correct budget line", "Cumulative payments vs contract value tracked", "Retention balance updated", "WHT liability cleared"],
+  },
+  22: {
+    documents: ["Vendor Performance Scorecard", "KPI Assessment Report", "Performance Improvement Plan", "Contractor Default Notice", "Performance Bond Claim (if required)"],
+    workflow: ["Score vendor performance against contract KPIs", "Issue periodic performance reports to vendor", "Hold performance review meetings", "Issue improvement notice if below threshold", "Initiate performance bond claim if default confirmed", "Update vendor performance record in registry", "Feed results into future qualification scoring"],
+    automation: ["KPI scores auto-calculated from delivery data", "Performance below 70% triggers alert automatically", "Improvement plan template issued on first warning", "Vendor performance registry updated in real-time"],
+    aiCapabilities: ["Benchmark vendor performance vs industry peers", "Predict risk of contract default from trend data", "Recommend sanctions proportional to breach severity", "Generate performance report narrative automatically"],
+    approvals: ["Contract Manager approves scorecard", "CPO approves performance improvement notices", "Accounting Officer approves bond claim initiation"],
+    communications: ["Performance scorecard shared with vendor", "Improvement notice with response deadline", "Performance review meeting invitations", "Bond claim notice to guarantor bank"],
+    riskFlags: ["Vendor KPI score below 60% — default threshold approaching", "No improvement after first notice", "Performance bond about to expire while dispute ongoing", "Vendor disputing KPI scores"],
+    finance: ["Contract deductions calculated for SLA breaches", "Performance bond status monitored", "Deduction register updated in IFMIS", "Penalty interest applied if applicable"],
+  },
+  23: {
+    documents: ["Immutable Audit Log", "Compliance Assessment Report", "Exception Register", "Audit Findings Report", "Management Response", "Corrective Action Plan"],
+    workflow: ["Generate immutable audit trail export", "Run automated compliance checks against policy", "Identify and log exceptions", "Report findings to management", "Obtain management responses", "Track corrective action implementation", "Close audit cycle with confirmation"],
+    automation: ["Audit trail cannot be modified — blockchain-backed", "Compliance checks run nightly against all records", "Exception auto-classified by severity", "Corrective action due dates tracked automatically"],
+    aiCapabilities: ["Pattern-match across records to detect systemic fraud", "Score compliance health across all procurement records", "Generate audit summary for Auditor-General submission", "Flag transactions requiring forensic review"],
+    approvals: ["Audit team validates all findings", "Management signs response to findings", "CPO acknowledges corrective actions"],
+    communications: ["Audit findings report issued to management", "OAG submission if threshold met", "PRAZ compliance report submission", "Parliament notification if applicable"],
+    riskFlags: ["Repeat exceptions from same officer — misconduct risk", "Corrective actions overdue", "Management response not received within 30 days", "Systemic compliance failure pattern detected"],
+    finance: ["Financial irregularity value quantified", "Recovery action initiated for overpayments", "Budget impact of findings reported", "PFMA compliance status confirmed"],
+  },
+  24: {
+    documents: ["Spend Analytics Dashboard", "Savings Report", "Cycle-Time Analysis", "Supplier Market Analysis", "Procurement Performance Report", "Board Intelligence Brief"],
+    workflow: ["Aggregate spend data across all completed procurements", "Calculate realised savings vs market benchmarks", "Measure cycle times per procurement phase", "Analyse supplier concentration and risk", "Generate periodic management reports", "Present insights to CPO and board", "Feed learnings into next planning cycle"],
+    automation: ["Spend data aggregated automatically from IFMIS", "Savings calculated vs pre-set benchmark prices", "Cycle-time metrics computed from stage timestamps", "Dashboard refreshed in real-time"],
+    aiCapabilities: ["Identify savings opportunities from spend patterns", "Forecast next period procurement demand", "Detect price inflation trends by category", "Benchmark against peer entities and regional standards"],
+    approvals: ["CPO validates analytics report", "Board receives intelligence brief quarterly"],
+    communications: ["Monthly spend dashboard distributed to CFO", "Quarterly savings report to Minister", "Annual procurement performance report published", "PRAZ statistics submission"],
+    riskFlags: ["Spend concentration in single supplier > 40%", "Savings target not being met", "Cycle times increasing — process deterioration", "Data quality issues in underlying records"],
+    finance: ["Total procurement spend reported by category", "Savings vs budget targets tracked", "ROI of procurement processes calculated", "IFMIS data reconciliation confirmed"],
+  },
+  25: {
+    documents: ["Final Completion Certificate", "Defects Liability Period Register", "Warranty Register", "Contract Closeout Report", "Lessons Learned Register", "Archive Index"],
+    workflow: ["Issue practical completion certificate", "Activate defects liability period monitoring", "Release retention after defects period (if clean)", "Register all warranties in warranty tracker", "Conduct contract closeout meeting", "Document lessons learned", "Archive all contract records in repository", "Update vendor performance registry with final rating"],
+    automation: ["Defects liability period countdown automated", "Retention release triggered on DLP expiry", "Warranty expiry alerts scheduled", "All documents auto-indexed on archive"],
+    aiCapabilities: ["Extract lessons learned from performance data", "Recommend improvements to future similar procurements", "Generate closeout narrative from contract history", "Score contract overall success for benchmarking"],
+    approvals: ["Project Manager issues completion certificate", "Finance Officer releases retention", "CPO signs off closeout report", "Auditor confirms records are complete"],
+    communications: ["Completion certificate to contractor", "Retention release notification to finance", "Warranty registration confirmations", "Lessons learned distributed to procurement team"],
+    riskFlags: ["Outstanding defects not rectified before retention release", "Warranty documents not received", "Lessons learned not captured — knowledge lost", "Records incomplete before archiving"],
+    finance: ["Final retention released after DLP confirmation", "All financial obligations settled", "Contract closed in IFMIS", "Final savings reported to finance"],
+  },
 };
 
 // ── Helper components ─────────────────────────────────────────────────────────
@@ -325,7 +504,7 @@ function StageDetailPanel({
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<StagePanelTab>("overview");
-  const tools = STAGE_TOOLS[stage.id] ?? DEFAULT_TOOLS;
+  const tools = STAGE_TOOLS[stage.id] ?? STAGE_TOOLS[0];
 
   const tabs: { key: StagePanelTab; label: string; icon: React.ElementType }[] = [
     { key: "overview",   label: "Overview",      icon: Eye           },

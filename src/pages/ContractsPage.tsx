@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import { FeatureGrid } from "@/components/ModulePage";
+import LifecycleTower from "@/components/LifecycleTower";
+import { CONTRACT_STAGES } from "@/lib/lifecycle-stages";
 import { contracts } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
@@ -8,9 +11,11 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { Eye, Download, FileText, AlertTriangle } from "lucide-react";
 
 type Contract = typeof contracts[0];
+type Tab = "Contracts" | "Lifecycle Tower" | "Capabilities";
 
 export default function ContractsPage() {
   const { user } = useAuth();
+  const [tab, setTab] = useState<Tab>("Contracts");
 
   const openContract = (c: Contract) => {
     toast(`Contract ${c.id} opened — ${c.title} | ${c.vendor} | ${c.value} | ${c.progress}% complete`, "info");
@@ -79,6 +84,42 @@ export default function ContractsPage() {
           <KpiCard label="Completed YTD"     value="340" delta="+22%" />
         </div>
 
+        {/* Tab bar */}
+        <div className="flex gap-1 mb-5 border-b border-black/8 overflow-x-auto scrollbar-none">
+          {(["Contracts", "Lifecycle Tower", "Capabilities"] as Tab[]).map(t => (
+            <button key={t} onClick={() => setTab(t)}
+              className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors flex-shrink-0
+                ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+              {t}
+            </button>
+          ))}
+        </div>
+
+        {tab === "Lifecycle Tower" && (
+          <LifecycleTower
+            title="Contract Lifecycle Tower — 18 Stages"
+            subtitle="From initiation through post-contract review. Click any stage for full toolset."
+            stages={CONTRACT_STAGES}
+            context="Contract Management"
+            badgeLabel="18 Stages · Full Lifecycle"
+          />
+        )}
+
+        {tab === "Capabilities" && (
+          <>
+            <h2 className="text-sm font-semibold mb-3">Contract Lifecycle Capabilities</h2>
+            <FeatureGrid features={[
+              { title: "Contract Drafting",          desc: "Template library, clause library, AI-assisted drafting, version control, redlining." },
+              { title: "E-Signature",                desc: "Qualified digital signatures, multi-party signing workflows, signed-PDF vault." },
+              { title: "Milestones & Deliverables",  desc: "Schedule, deliverables register, acceptance certificates, document attachments." },
+              { title: "Variations & Amendments",    desc: "Change orders, scope/price/time variations with approval workflow and audit trail." },
+              { title: "Performance Monitoring",     desc: "SLA tracking, KPI scoring, defect logs, deduction calculations." },
+              { title: "AI Contract Intelligence",   desc: "Clause extraction, risk highlights, obligation tracking, expiry alerts, renewal recommendations." },
+            ]} />
+          </>
+        )}
+
+        {tab === "Contracts" && (<>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
           <Card className="lg:col-span-2">
             <CardHeader title="Active Contracts" subtitle={`${contracts.length} contracts in progress`} />
@@ -164,16 +205,7 @@ export default function ContractsPage() {
             </div>
           </Card>
         </div>
-
-        <h2 className="text-sm font-semibold mb-3">Contract Lifecycle Capabilities</h2>
-        <FeatureGrid features={[
-          { title: "Contract Drafting",          desc: "Template library, clause library, AI-assisted drafting, version control, redlining." },
-          { title: "E-Signature",                desc: "Qualified digital signatures, multi-party signing workflows, signed-PDF vault." },
-          { title: "Milestones & Deliverables",  desc: "Schedule, deliverables register, acceptance certificates, document attachments." },
-          { title: "Variations & Amendments",    desc: "Change orders, scope/price/time variations with approval workflow and audit trail." },
-          { title: "Performance Monitoring",     desc: "SLA tracking, KPI scoring, defect logs, deduction calculations." },
-          { title: "AI Contract Intelligence",   desc: "Clause extraction, risk highlights, obligation tracking, expiry alerts, renewal recommendations." },
-        ]} />
+        </>)}
       </div>
     </AppShell>
   );

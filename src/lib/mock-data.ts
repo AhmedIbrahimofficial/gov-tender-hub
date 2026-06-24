@@ -434,4 +434,20 @@ export const navSections = [
       { to: "/portal", label: "Public Transparency", icon: "Globe2" },
     ],
   },
+  {
+    label: "Corporate Module",
+    items: [
+      { to: "/corporate",                                      label: "Corporate Hub",                   icon: "OfficeBuildingIcon" },
+      { to: "/corporate/permanent-secretary",                  label: "Permanent Secretary",             icon: "Crown"              },
+      { to: "/corporate/strategy-policy-planning",             label: "Strategy, Policy & Planning",     icon: "Target"             },
+      { to: "/corporate/finance-accounting",                   label: "Finance & Accounting",            icon: "Wallet"             },
+      { to: "/corporate/procurement-supply-chain",             label: "Procurement & Supply Chain",      icon: "ShoppingCart"       },
+      { to: "/corporate/service-delivery",                     label: "Service Delivery",                icon: "Headphones"         },
+      { to: "/corporate/operations",                           label: "Operations",                      icon: "Settings"           },
+      { to: "/corporate/human-resources",                      label: "Human Resources",                 icon: "Users"              },
+      { to: "/corporate/ict-digital",                          label: "ICT & Digital Transformation",   icon: "Monitor"            },
+      { to: "/corporate/administration-facilities",            label: "Administration & Facilities",     icon: "Building2"          },
+      { to: "/corporate/legal-compliance-audit-risk",          label: "Legal, Compliance, Audit & Risk", icon: "Scale"              },
+    ],
+  },
 ];

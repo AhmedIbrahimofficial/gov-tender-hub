@@ -9,6 +9,7 @@ import {
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio, DollarSign,
   Mail, Send, Clock, AlertTriangle, Settings,
+  Crown, Target, Headphones, Monitor, Users,
 } from "lucide-react";
 import { navSections } from "@/lib/mock-data";
 import { useAuth, type UserRole } from "@/lib/auth-context";
@@ -299,7 +300,7 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue"],
 
   // Compliance officer
-  compliance_officer:["/dashboard", "/teams", "/audit", "/anti-corruption", "/governance", "/utility/public-records", "/utility/announcements"],
+  compliance_officer:["/dashboard", "/teams", "/audit", "/anti-corruption", "/governance", "/utility/public-records", "/utility/announcements", "/corporate"],
 
   // Legal officer
   legal_officer:     ["/dashboard", "/teams", "/contracts", "/audit", "/governance", "/utility/announcements"],
@@ -315,11 +316,11 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   ethics_officer:          ["/dashboard", "/teams", "/anti-corruption", "/governance"],
 
   // Performance officer
-  performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics"],
+  performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics", "/corporate"],
 
   // IT officer / system admin — full access
-  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility"],
-  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility"],
+  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate"],
+  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate"],
 
   // Risk officer
   risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
@@ -361,8 +362,8 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   end_user: ["/dashboard", "/teams", "/tenders", "/planning"],
 
   // Board / executive director — strategic overview only
-  executive_director: ["/dashboard", "/teams", "/analytics", "/contracts", "/finance", "/utility/announcements"],
-  board_member:       ["/dashboard", "/analytics", "/governance"],
+  executive_director: ["/dashboard", "/teams", "/analytics", "/contracts", "/finance", "/utility/announcements", "/corporate"],
+  board_member:       ["/dashboard", "/analytics", "/governance", "/corporate"],
 
   // Regulator
   regulator: ["/dashboard", "/teams", "/analytics", "/audit", "/anti-corruption", "/governance", "/vendors", "/tenders", "/utility/public-records", "/utility/gazette"],
@@ -387,6 +388,9 @@ const iconMap: Record<string, React.ElementType> = {
   Landmark, UsersRound, Globe2, ScaleIcon: Scale, ShoppingCart, Gavel,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   BookOpen, MessageSquare, Newspaper, Megaphone, Radio, DollarSign,
+  // Corporate Module icons
+  Crown, Target, Headphones, Monitor, Users, Settings, Scale,
+  OfficeBuildingIcon: Building2,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {
