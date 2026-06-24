@@ -12,6 +12,7 @@ import AuditorDashboard from "./AuditorDashboard";
 import SupplierDashboard from "./SupplierDashboard";
 import MinisterDashboard from "./MinisterDashboard";
 import CommandCenter from "./CommandCenter";
+import PresidentDashboard from "./PresidentDashboard";
 
 // Role-specific dashboards
 import {
