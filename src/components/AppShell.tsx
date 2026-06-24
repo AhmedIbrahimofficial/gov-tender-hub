@@ -319,13 +319,8 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics", "/corporate"],
 
   // IT officer / system admin — full access
-<<<<<<< HEAD
-  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate"],
-  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate"],
-=======
-  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/prime-entity"],
-  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/prime-entity"],
->>>>>>> 555a288eefb036184b9305d7d9e7582741de3012
+  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity"],
+  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity"],
 
   // Risk officer
   risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
