@@ -61,6 +61,8 @@ import PrimeMinisterDashboard from "./pages/PrimeMinisterDashboard";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectManagementPage from "./pages/ProjectManagementPage";
 import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
+import MinistryWorkbenchPage from "./pages/MinistryWorkbenchPage";
+import SeniorDashboardPage from "./pages/SeniorDashboardPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -85,8 +87,10 @@ function AppRoutes() {
       <Route path="/ai-agents" element={<ProtectedRoute><AiAgentsPage /></ProtectedRoute>} />
       <Route path="/planning" element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
 
-      {/* Procurement Workbench */}
+      {/* Procurement Workbench — global */}
       <Route path="/workbench" element={<ProtectedRoute><ProcurementWorkbenchPage /></ProtectedRoute>} />
+      {/* Per-ministry Procurement Workbench */}
+      <Route path="/workbench/:ministryId" element={<ProtectedRoute><MinistryWorkbenchPage /></ProtectedRoute>} />
 
       {/* Procurement Lifecycle Control Tower */}
       <Route path="/lifecycle" element={<ProtectedRoute><ProcurementLifecyclePage /></ProtectedRoute>} />
@@ -137,6 +141,8 @@ function AppRoutes() {
       {/* Ministry & Department Dashboards */}
       <Route path="/ministry/:ministryId/dashboard" element={<ProtectedRoute><MinistryDashboardPage /></ProtectedRoute>} />
       <Route path="/ministry/:ministryId/department/:deptId" element={<ProtectedRoute><DepartmentDashboardPage /></ProtectedRoute>} />
+      {/* Senior Officer Dashboard */}
+      <Route path="/ministry/:ministryId/senior/:officerIdx" element={<ProtectedRoute><SeniorDashboardPage /></ProtectedRoute>} />
 
       {/* Prime Entity Super Admin */}
       <Route path="/prime-entity" element={<ProtectedRoute><PrimeEntityDashboard /></ProtectedRoute>} />

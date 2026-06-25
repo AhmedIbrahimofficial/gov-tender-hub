@@ -6,162 +6,169 @@ import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip,
 } from "recharts";
-import { Users, TrendingUp, ShieldCheck, FileText, Activity, DollarSign, ArrowLeft } from "lucide-react";
+import {
+  Users, TrendingUp, ShieldCheck, FileText, Activity,
+  DollarSign, ArrowLeft, Briefcase, Star, Phone, Mail, ChevronRight,
+} from "lucide-react";
+import { ZW_MINISTRIES } from "@/lib/zw-ministries";
+import { MINISTRY_DASH } from "@/lib/ministry-dashboard-data";
 
 const TIP = { contentStyle: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12 } };
 
-const DEPT_DATA: Record<string, {
-  name: string; ministry: string; head: string; location: string;
-  budget: number; spent: number; committed: number;
-  staffCount: number; activeTenders: number; activeContracts: number; complianceScore: number;
-  staff: { name: string; role: string; email: string; status: string }[];
-  tenders: { id: string; title: string; value: string; status: string }[];
-  activity: { time: string; event: string; type: string }[];
-  spendTrend: { month: string; spend: number }[];
-  performance: { metric: string; value: string; status: string }[];
-}> = {
-  "clinical-services": {
-    name: "Clinical Services", ministry: "Ministry of Health & Child Care",
-    head: "Dr. T. Moyo", location: "Kaguvi Building, Harare",
-    budget: 280, spent: 186, committed: 42, staffCount: 1820,
-    activeTenders: 6, activeContracts: 8, complianceScore: 96,
-    staff: [
-      { name: "Dr. T. Moyo",   role: "Director — Clinical Services", email: "tmoyo@moh.gov.zw",   status: "Active" },
-      { name: "P. Dube",       role: "Chief Procurement Officer",    email: "pdube@moh.gov.zw",   status: "Active" },
-      { name: "R. Chikwanda",  role: "Finance Manager",             email: "rchik@moh.gov.zw",   status: "Active" },
-      { name: "A. Mpofu",      role: "Procurement Officer",         email: "ampofu@moh.gov.zw",  status: "Active" },
-      { name: "J. Banda",      role: "Contracts Manager",           email: "jbanda@moh.gov.zw",  status: "On Leave"},
-    ],
-    tenders: [
-      { id: "ZW-PRA-2026-00183", title: "ARV Medicines Framework",    value: "USD 42.5M", status: "Evaluation" },
-      { id: "ZW-PRA-2026-00171", title: "Medical Equipment Supply",   value: "USD 18.2M", status: "Bidding"    },
-      { id: "ZW-PRA-2026-00158", title: "Lab Reagents Annual Supply", value: "USD 4.8M",  status: "Awarded"    },
-    ],
-    activity: [
-      { time: "10:32", event: "ARV tender scored — 3 bidders qualified",   type: "info"    },
-      { time: "09:14", event: "Medical supplies delivery confirmed — GRN",  type: "success" },
-      { time: "08:02", event: "Q3 budget request submitted to Finance",     type: "info"    },
-      { time: "07:45", event: "Compliance audit finding closed",            type: "success" },
-    ],
-    spendTrend: [
-      { month:"Jan", spend:28 }, { month:"Feb", spend:31 }, { month:"Mar", spend:34 },
-      { month:"Apr", spend:29 }, { month:"May", spend:36 }, { month:"Jun", spend:28 },
-    ],
-    performance: [
-      { metric: "Budget Utilisation",      value: "66.4%",    status: "On Track" },
-      { metric: "Procurement Plan Adherence", value: "94%",   status: "Good"     },
-      { metric: "Contract Performance",    value: "4.5/5.0",  status: "Good"     },
-      { metric: "Open Audit Findings",     value: "2",        status: "Warning"  },
-      { metric: "Supplier Rating Avg",     value: "4.2/5.0",  status: "Good"     },
-      { metric: "Invoice Payment Avg",     value: "21 days",  status: "On Track" },
-    ],
-  },
-  "infrastructure-division": {
-    name: "Infrastructure Division", ministry: "Ministry of Transport & Infrastructure",
-    head: "J. Banda", location: "Makombe Complex, Harare",
-    budget: 320, spent: 214, committed: 68, staffCount: 1240,
-    activeTenders: 8, activeContracts: 12, complianceScore: 89,
-    staff: [
-      { name: "J. Banda",     role: "Director — Infrastructure",  email: "jbanda@mot.gov.zw",  status: "Active"   },
-      { name: "T. Sithole",   role: "Chief Engineer",             email: "tsithole@mot.gov.zw",status: "Active"   },
-      { name: "M. Ncube",     role: "Procurement Officer",        email: "mncube@mot.gov.zw",  status: "Active"   },
-      { name: "S. Mokoena",   role: "Finance Officer",            email: "smokoena@mot.gov.zw",status: "Active"   },
-    ],
-    tenders: [
-      { id: "ZW-PRA-2026-00181", title: "Beitbridge Highway Sec 4", value: "USD 88.0M", status: "Published" },
-      { id: "ZW-PRA-2026-00162", title: "Bridge Rehabilitation",    value: "USD 24.0M", status: "Bidding"   },
-    ],
-    activity: [
-      { time: "11:20", event: "Highway tender advertised — closing Aug 4",    type: "info"    },
-      { time: "09:45", event: "Infrastructure spend at 88% — risk warning",   type: "warning" },
-      { time: "08:30", event: "Site inspection completed — Section 3",         type: "success" },
-    ],
-    spendTrend: [
-      { month:"Jan", spend:32 }, { month:"Feb", spend:38 }, { month:"Mar", spend:42 },
-      { month:"Apr", spend:36 }, { month:"May", spend:44 }, { month:"Jun", spend:22 },
-    ],
-    performance: [
-      { metric: "Budget Utilisation",      value: "88%",      status: "Warning" },
-      { metric: "Procurement Plan Adherence", value: "88%",   status: "Warning" },
-      { metric: "Contract Performance",    value: "3.9/5.0",  status: "Warning" },
-      { metric: "Open Audit Findings",     value: "6",        status: "At Risk" },
-      { metric: "Supplier Rating Avg",     value: "3.8/5.0",  status: "Warning" },
-      { metric: "Invoice Payment Avg",     value: "34 days",  status: "Warning" },
-    ],
-  },
-};
-
-const DEFAULT_DEPT = DEPT_DATA["clinical-services"];
-
 const STATUS_COLORS: Record<string, string> = {
-  "On Track":"bg-emerald-100 text-emerald-700", Good:"bg-emerald-100 text-emerald-700",
-  Warning:"bg-amber-100 text-amber-700", "At Risk":"bg-red-100 text-red-700",
-  Active:"bg-emerald-100 text-emerald-700", "On Leave":"bg-amber-100 text-amber-700",
-  Evaluation:"bg-amber-100 text-amber-700", Bidding:"bg-blue-100 text-blue-700",
-  Awarded:"bg-emerald-100 text-emerald-700", Published:"bg-violet-100 text-violet-700",
+  "On Track": "bg-emerald-100 text-emerald-700", Good: "bg-emerald-100 text-emerald-700",
+  Warning: "bg-amber-100 text-amber-700", "At Risk": "bg-red-100 text-red-700",
+  Active: "bg-emerald-100 text-emerald-700", "On Leave": "bg-amber-100 text-amber-700",
+  Evaluation: "bg-amber-100 text-amber-700", Bidding: "bg-blue-100 text-blue-700",
+  Awarded: "bg-emerald-100 text-emerald-700", Published: "bg-violet-100 text-violet-700",
+  Critical: "bg-red-100 text-red-700",
 };
+
+// Build spend trend data from dept budget/spent
+function buildSpendTrend(budget: number, spent: number) {
+  const months = ["Jan","Feb","Mar","Apr","May","Jun"];
+  const avg = spent / 6;
+  return months.map((month, i) => ({
+    month,
+    spend: Math.round(avg * (0.8 + Math.random() * 0.5)),
+  }));
+}
+
+type TabDept = "overview" | "staff" | "tenders" | "workbench" | "budget";
 
 export default function DepartmentDashboardPage() {
   const { ministryId, deptId } = useParams<{ ministryId: string; deptId: string }>();
   const navigate = useNavigate();
-  const dept = (deptId && DEPT_DATA[deptId]) ? DEPT_DATA[deptId] : DEFAULT_DEPT;
-  const pct = Math.round((dept.spent / dept.budget) * 100);
+  const [activeTab, setActiveTab] = useState<TabDept>("overview");
+
+  // Resolve ZWMinistry from zw-ministries.ts
+  const zwMin = ZW_MINISTRIES.find(m => m.id === ministryId);
+  const zwDept = zwMin?.departments.find(d => d.id === deptId);
+
+  // Resolve ministry dashboard data for financial figures
+  const dashMin = ministryId ? MINISTRY_DASH[ministryId] : undefined;
+  const dashDept = dashMin?.departments.find(d => d.id === deptId);
+
+  // Fallback values
+  const deptName = zwDept?.name ?? dashDept?.name ?? "Department";
+  const minName = zwMin?.name ?? dashMin?.name ?? "Ministry";
+  const head = zwDept?.head ?? dashDept?.head ?? "—";
+  const budget = dashDept?.budget ?? 100;
+  const spent = dashDept?.spent ?? 60;
+  const staff = dashDept?.staff ?? zwDept?.roles.reduce((s, r) => s + r.count, 0) ?? 0;
+  const pct = Math.round((spent / budget) * 100);
+  const spendTrend = buildSpendTrend(budget, spent);
+
+  // Senior roles from ZW data
+  const seniorRoles = zwDept?.roles.filter(r => r.level === "Senior" || r.level === "Executive") ?? [];
+  const allRoles = zwDept?.roles ?? [];
 
   return (
     <AppShell>
-      {/* Back button */}
-      <button onClick={()=>navigate(`/ministry/${ministryId}/dashboard`)} className="flex items-center gap-2 text-sm text-black/50 hover:text-black mb-4 transition-colors">
-        <ArrowLeft className="h-4 w-4"/>Back to Ministry Dashboard
+      {/* Back */}
+      <button onClick={() => navigate(`/ministry/${ministryId}/dashboard`)}
+        className="flex items-center gap-2 text-sm text-black/50 hover:text-black mb-4 transition-colors">
+        <ArrowLeft className="h-4 w-4" />Back to {minName.split(" ").slice(0,3).join(" ")}
       </button>
 
       {/* Header */}
       <div className="flex items-start gap-4 mb-6">
-        <div className="h-12 w-12 rounded-2xl bg-black text-white text-lg flex items-center justify-center flex-shrink-0">🏢</div>
+        <div className="h-12 w-12 rounded-2xl bg-black text-white text-xl flex items-center justify-center flex-shrink-0">🏢</div>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-black">{dept.name}</h1>
+          <h1 className="text-xl font-bold text-black">{deptName}</h1>
           <div className="flex items-center gap-4 mt-1 flex-wrap">
-            <span className="text-sm text-black/50">{dept.ministry}</span>
-            <span className="text-sm text-black/50">Head: {dept.head}</span>
-            <span className="text-sm text-black/50">{dept.location}</span>
+            <span className="text-sm text-black/50">{minName}</span>
+            <span className="text-sm text-black/50">Head: {head}</span>
+            {zwDept && <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Code: {zwDept.code}</span>}
           </div>
         </div>
+        <button onClick={() => navigate(`/workbench/${ministryId}`)}
+          className="h-8 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1.5 flex-shrink-0">
+          <Briefcase className="h-3.5 w-3.5" />Procurement Workbench
+        </button>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-        <KpiCard label="Budget (M)"        value={`USD ${dept.budget}M`}          icon={DollarSign}  color="blue"   />
-        <KpiCard label="Spent (M)"         value={`USD ${dept.spent}M`} delta={`${pct}%`} icon={TrendingUp} color={pct>=85?"amber":"green"} />
-        <KpiCard label="Committed (M)"     value={`USD ${dept.committed}M`}        icon={Activity}    color="amber"  />
-        <KpiCard label="Staff Count"       value={dept.staffCount.toLocaleString()} icon={Users}      color="cyan"   />
-        <KpiCard label="Active Tenders"    value={String(dept.activeTenders)}       icon={FileText}   color="violet" />
-        <KpiCard label="Compliance Score"  value={`${dept.complianceScore}%`}       icon={ShieldCheck}color="green"  />
+        <KpiCard label="Budget (M)"       value={`USD ${budget}M`}             icon={DollarSign}  color="blue" />
+        <KpiCard label="Spent (M)"        value={`USD ${spent}M`} delta={`${pct}%`} icon={TrendingUp} color={pct >= 85 ? "amber" : "green"} />
+        <KpiCard label="Available (M)"    value={`USD ${budget - spent}M`}     icon={Activity}    color="cyan" />
+        <KpiCard label="Staff Count"      value={staff.toLocaleString()}        icon={Users}       color="violet" />
+        <KpiCard label="Senior Roles"     value={String(seniorRoles.reduce((s,r) => s + r.count, 0))} icon={Star} color="amber" />
+        <KpiCard label="Compliance"       value="94%"                          icon={ShieldCheck} color="green" />
       </div>
 
-      {/* Charts + Staff */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      {/* Tabs */}
+      <div className="flex gap-1 border-b border-black/5 mb-6 overflow-x-auto">
+        {(["overview","staff","tenders","workbench","budget"] as TabDept[]).map(t => (
+          <button key={t} onClick={() => setActiveTab(t)}
+            className={`h-9 px-4 text-sm font-medium capitalize whitespace-nowrap border-b-2 transition-colors
+              ${activeTab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black/70"}`}>
+            {t === "workbench" ? "Procurement" : t}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "overview" && (
+        <DeptOverviewTab spendTrend={spendTrend} allRoles={allRoles} deptName={deptName} navigate={navigate} />
+      )}
+      {activeTab === "staff" && (
+        <DeptStaffTab allRoles={allRoles} head={head} deptName={deptName} />
+      )}
+      {activeTab === "tenders" && (
+        <DeptTendersTab minName={minName} deptName={deptName} navigate={navigate} />
+      )}
+      {activeTab === "workbench" && (
+        <DeptWorkbenchTab ministryId={ministryId ?? ""} navigate={navigate} />
+      )}
+      {activeTab === "budget" && (
+        <DeptBudgetTab budget={budget} spent={spent} pct={pct} deptName={deptName} />
+      )}
+    </AppShell>
+  );
+}
+
+// ─── Overview Tab ─────────────────────────────────────────────────────────────
+function DeptOverviewTab({ spendTrend, allRoles, deptName, navigate }: {
+  spendTrend: { month: string; spend: number }[];
+  allRoles: { title: string; level: string; count: number }[];
+  deptName: string;
+  navigate: (p: string) => void;
+}) {
+  const performanceMetrics = [
+    { metric: "Budget Utilisation",           value: "66%",      status: "On Track" },
+    { metric: "Procurement Plan Adherence",   value: "92%",      status: "Good"     },
+    { metric: "Contract Performance",         value: "4.4/5.0",  status: "Good"     },
+    { metric: "Open Audit Findings",          value: "3",        status: "Warning"  },
+    { metric: "Supplier Rating Avg",          value: "4.1/5.0",  status: "Good"     },
+    { metric: "Invoice Payment Avg",          value: "24 days",  status: "On Track" },
+  ];
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader title="Monthly Expenditure Trend" subtitle="USD M" />
           <div className="p-4 h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dept.spendTrend}>
+              <AreaChart data={spendTrend}>
                 <CartesianGrid stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v=>`$${v}M`} />
-                <Tooltip {...TIP} formatter={(v:number)=>[`USD ${v}M`]} />
+                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+                <Tooltip {...TIP} formatter={(v: number) => [`USD ${v}M`]} />
                 <Area type="monotone" dataKey="spend" stroke="#3b82f6" fill="#eff6ff" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </Card>
         <Card>
-          <CardHeader title="Performance Metrics" subtitle="Departmental KPIs" />
+          <CardHeader title="Performance Metrics" subtitle={deptName} />
           <div className="divide-y divide-black/5">
-            {dept.performance.map(p=>(
+            {performanceMetrics.map(p => (
               <div key={p.metric} className="px-5 py-2.5 flex items-center justify-between">
                 <span className="text-sm text-black/70">{p.metric}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-black">{p.value}</span>
-                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${STATUS_COLORS[p.status]||"bg-gray-100 text-gray-600"}`}>{p.status}</span>
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${STATUS_COLORS[p.status] ?? "bg-gray-100"}`}>{p.status}</span>
                 </div>
               </div>
             ))}
@@ -169,76 +176,198 @@ export default function DepartmentDashboardPage() {
         </Card>
       </div>
 
-      {/* Staff + Tenders + Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <Card className="lg:col-span-1">
-          <CardHeader title="Department Staff" subtitle="Key personnel" />
-          <div className="divide-y divide-black/5">
-            {dept.staff.map(s=>(
-              <div key={s.name} className="px-5 py-3 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-black/50">
-                    {s.name.split(" ").map(n=>n[0]).join("").slice(0,2)}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-black">{s.name}</div>
-                    <div className="text-xs text-black/40">{s.role}</div>
-                  </div>
-                </div>
-                <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md flex-shrink-0 ${STATUS_COLORS[s.status]||"bg-gray-100 text-gray-600"}`}>{s.status}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Active Tenders" />
-          <div className="divide-y divide-black/5">
-            {dept.tenders.map(t=>(
-              <div key={t.id} className="px-5 py-3">
-                <div className="text-sm font-medium text-black">{t.title}</div>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs font-bold text-black/60">{t.value}</span>
-                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${STATUS_COLORS[t.status]||"bg-gray-100"}`}>{t.status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Activity Log" />
-          <div className="divide-y divide-black/5">
-            {dept.activity.map((a,i)=>(
-              <div key={i} className="px-5 py-3 flex items-start gap-2">
-                <span className="text-xs text-black/30 font-mono mt-0.5 whitespace-nowrap">{a.time}</span>
-                <div className={`h-1.5 w-1.5 rounded-full mt-1.5 flex-shrink-0 ${a.type==="success"?"bg-emerald-500":a.type==="warning"?"bg-amber-500":"bg-blue-500"}`}/>
-                <span className="text-xs text-black/70 leading-relaxed">{a.event}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* Budget allocation */}
+      {/* Staff Role Breakdown */}
       <Card>
-        <CardHeader title="Budget Allocation & Utilisation" subtitle={`FY2026 — ${dept.name}`} />
+        <CardHeader title="Staffing Structure" subtitle="Roles by level" />
+        <div className="p-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {["Executive","Senior","Officer","Support"].map(level => {
+              const roles = allRoles.filter(r => r.level === level);
+              const count = roles.reduce((s, r) => s + r.count, 0);
+              const levelColors: Record<string,string> = {
+                Executive: "bg-violet-50 text-violet-700 border-violet-100",
+                Senior: "bg-amber-50 text-amber-700 border-amber-100",
+                Officer: "bg-blue-50 text-blue-700 border-blue-100",
+                Support: "bg-gray-50 text-gray-600 border-gray-100",
+              };
+              return (
+                <div key={level} className={`rounded-xl border p-3 text-center ${levelColors[level]}`}>
+                  <div className="text-2xl font-bold">{count.toLocaleString()}</div>
+                  <div className="text-xs mt-1 font-medium">{level}</div>
+                  <div className="text-[10px] mt-0.5 opacity-70">{roles.length} role type{roles.length !== 1 ? "s" : ""}</div>
+                </div>
+              );
+            })}
+          </div>
+          {allRoles.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {allRoles.map(r => (
+                <div key={r.title} className="flex items-center justify-between text-sm">
+                  <span className="text-black/70">{r.title}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-black/40">{r.level}</span>
+                    <span className="text-sm font-bold text-black">{r.count.toLocaleString()}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+// ─── Staff Tab ─────────────────────────────────────────────────────────────────
+function DeptStaffTab({ allRoles, head, deptName }: {
+  allRoles: { title: string; level: string; count: number }[];
+  head: string;
+  deptName: string;
+}) {
+  return (
+    <Card>
+      <CardHeader title={`Staff — ${deptName}`} subtitle={`Head of Department: ${head}`} />
+      {allRoles.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 text-xs text-black/40 uppercase">
+              <tr>
+                {["Role Title","Level","Headcount","Workload"].map(h => (
+                  <th key={h} className="px-4 py-2.5 text-left font-medium">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-black/5">
+              {allRoles.map(r => {
+                const workload = r.level === "Executive" ? 95 : r.level === "Senior" ? 82 : r.level === "Officer" ? 74 : 68;
+                return (
+                  <tr key={r.title} className="hover:bg-gray-50/60">
+                    <td className="px-4 py-3 font-medium text-black">{r.title}</td>
+                    <td className="px-4 py-3">
+                      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${
+                        r.level === "Executive" ? "bg-violet-100 text-violet-700" :
+                        r.level === "Senior"    ? "bg-amber-100 text-amber-700"  :
+                        r.level === "Officer"   ? "bg-blue-100 text-blue-700"    :
+                        "bg-gray-100 text-gray-600"
+                      }`}>{r.level}</span>
+                    </td>
+                    <td className="px-4 py-3 font-bold text-black">{r.count.toLocaleString()}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden w-20">
+                          <div className={`h-full rounded-full ${workload >= 90 ? "bg-red-500" : workload >= 80 ? "bg-amber-500" : "bg-blue-500"}`} style={{ width: `${workload}%` }} />
+                        </div>
+                        <span className="text-xs text-black/50">{workload}%</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="px-5 py-8 text-center text-sm text-black/40">No staff data available for this department.</div>
+      )}
+    </Card>
+  );
+}
+
+// ─── Tenders Tab ──────────────────────────────────────────────────────────────
+function DeptTendersTab({ minName, deptName, navigate }: {
+  minName: string;
+  deptName: string;
+  navigate: (p: string) => void;
+}) {
+  const mockTenders = [
+    { id: `ZW-${deptName.substring(0,4).toUpperCase()}-2026-001`, title: `${deptName} — Q3 Supplies`, value: "USD 4.2M", status: "Bidding", closing: "2026-08-15" },
+    { id: `ZW-${deptName.substring(0,4).toUpperCase()}-2026-002`, title: `${deptName} — IT Systems`, value: "USD 2.8M", status: "Evaluation", closing: "2026-07-30" },
+    { id: `ZW-${deptName.substring(0,4).toUpperCase()}-2026-003`, title: `${deptName} — Consultancy Services`, value: "USD 1.4M", status: "Awarded", closing: "2026-06-20" },
+  ];
+  return (
+    <Card>
+      <CardHeader title={`Tenders — ${deptName}`} subtitle={minName}>
+        <button onClick={() => navigate("/tenders")} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1">
+          New Tender
+        </button>
+      </CardHeader>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 text-xs text-black/40 uppercase">
+            <tr>{["ID","Title","Value","Status","Closing",""].map(h => <th key={h} className="px-4 py-2.5 text-left font-medium whitespace-nowrap">{h}</th>)}</tr>
+          </thead>
+          <tbody className="divide-y divide-black/5">
+            {mockTenders.map(t => (
+              <tr key={t.id} className="hover:bg-gray-50/60">
+                <td className="px-4 py-3 font-mono text-[11px] text-black/40">{t.id}</td>
+                <td className="px-4 py-3 font-medium text-black">{t.title}</td>
+                <td className="px-4 py-3 font-semibold">{t.value}</td>
+                <td className="px-4 py-3"><span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${STATUS_COLORS[t.status] ?? "bg-gray-100"}`}>{t.status}</span></td>
+                <td className="px-4 py-3 text-xs text-black/50">{t.closing}</td>
+                <td className="px-4 py-3"><button onClick={() => navigate("/tenders")} className="h-6 px-2 rounded border border-black/10 text-[11px] hover:bg-gray-50">View</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
+// ─── Workbench Tab ─────────────────────────────────────────────────────────────
+function DeptWorkbenchTab({ ministryId, navigate }: { ministryId: string; navigate: (p: string) => void }) {
+  return (
+    <Card>
+      <CardHeader title="Procurement Workbench" subtitle="Department procurement tasks & workflow" />
+      <div className="p-8 text-center">
+        <Briefcase className="h-12 w-12 text-black/20 mx-auto mb-3" />
+        <p className="text-sm text-black/50 mb-4">Open the ministry procurement workbench to manage this department's tenders, RFQs and approvals.</p>
+        <button onClick={() => navigate(`/workbench/${ministryId}`)}
+          className="h-9 px-5 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors">
+          Open Procurement Workbench
+        </button>
+      </div>
+    </Card>
+  );
+}
+
+// ─── Budget Tab ────────────────────────────────────────────────────────────────
+function DeptBudgetTab({ budget, spent, pct, deptName }: {
+  budget: number; spent: number; pct: number; deptName: string;
+}) {
+  const committed = Math.round(budget * 0.12);
+  const available = budget - spent - committed;
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-3">
+        <KpiCard label="Approved Budget" value={`USD ${budget}M`} icon={DollarSign} color="blue" />
+        <KpiCard label="Spent YTD"       value={`USD ${spent}M`} delta={`${pct}%`} icon={TrendingUp} color={pct >= 85 ? "amber" : "green"} />
+        <KpiCard label="Available"       value={`USD ${available}M`} icon={Activity} color="cyan" />
+      </div>
+      <Card>
+        <CardHeader title="Budget Allocation & Utilisation" subtitle={`FY2026 — ${deptName}`} />
         <div className="p-6">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-black">Approved Budget: USD {dept.budget}M</span>
-            <span className="text-sm font-bold text-black">{pct}% utilised</span>
+            <span className="text-sm font-medium">Approved Budget: USD {budget}M</span>
+            <span className="text-sm font-bold">{pct}% utilised</span>
           </div>
-          <div className="h-4 rounded-full bg-gray-100 overflow-hidden mb-4">
-            <div className={`h-full rounded-full transition-all ${pct>=85?"bg-amber-500":"bg-blue-500"}`} style={{width:`${Math.min(pct,100)}%`}}/>
+          <div className="h-4 rounded-full bg-gray-100 overflow-hidden mb-6">
+            <div className={`h-full rounded-full ${pct >= 85 ? "bg-amber-500" : "bg-blue-500"}`} style={{ width: `${Math.min(pct,100)}%` }} />
           </div>
           <div className="grid grid-cols-3 gap-4 text-center">
-            {[["Spent",dept.spent,"USD M","text-blue-600"],["Committed",dept.committed,"USD M","text-amber-600"],["Available",dept.budget-dept.spent-dept.committed,"USD M","text-emerald-600"]].map(([label,val,unit,cls])=>(
+            {[
+              ["Spent", spent, "text-blue-600"],
+              ["Committed", committed, "text-amber-600"],
+              ["Available", available, "text-emerald-600"],
+            ].map(([label, val, cls]) => (
               <div key={label as string} className="p-3 rounded-xl bg-gray-50">
                 <div className={`text-xl font-bold ${cls}`}>{val}</div>
-                <div className="text-xs text-black/40 mt-0.5">{label} ({unit})</div>
+                <div className="text-xs text-black/40 mt-0.5">{label} (USD M)</div>
               </div>
             ))}
           </div>
         </div>
       </Card>
-    </AppShell>
+    </div>
   );
 }
