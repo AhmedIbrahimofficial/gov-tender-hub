@@ -15,6 +15,11 @@ export type UserRole =
   | "health_safety_officer" | "environment_officer" | "gender_officer"
   | "permanent_secretary" | "procurement_director"
   | "president" | "chief_executive"
+  | "hr_manager" | "hr_officer" | "welfare_officer"
+  | "finance_manager" | "budget_manager" | "treasury_manager"
+  | "operations_manager" | "facilities_manager" | "transport_officer"
+  | "ict_manager" | "cybersecurity_officer" | "systems_admin"
+  | "legal_counsel" | "governance_officer" | "research_officer"
   | "public"; // public portal user (company/bidder)
 
 export type AuthUser = {
