@@ -429,10 +429,11 @@ export const navSections = [
     label: "Corporate & Governance",
     icon: "Crown",
     items: [
-      { to: "/corporate",     label: "Corporate Module",       icon: "Crown"      },
-      { to: "/prime-entity",  label: "Prime Entity",           icon: "Landmark"   },
-      { to: "/organisations", label: "Organisation Registry",  icon: "Building2"  },
-      { to: "/president",     label: "Executive Dashboard",    icon: "Landmark"   },
+      { to: "/corporate",      label: "Corporate Module",       icon: "Crown"      },
+      { to: "/prime-entity",   label: "Prime Entity",           icon: "Landmark"   },
+      { to: "/organisations",  label: "Organisation Registry",  icon: "Building2"  },
+      { to: "/president",      label: "Executive Dashboard",    icon: "Landmark"   },
+      { to: "/prime-minister", label: "Prime Minister Portal",  icon: "Star"       },
     ],
   },
   {

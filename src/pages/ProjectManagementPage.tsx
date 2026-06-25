@@ -311,7 +311,7 @@ function PlanningWBSTab() {
                     <div className="h-full bg-blue-500 rounded-full" style={{ width: `${t.progress}%` }}/>
                   </div>
                   <span className="text-[10px] text-black/50 w-7 text-right">{t.progress}%</span>
-                  <Badge tone={t.status === "Completed" ? "green" : t.status === "Delayed" ? "red" : t.status === "In Progress" ? "blue" : "muted"} >
+                  <Badge tone={t.status === "Completed" ? "green" : t.status === "Overdue" ? "red" : t.status === "In Progress" ? "blue" : "muted"} >
                     {t.status}
                   </Badge>
                 </div>
@@ -337,7 +337,7 @@ function PlanningWBSTab() {
                   <div className="w-24 h-1.5 rounded-full bg-black/5 overflow-hidden">
                     <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${m.progress}%` }}/>
                   </div>
-                  <Badge tone={m.status === "Completed" ? "green" : m.status === "Delayed" ? "red" : m.status === "Upcoming" ? "muted" : "blue"}>
+                  <Badge tone={m.status === "Completed" ? "green" : m.status === "Delayed" ? "red" : m.status === "Pending" ? "muted" : "blue"}>
                     {m.status}
                   </Badge>
                 </div>
@@ -390,7 +390,7 @@ function ScheduleGanttTab() {
 
   const barColor = (status: string) => {
     if (status === "Completed") return "bg-emerald-500";
-    if (status === "Delayed") return "bg-red-500";
+    if (status === "Overdue") return "bg-red-500";
     if (status === "In Progress") return "bg-blue-500";
     return "bg-gray-300";
   };
@@ -431,7 +431,7 @@ function ScheduleGanttTab() {
                   <span className="text-[9px] text-white font-medium truncate">{t.progress}%</span>
                 </div>
               </div>
-              <Badge tone={t.status === "Completed" ? "green" : t.status === "Delayed" ? "red" : t.status === "In Progress" ? "blue" : "muted"} >
+              <Badge tone={t.status === "Completed" ? "green" : t.status === "Overdue" ? "red" : t.status === "In Progress" ? "blue" : "muted"} >
                 {t.status}
               </Badge>
             </div>
@@ -439,7 +439,7 @@ function ScheduleGanttTab() {
         </div>
         {/* Legend */}
         <div className="flex items-center gap-4 mt-4 pt-3 border-t border-black/5 text-[10px] text-black/50">
-          {[["Completed","bg-emerald-500"],["In Progress","bg-blue-500"],["Delayed","bg-red-500"],["Not Started","bg-gray-300"]].map(([l,c]) => (
+          {[["Completed","bg-emerald-500"],["In Progress","bg-blue-500"],["Overdue","bg-red-500"],["Not Started","bg-gray-300"]].map(([l,c]) => (
             <div key={l} className="flex items-center gap-1.5"><div className={`w-3 h-3 rounded ${c}`}/>{l}</div>
           ))}
         </div>
@@ -471,7 +471,7 @@ function ScheduleGanttTab() {
                   <div className="text-xs font-medium text-black truncate">{m.title}</div>
                   <div className="text-[10px] text-black/45">{m.plannedDate} · {m.owner}</div>
                 </div>
-                <Badge tone={m.status === "Completed" ? "green" : m.status === "Delayed" ? "red" : m.status === "Upcoming" ? "muted" : "blue"}>
+                <Badge tone={m.status === "Completed" ? "green" : m.status === "Delayed" ? "red" : m.status === "Pending" ? "muted" : "blue"}>
                   {m.status}
                 </Badge>
               </div>
@@ -1092,7 +1092,6 @@ function AIAgentsTab() {
 // ── Main Page ──────────────────────────────────────────────────────────────
 export default function ProjectManagementPage() {
   const [tab, setTab] = useState<Tab>("Dashboard");
-  const [aiOpen, setAiOpen] = useState(false);
 
   return (
     <AppShell>
@@ -1100,7 +1099,6 @@ export default function ProjectManagementPage() {
         <PageHeader
           title="Project Management Tower"
           subtitle="Unified PM dashboard — portfolio, planning, finance, risk, quality, and resources"
-          icon={Briefcase}
           actions={
             <div className="flex items-center gap-2">
               <button onClick={() => act("Portfolio refreshed")}
@@ -1110,10 +1108,6 @@ export default function ProjectManagementPage() {
               <button onClick={() => act("Report downloaded")}
                 className="h-8 px-3 rounded-xl border border-black/10 text-xs hover:bg-gray-50 flex items-center gap-1.5 transition-colors">
                 <Download className="h-3.5 w-3.5" /> Export
-              </button>
-              <button onClick={() => setAiOpen(o => !o)}
-                className="h-8 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-white text-xs font-medium hover:opacity-90 flex items-center gap-1.5 transition-opacity">
-                <Sparkles className="h-3.5 w-3.5" /> AI Assistant
               </button>
             </div>
           }
@@ -1148,9 +1142,10 @@ export default function ProjectManagementPage() {
       </div>
 
       <AIAssistantPanel
-        open={aiOpen}
-        onClose={() => setAiOpen(false)}
+        agentName="PM Intelligence"
+        agentRole="Project portfolio analysis, schedule monitoring, cost forecasting, risk alerts"
         context="project-management"
+        color="blue"
       />
     </AppShell>
   );

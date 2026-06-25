@@ -188,7 +188,7 @@ function TenderDetailModal({ tender, onClose, onApply }: {
             <Send className="h-3.5 w-3.5" /> Apply Now
           </button>
           <button onClick={() => {
-            const content = `TENDER NOTICE\n\nReference: ${tender.id}\nTitle: ${tender.title}\nEntity: ${tender.entity}\nCategory: ${tender.category}\nValue: ${tender.value}\nMethod: ${tender.method}\nClosing Date: ${tender.closing}\nBids Received: ${tender.bids}\n\nGovernment of Zimbabwe · PRAZ\n© 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System � Government of Zimbabwe`;
+            const content = `TENDER NOTICE\n\nReference: ${tender.id}\nTitle: ${tender.title}\nEntity: ${tender.entity}\nCategory: ${tender.category}\nValue: ${tender.value}\nMethod: ${tender.method}\nClosing Date: ${tender.closing}\nBids Received: ${tender.bids}\n\nGovernment of Zimbabwe · PRAZ\n© 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System � Government of Zimbabwe`;
             const blob = new Blob([content], { type: "application/octet-stream" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a"); a.href = url; a.download = `${tender.id}-notice.txt`; a.click();
@@ -465,7 +465,7 @@ export default function SupplierPortalPage() {
     if (statusFilter === "Open")    return base.filter(t => ["Published", "Bidding"].includes(t.status));
     if (statusFilter === "Awarded") return base.filter(t => t.status === "Awarded");
     if (statusFilter === "Past")    return base.filter(t => ["Closed", "Cancelled", "Awarded"].includes(t.status));
-    if (statusFilter === "Coming")  return base.filter(t => t.status === "Draft" || t.status === "Planned");
+    if (statusFilter === "Coming")  return base.filter(t => t.status === "Draft" || (t.status as string) === "Planned");
     if (statusFilter === "Flagged") return base.filter(t => t.bids === 0);
     if (statusFilter === "Plan")    return base.filter(t => t.status === "Published");
     return base;
@@ -484,7 +484,7 @@ export default function SupplierPortalPage() {
   const handleLogout = () => { logout(); navigate("/signin"); };
 
   const downloadPDF = (tender: typeof tenders[number]) => {
-    const content = `TENDER NOTICE\n\nReference: ${tender.id}\nTitle: ${tender.title}\nEntity: ${tender.entity}\nCategory: ${tender.category}\nValue: ${tender.value}\nMethod: ${tender.method}\nClosing Date: ${tender.closing}\nBids Received: ${tender.bids}\n\nGovernment of Zimbabwe · PRAZ\n© 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System � Government of Zimbabwe`;
+    const content = `TENDER NOTICE\n\nReference: ${tender.id}\nTitle: ${tender.title}\nEntity: ${tender.entity}\nCategory: ${tender.category}\nValue: ${tender.value}\nMethod: ${tender.method}\nClosing Date: ${tender.closing}\nBids Received: ${tender.bids}\n\nGovernment of Zimbabwe · PRAZ\n© 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System � Government of Zimbabwe`;
     const blob = new Blob([content], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = `${tender.id}.txt`; a.click();
@@ -648,9 +648,9 @@ export default function SupplierPortalPage() {
           {activeTab === "rfps" && (
             <div className="space-y-3">
               <FilterBar />
-              {allTendersFiltered.filter(t => t.method === "RFP" || t.category.includes("Proposal")).length === 0
+              {allTendersFiltered.filter(t => (t.method as string) === "RFP" || t.category.includes("Proposal")).length === 0
                 ? <div className="py-16 text-center text-black/40 text-sm">No RFPs match your filters.</div>
-                : allTendersFiltered.filter(t => t.method === "RFP" || t.category.includes("Proposal")).map(t => <TenderCard key={t.id} t={t} />)
+                : allTendersFiltered.filter(t => (t.method as string) === "RFP" || t.category.includes("Proposal")).map(t => <TenderCard key={t.id} t={t} />)
               }
               {allTendersFiltered.slice(0, 2).map(t => <TenderCard key={t.id} t={t} />)}
             </div>
@@ -660,9 +660,9 @@ export default function SupplierPortalPage() {
           {activeTab === "eois" && (
             <div className="space-y-3">
               <FilterBar />
-              {allTendersFiltered.filter(t => t.method === "EOI" || t.category.includes("Interest")).length === 0
+              {allTendersFiltered.filter(t => (t.method as string) === "EOI" || t.category.includes("Interest")).length === 0
                 ? <div className="py-16 text-center text-black/40 text-sm">No EOIs match your filters.</div>
-                : allTendersFiltered.filter(t => t.method === "EOI" || t.category.includes("Interest")).map(t => <TenderCard key={t.id} t={t} />)
+                : allTendersFiltered.filter(t => (t.method as string) === "EOI" || t.category.includes("Interest")).map(t => <TenderCard key={t.id} t={t} />)
               }
               {allTendersFiltered.slice(0, 2).map(t => <TenderCard key={t.id} t={t} />)}
             </div>

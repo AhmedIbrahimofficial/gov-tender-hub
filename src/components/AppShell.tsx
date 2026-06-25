@@ -9,7 +9,7 @@ import {
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio, DollarSign,
   Mail, Send, Clock, AlertTriangle, Settings,
-  Crown, Target, Headphones, Monitor, Users,
+  Crown, Target, Headphones, Monitor, Users, Star,
 } from "lucide-react";
 import { navSections } from "@/lib/mock-data";
 import { useAuth, type UserRole } from "@/lib/auth-context";
@@ -276,7 +276,7 @@ function InboxPanel({ onClose }: { onClose: () => void }) {
 
 /* ─── Role-based nav whitelist ──────────────────────────────────────────── */
 // minister and system_admin get full access (no whitelist = all routes allowed)
-const FULL_ACCESS_ROLES = new Set<string>(["minister", "system_admin", "cpo", "permanent_secretary", "president", "procurement_director"]);
+const FULL_ACCESS_ROLES = new Set<string>(["minister", "system_admin", "cpo", "permanent_secretary", "president", "prime_minister", "procurement_director"]);
 
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
@@ -396,7 +396,7 @@ const iconMap: Record<string, React.ElementType> = {
   OfficeBuildingIcon: Building2,
   Globe, Image,
   // Extra icons for grouped nav section headers
-  Briefcase, CheckCircle, Bell: Bell,
+  Briefcase, CheckCircle, Bell: Bell, Star,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {

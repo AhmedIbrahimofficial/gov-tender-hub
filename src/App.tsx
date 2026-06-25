@@ -57,6 +57,7 @@ import TenderDetailPage from "./pages/TenderDetailPage";
 import TenderStagePage from "./pages/TenderStagePage";
 import PrimeEntityDashboard from "./pages/PrimeEntityDashboard";
 import PresidentDashboard from "./pages/PresidentDashboard";
+import PrimeMinisterDashboard from "./pages/PrimeMinisterDashboard";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectManagementPage from "./pages/ProjectManagementPage";
 import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
@@ -141,7 +142,10 @@ function AppRoutes() {
       <Route path="/prime-entity" element={<ProtectedRoute><PrimeEntityDashboard /></ProtectedRoute>} />
 
       {/* Office of the President — global super-executive */}
-      <Route path="/president" element={<ProtectedRoute><PresidentDashboard /></ProtectedRoute>} />
+      <Route path="/president"      element={<ProtectedRoute><PresidentDashboard /></ProtectedRoute>} />
+
+      {/* Office of the Prime Minister */}
+      <Route path="/prime-minister" element={<ProtectedRoute><PrimeMinisterDashboard /></ProtectedRoute>} />
 
       {/* Project Management Tower — unified module */}
       <Route path="/projects"             element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
