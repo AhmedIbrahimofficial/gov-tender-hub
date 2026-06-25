@@ -5,414 +5,533 @@ import { useAuth } from "@/lib/auth-context";
 import { pushNotification } from "@/lib/local-store";
 import { getRoleDashboardConfig } from "@/lib/role-dashboard-data";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   AreaChart, Area, PieChart, Pie, Cell,
 } from "recharts";
 import {
-  FileText, CheckCircle2, AlertTriangle, Shield, DollarSign, Users, TrendingUp,
-  Briefcase, Search, Download, Package, BookOpen, Gavel, Settings, Activity,
-  BarChart3, Wrench, Leaf, Heart, Star, Globe2, Archive, Zap, Eye, Plus,
-  RefreshCcw, Clock, Mail, Target, Sparkles, MessageSquare, Edit, Calendar,
-  Upload, Lock, Award, Map, Headphones, Warehouse, PackageCheck, ScanLine,
-  Printer, FolderOpen, X, Share, Truck, Image,
+  Sparkles, LayoutDashboard, FileText, TrendingUp, MessageSquare,
+  Settings, ChevronRight, Activity, CheckCircle2, Clock,
+  AlertTriangle, Users, Star, Send, Search, Download,
+  BarChart3, Shield, DollarSign, Package, Wallet, BookOpen,
+  Plus, Eye, RefreshCcw, Target, Landmark, Building2,
+  ClipboardList, ShieldCheck, AlertOctagon, Crown, Globe,
+  Newspaper, Bell, Image, Trash2, Wrench, Boxes, Warehouse,
+  ScanLine, PackageCheck, Briefcase, PiggyBank, FileSignature,
+  Archive, Gavel, Scale, MapPin, Calendar, Award,
+  GraduationCap, Leaf, XCircle, ArrowRight, User,
 } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {
-  FileText, CheckCircle2, AlertTriangle, Shield, DollarSign, Users, TrendingUp,
-  Briefcase, Search, Download, Package, BookOpen, Gavel, Settings, Activity,
-  BarChart3, Wrench, Leaf, Heart, Star, Globe2, Archive, Zap, Eye, Plus,
-  RefreshCcw, Clock, Mail, Target, Sparkles, MessageSquare, Edit, Calendar,
-  Upload, Lock, Award, Map, Headphones, Warehouse, PackageCheck, ScanLine,
-  Printer, FolderOpen, X, Share, Truck, Image,
+  LayoutDashboard, FileText, TrendingUp, MessageSquare, Settings,
+  Activity, CheckCircle2, Clock, AlertTriangle, Users, Star, Send,
+  Search, Download, BarChart3, Shield, DollarSign, Package, Wallet,
+  BookOpen, Plus, Eye, RefreshCcw, Target, Landmark, Building2,
+  ClipboardList, ShieldCheck, AlertOctagon, Crown, Globe, Newspaper,
+  Bell, Image, Trash2, Wrench, Boxes, Warehouse, ScanLine, PackageCheck,
+  Briefcase, PiggyBank, FileSignature, Archive, Gavel, Scale, MapPin,
+  Calendar, Award, GraduationCap, Leaf, XCircle, ArrowRight, User,
+  Sparkles, BarChart: BarChart3, ChevronRight,
 };
 
-const THEME_COLORS: Record<string, { bg: string; accent: string; text: string; bar: string; chart: string[] }> = {
-  blue:    { bg: "bg-blue-50",    accent: "border-blue-500",  text: "text-blue-700",  bar: "#3b82f6", chart: ["#3b82f6","#60a5fa","#93c5fd"] },
-  green:   { bg: "bg-green-50",   accent: "border-green-500", text: "text-green-700", bar: "#22c55e", chart: ["#22c55e","#4ade80","#86efac"] },
-  violet:  { bg: "bg-violet-50",  accent: "border-violet-500",text: "text-violet-700",bar: "#8b5cf6", chart: ["#8b5cf6","#a78bfa","#c4b5fd"] },
-  amber:   { bg: "bg-amber-50",   accent: "border-amber-500", text: "text-amber-700", bar: "#f59e0b", chart: ["#f59e0b","#fbbf24","#fcd34d"] },
-  red:     { bg: "bg-red-50",     accent: "border-red-500",   text: "text-red-700",   bar: "#ef4444", chart: ["#ef4444","#f87171","#fca5a5"] },
-  slate:   { bg: "bg-slate-50",   accent: "border-slate-500", text: "text-slate-700", bar: "#64748b", chart: ["#64748b","#94a3b8","#cbd5e1"] },
-  teal:    { bg: "bg-teal-50",    accent: "border-teal-500",  text: "text-teal-700",  bar: "#14b8a6", chart: ["#14b8a6","#2dd4bf","#5eead4"] },
-  indigo:  { bg: "bg-indigo-50",  accent: "border-indigo-500",text: "text-indigo-700",bar: "#6366f1", chart: ["#6366f1","#818cf8","#a5b4fc"] },
-  orange:  { bg: "bg-orange-50",  accent: "border-orange-500",text: "text-orange-700",bar: "#f97316", chart: ["#f97316","#fb923c","#fdba74"] },
-  pink:    { bg: "bg-pink-50",    accent: "border-pink-500",  text: "text-pink-700",  bar: "#ec4899", chart: ["#ec4899","#f472b6","#f9a8d4"] },
-  cyan:    { bg: "bg-cyan-50",    accent: "border-cyan-500",  text: "text-cyan-700",  bar: "#06b6d4", chart: ["#06b6d4","#22d3ee","#67e8f9"] },
-  emerald: { bg: "bg-emerald-50", accent: "border-emerald-500",text: "text-emerald-700",bar: "#10b981", chart: ["#10b981","#34d399","#6ee7b7"] },
-};
+type DashTab = "Overview" | "My Work" | "Reports" | "Communications" | "AI Assistant" | "Settings";
+const TABS: DashTab[] = ["Overview", "My Work", "Reports", "Communications", "AI Assistant", "Settings"];
 
-type Tab = "Overview" | "My Work" | "Reports" | "Communications" | "AI Assistant" | "Settings";
-const TABS: Tab[] = ["Overview","My Work","Reports","Communications","AI Assistant","Settings"];
+const PIE_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
+
+function ActivityDot({ type }: { type: string }) {
+  const cls = type === "success" ? "bg-emerald-500" : type === "error" ? "bg-red-500"
+    : type === "warning" ? "bg-amber-500" : "bg-blue-500";
+  return <div className={`h-2 w-2 rounded-full flex-shrink-0 mt-1.5 ${cls}`} />;
+}
+
+function QuickActionCard({ action, onPress }: { action: { label: string; desc: string; icon: string; route?: string }; onPress: () => void }) {
+  const Icon = ICON_MAP[action.icon] ?? Activity;
+  return (
+    <button onClick={onPress}
+      className="flex items-center gap-3 p-3 rounded-xl bg-white border border-black/8 hover:border-black/25 hover:shadow-sm transition-all text-left group w-full">
+      <div className="h-9 w-9 rounded-xl bg-gray-100 grid place-items-center flex-shrink-0 group-hover:bg-black/5">
+        <Icon className="h-4 w-4 text-black/60" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-xs font-semibold text-black truncate">{action.label}</div>
+        <div className="text-[10px] text-black/40 truncate">{action.desc}</div>
+      </div>
+      <ChevronRight className="h-3.5 w-3.5 text-black/20 group-hover:text-black flex-shrink-0" />
+    </button>
+  );
+}
+
+function SubModuleCard({ mod, onPress }: { mod: { label: string; route: string; icon: string; desc: string }; onPress: () => void }) {
+  const Icon = ICON_MAP[mod.icon] ?? Activity;
+  return (
+    <button onClick={onPress}
+      className="p-4 rounded-2xl bg-white border border-black/8 hover:border-black/25 hover:shadow-md transition-all text-left group">
+      <div className="h-10 w-10 rounded-xl bg-gray-100 grid place-items-center mb-3 group-hover:bg-black/5">
+        <Icon className="h-5 w-5 text-black/60" />
+      </div>
+      <div className="text-sm font-semibold text-black mb-0.5">{mod.label}</div>
+      <div className="text-[11px] text-black/40">{mod.desc}</div>
+    </button>
+  );
+}
 
 export default function UniversalRoleDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const config = getRoleDashboardConfig(user?.role ?? "");
-  const tc = THEME_COLORS[config.theme] ?? THEME_COLORS.slate;
-  const [tab, setTab] = useState<Tab>("Overview");
-  const [aiInput, setAiInput] = useState("");
-  const [aiMessages, setAiMessages] = useState<Array<{from:"user"|"ai"; text:string}>>([
-    { from: "ai", text: `Hello ${user?.name?.split(" ")[0] ?? "there"}! I'm ${config.aiName}. How can I help you today?` }
-  ]);
+  const [tab, setTab] = useState<DashTab>("Overview");
+  const [aiQuery, setAiQuery] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
-  function act(msg: string) {
-    pushNotification(msg, "success");
-  }
+  const cfg = getRoleDashboardConfig(user?.role ?? "");
 
-  function handleAction(label: string, route?: string) {
-    act(`Action: ${label}`);
+  const go = (route?: string) => {
     if (route) navigate(route);
-  }
-
-  function sendAiMessage() {
-    if (!aiInput.trim()) return;
-    const userMsg = aiInput.trim();
-    setAiInput("");
-    setAiMessages(prev => [
-      ...prev,
-      { from: "user", text: userMsg },
-      { from: "ai", text: `Understood. Based on your query about "${userMsg}", here's what I found: All relevant ${config.department} data has been reviewed. I recommend checking the latest reports and ensuring all compliance items are up to date.` }
-    ]);
-  }
-
-  const Icon = (name: string) => {
-    const I = ICON_MAP[name] ?? FileText;
-    return <I className="h-4 w-4" />;
+    pushNotification(`Navigating to ${route ?? "dashboard"}`, "info");
   };
+
+  const handleAI = () => {
+    if (!aiQuery.trim()) return;
+    setAiLoading(true);
+    setTimeout(() => {
+      setAiResponse(
+        `[${cfg.aiName}] Analysis complete for: "${aiQuery}"\n\n` +
+        `Based on current data from ${cfg.department}:\n` +
+        cfg.aiCapabilities.map((c, i) => `${i + 1}. ${c} — operational`).join("\n") +
+        `\n\nKey insight: Your ${cfg.kpis[0]?.label} is currently ${cfg.kpis[0]?.value}. ` +
+        `Recommendation: Review ${cfg.subModules[0]?.label} for detailed action items.`
+      );
+      setAiLoading(false);
+    }, 1200);
+  };
+
+  const colorKpi = (c: string) => c as "blue"|"green"|"amber"|"red"|"violet"|"cyan"|"orange"|"pink";
 
   return (
     <AppShell>
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
-        {/* Header */}
-        <div className={`rounded-2xl ${config.color} text-white px-6 py-5 mb-6 flex items-start justify-between gap-4`}>
-          <div>
-            <div className="text-xs font-medium opacity-60 uppercase tracking-widest mb-1">{config.department}</div>
-            <h1 className="text-2xl font-semibold">{config.title}</h1>
-            <p className="text-sm opacity-70 mt-1">{config.subtitle}</p>
-            {user && <p className="text-xs opacity-50 mt-1">Logged in as: {user.name} · {user.entity}</p>}
-          </div>
-          <div className="text-right text-xs opacity-50">
-            <div>{new Date().toLocaleDateString("en-ZW",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</div>
+
+        {/* Role header banner */}
+        <div className="rounded-2xl mb-5 p-5 text-white relative overflow-hidden"
+          style={{ background: `linear-gradient(135deg, ${cfg.gradientFrom}, ${cfg.gradientTo})` }}>
+          <div className="absolute inset-0 opacity-10"
+            style={{ backgroundImage: "radial-gradient(circle at 80% 50%, white 0%, transparent 60%)" }} />
+          <div className="relative z-10 flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <Badge tone="default">{cfg.department}</Badge>
+                <span className="text-[10px] text-white/50 font-mono uppercase tracking-wider">{user?.entity}</span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-white leading-tight" style={{ letterSpacing: "-0.02em" }}>
+                {cfg.title}
+              </h1>
+              <p className="text-sm text-white/70 mt-1">{cfg.subtitle}</p>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <button onClick={() => { pushNotification("AI summary requested", "info"); setTab("AI Assistant"); }}
+                className="h-9 px-3 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-medium flex items-center gap-1.5 backdrop-blur transition-colors">
+                <Sparkles className="h-3.5 w-3.5" /> AI Briefing
+              </button>
+              <button onClick={() => pushNotification("Daily report generated", "success")}
+                className="h-9 px-3 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-medium flex items-center gap-1.5 backdrop-blur transition-colors">
+                <Download className="h-3.5 w-3.5" /> Daily Report
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
-          {config.kpis.map((kpi, i) => (
-            <KpiCard
-              key={i}
-              label={kpi.label}
-              value={kpi.value}
-              delta={kpi.delta}
-              positive={kpi.positive}
-              color={kpi.color as "blue"|"green"|"amber"|"red"|"teal"|"indigo"|"violet"}
-            />
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
+          {cfg.kpis.map((kpi, i) => (
+            <KpiCard key={i} label={kpi.label} value={kpi.value} delta={kpi.delta}
+              positive={kpi.positive} color={colorKpi(kpi.color)} />
           ))}
         </div>
 
-        {/* Tab navigation */}
-        <div className="flex gap-1 mb-5 border-b border-black/10 overflow-x-auto">
+        {/* Tab bar */}
+        <div className="flex gap-1 mb-5 border-b border-black/10 overflow-x-auto scrollbar-none">
           {TABS.map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap transition-colors ${
-                tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
-              }`}
-            >
+            <button key={t} onClick={() => setTab(t)}
+              className={`px-3 py-2.5 text-xs font-medium border-b-2 -mb-px whitespace-nowrap transition-colors flex-shrink-0
+                ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
               {t}
             </button>
           ))}
         </div>
 
-        {/* TAB: Overview */}
+        {/* ── OVERVIEW TAB ─────────────────────────────────────────────────── */}
         {tab === "Overview" && (
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-            {/* Chart */}
-            <div className="xl:col-span-2">
-              <Card>
-                <CardHeader title={config.chartTitle} />
-                <div className="px-5 pb-5">
-                  {config.chartData.length > 0 && config.chartData[0].value2 !== undefined ? (
-                    <ResponsiveContainer width="100%" height={220}>
-                      <BarChart data={config.chartData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                        <YAxis tick={{ fontSize: 11 }} />
-                        <Tooltip />
-                        <Bar dataKey="value" fill={tc.bar} radius={[4,4,0,0]} name="Primary" />
-                        <Bar dataKey="value2" fill={tc.chart[1]} radius={[4,4,0,0]} name="Secondary" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  ) : config.chartData.length > 4 ? (
-                    <ResponsiveContainer width="100%" height={220}>
-                      <AreaChart data={config.chartData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                        <YAxis tick={{ fontSize: 11 }} />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="value" stroke={tc.bar} fill={tc.bar} fillOpacity={0.15} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <ResponsiveContainer width="100%" height={220}>
-                      <PieChart>
-                        <Pie data={config.chartData} dataKey="value" nameKey="label" cx="50%" cy="50%" outerRadius={90} label={({ label, percent }) => `${label} ${(percent*100).toFixed(0)}%`} labelLine={false}>
-                          {config.chartData.map((_, i) => <Cell key={i} fill={tc.chart[i % tc.chart.length]} />)}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </Card>
-            </div>
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-            {/* Recent Activity */}
-            <div>
+              {/* Chart */}
+              <div className="lg:col-span-2">
+                <Card>
+                  <CardHeader title={cfg.chartTitle} subtitle={`${cfg.chartLabel1}${cfg.chartLabel2 ? ` vs ${cfg.chartLabel2}` : ""}`} />
+                  <div className="p-4 h-[240px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      {cfg.chartLabel2 ? (
+                        <BarChart data={cfg.chartData} margin={{ bottom: 0 }}>
+                          <CartesianGrid stroke="#f1f5f9" vertical={false} />
+                          <XAxis dataKey="label" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                          <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                          <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12 }} />
+                          <Bar dataKey="value" fill={cfg.accentHex} radius={[3,3,0,0]} name={cfg.chartLabel1} />
+                          <Bar dataKey="value2" fill="#e2e8f0" radius={[3,3,0,0]} name={cfg.chartLabel2} />
+                        </BarChart>
+                      ) : cfg.chartData.length <= 5 ? (
+                        <PieChart>
+                          <Pie data={cfg.chartData.map(d => ({ name: d.label, value: d.value }))}
+                            cx="50%" cy="50%" innerRadius={50} outerRadius={90} paddingAngle={3} dataKey="value">
+                            {cfg.chartData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                          </Pie>
+                          <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12 }} />
+                        </PieChart>
+                      ) : (
+                        <AreaChart data={cfg.chartData} margin={{ bottom: 0 }}>
+                          <defs>
+                            <linearGradient id={`grad-${cfg.role}`} x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor={cfg.accentHex} stopOpacity={0.2} />
+                              <stop offset="95%" stopColor={cfg.accentHex} stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid stroke="#f1f5f9" vertical={false} />
+                          <XAxis dataKey="label" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                          <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                          <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12 }} />
+                          <Area type="monotone" dataKey="value" stroke={cfg.accentHex}
+                            fill={`url(#grad-${cfg.role})`} name={cfg.chartLabel1} strokeWidth={2} />
+                        </AreaChart>
+                      )}
+                    </ResponsiveContainer>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Recent Activity */}
               <Card>
-                <CardHeader title="Recent Activity" />
-                <div className="divide-y divide-black/5">
-                  {config.recentActivity.map((a, i) => (
-                    <div key={i} className="px-5 py-3.5 flex gap-3 items-start">
-                      <span className={`mt-0.5 h-2 w-2 rounded-full flex-shrink-0 ${
-                        a.type === "success" ? "bg-green-500" :
-                        a.type === "error" ? "bg-red-500" :
-                        a.type === "warning" ? "bg-amber-500" : "bg-blue-500"
-                      }`} />
-                      <div>
+                <CardHeader title="Recent Activity" subtitle="Latest actions & alerts" />
+                <div className="divide-y divide-black/5 max-h-[240px] overflow-y-auto">
+                  {cfg.recentActivity.map((a, i) => (
+                    <div key={i} className="px-4 py-3 flex items-start gap-2.5">
+                      <ActivityDot type={a.type} />
+                      <div className="flex-1 min-w-0">
                         <p className="text-xs text-black leading-relaxed">{a.action}</p>
-                        <p className="text-[10px] text-black/40 mt-0.5">{a.time}</p>
+                        <p className="text-[10px] text-black/35 mt-0.5">{a.time}</p>
                       </div>
                     </div>
                   ))}
-                  {config.recentActivity.length === 0 && (
-                    <div className="px-5 py-8 text-center text-xs text-black/30">No recent activity</div>
-                  )}
                 </div>
               </Card>
+            </div>
+
+            {/* Sub-modules grid */}
+            <div>
+              <h3 className="text-sm font-semibold text-black mb-3">Quick Module Access</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                {cfg.subModules.map((mod, i) => (
+                  <SubModuleCard key={i} mod={mod} onPress={() => go(mod.route)} />
+                ))}
+              </div>
             </div>
           </div>
         )}
 
-        {/* TAB: My Work */}
+        {/* ── MY WORK TAB ──────────────────────────────────────────────────── */}
         {tab === "My Work" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {config.quickActions.map((action, i) => {
-              const I = ICON_MAP[action.icon] ?? FileText;
-              return (
-                <button
-                  key={i}
-                  onClick={() => handleAction(action.label, action.route)}
-                  className={`text-left p-5 rounded-2xl border-2 ${tc.accent} ${tc.bg} hover:shadow-md transition-all group`}
-                >
-                  <div className={`h-9 w-9 rounded-xl flex items-center justify-center mb-3 ${tc.text} bg-white/60`}>
-                    <I className="h-4 w-4" />
-                  </div>
-                  <div className={`text-sm font-semibold ${tc.text} mb-1`}>{action.label}</div>
-                  <div className="text-xs text-black/50">{action.desc}</div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* TAB: Reports */}
-        {tab === "Reports" && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {cfg.quickActions.map((action, i) => (
+                <QuickActionCard key={i} action={action} onPress={() => go(action.route)} />
+              ))}
+            </div>
             <Card>
-              <CardHeader title="Available Reports" />
+              <CardHeader title="My Tasks" subtitle="Current workload" />
               <div className="divide-y divide-black/5">
                 {[
-                  { name: `${config.title} — Monthly Activity Report`, period: "June 2026", status: "Ready" },
-                  { name: `${config.title} — Quarterly Performance Report`, period: "Q2 2026", status: "Ready" },
-                  { name: `${config.title} — Annual Summary 2025`, period: "FY 2025", status: "Archived" },
-                  { name: `AI Activity Digest — ${config.aiName}`, period: "June 2026", status: "Ready" },
-                  { name: `${config.department} — KPI Scorecard`, period: "June 2026", status: "Draft" },
-                ].map((r, i) => (
-                  <div key={i} className="px-5 py-3.5 flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-medium text-black">{r.name}</div>
-                      <div className="text-xs text-black/40">{r.period}</div>
+                  { task: `Complete ${cfg.quickActions[0]?.label ?? "primary task"}`, due: "Today", status: "In Progress" },
+                  { task: `Review ${cfg.kpis[0]?.label ?? "KPI"} report`, due: "Tomorrow", status: "Pending" },
+                  { task: `Submit ${cfg.chartTitle.split(" ")[0]} update`, due: "This week", status: "Pending" },
+                  { task: `Coordinate with ${cfg.department} team`, due: "This week", status: "In Progress" },
+                  { task: "Complete CPD training module", due: "End of month", status: "Planned" },
+                ].map((t, i) => (
+                  <div key={i} className="px-5 py-3 flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-black truncate">{t.task}</p>
+                      <p className="text-[10px] text-black/40 mt-0.5">Due: {t.due}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge tone={r.status === "Ready" ? "green" : r.status === "Draft" ? "amber" : "blue"}>{r.status}</Badge>
-                      <button onClick={() => act(`Downloading: ${r.name}`)} className="h-7 w-7 rounded-lg border border-black/10 flex items-center justify-center hover:bg-gray-100">
-                        <Download className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold flex-shrink-0
+                      ${t.status === "In Progress" ? "bg-blue-100 text-blue-700"
+                        : t.status === "Pending" ? "bg-amber-100 text-amber-700"
+                        : "bg-gray-100 text-gray-600"}`}>{t.status}</span>
+                    <button onClick={() => pushNotification(`Task updated: ${t.task}`, "success")}
+                      className="h-7 px-2.5 rounded-lg bg-black text-white text-[10px] hover:bg-gray-800 flex-shrink-0">Done</button>
                   </div>
                 ))}
               </div>
             </Card>
+          </div>
+        )}
+
+        {/* ── REPORTS TAB ──────────────────────────────────────────────────── */}
+        {tab === "Reports" && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {cfg.kpis.slice(0, 4).map((kpi, i) => (
+                <KpiCard key={i} label={kpi.label} value={kpi.value} delta={kpi.delta}
+                  positive={kpi.positive} color={colorKpi(kpi.color)} />
+              ))}
+            </div>
             <Card>
-              <CardHeader title={config.chartTitle} />
-              <div className="px-5 pb-5">
-                {config.chartData.length > 0 && (
-                  <ResponsiveContainer width="100%" height={200}>
-                    <BarChart data={config.chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 11 }} />
-                      <Tooltip />
-                      <Bar dataKey="value" fill={tc.bar} radius={[4,4,0,0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+              <CardHeader title="My Reports Register" subtitle="All reports with status and age"
+                action={
+                  <button onClick={() => pushNotification("New report created", "success")}
+                    className="h-8 px-3 rounded-xl bg-black text-white text-xs flex items-center gap-1.5 hover:bg-gray-800">
+                    <Plus className="h-3.5 w-3.5" /> New Report
+                  </button>
+                } />
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b border-black/8">
+                    <tr>{["Report Title", "Date", "Status", ""].map(h => (
+                      <th key={h} className="px-4 py-3 text-left text-[11px] font-semibold text-black/40 whitespace-nowrap">{h}</th>
+                    ))}</tr>
+                  </thead>
+                  <tbody className="divide-y divide-black/5">
+                    {[
+                      { title: `Monthly ${cfg.title} Report — June 2026`, date: "2026-07-01", status: "Draft" },
+                      { title: `${cfg.chartTitle} — Q2 2026`, date: "2026-06-30", status: "Submitted" },
+                      { title: `${cfg.kpis[0]?.label ?? "KPI"} Analysis Report`, date: "2026-06-15", status: "Approved" },
+                      { title: `${cfg.department} Activity Summary`, date: "2026-06-01", status: "Archived" },
+                    ].map((r, i) => (
+                      <tr key={i} className="hover:bg-gray-50/60">
+                        <td className="px-4 py-3 text-xs text-black">{r.title}</td>
+                        <td className="px-4 py-3 text-xs text-black/50">{r.date}</td>
+                        <td className="px-4 py-3">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold
+                            ${r.status === "Approved" ? "bg-emerald-100 text-emerald-700"
+                              : r.status === "Draft" ? "bg-gray-100 text-gray-600"
+                              : r.status === "Submitted" ? "bg-blue-100 text-blue-700"
+                              : "bg-gray-50 text-gray-400"}`}>{r.status}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-1">
+                            <button onClick={() => pushNotification(`Opened ${r.title}`, "info")}
+                              className="h-7 px-2.5 rounded-lg border border-black/10 text-[10px] hover:bg-gray-100">Open</button>
+                            <button onClick={() => pushNotification(`Downloaded ${r.title}`, "success")}
+                              className="h-7 px-2.5 rounded-lg border border-black/10 text-[10px] hover:bg-gray-100">PDF</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* ── COMMUNICATIONS TAB ───────────────────────────────────────────── */}
+        {tab === "Communications" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <Card>
+              <CardHeader title="Internal Messages" subtitle="Recent messages"
+                action={
+                  <button onClick={() => pushNotification("New message composed", "info")}
+                    className="h-8 px-3 rounded-xl bg-black text-white text-xs flex items-center gap-1.5 hover:bg-gray-800">
+                    <Send className="h-3.5 w-3.5" /> Compose
+                  </button>
+                } />
+              <div className="divide-y divide-black/5">
+                {[
+                  { from: "CPO — T. Moyo", subject: `Action required: ${cfg.quickActions[0]?.label}`, time: "09:14", unread: true },
+                  { from: "Finance — R. Chikwanda", subject: "Q2 budget confirmation needed", time: "08:42", unread: true },
+                  { from: "HR Department", subject: "Performance review scheduled", time: "Yesterday", unread: false },
+                  { from: "AI System", subject: `Daily ${cfg.title} briefing ready`, time: "06:00", unread: false },
+                ].map((m, i) => (
+                  <div key={i} className={`px-5 py-3.5 hover:bg-gray-50/60 cursor-pointer ${m.unread ? "" : "opacity-60"}`}
+                    onClick={() => pushNotification(`Opened message from ${m.from}`, "info")}>
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className={`text-xs ${m.unread ? "font-semibold text-black" : "font-medium text-black/70"}`}>{m.from}</span>
+                      <span className="text-[10px] text-black/35">{m.time}</span>
+                    </div>
+                    <p className={`text-xs truncate ${m.unread ? "text-black" : "text-black/50"}`}>{m.subject}</p>
+                    {m.unread && <div className="h-1.5 w-1.5 rounded-full bg-black mt-1.5 ml-auto" />}
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <div className="space-y-4">
+              <Card>
+                <CardHeader title="Quick Communication" subtitle="Send message or call" />
+                <div className="p-4 space-y-3">
+                  <input placeholder="To: name@gov.zw" className="w-full h-9 px-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
+                  <input placeholder="Subject" className="w-full h-9 px-3 rounded-xl border border-black/10 text-sm focus:outline-none" />
+                  <textarea rows={4} placeholder="Message…" className="w-full px-3 py-2 rounded-xl border border-black/10 text-sm resize-none focus:outline-none" />
+                  <div className="flex gap-2">
+                    <button onClick={() => pushNotification("Message sent successfully", "success")}
+                      className="flex-1 h-9 rounded-xl bg-black text-white text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-gray-800">
+                      <Send className="h-3.5 w-3.5" /> Send
+                    </button>
+                    <button onClick={() => pushNotification("Voice call initiated", "info")}
+                      className="h-9 px-3 rounded-xl border border-black/10 text-xs hover:bg-gray-50">📞 Call</button>
+                  </div>
+                </div>
+              </Card>
+              <Card>
+                <CardHeader title="Notification Centre" />
+                <div className="divide-y divide-black/5">
+                  {cfg.recentActivity.slice(0, 3).map((a, i) => (
+                    <div key={i} className="px-4 py-3 flex items-start gap-2.5">
+                      <ActivityDot type={a.type} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-black">{a.action}</p>
+                        <p className="text-[10px] text-black/35 mt-0.5">{a.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {/* ── AI ASSISTANT TAB ─────────────────────────────────────────────── */}
+        {tab === "AI Assistant" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="bg-gradient-to-br from-violet-50 to-blue-50 border border-violet-200/60 rounded-2xl p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-10 w-10 rounded-xl bg-violet-600 grid place-items-center flex-shrink-0">
+                    <Sparkles className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-black">{cfg.aiName}</div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[10px] text-emerald-600 font-medium">Active — ready to assist</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <input value={aiQuery} onChange={e => setAiQuery(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleAI()}
+                    placeholder={`Ask ${cfg.aiName} anything about ${cfg.department}…`}
+                    className="flex-1 h-10 px-4 rounded-xl border border-violet-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-300" />
+                  <button onClick={handleAI} disabled={aiLoading}
+                    className="h-10 px-4 rounded-xl bg-violet-600 text-white text-xs font-medium hover:bg-violet-700 disabled:opacity-50 flex items-center gap-1.5">
+                    {aiLoading ? <RefreshCcw className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                    {aiLoading ? "Thinking…" : "Ask AI"}
+                  </button>
+                </div>
+                {aiResponse && (
+                  <div className="mt-4 p-4 bg-white rounded-xl border border-violet-100 text-xs text-black/70 leading-relaxed whitespace-pre-line max-h-48 overflow-y-auto">
+                    {aiResponse}
+                  </div>
                 )}
               </div>
-              <div className="px-5 pb-5">
-                <button onClick={() => act("Exporting report data")} className={`w-full h-9 rounded-xl text-sm font-medium text-white flex items-center justify-center gap-2 ${config.color} hover:opacity-90`}>
-                  <Download className="h-4 w-4" /> Export Data
-                </button>
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {/* TAB: Communications */}
-        {tab === "Communications" && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-            <Card>
-              <CardHeader title="Messages & Notifications" />
-              <div className="divide-y divide-black/5">
-                {[
-                  { from: "System", subject: "Weekly activity report ready", time: "Today 09:14", unread: true },
-                  { from: "CPO Office", subject: "Approval request — tender ZW-PRA-2026-00184", time: "Yesterday", unread: true },
-                  { from: "Compliance Team", subject: "PPDPA compliance update — Q2 2026", time: "3 days ago", unread: false },
-                  { from: config.aiName, subject: "AI-generated daily briefing ready", time: "Today 07:00", unread: false },
-                  { from: "PRAZ Regulator", subject: "Regulatory advisory — threshold update", time: "1 week ago", unread: false },
-                ].map((m, i) => (
-                  <div key={i} className={`px-5 py-3.5 flex items-start gap-3 cursor-pointer hover:bg-gray-50 transition-colors ${m.unread ? "bg-blue-50/30" : ""}`} onClick={() => act(`Opening message: ${m.subject}`)}>
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${tc.bg} ${tc.text}`}>
-                      {m.from[0]}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-black">{m.from}</span>
-                        <span className="text-[10px] text-black/40">{m.time}</span>
-                      </div>
-                      <p className={`text-xs mt-0.5 ${m.unread ? "text-black font-medium" : "text-black/60"}`}>{m.subject}</p>
-                    </div>
-                    {m.unread && <div className="h-2 w-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />}
-                  </div>
-                ))}
-              </div>
-              <div className="px-5 pb-4">
-                <button onClick={() => act("Compose new message")} className={`w-full h-9 rounded-xl text-sm font-medium text-white ${config.color} hover:opacity-90`}>
-                  Compose Message
-                </button>
-              </div>
-            </Card>
-            <Card>
-              <CardHeader title="Announcements" />
-              <div className="divide-y divide-black/5">
-                {[
-                  { title: "System Maintenance — Sunday 02:00–04:00", type: "warning" as const },
-                  { title: "PPDPA Threshold Update Effective July 1", type: "info" as const },
-                  { title: "New Training Module: Ethics in Procurement", type: "success" as const },
-                  { title: "Q3 2026 Procurement Calendar Published", type: "info" as const },
-                ].map((a, i) => (
-                  <div key={i} className="px-5 py-3.5 flex items-center gap-3">
-                    <span className={`h-2 w-2 rounded-full flex-shrink-0 ${a.type === "warning" ? "bg-amber-500" : a.type === "success" ? "bg-green-500" : "bg-blue-500"}`} />
-                    <p className="text-xs text-black">{a.title}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {/* TAB: AI Assistant */}
-        {tab === "AI Assistant" && (
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-            <div className="xl:col-span-2">
               <Card>
-                <CardHeader title={config.aiName} description="AI-powered assistant for your role" />
-                <div className="flex flex-col" style={{ height: 360 }}>
-                  <div className="flex-1 overflow-y-auto px-5 py-3 space-y-3">
-                    {aiMessages.map((m, i) => (
-                      <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-                        <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                          m.from === "user"
-                            ? `${config.color} text-white`
-                            : "bg-gray-100 text-black"
-                        }`}>
-                          {m.text}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="px-5 py-3 border-t border-black/8 flex gap-2">
-                    <input
-                      value={aiInput}
-                      onChange={e => setAiInput(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && sendAiMessage()}
-                      placeholder={`Ask ${config.aiName}...`}
-                      className="flex-1 h-9 px-3 rounded-xl border border-black/10 text-sm outline-none focus:border-black/30"
-                    />
-                    <button onClick={sendAiMessage} className={`h-9 px-4 rounded-xl text-sm font-medium text-white ${config.color} hover:opacity-90`}>Send</button>
-                  </div>
-                </div>
-              </Card>
-            </div>
-            <div>
-              <Card>
-                <CardHeader title="AI Capabilities" />
-                <div className="px-5 pb-5 space-y-2">
-                  {config.aiCapabilities.map((cap, i) => (
-                    <div key={i} className={`flex items-center gap-2 text-xs py-2 px-3 rounded-xl ${tc.bg}`}>
-                      <Sparkles className={`h-3.5 w-3.5 flex-shrink-0 ${tc.text}`} />
-                      <span className="text-black/70">{cap}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-5 pb-4 space-y-2">
-                  {["Summarise today's activity", "What needs my attention?", "Generate status report"].map(q => (
-                    <button key={q} onClick={() => { setAiInput(q); }} className="w-full text-left text-xs px-3 py-2 rounded-xl border border-black/10 hover:bg-gray-50 transition-colors text-black/60 hover:text-black">
-                      {q}
+                <CardHeader title="Suggested Questions" subtitle="Click to ask automatically" />
+                <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[
+                    `Summarise today's ${cfg.title} activities`,
+                    `What tasks are pending for ${cfg.department}?`,
+                    `Generate a performance report for ${cfg.kpis[0]?.label}`,
+                    `What are the key risks in ${cfg.department} this week?`,
+                    "Which items need urgent attention today?",
+                    "Draft a summary email to my supervisor",
+                  ].map((q, i) => (
+                    <button key={i} onClick={() => { setAiQuery(q); setTimeout(handleAI, 100); }}
+                      className="text-left p-3 rounded-xl bg-gray-50 hover:bg-violet-50 border border-black/5 hover:border-violet-200 text-xs text-black/70 transition-colors">
+                      💬 {q}
                     </button>
                   ))}
                 </div>
               </Card>
             </div>
+            <div className="space-y-4">
+              <Card>
+                <CardHeader title="AI Capabilities" subtitle={`${cfg.aiName} can help with:`} />
+                <div className="p-4 space-y-2">
+                  {cfg.aiCapabilities.map((cap, i) => (
+                    <div key={i} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => { setAiQuery(cap); handleAI(); }}>
+                      <div className="h-4 w-4 rounded-full bg-violet-100 grid place-items-center flex-shrink-0">
+                        <div className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
+                      </div>
+                      <span className="text-xs text-black/70">{cap}</span>
+                      <button className="ml-auto text-[10px] bg-violet-100 text-violet-700 px-2 py-0.5 rounded-md hover:bg-violet-200">Run</button>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+              <div className="bg-black rounded-2xl p-4 text-white">
+                <div className="text-xs font-semibold mb-2">Automated Daily Report</div>
+                <p className="text-[11px] text-white/60 leading-relaxed mb-3">
+                  Your daily AI briefing is auto-generated each morning at 06:00 and sent to your supervisor.
+                </p>
+                <button onClick={() => pushNotification("Daily AI report sent to supervisor", "success")}
+                  className="w-full h-8 rounded-xl bg-white text-black text-xs font-medium hover:bg-gray-100 flex items-center justify-center gap-1.5">
+                  <Send className="h-3.5 w-3.5" /> Send Now
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* TAB: Settings */}
+        {/* ── SETTINGS TAB ─────────────────────────────────────────────────── */}
         {tab === "Settings" && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <Card>
-              <CardHeader title="Profile Settings" />
-              <div className="px-5 pb-5 space-y-4">
-                <div>
-                  <label className="text-xs font-medium text-black/60 block mb-1">Full Name</label>
-                  <div className="h-9 px-3 flex items-center border border-black/10 rounded-xl text-sm text-black">{user?.name}</div>
+              <CardHeader title="My Profile" subtitle="Account & role information" />
+              <div className="p-5 space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-2xl bg-black text-white text-xl font-bold grid place-items-center flex-shrink-0">
+                    {user?.avatar ?? "U"}
+                  </div>
+                  <div>
+                    <div className="text-base font-semibold text-black">{user?.name ?? "User"}</div>
+                    <div className="text-sm text-black/50">{cfg.title}</div>
+                    <div className="text-xs text-black/35">{user?.email}</div>
+                  </div>
                 </div>
-                <div>
-                  <label className="text-xs font-medium text-black/60 block mb-1">Role</label>
-                  <div className="h-9 px-3 flex items-center border border-black/10 rounded-xl text-sm text-black">{config.title}</div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    ["Department", cfg.department],
+                    ["Entity", user?.entity ?? "Government of Zimbabwe"],
+                    ["Role", cfg.title],
+                    ["Phone", user?.phone ?? "Not set"],
+                  ].map(([label, value]) => (
+                    <div key={label} className="p-3 rounded-xl bg-gray-50 border border-black/5">
+                      <div className="text-[10px] text-black/40 uppercase tracking-wide mb-0.5">{label}</div>
+                      <div className="text-xs font-semibold text-black truncate">{value}</div>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <label className="text-xs font-medium text-black/60 block mb-1">Department</label>
-                  <div className="h-9 px-3 flex items-center border border-black/10 rounded-xl text-sm text-black">{config.department}</div>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-black/60 block mb-1">Entity</label>
-                  <div className="h-9 px-3 flex items-center border border-black/10 rounded-xl text-sm text-black">{user?.entity}</div>
-                </div>
-                <button onClick={() => act("Profile updated")} className={`h-9 px-5 rounded-xl text-sm font-medium text-white ${config.color} hover:opacity-90`}>
-                  Save Changes
+                <button onClick={() => pushNotification("Profile updated", "success")}
+                  className="w-full h-9 rounded-xl bg-black text-white text-xs font-medium hover:bg-gray-800">
+                  Update Profile
                 </button>
               </div>
             </Card>
             <Card>
-              <CardHeader title="Notification Preferences" />
-              <div className="px-5 pb-5 space-y-3">
-                {["Email notifications", "SMS alerts for approvals", "Daily AI digest", "Compliance reminders", "New tender alerts"].map((pref, i) => (
-                  <div key={i} className="flex items-center justify-between py-2 border-b border-black/5">
-                    <span className="text-sm text-black/70">{pref}</span>
-                    <button onClick={() => act(`Toggled: ${pref}`)} className={`h-6 w-11 rounded-full relative transition-colors ${i % 2 === 0 ? "bg-black" : "bg-gray-200"}`}>
-                      <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${i % 2 === 0 ? "translate-x-5" : "translate-x-0.5"}`} />
+              <CardHeader title="Dashboard Preferences" subtitle="Customise your workspace" />
+              <div className="p-5 space-y-3">
+                {[
+                  { label: "Daily AI Briefing", desc: "Receive automated morning report", enabled: true },
+                  { label: "Email Notifications", desc: "Alert emails for critical items", enabled: true },
+                  { label: "Mobile Push Alerts", desc: "Real-time mobile notifications", enabled: false },
+                  { label: "Weekly Performance Report", desc: "Auto-generated KPI summary", enabled: true },
+                  { label: "Supervisor Escalations", desc: "Auto-escalate overdue items", enabled: true },
+                ].map((pref, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-black/5">
+                    <div>
+                      <div className="text-xs font-medium text-black">{pref.label}</div>
+                      <div className="text-[10px] text-black/40">{pref.desc}</div>
+                    </div>
+                    <button onClick={() => pushNotification(`${pref.label} preference toggled`, "info")}
+                      className={`h-6 w-11 rounded-full transition-colors ${pref.enabled ? "bg-black" : "bg-gray-200"}`}>
+                      <div className={`h-5 w-5 rounded-full bg-white shadow-sm transition-transform mx-0.5 ${pref.enabled ? "translate-x-5" : ""}`} />
                     </button>
                   </div>
                 ))}
@@ -421,19 +540,6 @@ export default function UniversalRoleDashboard() {
           </div>
         )}
 
-        {/* Module shortcuts */}
-        {config.subModules.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-2">
-            {config.subModules.map((m, i) => {
-              const I = ICON_MAP[m.icon] ?? FileText;
-              return (
-                <button key={i} onClick={() => navigate(m.route)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-black/10 text-sm font-medium hover:bg-gray-100 transition-colors text-black/70 hover:text-black">
-                  <I className="h-3.5 w-3.5" />{m.label}
-                </button>
-              );
-            })}
-          </div>
-        )}
       </div>
     </AppShell>
   );
