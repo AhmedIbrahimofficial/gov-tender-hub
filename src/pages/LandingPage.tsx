@@ -37,12 +37,14 @@ function Navbar() {
   return (
     <nav className="absolute top-0 left-0 right-0 z-20 px-6 py-5">
       <div className="max-w-[88rem] mx-auto flex items-center justify-between">
-        {/* Left: Logo + APPIIOMS */}
-        <Link to="/" className="flex items-center gap-2.5">
-          <LogoIcon className="w-7 h-7 text-black" />
-          <span className="text-2xl font-medium tracking-tight text-black" style={{ fontFamily: "'TT Norms Pro', 'Inter', sans-serif" }}>
-            APPIIOMS
-          </span>
+        {/* Left: Logo + System Name */}
+        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+          <LogoIcon className="w-6 h-6 text-black flex-shrink-0" />
+          <div className="leading-none">
+            <div className="text-[10px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
+            <div className="text-[10px] font-bold text-black tracking-tight leading-tight uppercase">Procurement & Oversight</div>
+            <div className="text-[10px] font-bold text-black tracking-tight leading-tight uppercase">Intelligence System</div>
+          </div>
         </Link>
 
         {/* Center nav links */}
@@ -88,11 +90,20 @@ function HeroSection() {
             Procurement<br />Intelligence
           </h1>
           <p
-            className="text-black/70 text-base md:text-lg max-w-md mb-8 leading-relaxed"
+            className="text-black/70 text-base md:text-lg max-w-md mb-6 leading-relaxed"
             style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif" }}
           >
-            AI-Powered Electronic Public Procurement and Oversight Intelligence System — where every procurement decision is transparent, automated, and incorruptible.
+            AI Powered Electronic Public Procurement and Oversight Intelligence System — where every procurement decision is transparent, automated, and incorruptible.
           </p>
+
+          {/* Value pillars */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {["Integrity", "Public Trust", "Transparency", "Good Governance", "Clean Procurement"].map(v => (
+              <span key={v} className="px-3 py-1 rounded-full border border-black/25 text-xs font-semibold text-black/80 bg-white/50 backdrop-blur-sm">
+                {v}
+              </span>
+            ))}
+          </div>
 
           {/* CTA button */}
           <Link
@@ -131,7 +142,7 @@ function InfoSection() {
               className="text-black text-4xl md:text-5xl font-medium leading-tight mb-8"
               style={{ letterSpacing: "-0.03em" }}
             >
-              Meet APPIIOMS.
+              AI Powered Electronic<br />Public Procurement<br />&amp; Oversight System.
             </h2>
             <Link
               to="/signin"
@@ -223,7 +234,7 @@ function UseCasesSection() {
       <div className="max-w-[88rem] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left */}
         <div className="md:pr-12 md:pt-2">
-          <p className="text-black/60 text-sm mb-2">APPIIOMS in Practice</p>
+          <p className="text-black/60 text-sm mb-2">Our System in Practice</p>
           <h2
             className="text-5xl md:text-6xl font-medium leading-none mb-6"
             style={{ letterSpacing: "-0.04em" }}
@@ -231,7 +242,7 @@ function UseCasesSection() {
             Use modes
           </h2>
           <p className="text-black/60 text-base leading-relaxed max-w-sm">
-            APPIIOMS powers a wide range of procurement modes for government entities, oversight bodies, and treasury offices wanting transparent, AI-enforced procurement management.
+            This system powers a wide range of procurement modes for government entities, oversight bodies, and treasury offices wanting transparent, AI-enforced procurement management.
           </p>
           <div className="mt-10 space-y-3">
             {["Tender Management","RFQ & Small Purchases","RFP & EOI","Live Asset Auctions","Anti-Corruption AI","Public Transparency Portal"].map((m) => (
@@ -258,7 +269,7 @@ function UseCasesSection() {
               Government<br />Commerce
             </h3>
             <p className="text-black/70 text-base max-w-md mb-8">
-              Lift procurement integrity by deploying APPIIOMS — a trusted AI-driven system with full audit trails, letting every official transact with zero corruption risk.
+              Lift procurement integrity with a trusted AI-driven system featuring full audit trails, letting every official transact with zero corruption risk.
             </p>
             <Link
               to="/signin"
@@ -305,12 +316,15 @@ function Footer() {
   return (
     <footer className="bg-[#F5F5F5] px-6 py-12 border-t border-black/10">
       <div className="max-w-[88rem] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-        <div className="flex items-center gap-2.5">
-          <LogoIcon className="w-6 h-6 text-black" />
-          <span className="text-lg font-medium tracking-tight text-black">APPIIOMS</span>
+        <div className="flex items-center gap-2">
+          <LogoIcon className="w-6 h-6 text-black flex-shrink-0" />
+          <div className="leading-none">
+            <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public Procurement</div>
+            <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">and Oversight Intelligence System</div>
+          </div>
         </div>
         <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-black/50">
-          <span>AI-Powered Public Procurement Integrity & Intelligence Oversight Management System</span>
+          <span>AI Powered Electronic Public Procurement and Oversight Intelligence System · Integrity · Public Trust · Transparency · Good Governance · Clean Procurement</span>
         </div>
         <div className="flex gap-6 text-sm text-black/50">
           {[
@@ -323,7 +337,7 @@ function Footer() {
         </div>
       </div>
       <div className="max-w-[88rem] mx-auto mt-8 pt-6 border-t border-black/10 text-xs text-black/30">
-        © 2026 APPIIOMS · Government of Zimbabwe · PRAZ · All procurement data publicly disclosed
+        © 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System · Government of Zimbabwe · PRAZ · All procurement data publicly disclosed
       </div>
     </footer>
   );

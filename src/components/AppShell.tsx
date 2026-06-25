@@ -280,13 +280,13 @@ const FULL_ACCESS_ROLES = new Set<string>(["minister", "system_admin", "cpo", "p
 
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
-  procurement_officer: ["/dashboard", "/teams", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
+  procurement_officer: ["/dashboard", "/teams", "/workbench", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
 
   // Evaluator — only evaluation-related pages
-  evaluator: ["/dashboard", "/teams", "/tenders", "/evaluations", "/awards", "/certificates"],
+  evaluator: ["/dashboard", "/teams", "/workbench", "/tenders", "/evaluations", "/awards", "/certificates"],
 
   // Finance officer — payments, invoices, budget
-  finance_officer: ["/dashboard", "/teams", "/finance", "/budget", "/budget/execution", "/budget/expenditure", "/budget/commitments", "/budget/revenue", "/budget/treasury", "/utility/catalogue"],
+  finance_officer: ["/dashboard", "/teams", "/workbench", "/finance", "/budget", "/budget/execution", "/budget/expenditure", "/budget/commitments", "/budget/revenue", "/budget/treasury", "/utility/catalogue"],
 
   // Auditor — audit, anti-corruption, compliance
   auditor: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/bi-dashboards", "/utility/public-records", "/budget", "/budget/fraud", "/budget/execution"],
@@ -604,13 +604,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         </button>
 
         <Link to="/dashboard" className="flex items-center gap-2 flex-shrink-0">
-          <LogoIcon className="h-6 w-6 text-black" />
-          <div className="leading-tight hidden sm:block">
-            <div className="text-sm font-semibold text-black tracking-tight">APPIIOMS</div>
-            <div className="text-[9px] text-black/40 uppercase tracking-wider">Procurement Intelligence</div>
+          <LogoIcon className="h-6 w-6 text-black flex-shrink-0" />
+          <div className="leading-none hidden sm:block">
+            <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
+            <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">Procurement & Oversight</div>
+            <div className="text-[9px] font-bold text-black/60 tracking-tight leading-tight uppercase">Intelligence System</div>
           </div>
           <div className="leading-tight sm:hidden">
-            <div className="text-sm font-semibold text-black tracking-tight">APPIIOMS</div>
+            <div className="text-[10px] font-bold text-black tracking-tight">AEPPOIS</div>
           </div>
         </Link>
 
@@ -795,8 +796,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         `}>
           <div className="flex items-center justify-between px-4 h-14 border-b border-black/10 flex-shrink-0">
             <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-              <LogoIcon className="h-6 w-6 text-black" />
-              <span className="text-sm font-semibold text-black">APPIIOMS</span>
+              <LogoIcon className="h-6 w-6 text-black flex-shrink-0" />
+              <div className="leading-none">
+                <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
+                <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">Procurement & Oversight</div>
+                <div className="text-[9px] font-bold text-black/60 tracking-tight leading-tight uppercase">Intelligence System</div>
+              </div>
             </Link>
             <button onClick={() => setMobileOpen(false)} className="h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40">
               <X className="h-5 w-5" />

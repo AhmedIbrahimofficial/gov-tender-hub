@@ -435,8 +435,8 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
         <div className="flex justify-center mb-4"><LogoIcon className="h-10 w-10 text-black" /></div>
-        <h1 className="text-2xl font-bold text-black" style={{ letterSpacing: "-0.02em" }}>Welcome to APPIIOMS</h1>
-        <p className="text-sm text-black/50 mt-1.5">AI-Powered Enterprise Operations & Intelligence Management</p>
+        <h1 className="text-2xl font-bold text-black" style={{ letterSpacing: "-0.02em" }}>AI Powered Electronic Public Procurement and Oversight Intelligence System</h1>
+        <p className="text-sm text-black/50 mt-1.5">Integrity · Public Trust · Transparency · Good Governance · Clean Procurement</p>
       </div>
       <div className="space-y-3">
         <button onClick={onPublic}
@@ -488,18 +488,22 @@ export default function SignInPage() {
         {/* Logo */}
         <div className="px-8 py-6 border-b border-white/8 flex-shrink-0">
           <Link to="/" className="flex items-center gap-2.5">
-            <LogoIcon className="w-7 h-7 text-white" />
-            <span className="text-lg font-semibold tracking-tight text-white">APPIIOMS</span>
+            <LogoIcon className="w-7 h-7 text-white flex-shrink-0" />
+            <div className="leading-none">
+              <div className="text-[9px] font-bold text-white tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
+              <div className="text-[9px] font-bold text-white tracking-tight leading-tight uppercase">Procurement & Oversight</div>
+              <div className="text-[9px] font-bold text-white/60 tracking-tight leading-tight uppercase">Intelligence System</div>
+            </div>
           </Link>
         </div>
 
         {/* Tag line */}
         <div className="px-8 py-6 flex-shrink-0 border-b border-white/8">
           <h2 className="text-2xl font-semibold text-white leading-tight mb-2" style={{ letterSpacing: "-0.025em" }}>
-            Integrity.<br />Public Trust.<br />Smart Government.
+            Integrity.<br />Public Trust.<br />Transparency.<br />Good Governance.<br />Clean Procurement.
           </h2>
           <p className="text-sm text-white/45 leading-relaxed">
-            AI-Powered Enterprise Operations & Intelligence Management System — Government Platform.
+            AI Powered Electronic Public Procurement and Oversight Intelligence System — Government of Zimbabwe.
           </p>
         </div>
 
@@ -535,7 +539,7 @@ export default function SignInPage() {
         </div>
 
         <div className="px-6 py-3 border-t border-white/8 flex-shrink-0">
-          <p className="text-[10px] text-white/20">© 2026 APPIIOMS · Government Enterprise Platform</p>
+          <p className="text-[10px] text-white/20">© 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System · Government of Zimbabwe</p>
         </div>
       </div>
 

@@ -58,6 +58,7 @@ import TenderStagePage from "./pages/TenderStagePage";
 import PrimeEntityDashboard from "./pages/PrimeEntityDashboard";
 import PresidentDashboard from "./pages/PresidentDashboard";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -81,6 +82,9 @@ function AppRoutes() {
       <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
       <Route path="/ai-agents" element={<ProtectedRoute><AiAgentsPage /></ProtectedRoute>} />
       <Route path="/planning" element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
+
+      {/* Procurement Workbench */}
+      <Route path="/workbench" element={<ProtectedRoute><ProcurementWorkbenchPage /></ProtectedRoute>} />
 
       {/* Procurement Lifecycle Control Tower */}
       <Route path="/lifecycle" element={<ProtectedRoute><ProcurementLifecyclePage /></ProtectedRoute>} />

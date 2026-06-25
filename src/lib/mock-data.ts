@@ -334,6 +334,7 @@ export const navSections = [
     label: "Procurement Management",
     icon: "ShoppingCart",
     items: [
+      { to: "/workbench",         label: "Procurement Workbench",  icon: "LayoutDashboard" },
       { to: "/lifecycle",         label: "Lifecycle Tower",        icon: "BarChart3"    },
       { to: "/tenders-lifecycle", label: "Tender Management",      icon: "FileText"     },
       { to: "/rfq",               label: "RFQ Management",         icon: "ShoppingCart" },
