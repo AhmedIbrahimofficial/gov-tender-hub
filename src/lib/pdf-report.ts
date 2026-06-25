@@ -258,7 +258,7 @@ export function generateDailyReportPDF(user: AuthUser) {
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<title>APPIIOMS Daily Report — ${user.name} — ${report.date}</title>
+<title>AI Powered Electronic Public Procurement and Oversight Intelligence System — Daily Report — ${user.name} — ${report.date}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
   body { background: #fff; color: #111; font-size: 12px; line-height: 1.5; }
@@ -337,8 +337,8 @@ export function generateDailyReportPDF(user: AuthUser) {
     <div class="logo-row">
       <div class="logo-box"></div>
       <div>
-        <div class="org-name">APPIIOMS</div>
-        <div class="org-sub">AI-Powered Public Procurement Intelligence System</div>
+        <div class="org-name" style="font-size:12px;letter-spacing:-0.01em;">AI Powered Electronic Public Procurement</div>
+        <div class="org-sub">and Oversight Intelligence System — Government of Zimbabwe · PRAZ</div>
       </div>
     </div>
     <div class="header-meta">
@@ -361,7 +361,7 @@ export function generateDailyReportPDF(user: AuthUser) {
   <div class="ai-note">
     <div class="ai-note-title">🤖 AI-Generated Executive Summary</div>
     <div class="ai-note-text">
-      On ${report.date}, <strong>${user.name}</strong> completed the following procurement activities within APPIIOMS. 
+      On ${report.date}, <strong>${user.name}</strong> completed the following procurement activities within the AI Powered Electronic Public Procurement and Oversight Intelligence System. 
       ${report.tenders.length} tender record(s) were active, ${report.invoices.length} invoice(s) processed, 
       and ${report.auditLogs.length} audit event(s) logged. All activities comply with PPDPA 2018 requirements. 
       No critical violations detected. Compliance score maintained at 94.2%. 
@@ -390,7 +390,7 @@ export function generateDailyReportPDF(user: AuthUser) {
 
   <!-- Footer -->
   <div class="footer">
-    <span>APPIIOMS — AI-Powered Public Procurement Integrity & Intelligence Oversight Management System</span>
+    <span>AI Powered Electronic Public Procurement and Oversight Intelligence System</span>
     <span>Government of Zimbabwe · PRAZ · Confidential</span>
   </div>
 

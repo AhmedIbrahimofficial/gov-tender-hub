@@ -611,7 +611,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="text-[9px] font-bold text-black/60 tracking-tight leading-tight uppercase">Intelligence System</div>
           </div>
           <div className="leading-tight sm:hidden">
-            <div className="text-[10px] font-bold text-black tracking-tight">AEPPOIS</div>
+            <div className="text-[10px] font-bold text-black tracking-tight">AI Powered Electronic Public Procurement</div>
+            <div className="text-[9px] font-bold text-black tracking-tight">& Oversight Intelligence System</div>
           </div>
         </Link>
 

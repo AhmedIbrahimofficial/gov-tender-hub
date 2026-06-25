@@ -33,7 +33,7 @@ export default function AwardsPage() {
   const awardedTenders = tenders.filter(t => t.status === "Awarded");
 
   const downloadAwardNotice = (c: AwardCandidate) => {
-    const content = `LETTER OF AWARD\n\nReference: ${c.tenderId}\nTender: ${c.title}\nAwarded To: ${c.vendor}\nContract Value: ${c.value}\nEvaluation Score: ${c.score}/100\nAward Date: ${new Date().toLocaleDateString()}\nStandstill Period: 14 working days\n\n${c.entity} · Government of Zimbabwe · APPIIOMS\n© 2026 All Rights Reserved`;
+    const content = `LETTER OF AWARD\n\nReference: ${c.tenderId}\nTender: ${c.title}\nAwarded To: ${c.vendor}\nContract Value: ${c.value}\nEvaluation Score: ${c.score}/100\nAward Date: ${new Date().toLocaleDateString()}\nStandstill Period: 14 working days\n\n${c.entity} · Government of Zimbabwe · AI Powered Electronic Public Procurement and Oversight Intelligence System\n© 2026 All Rights Reserved`;
     const blob = new Blob([content], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = `LOA-${c.tenderId}.txt`; a.click();

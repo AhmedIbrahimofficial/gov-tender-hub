@@ -1557,14 +1557,14 @@ const DEFAULT_CONFIG: RoleDashboardConfig = {
   ],
   recentActivity: [
     { action: "Dashboard loaded successfully", time: "Just now", type: "success" },
-    { action: "Welcome to APPIIOMS — your role-based workspace", time: "Just now", type: "info" },
+    { action: "Welcome to the AI Powered Electronic Public Procurement and Oversight Intelligence System — your role-based workspace", time: "Just now", type: "info" },
   ],
   chartData: [
     { label: "Mon", value: 6 }, { label: "Tue", value: 8 }, { label: "Wed", value: 5 },
     { label: "Thu", value: 9 }, { label: "Fri", value: 7 }, { label: "Sat", value: 2 },
   ],
   chartTitle: "Weekly Activity", chartLabel1: "Tasks",
-  aiName: "APPIIOMS AI Assistant",
+  aiName: "Procurement Intelligence AI Assistant",
   aiCapabilities: ["Summarise my work activities", "Generate activity report", "Suggest next actions", "Draft communications"],
   subModules: [
     { label: "My Workspace", route: "/teams", icon: "Users", desc: "Daily work" },

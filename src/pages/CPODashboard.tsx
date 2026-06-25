@@ -52,7 +52,7 @@ export default function CPODashboard() {
       <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
         <PageHeader
           title={`Good morning, ${user?.name?.split(" ")[0]}`}
-          description="Chief Procurement Officer · APPIIOMS Command Center"
+          description="Chief Procurement Officer · Procurement Command Center"
           actions={
             <div className="flex gap-2">
               <button onClick={handleRequestAIReport}

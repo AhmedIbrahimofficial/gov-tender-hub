@@ -629,7 +629,7 @@ export function ITOfficerDashboard() {
             <CardHeader title="System Health" action={<Badge tone="green">All Systems Go</Badge>} />
             <div className="divide-y divide-black/5">
               {[
-                { service: "APPIIOMS Core API",      status: "Online", latency: "12ms",  uptime: "99.98%" },
+                { service: "Procurement Intelligence Core API", status: "Online", latency: "12ms",  uptime: "99.98%" },
                 { service: "AI Agents Engine",        status: "Online", latency: "48ms",  uptime: "99.91%" },
                 { service: "ZIMRA Integration",       status: "Online", latency: "182ms", uptime: "99.72%" },
                 { service: "Document Vault",          status: "Online", latency: "24ms",  uptime: "100%"   },

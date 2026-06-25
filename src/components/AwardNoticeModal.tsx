@@ -123,7 +123,7 @@ export default function AwardNoticeModal({ tender, vendor, awardedBy, onClose }:
                   <p>Your bid demonstrated the strongest technical and financial proposal among all responsive submissions. The AI-assisted evaluation confirmed your compliance with all mandatory requirements.</p>
                   <p>Please find attached the <strong>Letter of Award</strong> and a list of required legal documents to be submitted within <strong>14 working days</strong> to formalise the contract.</p>
                   <p>Congratulations on this award. We look forward to a successful working partnership.</p>
-                  <p className="text-black/50">— {awardedBy}, Adjudication Officer · {tender.entity} · APPIIOMS</p>
+                  <p className="text-black/50">— {awardedBy}, Adjudication Officer · {tender.entity} · AI Powered Electronic Public Procurement and Oversight Intelligence System</p>
                 </div>
               </div>
 

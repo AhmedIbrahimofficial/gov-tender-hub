@@ -350,7 +350,7 @@ export type AwardNotice = {
   status: "sent" | "pending";
 };
 
-const KEY = "appiioms_data";
+const KEY = "aeppois_procurement_data";
 
 function load(): Store {
   try {

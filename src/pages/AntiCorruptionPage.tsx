@@ -38,7 +38,7 @@ export default function AntiCorruptionPage() {
   };
 
   const downloadEvidence = (id: string) => {
-    const content = `EVIDENCE PACKAGE\n\nAlert ID: ${id}\nGenerated: ${new Date().toLocaleString()}\nBy: ${user?.name ?? "System"}\n\nContents:\n• AI fraud detection analysis\n• Bid comparison data\n• Vendor relationship map\n• Timeline of events\n• Supporting procurement records\n\nConfidential — APPIIOMS Anti-Corruption Unit`;
+    const content = `EVIDENCE PACKAGE\n\nAlert ID: ${id}\nGenerated: ${new Date().toLocaleString()}\nBy: ${user?.name ?? "System"}\n\nContents:\n• AI fraud detection analysis\n• Bid comparison data\n• Vendor relationship map\n• Timeline of events\n• Supporting procurement records\n\nConfidential — AI Powered Electronic Public Procurement and Oversight Intelligence System · Anti-Corruption Unit`;
     const blob = new Blob([content], { type: "application/octet-stream" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = `${id}-evidence.txt`; a.click();

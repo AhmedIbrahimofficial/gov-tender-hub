@@ -58,6 +58,7 @@ import TenderStagePage from "./pages/TenderStagePage";
 import PrimeEntityDashboard from "./pages/PrimeEntityDashboard";
 import PresidentDashboard from "./pages/PresidentDashboard";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProjectManagementPage from "./pages/ProjectManagementPage";
 import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -142,18 +143,18 @@ function AppRoutes() {
       {/* Office of the President — global super-executive */}
       <Route path="/president" element={<ProtectedRoute><PresidentDashboard /></ProtectedRoute>} />
 
-      {/* Project Management module — handles 11 sub-routes */}
-      <Route path="/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/portfolio"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/planning"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/schedule"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/costs"       element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/risks"       element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/quality"     element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/resources"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/contractors" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/documents"   element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-      <Route path="/projects/ai-tower"    element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+      {/* Project Management Tower — unified module */}
+      <Route path="/projects"             element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/portfolio"   element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/planning"    element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/schedule"    element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/costs"       element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/risks"       element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/quality"     element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/resources"   element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/contractors" element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/documents"   element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
+      <Route path="/projects/ai-tower"    element={<ProtectedRoute><ProjectManagementPage /></ProtectedRoute>} />
 
       {/* Utility Services */}
       <Route path="/utility" element={<ProtectedRoute><UtilityPage /></ProtectedRoute>} />
