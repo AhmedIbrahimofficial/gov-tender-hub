@@ -287,15 +287,15 @@ function Welcome() {
 /* ───────────────────────── Page ───────────────────────── */
 export default function LandingPage() {
   const railLeft = [
-    { icon: FileText,    label: "MIS Reports",               to: "/analytics"              },
-    { icon: MapPin,      label: "Tenders by Location",       to: "/gis"                    },
-    { icon: Building2,   label: "Tenders by Organisation",   to: "/organisations"          },
-    { icon: Tag,         label: "Tenders by Classification", to: "/tenders"                },
-    { icon: Archive,     label: "Tenders in Archive",        to: "/tenders"                },
-    { icon: ListChecks,  label: "Tenders Status",            to: "/tenders"                },
-    { icon: XCircle,     label: "Cancelled / Retendered",    to: "/tenders"                },
-    { icon: Download,    label: "Downloads",                 to: "/utility/public-records" },
-    { icon: ShieldCheck, label: "Debarment List",            to: "/anti-corruption"        },
+    { icon: FileText,    label: "MIS Reports",               to: "/portal" },
+    { icon: MapPin,      label: "Tenders by Location",       to: "/gis"    },
+    { icon: Building2,   label: "Tenders by Organisation",   to: "/portal" },
+    { icon: Tag,         label: "Tenders by Classification", to: "/portal" },
+    { icon: Archive,     label: "Tenders in Archive",        to: "/portal" },
+    { icon: ListChecks,  label: "Tenders Status",            to: "/portal" },
+    { icon: XCircle,     label: "Cancelled / Retendered",    to: "/portal" },
+    { icon: Download,    label: "Downloads",                 to: "/portal" },
+    { icon: ShieldCheck, label: "Debarment List",            to: "/portal" },
   ];
 
   const latest = [
