@@ -14,7 +14,7 @@ export type UserRole =
   | "it_officer" | "logistics_officer" | "security_officer"
   | "health_safety_officer" | "environment_officer" | "gender_officer"
   | "permanent_secretary" | "procurement_director"
-  | "president" | "chief_executive"
+  | "president" | "prime_minister" | "chief_executive"
   | "hr_manager" | "hr_officer" | "welfare_officer"
   | "finance_manager" | "budget_manager" | "treasury_manager"
   | "operations_manager" | "facilities_manager" | "transport_officer"
@@ -117,6 +117,7 @@ export const DEMO_USERS_LIST = DEMO_USERS;
 // All 44 management roles
 export const ALL_ROLES: { role: UserRole; label: string; desc: string; color: string }[] = [
   { role: "president",             label: "President / Head of State",  desc: "Whole-of-government super-executive",color: "bg-gradient-to-r from-blue-700 to-blue-900" },
+  { role: "prime_minister",        label: "Prime Minister",             desc: "Head of Government / Deputy Executive", color: "bg-gradient-to-r from-amber-700 to-amber-900" },
   { role: "permanent_secretary",   label: "Permanent Secretary",        desc: "Institutional head · Strategic oversight", color: "bg-slate-950" },
   { role: "procurement_director",  label: "Procurement Director",       desc: "Procurement division leadership",    color: "bg-slate-800" },
   { role: "cpo",                   label: "Chief Procurement Officer",  desc: "Full platform authority",            color: "bg-slate-900" },

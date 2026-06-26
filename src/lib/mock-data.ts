@@ -450,6 +450,7 @@ export const navSections = [
       { to: "/projects/resources",    label: "Resources",            icon: "UsersRound"      },
       { to: "/projects/contractors",  label: "Contractors",          icon: "Building2"       },
       { to: "/projects/documents",    label: "Documents",            icon: "FileText"        },
+      { to: "/gis",                   label: "GIS Map",              icon: "MapPin"          },
     ],
   },
   {

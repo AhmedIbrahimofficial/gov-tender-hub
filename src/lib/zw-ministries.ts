@@ -32,8 +32,88 @@ export type ZWMinistry = {
   email: string;
   address: string;
   description: string;
+  cpo: string;           // Chief Procurement Officer name for this ministry
   departments: ZWDepartment[];
   stateEntities: ZWStateEntity[];
+};
+
+// ─── Presidency / Office of the President and Cabinet ─────────────────────────
+export type ZWPresidency = {
+  id: "presidency";
+  name: "Office of the President and Cabinet";
+  code: "OPC";
+  title: string;        // e.g. "President / Head of State"
+  incumbent: string;    // e.g. "H.E. President E.D. Mnangagwa"
+  phone: string;
+  email: string;
+  address: string;
+  description: string;
+  departments: ZWDepartment[];
+};
+
+export const ZW_PRESIDENCY: ZWPresidency = {
+  id: "presidency",
+  name: "Office of the President and Cabinet",
+  code: "OPC",
+  title: "President / Head of State",
+  incumbent: "H.E. President E.D. Mnangagwa",
+  phone: "+263 4 707 941",
+  email: "info@opc.gov.zw",
+  address: "State House, Harare",
+  description: "The supreme executive authority of the Republic of Zimbabwe. The Office of the President and Cabinet coordinates government policy across all ministries and state entities.",
+  departments: [
+    {
+      id: "opc-cabinet",
+      name: "Cabinet Affairs and Policy Coordination",
+      code: "CAPC",
+      head: "Chief Secretary to the President and Cabinet",
+      roles: [
+        { title: "President / Head of State",              level: "Executive", count: 1 },
+        { title: "Chief Secretary to the Cabinet",         level: "Executive", count: 1 },
+        { title: "Principal Director Cabinet Affairs",     level: "Senior",    count: 2 },
+        { title: "Senior Cabinet Officer",                 level: "Senior",    count: 4 },
+        { title: "Cabinet Officer",                        level: "Officer",   count: 10 },
+        { title: "Administrative Officer",                 level: "Support",   count: 15 },
+      ],
+    },
+    {
+      id: "opc-national-security",
+      name: "National Security and Intelligence",
+      code: "NSI",
+      head: "Director-General National Security",
+      roles: [
+        { title: "Director-General National Security",    level: "Executive", count: 1 },
+        { title: "Deputy Director-General",               level: "Senior",    count: 2 },
+        { title: "Principal Intelligence Officer",        level: "Senior",    count: 5 },
+        { title: "Intelligence Officer",                  level: "Officer",   count: 20 },
+        { title: "Support Officer",                       level: "Support",   count: 18 },
+      ],
+    },
+    {
+      id: "opc-state-residences",
+      name: "State Residences and Protocol",
+      code: "SRP",
+      head: "Director State Residences",
+      roles: [
+        { title: "Director State Residences",             level: "Executive", count: 1 },
+        { title: "Chief Protocol Officer",                level: "Senior",    count: 2 },
+        { title: "Protocol Officer",                      level: "Officer",   count: 8 },
+        { title: "Support Officer",                       level: "Support",   count: 25 },
+      ],
+    },
+    {
+      id: "opc-procurement",
+      name: "Presidential Procurement and Supply",
+      code: "PPS",
+      head: "Chief Procurement Officer — OPC",
+      roles: [
+        { title: "Chief Procurement Officer — OPC",       level: "Executive", count: 1 },
+        { title: "Senior Procurement Officer",            level: "Senior",    count: 3 },
+        { title: "Procurement Officer",                   level: "Officer",   count: 8 },
+        { title: "Procurement Clerk",                     level: "Support",   count: 6 },
+      ],
+    },
+  ],
 };
 
 
@@ -47,6 +127,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@mof.gov.zw",
     address: "Munhumutapa Building, Samora Machel Avenue, Harare",
     description: "National treasury, fiscal policy, budget management, tax administration and investment promotion",
+    cpo: "Mrs. G. Chideme (CPO — MOF)",
     departments: [
       {
         id: "mof-bud", name: "Budget and Public Finance", code: "BPF", head: "Mr. G. Chigumba",
@@ -100,6 +181,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@mohcc.gov.zw",
     address: "Kaguvi Building, 4th Street, Harare",
     description: "National health services, disease control, pharmaceuticals, maternal and child health",
+    cpo: "Mr. T. Rusike (CPO — MOH)",
     departments: [
       {
         id: "moh-ps", name: "Preventive Services", code: "PS", head: "Dr. E. Dhliwayo",
@@ -153,6 +235,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@mopse.gov.zw",
     address: "Ambassador House, Union Avenue, Harare",
     description: "Primary and secondary school education, curriculum development, teacher training and welfare",
+    cpo: "Ms. F. Mpofu (CPO — MOPSE)",
     departments: [
       {
         id: "mopse-curr", name: "Curriculum Development", code: "CD", head: "Mr. N. Munayi",
@@ -195,6 +278,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@mhte.gov.zw",
     address: "Harare",
     description: "Universities, polytechnics, teachers colleges and vocational training centres",
+    cpo: "Prof. S. Chitura (CPO — MOHTE)",
     departments: [
       {
         id: "mohte-univ", name: "University Education", code: "UE", head: "Prof. S. Chitura",
@@ -232,6 +316,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@transport.gov.zw",
     address: "Kaguvi Building, 4th Street, Harare",
     description: "Roads, railways, aviation, civil aviation, ZINARA, postal services and infrastructure development",
+    cpo: "Eng. R. Choto (CPO — MOT)",
     departments: [
       {
         id: "mot-roads", name: "Roads and Traffic", code: "RT", head: "Eng. T. Ncube",
@@ -286,6 +371,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@agritex.gov.zw",
     address: "1 Borrowdale Road, Harare",
     description: "Agricultural production, mechanisation, irrigation, food security and farmer support programmes",
+    cpo: "Dr. M. Chivasa (CPO — MOAM)",
     departments: [
       {
         id: "moam-agric", name: "Agricultural Production and Extension", code: "APE", head: "Dr. M. Chivasa",
@@ -329,6 +415,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@lands.gov.zw",
     address: "Ngungunyana Building, Harare",
     description: "Land reform, rural resettlement, water resources management and land administration",
+    cpo: "Ms. N. Marufu (CPO — MOLAWR)",
     departments: [
       {
         id: "molawr-land", name: "Land Administration and Survey", code: "LAS", head: "Mr. T. Samhungu",
@@ -372,6 +459,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@mines.gov.zw",
     address: "Zimre Centre, Harare",
     description: "Mining regulation, mineral development, geological surveys and gold marketing",
+    cpo: "Mr. T. Mwanza (CPO — MOMMD)",
     departments: [
       {
         id: "mommd-mines", name: "Mines Administration", code: "MA", head: "Mr. T. Mwanza",
@@ -416,6 +504,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@energy.gov.zw",
     address: "Livingstone House, Harare",
     description: "Electricity generation and distribution, energy policy, petroleum regulation, renewable energy",
+    cpo: "Eng. B. Nyoni (CPO — MOEPD)",
     departments: [
       {
         id: "moepd-elec", name: "Electricity and Energy", code: "EE", head: "Eng. N. Matambo",
@@ -460,6 +549,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@environment.gov.zw",
     address: "Makombe Complex, Harare",
     description: "Environmental protection, climate change policy, tourism development, wildlife conservation",
+    cpo: "Ms. G. Madhuku (CPO — MOECT)",
     departments: [
       {
         id: "moect-env", name: "Environmental Management", code: "EM", head: "Dr. T. Mubvumbi",
@@ -504,6 +594,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@homeaffairs.gov.zw",
     address: "Makombe Complex, Harare",
     description: "Police, immigration, national registration, civil registry, cultural heritage and traditional affairs",
+    cpo: "Mr. J. Nhira (CPO — MOHACH)",
     departments: [
       {
         id: "mohach-immig", name: "Immigration", code: "IMM", head: "Mr. J. Nhira",
@@ -547,6 +638,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@defence.gov.zw",
     address: "Defence House, Harare",
     description: "National defence, Zimbabwe National Army, war veterans affairs and demobilisation",
+    cpo: "Maj. Gen. P. Moyo (CPO — MODWV)",
     departments: [
       {
         id: "modwv-def", name: "Defence Administration", code: "DA", head: "Maj. Gen. P. Moyo",
@@ -580,6 +672,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@foreign.gov.zw",
     address: "Munhumutapa Building, Harare",
     description: "Diplomatic relations, foreign missions, international trade negotiations and treaty management",
+    cpo: "Amb. T. Chikwanda (CPO — MOFAIT)",
     departments: [
       {
         id: "mofait-diplo", name: "Diplomatic and Consular Services", code: "DCS", head: "Amb. T. Chikwanda",
@@ -613,6 +706,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@justice.gov.zw",
     address: "Old Mutual Building, Harare",
     description: "Legal affairs, judicial administration, law reform, constitutional development and parliamentary affairs",
+    cpo: "Mr. M. Chinhengo (CPO — MOJLPA)",
     departments: [
       {
         id: "mojlpa-legal", name: "Legal Administration", code: "LA", head: "Mr. M. Chinhengo",
@@ -655,6 +749,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@publicservice.gov.zw",
     address: "Compensation House, Harare",
     description: "Public service management, labour relations, social welfare, social protection and poverty reduction",
+    cpo: "Ms. N. Mushayandebvu (CPO — MOPSLSW)",
     departments: [
       {
         id: "mopslsw-ps", name: "Public Service Commission", code: "PSC", head: "Ms. N. Mushayandebvu",
@@ -698,6 +793,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@information.gov.zw",
     address: "Linquenda House, Harare",
     description: "Public information, broadcasting, state media, publications and government communications",
+    cpo: "Mr. N. Mushangwe (CPO — MOIPBS)",
     departments: [
       {
         id: "moipbs-broadcast", name: "Broadcasting Services", code: "BS", head: "Mr. D. Mwonzora",
@@ -733,6 +829,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@localgovernment.gov.zw",
     address: "Makombe Complex, Harare",
     description: "Local authority oversight, urban and rural councils, public works and government buildings",
+    cpo: "Eng. T. Chimutengo (CPO — MOLGPW)",
     departments: [
       {
         id: "molgpw-local", name: "Local Authorities", code: "LA", head: "Mr. B. Chirinda",
@@ -776,6 +873,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@women.gov.zw",
     address: "Kaguvi Building, Harare",
     description: "Women empowerment, SME development, cooperative societies and community development",
+    cpo: "Ms. T. Museka (CPO — MOWACS)",
     departments: [
       {
         id: "mowacs-women", name: "Women Empowerment", code: "WE", head: "Ms. T. Museka",
@@ -818,6 +916,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@youth.gov.zw",
     address: "Kaguvi Building, Harare",
     description: "Youth development, vocational training, skills development and youth enterprise",
+    cpo: "Ms. A. Muzondo (CPO — MOYEDVT)",
     departments: [
       {
         id: "moyedvt-youth", name: "Youth Development", code: "YD", head: "Mr. T. Makoni",
@@ -851,6 +950,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@ict.gov.zw",
     address: "Munhumutapa Building, Harare",
     description: "ICT policy, telecommunications regulation, postal services and digital economy development",
+    cpo: "Mr. T. Chinyanga (CPO — MOICT)",
     departments: [
       {
         id: "moict-ict", name: "ICT Policy and Development", code: "ICTPD", head: "Mr. T. Chinyanga",
@@ -896,6 +996,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@industry.gov.zw",
     address: "Mukwati Building, Harare",
     description: "Industrial development, trade and commerce, consumer protection, standards and quality",
+    cpo: "Mr. C. Machingauta (CPO — MOIAC)",
     departments: [
       {
         id: "moiac-ind", name: "Industrial Development", code: "ID", head: "Mr. C. Machingauta",
@@ -940,6 +1041,7 @@ export const ZW_MINISTRIES: ZWMinistry[] = [
     email: "info@cabinet.gov.zw",
     address: "Munhumutapa Building, Harare",
     description: "Cabinet secretariat, policy coordination, national procurement oversight, anti-corruption and state security",
+    cpo: "Mr. T. Moyo (CPO — OPC)",
     departments: [
       {
         id: "opc-cabinet", name: "Cabinet Secretariat", code: "CS", head: "Dr. C. Mutisi",

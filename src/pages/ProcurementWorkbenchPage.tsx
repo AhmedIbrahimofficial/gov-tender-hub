@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { AppShell, PageHeader, Card, Badge } from "@/components/AppShell";
 import {
   FileText, CheckCircle2, Clock, Circle, AlertCircle,
@@ -6,9 +6,11 @@ import {
   Download, Eye, MessageSquare, AlertTriangle, DollarSign,
   Shield, BarChart3, Search, BookOpen, Info, Save, Send,
   RotateCcw, HelpCircle, ArrowUp, UserPlus, PauseCircle,
-  XCircle, Check, X, Filter, Plus, Flag, Lock,
+  XCircle, Check, X, Filter, Plus, Flag, Lock, FolderOpen,
+  CalendarDays, Tag, ChevronDown,
 } from "lucide-react";
 import { pushNotification } from "@/lib/local-store";
+import { useAuth } from "@/lib/auth-context";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type UserHierarchyRole = "Initiator" | "Approver" | "Authorizer" | "Adjudicator" | "Oversight";
@@ -47,9 +49,38 @@ interface WorkbenchRecord {
 type NavTab =
   | "overview" | "details" | "participants" | "suppliers"
   | "documents" | "approvals" | "communications" | "risks"
-  | "compliance" | "financials" | "performance" | "audit" | "ai";
+  | "compliance" | "financials" | "performance" | "audit" | "ai" | "casefile";
 
 type WorkAreaTab = "form" | "checklist" | "instructions";
+
+// ─── Case File Types ──────────────────────────────────────────────────────────
+type TenderCategory = "All" | "Works" | "Contractor" | "Supplies";
+
+type AssignedTask = {
+  id: string;
+  title: string;
+  stage: string;
+  priority: Priority;
+  dueDate: string;
+  status: "active" | "pending" | "overdue" | "completed";
+  role: UserHierarchyRole;
+};
+
+type CaseFileTender = {
+  recordNumber: string;
+  referenceNumber: string;
+  title: string;
+  entity: string;
+  category: TenderCategory;
+  value: string;
+  status: "Open" | "Pending" | "Approved" | "Rejected" | "On Hold";
+  priority: Priority;
+  currentStage: string;
+  dueDate: string;
+  percentageComplete: number;
+  assignedToUsers: string[]; // user IDs
+  tasks: AssignedTask[];
+};
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
 const MOCK_RECORD: WorkbenchRecord = {
@@ -123,11 +154,26 @@ const MOCK_QUEUE_ITEMS = [
   { id: "WQ-004", title: "EOI Shortlist — Water Treatment",      type: "Delegated Tasks", priority: "Low",    due: "2026-06-30", status: "delegated"},
 ];
 
-const MOCK_DOCUMENTS = [
-  { name: "Tender Document v3.pdf",     category: "Tender Documents",  size: "2.4 MB", uploaded: "2026-06-20", status: "Final"   },
-  { name: "BOQ_ARV_2026.xlsx",          category: "Quotations",        size: "840 KB", uploaded: "2026-06-21", status: "Final"   },
-  { name: "Evaluation Matrix.xlsx",     category: "Evaluation Reports",size: "1.1 MB", uploaded: "2026-06-23", status: "Draft"   },
-  { name: "Budget Approval Letter.pdf", category: "Contracts",         size: "310 KB", uploaded: "2026-06-18", status: "Approved"},
+const MOCK_DOCUMENTS: {
+  name: string; category: string; size: string; uploaded: string; status: string; uploader?: string;
+}[] = [
+  // ── Minutes ───────────────────────────────────────────────────────────────
+  { name: "Procurement Committee Minutes — 12 Jun 2026.pdf",  category: "Minutes",              size: "320 KB", uploaded: "2026-06-12", status: "Final",   uploader: "D. Moyo"      },
+  { name: "Evaluation Panel Minutes — 20 Jun 2026.pdf",       category: "Minutes",              size: "280 KB", uploaded: "2026-06-20", status: "Final",   uploader: "A. Chikwanda" },
+  // ── Resolutions ───────────────────────────────────────────────────────────
+  { name: "Award Resolution — MOH-2026-00183.pdf",            category: "Resolutions",          size: "190 KB", uploaded: "2026-06-22", status: "Approved",uploader: "L. Ndlovu"    },
+  { name: "Procurement Committee Resolution No. 14.pdf",      category: "Resolutions",          size: "145 KB", uploaded: "2026-06-15", status: "Draft",   uploader: "D. Moyo"      },
+  // ── Compliance Checklist ──────────────────────────────────────────────────
+  { name: "PRAZ Compliance Checklist v2.xlsx",                category: "Compliance Checklist", size: "210 KB", uploaded: "2026-06-21", status: "Final",   uploader: "L. Ndlovu"    },
+  { name: "Anti-Corruption Declaration Forms.pdf",            category: "Compliance Checklist", size: "390 KB", uploaded: "2026-06-19", status: "Approved",uploader: "S. Nkosi"     },
+  // ── Attachments ───────────────────────────────────────────────────────────
+  { name: "Tender Document v3.pdf",                           category: "Attachments",          size: "2.4 MB", uploaded: "2026-06-20", status: "Final",   uploader: "D. Moyo"      },
+  { name: "BOQ_ARV_2026.xlsx",                                category: "Attachments",          size: "840 KB", uploaded: "2026-06-21", status: "Final",   uploader: "D. Moyo"      },
+  { name: "Evaluation Matrix.xlsx",                           category: "Attachments",          size: "1.1 MB", uploaded: "2026-06-23", status: "Draft",   uploader: "A. Chikwanda" },
+  { name: "Budget Approval Letter.pdf",                       category: "Attachments",          size: "310 KB", uploaded: "2026-06-18", status: "Approved",uploader: "L. Ndlovu"    },
+  // ── Notices ───────────────────────────────────────────────────────────────
+  { name: "Clarification Notice No. 1.pdf",                   category: "Notices",              size: "125 KB", uploaded: "2026-06-17", status: "Final",   uploader: "D. Moyo"      },
+  { name: "Award Notice — MOH-2026-00183.pdf",                category: "Notices",              size: "168 KB", uploaded: "2026-06-23", status: "Final",   uploader: "D. Moyo"      },
 ];
 
 const MOCK_AUDIT = [
@@ -145,11 +191,16 @@ const MOCK_NOTES = [
 ];
 
 const MOCK_PARTICIPANTS = [
-  { name: "D. Moyo",       role: "Senior Procurement Officer", hierarchy: "Initiator"   as UserHierarchyRole, status: "Active",   task: "Evaluation coordination",  done: false },
-  { name: "A. Chikwanda",  role: "Finance Officer",            hierarchy: "Approver"    as UserHierarchyRole, status: "Pending",  task: "Budget confirmation",      done: false },
-  { name: "L. Ndlovu",     role: "Legal Officer",              hierarchy: "Authorizer"  as UserHierarchyRole, status: "Complete", task: "Compliance clearance",     done: true  },
-  { name: "CPO — D. Sithole", role: "Chief Procurement Officer", hierarchy: "Authorizer" as UserHierarchyRole, status: "Pending", task: "Final sign-off",          done: false },
-  { name: "S. Nkosi",      role: "Auditor",                    hierarchy: "Oversight"   as UserHierarchyRole, status: "Viewer",   task: "Observation only",         done: false },
+  { name: "D. Moyo",          role: "Senior Procurement Officer",  hierarchy: "Initiator"   as UserHierarchyRole, status: "Stage Coordinating", task: "Evaluation coordination",  done: false,
+    coachingNotes: "Consolidate all evaluation score sheets before submission. Any divergence above 15% must be flagged to the evaluation committee." },
+  { name: "A. Chikwanda",     role: "Finance Officer",             hierarchy: "Approver"    as UserHierarchyRole, status: "Pending Approval",   task: "Budget confirmation",      done: false,
+    coachingNotes: "Cross-reference IFMIS before approving. Confirm performance bond aligns with the estimated contract value." },
+  { name: "L. Ndlovu",        role: "Legal Officer",               hierarchy: "Authorizer"  as UserHierarchyRole, status: "Authorised",         task: "Compliance clearance",     done: true,
+    coachingNotes: "PPDPA compliance confirmed. Award notice must include debriefing clause. All declarations on file." },
+  { name: "CPO — D. Sithole", role: "Chief Procurement Officer",   hierarchy: "Authorizer"  as UserHierarchyRole, status: "Awaiting Sign-off",  task: "Final sign-off",           done: false,
+    coachingNotes: "Final sign-off requires evaluation report and budget line confirmation. No award can proceed until both are on file." },
+  { name: "S. Nkosi",         role: "Auditor",                     hierarchy: "Oversight"   as UserHierarchyRole, status: "Under Observation",  task: "Observation only",         done: false,
+    coachingNotes: "Reviewing COI declarations. Flag any evaluator with procurement interest in the past 12 months." },
 ];
 
 const MOCK_SUPPLIERS = [
@@ -160,12 +211,58 @@ const MOCK_SUPPLIERS = [
   { id: "VEN-00478", name: "Mutare Drug Consortium",     score: 41, financial: 38, status: "Non-Responsive", risk: "High", bids: 1 },
 ];
 
-const MOCK_APPROVALS = [
-  { stage: "Budget Confirmation",    approver: "L. Ndlovu",    role: "Finance Officer",    date: "2026-06-22", status: "Approved",  comment: "Budget line BC-MHCC-2026-0041 confirmed" },
-  { stage: "Legal Clearance",        approver: "A. Mpofu",     role: "Legal Officer",       date: "2026-06-23", status: "Approved",  comment: "Procurement method compliant with PPDPA" },
-  { stage: "Technical Evaluation",   approver: "D. Moyo",      role: "Procurement Officer", date: "—",          status: "Pending",   comment: "" },
-  { stage: "Adjudication Board",     approver: "CPO Board",    role: "Adjudicator",         date: "—",          status: "Not Yet",   comment: "" },
-  { stage: "Award Authorisation",    approver: "PS — R. Dube", role: "Authorizer",          date: "—",          status: "Not Yet",   comment: "" },
+const MOCK_APPROVALS: {
+  stage: string; stageLabel: string; approver: string; role: string;
+  startDate: string; endDate: string; time: string; age: string;
+  status: string; comment: string;
+  complianceMet: boolean | null; complianceFile: string | null;
+  discussionLink: string;
+}[] = [
+  {
+    stage: "Budget Confirmation",   stageLabel: "Stage 1",
+    approver: "L. Ndlovu",          role: "Finance Officer",
+    startDate: "2026-06-20",        endDate: "2026-06-22", time: "2026-06-22 08:55",
+    age: "2 days",                  status: "Approved",
+    comment: "Budget line BC-MHCC-2026-0041 confirmed",
+    complianceMet: true,            complianceFile: "Budget_Compliance_Checklist_Stage1.pdf",
+    discussionLink: "Stage 1 — Budget Thread",
+  },
+  {
+    stage: "Legal Clearance",       stageLabel: "Stage 2",
+    approver: "A. Mpofu",           role: "Legal Officer",
+    startDate: "2026-06-22",        endDate: "2026-06-23", time: "2026-06-23 14:10",
+    age: "1 day",                   status: "Approved",
+    comment: "Procurement method compliant with PPDPA",
+    complianceMet: true,            complianceFile: "Legal_Compliance_Checklist_Stage2.pdf",
+    discussionLink: "Stage 2 — Legal Thread",
+  },
+  {
+    stage: "Technical Evaluation",  stageLabel: "Stage 3",
+    approver: "D. Moyo",            role: "Procurement Officer",
+    startDate: "2026-06-23",        endDate: "—",           time: "—",
+    age: "3 days (active)",         status: "Pending",
+    comment: "",
+    complianceMet: false,           complianceFile: "Technical_Compliance_Checklist_Stage3.pdf",
+    discussionLink: "Stage 3 — Technical Thread",
+  },
+  {
+    stage: "Adjudication Board",    stageLabel: "Stage 4",
+    approver: "CPO Board",          role: "Adjudicator",
+    startDate: "—",                 endDate: "—",           time: "—",
+    age: "—",                       status: "Not Yet",
+    comment: "",
+    complianceMet: null,            complianceFile: null,
+    discussionLink: "Stage 4 — Adjudication Thread",
+  },
+  {
+    stage: "Award Authorisation",   stageLabel: "Stage 5",
+    approver: "PS — R. Dube",       role: "Authorizer",
+    startDate: "—",                 endDate: "—",           time: "—",
+    age: "—",                       status: "Not Yet",
+    comment: "",
+    complianceMet: null,            complianceFile: null,
+    discussionLink: "Stage 5 — Award Thread",
+  },
 ];
 
 const MOCK_RISKS = [
@@ -175,7 +272,258 @@ const MOCK_RISKS = [
   { id: "RSK-004", title: "Deadline risk — 2 days remaining",  category: "Time",       level: "High",   status: "Escalated", owner: "CPO",          mitigation: "CPO expediting sign-offs" },
 ];
 
-// ─── 1. Context Header ────────────────────────────────────────────────────────
+// ─── Case File — Staff allocation & per-tender tasks ─────────────────────────
+// Each entry represents a tender the logged-in staff member has been allocated to.
+// In production this would be fetched from the backend filtered by user.id.
+const CASE_FILE_TENDERS: CaseFileTender[] = [
+  {
+    recordNumber: "TND-2026-001",
+    referenceNumber: "ZW-PRA-2026-00183",
+    title: "Procurement of Antiretroviral Medicines (2-Year Framework)",
+    entity: "Ministry of Health & Child Care",
+    category: "Supplies",
+    value: "USD 42,500,000",
+    status: "Pending",
+    priority: "High",
+    currentStage: "Technical Evaluation",
+    dueDate: "2026-06-25",
+    percentageComplete: 46,
+    assignedToUsers: ["u7", "u6"], // A. Mpofu, P. Dube
+    tasks: [
+      { id: "t-001", title: "Consolidate evaluation score sheets", stage: "Technical Evaluation", priority: "High",   dueDate: "2026-06-25", status: "overdue",  role: "Initiator"  },
+      { id: "t-002", title: "Resolve evaluator divergence on Criterion 3",  stage: "Technical Evaluation", priority: "High",   dueDate: "2026-06-26", status: "active",   role: "Initiator"  },
+      { id: "t-003", title: "Upload signed evaluation matrix to vault",     stage: "Technical Evaluation", priority: "Medium", dueDate: "2026-06-27", status: "pending",  role: "Initiator"  },
+      { id: "t-004", title: "Submit for CPO sign-off",                      stage: "Technical Evaluation", priority: "High",   dueDate: "2026-06-27", status: "pending",  role: "Initiator"  },
+    ],
+  },
+  {
+    recordNumber: "RFQ-2026-0892",
+    referenceNumber: "ZW-RFQ-2026-00892",
+    title: "Office Stationery & Consumables — Q3 2026",
+    entity: "Ministry of Finance",
+    category: "Supplies",
+    value: "USD 4,200",
+    status: "Open",
+    priority: "Low",
+    currentStage: "Admin Evaluation",
+    dueDate: "2026-06-28",
+    percentageComplete: 34,
+    assignedToUsers: ["u7"], // A. Mpofu
+    tasks: [
+      { id: "t-005", title: "Admin compliance check — all 3 quotations",    stage: "Admin Evaluation", priority: "Low",    dueDate: "2026-06-27", status: "active",    role: "Approver"   },
+      { id: "t-006", title: "Prepare award recommendation memo",             stage: "Admin Evaluation", priority: "Medium", dueDate: "2026-06-28", status: "pending",   role: "Approver"   },
+    ],
+  },
+  {
+    recordNumber: "TND-2026-002",
+    referenceNumber: "ZW-PRA-2026-00181",
+    title: "Rehabilitation of Beitbridge–Harare Highway (Section 4)",
+    entity: "Ministry of Transport",
+    category: "Works",
+    value: "USD 88,000,000",
+    status: "Open",
+    priority: "High",
+    currentStage: "Advertisement",
+    dueDate: "2026-08-04",
+    percentageComplete: 15,
+    assignedToUsers: ["u7", "u1"], // A. Mpofu, T. Moyo
+    tasks: [
+      { id: "t-007", title: "Verify advertisement in Herald & Gazette",      stage: "Advertisement",    priority: "High",   dueDate: "2026-07-01", status: "active",    role: "Initiator"  },
+      { id: "t-008", title: "Update PRAZ portal — clarification log",        stage: "Advertisement",    priority: "Medium", dueDate: "2026-07-10", status: "pending",   role: "Initiator"  },
+      { id: "t-009", title: "Coordinate pre-bid site visit",                 stage: "Advertisement",    priority: "High",   dueDate: "2026-07-15", status: "pending",   role: "Initiator"  },
+    ],
+  },
+  {
+    recordNumber: "EOI-2026-0018",
+    referenceNumber: "ZW-EOI-2026-00018",
+    title: "Expression of Interest — Water Treatment Consultancy",
+    entity: "Ministry of Water",
+    category: "Contractor",
+    value: "Est. USD 800,000",
+    status: "Open",
+    priority: "Medium",
+    currentStage: "EOI Advertisement",
+    dueDate: "2026-07-15",
+    percentageComplete: 12,
+    assignedToUsers: ["u7"], // A. Mpofu
+    tasks: [
+      { id: "t-010", title: "Publish EOI on PRAZ portal and website",        stage: "EOI Advertisement", priority: "Medium", dueDate: "2026-07-01", status: "active",   role: "Initiator"  },
+      { id: "t-011", title: "Respond to supplier queries",                   stage: "EOI Advertisement", priority: "Low",    dueDate: "2026-07-10", status: "pending",  role: "Initiator"  },
+    ],
+  },
+  {
+    recordNumber: "RFP-2026-0041",
+    referenceNumber: "ZW-RFP-2026-00041",
+    title: "Provision of Legal Advisory Services — 3 Years",
+    entity: "Ministry of Justice",
+    category: "Contractor",
+    value: "USD 2,400,000",
+    status: "Pending",
+    priority: "Medium",
+    currentStage: "Financial Evaluation",
+    dueDate: "2026-06-30",
+    percentageComplete: 58,
+    assignedToUsers: ["u7", "u2"], // A. Mpofu, R. Chikwanda
+    tasks: [
+      { id: "t-012", title: "Financial scoring — 4 proposals",               stage: "Financial Evaluation", priority: "Medium", dueDate: "2026-06-29", status: "active",  role: "Initiator"  },
+      { id: "t-013", title: "Prepare combined ranking matrix",                stage: "Financial Evaluation", priority: "Medium", dueDate: "2026-06-30", status: "pending", role: "Initiator"  },
+    ],
+  },
+];
+// ─── Role-specific outcome status colours ─────────────────────────────────────
+const OUTCOME_STATUS_COLORS: Record<string, string> = {
+  "Stage Coordinating": "bg-blue-50 text-blue-700 border-blue-200",
+  "Stage Complete":     "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Returned":           "bg-red-50 text-red-700 border-red-200",
+  "Pending Approval":   "bg-amber-50 text-amber-700 border-amber-200",
+  "Budget Confirmed":   "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Approval Rejected":  "bg-red-50 text-red-700 border-red-200",
+  "Awaiting Sign-off":  "bg-amber-50 text-amber-700 border-amber-200",
+  "Authorised":         "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Deferred":           "bg-orange-50 text-orange-700 border-orange-200",
+  "Award Recommended":  "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Pending Review":     "bg-amber-50 text-amber-700 border-amber-200",
+  "Award Declined":     "bg-red-50 text-red-700 border-red-200",
+  "Under Observation":  "bg-slate-50 text-slate-700 border-slate-200",
+  "Cleared":            "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "Risk Flagged":       "bg-red-50 text-red-700 border-red-200",
+  default:              "bg-gray-50 text-gray-600 border-gray-200",
+};
+
+type ChatMsg = { author: string; text: string; time: string };
+
+function ParticipantsPanel({ onAct }: { onAct: (msg: string) => void }) {
+  const roleColors: Record<UserHierarchyRole, string> = {
+    Initiator:   "bg-blue-100 text-blue-700",
+    Approver:    "bg-violet-100 text-violet-700",
+    Authorizer:  "bg-emerald-100 text-emerald-700",
+    Adjudicator: "bg-amber-100 text-amber-700",
+    Oversight:   "bg-red-100 text-red-700",
+  };
+  const [notes, setNotes] = useState<Record<string, string>>(() =>
+    Object.fromEntries(MOCK_PARTICIPANTS.map(p => [p.name, p.coachingNotes]))
+  );
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [chatMsgs, setChatMsgs] = useState<ChatMsg[]>([
+    { author: "D. Moyo",      text: "Budget confirmation still outstanding. Can Finance confirm IFMIS line by COB?", time: "09:14" },
+    { author: "A. Chikwanda", text: "Checking now — will revert by 14:00.",                                         time: "10:02" },
+    { author: "L. Ndlovu",    text: "Legal clearance is done. Awaiting CPO final sign-off.",                        time: "10:45" },
+  ]);
+  const [draft, setDraft] = useState("");
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const toggle = (name: string) =>
+    setExpanded(prev => ({ ...prev, [name]: !prev[name] }));
+
+  const sendMsg = () => {
+    const text = draft.trim();
+    if (!text) return;
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    setChatMsgs(prev => [...prev, { author: "You", text, time }]);
+    setDraft("");
+    onAct("Participant message sent");
+    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+  };
+
+  const statusCls = (status: string) =>
+    OUTCOME_STATUS_COLORS[status] ?? OUTCOME_STATUS_COLORS.default;
+
+  return (
+    <div className="p-4 space-y-2 overflow-y-auto">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-semibold text-black/60">Participants — Role Hierarchy</span>
+        <button onClick={() => onAct("User added")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] flex items-center gap-1 hover:opacity-90">
+          <Plus className="h-3 w-3" /> Add
+        </button>
+      </div>
+
+      {MOCK_PARTICIPANTS.map((p) => {
+        const isOpen = !!expanded[p.name];
+        return (
+          <div key={p.name} className="border border-black/8 rounded-xl overflow-hidden">
+            <button
+              onClick={() => toggle(p.name)}
+              className="w-full flex items-center justify-between p-3 hover:bg-[#F5F5F5] transition-colors text-left"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="h-7 w-7 rounded-full bg-black text-white text-[10px] font-bold grid place-items-center flex-shrink-0">
+                  {p.name.replace(/^.*?—\s*/, "").split(" ").map((x: string) => x[0]).join("").slice(0, 2)}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-black truncate">{p.name}</div>
+                  <div className="text-[10px] text-black/40 truncate">{p.role} · {p.task}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+                <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${roleColors[p.hierarchy]}`}>{p.hierarchy}</span>
+                <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border ${statusCls(p.status)}`}>{p.status}</span>
+                <ChevronDown className={`h-3 w-3 text-black/30 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+              </div>
+            </button>
+
+            {isOpen && (
+              <div className="border-t border-black/8 bg-[#FAFAFA] px-3 py-3">
+                <label className="text-[10px] font-semibold text-black/50 uppercase tracking-wider block mb-1">
+                  Coaching Notes
+                </label>
+                <textarea
+                  rows={3}
+                  value={notes[p.name] ?? ""}
+                  onChange={e => setNotes(prev => ({ ...prev, [p.name]: e.target.value }))}
+                  onBlur={() => onAct(`Coaching notes saved for ${p.name}`)}
+                  placeholder="Add coaching guidance, role-specific instructions, or compliance reminders…"
+                  className="w-full resize-none rounded-lg border border-black/10 bg-white px-2.5 py-2 text-[11px] text-black focus:outline-none focus:ring-1 focus:ring-black/20 leading-relaxed"
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Shared group chat */}
+      <div className="border border-black/8 rounded-xl overflow-hidden mt-1">
+        <div className="flex items-center gap-2 px-3 py-2 bg-black/3 border-b border-black/8">
+          <MessageSquare className="h-3.5 w-3.5 text-black/40" />
+          <span className="text-[10px] font-semibold text-black/60">Participant Discussion</span>
+          <span className="ml-auto text-[9px] bg-black/5 text-black/40 px-1.5 py-0.5 rounded-full">{chatMsgs.length} messages</span>
+        </div>
+        <div className="max-h-52 overflow-y-auto px-3 py-3 space-y-2.5 bg-white">
+          {chatMsgs.map((m, i) => {
+            const isYou = m.author === "You";
+            return (
+              <div key={i} className={`flex flex-col ${isYou ? "items-end" : "items-start"}`}>
+                {!isYou && <span className="text-[9px] font-semibold text-black/40 mb-0.5 px-1">{m.author}</span>}
+                <div className={`max-w-[85%] px-2.5 py-1.5 rounded-xl text-[11px] leading-relaxed ${
+                  isYou ? "bg-black text-white rounded-br-sm" : "bg-black/5 text-black rounded-bl-sm"
+                }`}>{m.text}</div>
+                <span className="text-[9px] text-black/30 mt-0.5 px-1">{m.time}</span>
+              </div>
+            );
+          })}
+          <div ref={chatEndRef} />
+        </div>
+        <div className="flex gap-2 px-3 pb-3 pt-2 border-t border-black/8 bg-[#FAFAFA]">
+          <textarea
+            rows={2}
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } }}
+            placeholder="Message all participants… (Enter to send)"
+            className="flex-1 resize-none rounded-lg border border-black/10 bg-white px-2.5 py-1.5 text-[11px] text-black focus:outline-none focus:ring-1 focus:ring-black/20"
+          />
+          <button
+            onClick={sendMsg}
+            disabled={!draft.trim()}
+            className="h-9 w-9 rounded-lg bg-black text-white flex items-center justify-center hover:bg-black/80 disabled:opacity-30 flex-shrink-0 self-end"
+          >
+            <Send className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ContextHeader({ record }: { record: WorkbenchRecord }) {
   const statusColors = {
     Open: "bg-blue-100 text-blue-700 border-blue-200",
@@ -311,6 +659,7 @@ function WorkflowProgressTracker({ stages, currentIndex }: { stages: string[]; c
 // ─── 3. Navigation Panel ──────────────────────────────────────────────────────
 const NAV_TABS: { key: NavTab; label: string; icon: React.ElementType }[] = [
   { key: "overview",        label: "Overview",        icon: Eye           },
+  { key: "casefile",        label: "Case File",       icon: FolderOpen    },
   { key: "details",         label: "Details",         icon: FileText      },
   { key: "participants",    label: "Participants",     icon: Users         },
   { key: "suppliers",       label: "Suppliers",       icon: Users         },
@@ -332,12 +681,46 @@ const QUEUE_FILTERS: WorkQueueStatus[] = [
 function NavigationPanel({
   activeTab, onTabChange,
   queueFilter, onQueueFilterChange,
+  assignedTenders,
 }: {
   activeTab: NavTab;
   onTabChange: (t: NavTab) => void;
   queueFilter: WorkQueueStatus;
   onQueueFilterChange: (f: WorkQueueStatus) => void;
+  assignedTenders: CaseFileTender[];
 }) {
+  const [queueSearch, setQueueSearch] = useState("");
+
+  // Flatten all tasks from all assigned tenders into one cross-tender task list
+  const ALL_CROSS_TASKS = assignedTenders.flatMap(tender =>
+    tender.tasks.map(task => ({ ...task, tenderRef: tender.recordNumber, tenderTitle: tender.title }))
+  );
+
+  const statusToFilter: Record<string, WorkQueueStatus> = {
+    active:    "My Tasks",
+    overdue:   "Overdue Tasks",
+    pending:   "Pending Tasks",
+    completed: "Delegated Tasks",
+  };
+
+  const filteredTasks = ALL_CROSS_TASKS.filter(task => {
+    const filterMatch = statusToFilter[task.status] === queueFilter;
+    const searchMatch = queueSearch === "" ||
+      task.title.toLowerCase().includes(queueSearch.toLowerCase()) ||
+      task.tenderRef.toLowerCase().includes(queueSearch.toLowerCase()) ||
+      task.tenderTitle.toLowerCase().includes(queueSearch.toLowerCase()) ||
+      task.stage.toLowerCase().includes(queueSearch.toLowerCase());
+    return filterMatch && searchMatch;
+  });
+
+  const taskCounts: Record<WorkQueueStatus, number> = {
+    "My Tasks":        ALL_CROSS_TASKS.filter(t => t.status === "active").length,
+    "Overdue Tasks":   ALL_CROSS_TASKS.filter(t => t.status === "overdue").length,
+    "Pending Tasks":   ALL_CROSS_TASKS.filter(t => t.status === "pending").length,
+    "Escalated Tasks": 0,
+    "Delegated Tasks": ALL_CROSS_TASKS.filter(t => t.status === "completed").length,
+  };
+
   return (
     <div className="flex flex-col h-full border-r border-black/10 bg-white overflow-hidden">
       {/* Section label */}
@@ -356,11 +739,14 @@ function NavigationPanel({
             </button>
           ))}
         </div>
-        {/* Work Queue section */}
+
+        {/* Work Queue — cross-tender task bar */}
         <div className="mt-3 pt-2 border-t border-black/8">
-          <span className="text-[9px] font-bold text-black/35 uppercase tracking-wider px-2 mb-1 block">Work Queue</span>
+          <span className="text-[9px] font-bold text-black/35 uppercase tracking-wider px-2 mb-1 block">
+            Task Queue <span className="text-black/25 font-normal">· all tenders</span>
+          </span>
           {QUEUE_FILTERS.map(f => {
-            const count = MOCK_QUEUE_ITEMS.filter(q => q.type === f).length;
+            const count = taskCounts[f];
             return (
               <button key={f} onClick={() => onQueueFilterChange(f)}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors
@@ -372,22 +758,292 @@ function NavigationPanel({
               </button>
             );
           })}
-          {/* Queue item preview */}
-          {MOCK_QUEUE_ITEMS.filter(q => q.type === queueFilter).map(q => (
-            <div key={q.id} className={`mx-1 mt-1 p-2 rounded-lg border text-[10px] cursor-pointer hover:bg-[#F5F5F5]
-              ${q.status === "overdue" ? "border-red-100 bg-red-50" : q.status === "active" ? "border-blue-100 bg-blue-50" : "border-black/8"}`}>
-              <div className="font-semibold text-black truncate">{q.title}</div>
-              <div className={`mt-0.5 ${q.status === "overdue" ? "text-red-500" : "text-black/40"}`}>Due: {q.due}</div>
-            </div>
-          ))}
+
+          {/* Queue search bar */}
+          <div className="relative mt-2 mb-1">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-black/30" />
+            <input
+              value={queueSearch}
+              onChange={e => setQueueSearch(e.target.value)}
+              placeholder="Search tasks…"
+              className="w-full h-6 pl-6 pr-2 text-[10px] border border-black/10 rounded-lg focus:outline-none focus:ring-1 focus:ring-black/20 bg-[#F9F9F9]"
+            />
+            {queueSearch && (
+              <button onClick={() => setQueueSearch("")} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+                <X className="h-2.5 w-2.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Cross-tender task list */}
+          {filteredTasks.length === 0 ? (
+            <div className="mx-1 mt-1 p-2 text-[10px] text-black/30 text-center">No tasks match</div>
+          ) : (
+            filteredTasks.map(task => (
+              <div key={task.id}
+                className={`mx-1 mt-1 p-2 rounded-lg border text-[10px] cursor-pointer hover:bg-[#F0F0F0] transition-colors
+                  ${task.status === "overdue" ? "border-red-100 bg-red-50" : task.status === "active" ? "border-blue-100 bg-blue-50" : "border-black/8"}`}>
+                <div className="font-semibold text-black truncate">{task.title}</div>
+                <div className="text-black/40 mt-0.5 truncate">{task.tenderRef}</div>
+                <div className={`mt-0.5 ${task.status === "overdue" ? "text-red-500" : "text-black/40"}`}>Due: {task.dueDate}</div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
   );
 }
 
+// ─── Case File Tab ────────────────────────────────────────────────────────────
+function CaseFileTab({
+  assignedTenders,
+  onOpenTender,
+}: {
+  assignedTenders: CaseFileTender[];
+  onOpenTender: (recordNumber: string) => void;
+}) {
+  const [search, setSearch] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [category, setCategory] = useState<TenderCategory>("All");
+  const [expandedTender, setExpandedTender] = useState<string | null>(null);
+
+  const filtered = assignedTenders.filter(t => {
+    const matchSearch = search === "" ||
+      t.title.toLowerCase().includes(search.toLowerCase()) ||
+      t.recordNumber.toLowerCase().includes(search.toLowerCase()) ||
+      t.entity.toLowerCase().includes(search.toLowerCase()) ||
+      t.referenceNumber.toLowerCase().includes(search.toLowerCase());
+    const matchCat  = category === "All" || t.category === category;
+    const matchFrom = fromDate === "" || t.dueDate >= fromDate;
+    const matchTo   = toDate   === "" || t.dueDate <= toDate;
+    return matchSearch && matchCat && matchFrom && matchTo;
+  });
+
+  const statusCls: Record<string, string> = {
+    Open:      "bg-blue-100 text-blue-700",
+    Pending:   "bg-amber-100 text-amber-700",
+    Approved:  "bg-emerald-100 text-emerald-700",
+    Rejected:  "bg-red-100 text-red-700",
+    "On Hold": "bg-gray-100 text-gray-600",
+  };
+  const priCls: Record<Priority, string> = {
+    High:   "bg-red-100 text-red-700",
+    Medium: "bg-amber-100 text-amber-700",
+    Low:    "bg-green-100 text-green-700",
+  };
+  const taskStatusCls: Record<string, string> = {
+    active:    "border-blue-100 bg-blue-50",
+    overdue:   "border-red-100 bg-red-50",
+    pending:   "border-black/8 bg-white",
+    completed: "border-emerald-100 bg-emerald-50",
+  };
+  const taskStatusLabel: Record<string, string> = {
+    active:    "In Progress",
+    overdue:   "Overdue",
+    pending:   "Pending",
+    completed: "Done",
+  };
+  const taskStatusBadge: Record<string, string> = {
+    active:    "bg-blue-100 text-blue-700",
+    overdue:   "bg-red-100 text-red-700",
+    pending:   "bg-gray-100 text-gray-600",
+    completed: "bg-emerald-100 text-emerald-700",
+  };
+
+  return (
+    <div className="p-4 space-y-3">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <span className="text-xs font-semibold text-black/70">My Case File</span>
+          <p className="text-[10px] text-black/40 mt-0.5">Tenders you are system-allocated to · {assignedTenders.length} active</p>
+        </div>
+        <span className="text-[9px] bg-black/5 text-black/40 px-2 py-0.5 rounded-full">Access-controlled</span>
+      </div>
+
+      {/* Search bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search by tender title, ref, or entity…"
+          className="w-full h-8 pl-9 pr-8 text-xs border border-black/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/10"
+        />
+        {search && (
+          <button onClick={() => setSearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+            <X className="h-3 w-3" />
+          </button>
+        )}
+      </div>
+
+      {/* Filters row */}
+      <div className="flex flex-wrap gap-2 items-end">
+        {/* Category filter tabs */}
+        <div className="flex items-center gap-0.5 bg-[#F5F5F5] rounded-lg p-0.5">
+          {(["All", "Works", "Contractor", "Supplies"] as TenderCategory[]).map(cat => (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${category === cat ? "bg-black text-white" : "text-black/50 hover:text-black"}`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Date filters */}
+        <div className="flex items-center gap-1.5">
+          <CalendarDays className="h-3 w-3 text-black/30 flex-shrink-0" />
+          <input
+            type="date"
+            value={fromDate}
+            onChange={e => setFromDate(e.target.value)}
+            className="h-7 px-2 text-[10px] border border-black/10 rounded-lg focus:outline-none focus:ring-1 focus:ring-black/20 w-28"
+            title="From date"
+          />
+          <span className="text-[10px] text-black/30">–</span>
+          <input
+            type="date"
+            value={toDate}
+            onChange={e => setToDate(e.target.value)}
+            className="h-7 px-2 text-[10px] border border-black/10 rounded-lg focus:outline-none focus:ring-1 focus:ring-black/20 w-28"
+            title="To date"
+          />
+          {(fromDate || toDate) && (
+            <button onClick={() => { setFromDate(""); setToDate(""); }} className="text-[10px] text-black/40 hover:text-black flex items-center gap-0.5">
+              <X className="h-2.5 w-2.5" /> Clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Results count */}
+      {(search || category !== "All" || fromDate || toDate) && (
+        <div className="text-[10px] text-black/40">{filtered.length} of {assignedTenders.length} tenders</div>
+      )}
+
+      {/* Tender list */}
+      {filtered.length === 0 ? (
+        <div className="p-6 text-center text-xs text-black/30 bg-white rounded-xl border border-black/8">
+          <FolderOpen className="h-6 w-6 mx-auto mb-2 opacity-30" />
+          No tenders match your filters
+        </div>
+      ) : (
+        filtered.map(tender => {
+          const isExpanded = expandedTender === tender.recordNumber;
+          const myTasks = tender.tasks;
+          const overdueTasks = myTasks.filter(t => t.status === "overdue");
+          const activeTasks  = myTasks.filter(t => t.status === "active");
+
+          return (
+            <div key={tender.recordNumber} className="border border-black/10 rounded-xl overflow-hidden bg-white">
+              {/* Tender header row */}
+              <div
+                className="p-3 cursor-pointer hover:bg-[#F9F9F9] transition-colors"
+                onClick={() => setExpandedTender(isExpanded ? null : tender.recordNumber)}
+              >
+                <div className="flex items-start gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                      <span className="text-[10px] font-mono font-bold text-black/50">{tender.recordNumber}</span>
+                      <span className="text-[9px] text-black/30">·</span>
+                      <span className="text-[9px] font-mono text-black/40">{tender.referenceNumber}</span>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${statusCls[tender.status]}`}>{tender.status}</span>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${priCls[tender.priority]}`}>{tender.priority}</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/8 text-black/50">{tender.category}</span>
+                    </div>
+                    <div className="text-xs font-semibold text-black leading-snug truncate">{tender.title}</div>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-[10px] text-black/40">{tender.entity}</span>
+                      <span className="text-[10px] text-black/40">Stage: <strong className="text-black">{tender.currentStage}</strong></span>
+                      <span className="text-[10px] text-black/40">Due: <strong className={tender.dueDate <= "2026-06-26" ? "text-red-600" : "text-black"}>{tender.dueDate}</strong></span>
+                      <span className="text-[10px] font-bold text-black/70">{tender.value}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {overdueTasks.length > 0 && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700">{overdueTasks.length} overdue</span>
+                    )}
+                    {activeTasks.length > 0 && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">{activeTasks.length} active</span>
+                    )}
+                    <span className="text-[10px] text-black/40">{myTasks.length} task{myTasks.length !== 1 ? "s" : ""}</span>
+                    <ChevronDown className={`h-3.5 w-3.5 text-black/30 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="flex-1 bg-black/8 rounded-full h-1 overflow-hidden">
+                    <div className="bg-black h-full rounded-full transition-all" style={{ width: `${tender.percentageComplete}%` }} />
+                  </div>
+                  <span className="text-[9px] font-bold text-black/40 flex-shrink-0">{tender.percentageComplete}%</span>
+                </div>
+              </div>
+
+              {/* Expanded task list */}
+              {isExpanded && (
+                <div className="border-t border-black/8 bg-[#F9F9F9] p-3 space-y-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-semibold text-black/50 uppercase tracking-wider">My Tasks on this Tender</span>
+                    <button
+                      onClick={() => onOpenTender(tender.recordNumber)}
+                      className="h-6 px-2.5 bg-black text-white rounded-lg text-[9px] font-medium hover:opacity-90 flex items-center gap-1"
+                    >
+                      <Eye className="h-2.5 w-2.5" /> Open Tender
+                    </button>
+                  </div>
+                  {myTasks.length === 0 ? (
+                    <div className="text-[10px] text-black/30 text-center py-2">No tasks assigned</div>
+                  ) : (
+                    myTasks.map(task => (
+                      <div key={task.id} className={`flex items-start gap-2.5 p-2.5 border rounded-lg ${taskStatusCls[task.status]}`}>
+                        <div className={`flex-shrink-0 h-4 w-4 rounded-full grid place-items-center mt-0.5 ${task.status === "overdue" ? "bg-red-400" : task.status === "active" ? "bg-blue-400" : task.status === "completed" ? "bg-emerald-400" : "bg-black/15"}`}>
+                          {task.status === "completed" ? <Check className="h-2.5 w-2.5 text-white" /> : <span className="text-[8px] text-white font-bold">{task.priority[0]}</span>}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[11px] font-semibold text-black leading-tight">{task.title}</div>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            <span className="text-[9px] text-black/40">{task.stage}</span>
+                            <span className={`text-[9px] font-semibold px-1 py-0.5 rounded ${taskStatusBadge[task.status]}`}>{taskStatusLabel[task.status]}</span>
+                            <span className={`text-[9px] ${task.status === "overdue" ? "text-red-600 font-semibold" : "text-black/40"}`}>Due {task.dueDate}</span>
+                          </div>
+                        </div>
+                        <span className="text-[9px] bg-black/8 text-black/50 px-1.5 py-0.5 rounded flex-shrink-0">{task.role}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })
+      )}
+
+      {/* Access control notice */}
+      <div className="p-2.5 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-2">
+        <Shield className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+        <p className="text-[10px] text-amber-700">You can only view and act on tenders you have been system-allocated to. Contact your CPO if you need access to additional records.</p>
+      </div>
+    </div>
+  );
+}
+
 // ─── 4. Main Work Area ────────────────────────────────────────────────────────
-function MainWorkArea({ activeTab, record }: { activeTab: NavTab; record: WorkbenchRecord }) {
+function MainWorkArea({
+  activeTab,
+  record,
+  assignedTenders,
+  onOpenTender,
+}: {
+  activeTab: NavTab;
+  record: WorkbenchRecord;
+  assignedTenders: CaseFileTender[];
+  onOpenTender: (recordNumber: string) => void;
+}) {
   const [checks, setChecks] = useState({
     specAttached: true, budgetApproved: true, evalCompleted: false,
     declarationsSigned: false, conflictsChecked: true,
@@ -595,33 +1251,7 @@ function MainWorkArea({ activeTab, record }: { activeTab: NavTab; record: Workbe
   );
 
   if (activeTab === "participants") return (
-    <div className="p-4 space-y-2">
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-semibold text-black/60">Participants — Role Hierarchy</span>
-        <button onClick={() => act("User added")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] flex items-center gap-1 hover:opacity-90">
-          <Plus className="h-3 w-3" /> Add
-        </button>
-      </div>
-      {MOCK_PARTICIPANTS.map((p, i) => (
-        <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="h-7 w-7 rounded-full bg-black text-white text-[10px] font-bold grid place-items-center flex-shrink-0">
-              {p.name.split(" ").map((x: string) => x[0]).join("").slice(0, 2)}
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-semibold text-black truncate">{p.name}</div>
-              <div className="text-[10px] text-black/40 truncate">{p.role} · {p.task}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${roleColors[p.hierarchy]}`}>{p.hierarchy}</span>
-            <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${p.done ? "bg-emerald-100 text-emerald-700" : p.status === "Active" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"}`}>
-              {p.done ? "Done" : p.status}
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
+    <ParticipantsPanel onAct={act} />
   );
 
   if (activeTab === "suppliers") return (
@@ -656,26 +1286,86 @@ function MainWorkArea({ activeTab, record }: { activeTab: NavTab; record: Workbe
 
   if (activeTab === "approvals") return (
     <div className="p-4 space-y-2">
-      <div className="text-xs font-semibold text-black/60 mb-1">Approval Chain & History</div>
+      <div className="text-xs font-semibold text-black/60 mb-2">Approval Chain & History</div>
       {MOCK_APPROVALS.map((a, i) => (
         <div key={i} className="flex gap-3 p-3 border border-black/8 rounded-xl">
+          {/* Timeline spine */}
           <div className="flex flex-col items-center flex-shrink-0">
             <div className={`h-6 w-6 rounded-full grid place-items-center
               ${a.status === "Approved" ? "bg-emerald-500" : a.status === "Pending" ? "bg-amber-400" : "bg-black/10"}`}>
               {a.status === "Approved" ? <Check className="h-3 w-3 text-white" /> : <Clock className="h-3 w-3 text-white" />}
             </div>
-            {i < MOCK_APPROVALS.length - 1 && <div className="w-px flex-1 bg-black/8 mt-0.5 mb-0.5 min-h-[12px]" />}
+            {i < MOCK_APPROVALS.length - 1 && <div className="w-px flex-1 bg-black/8 mt-0.5 mb-0.5 min-h-[20px]" />}
           </div>
-          <div className="flex-1 min-w-0">
+
+          {/* Card body */}
+          <div className="flex-1 min-w-0 space-y-1.5">
+            {/* Row 1 — Stage label + stage name + status badge */}
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold text-black">{a.stage}</span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-black/5 text-black/40 flex-shrink-0">{a.stageLabel}</span>
+                <span className="text-xs font-semibold text-black truncate">{a.stage}</span>
+              </div>
               <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0
-                ${a.status === "Approved" ? "bg-emerald-100 text-emerald-700" : a.status === "Pending" ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-500"}`}>
+                ${a.status === "Approved" ? "bg-emerald-100 text-emerald-700"
+                  : a.status === "Pending" ? "bg-amber-100 text-amber-700"
+                  : "bg-gray-100 text-gray-500"}`}>
                 {a.status}
               </span>
             </div>
-            <div className="text-[10px] text-black/50 mt-0.5">{a.approver} · {a.role}{a.date !== "—" ? ` · ${a.date}` : ""}</div>
-            {a.comment && <div className="text-[10px] text-black/40 italic mt-0.5">"{a.comment}"</div>}
+
+            {/* Row 2 — Approver & role */}
+            <div className="text-[10px] text-black/50">{a.approver} · {a.role}</div>
+
+            {/* Row 3 — Dates, time, age */}
+            <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+              <div className="text-[9px] text-black/35"><span className="font-semibold text-black/50">Start:</span> {a.startDate}</div>
+              <div className="text-[9px] text-black/35"><span className="font-semibold text-black/50">End:</span> {a.endDate}</div>
+              <div className="text-[9px] text-black/35"><span className="font-semibold text-black/50">Time:</span> {a.time}</div>
+              <div className="text-[9px] text-black/35"><span className="font-semibold text-black/50">Age:</span> {a.age}</div>
+            </div>
+
+            {/* Row 4 — Compliance indicator + file link */}
+            <div className="flex items-center gap-3 pt-0.5">
+              {/* Compliance checkbox */}
+              <div className="flex items-center gap-1">
+                <div className={`h-3.5 w-3.5 rounded border flex-shrink-0 grid place-items-center
+                  ${a.complianceMet === true ? "bg-emerald-500 border-emerald-500"
+                    : a.complianceMet === false ? "bg-red-400 border-red-400"
+                    : "border-black/20 bg-white"}`}>
+                  {a.complianceMet === true  && <Check className="h-2.5 w-2.5 text-white" />}
+                  {a.complianceMet === false && <X className="h-2.5 w-2.5 text-white" />}
+                </div>
+                <span className={`text-[9px] font-medium
+                  ${a.complianceMet === true ? "text-emerald-600"
+                    : a.complianceMet === false ? "text-red-500"
+                    : "text-black/30"}`}>
+                  {a.complianceMet === true ? "Compliant" : a.complianceMet === false ? "Non-compliant" : "Not assessed"}
+                </span>
+              </div>
+              {/* Compliance file link */}
+              {a.complianceFile ? (
+                <button onClick={() => act(`Opened compliance file: ${a.complianceFile}`)}
+                  className="flex items-center gap-1 text-[9px] text-blue-600 hover:text-blue-800 transition-colors">
+                  <FileText className="h-3 w-3" />
+                  <span className="underline underline-offset-2 truncate max-w-[120px]">{a.complianceFile}</span>
+                </button>
+              ) : (
+                <span className="text-[9px] text-black/20 italic">No compliance file</span>
+              )}
+            </div>
+
+            {/* Row 5 — Comment */}
+            {a.comment && <div className="text-[10px] text-black/40 italic">"{a.comment}"</div>}
+
+            {/* Row 6 — Discussion thread link */}
+            <div className="pt-0.5">
+              <button onClick={() => act(`Opened discussion: ${a.discussionLink}`)}
+                className="flex items-center gap-1 text-[9px] text-black/40 hover:text-black transition-colors">
+                <MessageSquare className="h-3 w-3" />
+                <span className="underline underline-offset-2">{a.discussionLink}</span>
+              </button>
+            </div>
           </div>
         </div>
       ))}
@@ -759,50 +1449,218 @@ function MainWorkArea({ activeTab, record }: { activeTab: NavTab; record: Workbe
     </div>
   );
 
-  if (activeTab === "financials") return (
-    <div className="p-4 space-y-2">
-      <div className="text-xs font-semibold text-black/50">Budget & Expenditure</div>
-      {[
-        { label: "Approved Budget",    value: "USD 45,000,000", cls: "bg-blue-50 border-blue-100 text-blue-800"    },
-        { label: "Committed (PO)",     value: "USD 42,500,000", cls: "bg-amber-50 border-amber-100 text-amber-800" },
-        { label: "Invoiced to Date",   value: "USD 0",          cls: "bg-gray-50 border-gray-200 text-gray-700"    },
-        { label: "Available Balance",  value: "USD 2,500,000",  cls: "bg-emerald-50 border-emerald-100 text-emerald-800" },
-      ].map(b => (
-        <div key={b.label} className={`flex items-center justify-between p-3 border rounded-xl ${b.cls}`}>
-          <span className="text-xs font-medium">{b.label}</span>
-          <span className="text-sm font-bold">{b.value}</span>
-        </div>
-      ))}
-    </div>
-  );
+  if (activeTab === "financials") {
+    const now = new Date();
+    const finStampDate = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const finStampTime = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
-  if (activeTab === "performance") return (
-    <div className="p-4 space-y-2">
-      <div className="text-xs font-semibold text-black/50">KPIs & Performance Tracking</div>
-      {[
-        { label: "Cycle Time",             value: "18 days", target: "14 days", met: false, bar: 70  },
-        { label: "Compliance Score",        value: "82%",     target: "90%",     met: false, bar: 82  },
-        { label: "Evaluator Participation", value: "8/8",     target: "8/8",     met: true,  bar: 100 },
-        { label: "Document Completeness",   value: "94%",     target: "100%",    met: false, bar: 94  },
-        { label: "Budget Accuracy",         value: "On track",target: "On track",met: true,  bar: 96  },
-      ].map(k => (
-        <div key={k.label} className="p-3 border border-black/8 rounded-xl">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-black">{k.label}</span>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-black">{k.value}</span>
-              <span className={`text-[9px] px-1 py-0.5 rounded font-semibold ${k.met ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                {k.met ? "✓ Met" : `Target: ${k.target}`}
-              </span>
+    const approvedBudget    = 45_000_000;
+    const proposedAmount    = 42_500_000;
+    const withinBudget      = proposedAmount <= approvedBudget;
+
+    return (
+      <div className="p-4 space-y-3">
+
+        {/* ── Header context block ── */}
+        <div className="p-3 bg-[#F9F9F9] border border-black/8 rounded-xl space-y-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-mono font-bold text-black/50">{record.recordNumber}</span>
+                <span className="text-[10px] text-black/30">·</span>
+                <span className="text-[9px] font-mono text-black/40">{record.referenceNumber}</span>
+              </div>
+              <div className="text-xs font-semibold text-black leading-snug mt-0.5">{record.title}</div>
+            </div>
+            <div className="flex-shrink-0 text-right">
+              <div className="text-[9px] font-semibold text-black/40">{finStampDate}</div>
+              <div className="text-[9px] text-black/30">{finStampTime}</div>
             </div>
           </div>
-          <div className="w-full bg-black/8 rounded-full h-1 overflow-hidden">
-            <div className={`h-full rounded-full ${k.met ? "bg-emerald-500" : "bg-amber-400"}`} style={{ width: `${k.bar}%` }} />
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 pt-1 border-t border-black/8">
+            {[
+              { label: "Ministry",        value: record.ministry                  },
+              { label: "Department",      value: record.department                },
+              { label: "Budget Account",  value: "BA-2026-MOH-001"               },
+              { label: "Account Code",    value: record.budgetCode               },
+              { label: "Financial Year",  value: record.financialYear            },
+            ].map(r => (
+              <div key={r.label}>
+                <span className="text-[9px] text-black/35 font-medium">{r.label}</span>
+                <p className="text-[10px] font-semibold text-black leading-tight">{r.value}</p>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  );
+
+        {/* ── Overall procurement status ── */}
+        <div className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+          <div>
+            <div className="text-[9px] font-medium text-emerald-700 uppercase tracking-wide">Overall Status</div>
+            <div className="text-xs font-bold text-emerald-800 mt-0.5">Procurement Proposal — Proceed</div>
+          </div>
+          <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
+        </div>
+
+        {/* ── Budget & Expenditure figures ── */}
+        <div>
+          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-2">Budget &amp; Expenditure</div>
+          <div className="space-y-2">
+            {[
+              { label: "Approved Budget",       value: `USD ${approvedBudget.toLocaleString()}`,   cls: "bg-blue-50 border-blue-100 text-blue-800"          },
+              { label: "Proposed Tender Amount", value: `USD ${proposedAmount.toLocaleString()}`,   cls: "bg-violet-50 border-violet-100 text-violet-800"    },
+              { label: "Committed (PO)",         value: "USD 42,500,000",                           cls: "bg-amber-50 border-amber-100 text-amber-800"       },
+              { label: "Invoiced to Date",       value: "USD 0",                                    cls: "bg-gray-50 border-gray-200 text-gray-700"          },
+              { label: "Available Balance",      value: "USD 2,500,000",                            cls: "bg-emerald-50 border-emerald-100 text-emerald-800" },
+            ].map(b => (
+              <div key={b.label} className={`flex items-center justify-between p-3 border rounded-xl ${b.cls}`}>
+                <span className="text-xs font-medium">{b.label}</span>
+                <span className="text-sm font-bold">{b.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Within / over budget indicator ── */}
+        <div className={`flex items-center justify-between p-3 border rounded-xl ${withinBudget ? "bg-emerald-50 border-emerald-100" : "bg-red-50 border-red-100"}`}>
+          <div>
+            <div className={`text-[9px] font-medium uppercase tracking-wide ${withinBudget ? "text-emerald-700" : "text-red-700"}`}>
+              Within Budget Allocation?
+            </div>
+            <div className={`text-xs font-bold mt-0.5 ${withinBudget ? "text-emerald-800" : "text-red-800"}`}>
+              {withinBudget ? "✓ Yes — Proposed amount is within approved budget" : "✗ No — Proposed amount exceeds approved budget"}
+            </div>
+          </div>
+          {withinBudget
+            ? <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
+            : <AlertCircle  className="h-5 w-5 text-red-500 flex-shrink-0" />
+          }
+        </div>
+
+        {/* ── Signatories ── */}
+        <div>
+          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-2">Authorisation &amp; Verification</div>
+          <div className="space-y-2">
+            {[
+              { role: "Budget Checker",  name: "Mrs. T. Moyo",         title: "Senior Finance Officer",         date: "2026-06-20", status: "Confirmed", color: "bg-blue-50 border-blue-100 text-blue-800"       },
+              { role: "Approver",        name: "Mr. J. Chikomba",      title: "Director of Finance",            date: "2026-06-21", status: "Approved",  color: "bg-violet-50 border-violet-100 text-violet-800" },
+              { role: "Approver",        name: "Ms. R. Dube",          title: "Chief Procurement Officer",      date: "2026-06-22", status: "Approved",  color: "bg-violet-50 border-violet-100 text-violet-800" },
+              { role: "Authorizer",      name: "Dr. S. Mutasa",        title: "Permanent Secretary",            date: "2026-06-23", status: "Authorized",color: "bg-emerald-50 border-emerald-100 text-emerald-800" },
+            ].map((s, i) => (
+              <div key={i} className={`p-3 border rounded-xl ${s.color}`}>
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[9px] font-bold uppercase tracking-wide opacity-60">{s.role}</span>
+                  <span className="text-[9px] font-semibold opacity-70">{s.date}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold">{s.name}</div>
+                    <div className="text-[10px] opacity-60">{s.title}</div>
+                  </div>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/60">{s.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    );
+  }
+
+  if (activeTab === "performance") {
+    const now = new Date();
+    const stampDate = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const stampTime = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+    // Bidder pipeline KPI data
+    const totalBidders       = 24;
+    const rejected           = 4;
+    const disqualified       = 3;
+    const failedThreshold    = 5;
+    const nextRound          = totalBidders - rejected - disqualified - failedThreshold;
+    const pctRejected        = Math.round((rejected / totalBidders) * 100);
+    const pctDisqualified    = Math.round((disqualified / totalBidders) * 100);
+    const pctFailedThreshold = Math.round((failedThreshold / totalBidders) * 100);
+
+    return (
+      <div className="p-4 space-y-3">
+        {/* ── Header context block ── */}
+        <div className="p-3 bg-[#F9F9F9] border border-black/8 rounded-xl space-y-1.5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-mono font-bold text-black/50">{record.recordNumber}</span>
+                <span className="text-[10px] text-black/30">·</span>
+                <span className="text-[9px] font-mono text-black/40">{record.referenceNumber}</span>
+              </div>
+              <div className="text-xs font-semibold text-black leading-snug mt-0.5 truncate">{record.title}</div>
+            </div>
+            <div className="flex-shrink-0 text-right">
+              <div className="text-[9px] font-semibold text-black/40">{stampDate}</div>
+              <div className="text-[9px] text-black/30">{stampTime}</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap text-[9px] text-black/40">
+            <span>{record.ministry}</span>
+            <span>·</span>
+            <span>{record.currentStage}</span>
+            <span>·</span>
+            <span className="font-semibold text-black/60">{record.value}</span>
+          </div>
+        </div>
+
+        {/* ── Bidder Pipeline KPI cards ── */}
+        <div>
+          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-2">Bidder Pipeline</div>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: "Total Bidders",           value: String(totalBidders),                                color: "bg-blue-50 border-blue-100 text-blue-800"         },
+              { label: "Proceeding to Next Round", value: String(nextRound),                                  color: "bg-emerald-50 border-emerald-100 text-emerald-800" },
+              { label: "Rejected",                value: `${rejected} (${pctRejected}%)`,                    color: "bg-red-50 border-red-100 text-red-800"             },
+              { label: "Disqualified",            value: `${disqualified} (${pctDisqualified}%)`,            color: "bg-orange-50 border-orange-100 text-orange-800"    },
+              { label: "Failed Threshold",        value: `${failedThreshold} (${pctFailedThreshold}%)`,     color: "bg-amber-50 border-amber-100 text-amber-800"       },
+            ].map(c => (
+              <div key={c.label} className={`p-3 rounded-xl border ${c.color}`}>
+                <div className="text-[9px] font-medium opacity-70 leading-tight">{c.label}</div>
+                <div className="text-sm font-bold mt-0.5">{c.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Standard KPI tracking ── */}
+        <div>
+          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-2">KPIs & Performance Tracking</div>
+          <div className="space-y-2">
+            {[
+              { label: "Cycle Time",             value: "18 days", target: "14 days", met: false, bar: 70  },
+              { label: "Compliance Score",        value: "82%",     target: "90%",     met: false, bar: 82  },
+              { label: "Evaluator Participation", value: "8/8",     target: "8/8",     met: true,  bar: 100 },
+              { label: "Document Completeness",   value: "94%",     target: "100%",    met: false, bar: 94  },
+              { label: "Budget Accuracy",         value: "On track",target: "On track",met: true,  bar: 96  },
+            ].map(k => (
+              <div key={k.label} className="p-3 border border-black/8 rounded-xl">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-black">{k.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-black">{k.value}</span>
+                    <span className={`text-[9px] px-1 py-0.5 rounded font-semibold ${k.met ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                      {k.met ? "✓ Met" : `Target: ${k.target}`}
+                    </span>
+                  </div>
+                </div>
+                <div className="w-full bg-black/8 rounded-full h-1 overflow-hidden">
+                  <div className={`h-full rounded-full ${k.met ? "bg-emerald-500" : "bg-amber-400"}`} style={{ width: `${k.bar}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (activeTab === "audit") return (
     <div className="p-4 space-y-2">
@@ -859,6 +1717,10 @@ function MainWorkArea({ activeTab, record }: { activeTab: NavTab; record: Workbe
     </div>
   );
 
+  if (activeTab === "casefile") return (
+    <CaseFileTab assignedTenders={assignedTenders} onOpenTender={onOpenTender} />
+  );
+
   return (
     <div className="p-4 flex flex-col items-center justify-center h-32 text-black/30">
       <FileText className="h-8 w-8 mb-2 opacity-40" />
@@ -909,43 +1771,86 @@ function ActionPanel({ record }: { record: WorkbenchRecord }) {
 }
 
 // ─── 6. Documents & Attachments Panel ────────────────────────────────────────
+const DOC_CATEGORY_META: { key: string; label: string; color: string }[] = [
+  { key: "Minutes",              label: "Minutes",              color: "bg-blue-50 text-blue-700"   },
+  { key: "Resolutions",          label: "Resolutions",          color: "bg-purple-50 text-purple-700"},
+  { key: "Compliance Checklist", label: "Compliance Checklist", color: "bg-emerald-50 text-emerald-700" },
+  { key: "Attachments",          label: "Attachments",          color: "bg-slate-50 text-slate-600" },
+  { key: "Notices",              label: "Notices",              color: "bg-amber-50 text-amber-700" },
+];
+
 function DocumentsPanel() {
   const act = (msg: string) => pushNotification(msg, "success");
-  const cats = Array.from(new Set(MOCK_DOCUMENTS.map(d => d.category)));
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const toggle = (cat: string) => setCollapsed(p => ({ ...p, [cat]: !p[cat] }));
+
   return (
     <div className="p-4 space-y-3">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-black/60">Documents & Attachments</span>
+        <span className="text-xs font-semibold text-black/60">Case File Documents</span>
         <div className="flex gap-1">
           <button onClick={() => act("Document uploaded")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] flex items-center gap-1 hover:opacity-90">
             <Upload className="h-3 w-3" /> Upload
           </button>
-          <button onClick={() => act("Documents downloaded")} className="h-7 px-2.5 border border-black/10 rounded-lg text-[10px] flex items-center gap-1 hover:bg-[#F5F5F5]">
+          <button onClick={() => act("All documents downloaded")} className="h-7 px-2.5 border border-black/10 rounded-lg text-[10px] flex items-center gap-1 hover:bg-[#F5F5F5]">
             <Download className="h-3 w-3" /> All
           </button>
         </div>
       </div>
-      {cats.map(cat => (
-        <div key={cat}>
-          <div className="text-[10px] font-semibold text-black/40 uppercase tracking-wider mb-1">{cat}</div>
-          {MOCK_DOCUMENTS.filter(d => d.category === cat).map(doc => (
-            <div key={doc.name} className="flex items-center justify-between p-2.5 border border-black/8 rounded-xl hover:bg-[#F5F5F5] group mb-1">
-              <div className="flex items-center gap-2 min-w-0">
-                <FileText className="h-3.5 w-3.5 text-black/30 flex-shrink-0" />
-                <div className="min-w-0">
-                  <div className="text-xs text-black truncate">{doc.name}</div>
-                  <div className="text-[10px] text-black/40">{doc.size} · {doc.uploaded}</div>
-                </div>
+
+      {/* Category sections */}
+      {DOC_CATEGORY_META.map(({ key, label, color }) => {
+        const docs = MOCK_DOCUMENTS.filter(d => d.category === key);
+        const isOpen = !collapsed[key];
+        return (
+          <div key={key} className="border border-black/8 rounded-xl overflow-hidden">
+            {/* Section header */}
+            <button
+              onClick={() => toggle(key)}
+              className="w-full flex items-center justify-between px-3 py-2 hover:bg-[#F5F5F5] transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <ChevronDown className={`h-3 w-3 text-black/30 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+                <span className="text-[11px] font-semibold text-black/70">{label}</span>
+                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${color}`}>{docs.length}</span>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                <span className={`text-[9px] px-1 py-0.5 rounded font-semibold ${doc.status === "Final" || doc.status === "Approved" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{doc.status}</span>
-                <button onClick={() => act(`Viewing ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors"><Eye className="h-3 w-3" /></button>
-                <button onClick={() => act(`Downloaded ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors"><Download className="h-3 w-3" /></button>
+              <button
+                onClick={e => { e.stopPropagation(); act(`Document added to ${label}`); }}
+                className="h-5 w-5 rounded flex items-center justify-center bg-black/5 hover:bg-black hover:text-white transition-colors text-black/40"
+              >
+                <Plus className="h-3 w-3" />
+              </button>
+            </button>
+
+            {/* Document rows */}
+            {isOpen && (
+              <div className="border-t border-black/5">
+                {docs.length === 0 ? (
+                  <div className="px-4 py-3 text-[10px] text-black/30 italic">No documents in this category yet.</div>
+                ) : (
+                  docs.map(doc => (
+                    <div key={doc.name} className="flex items-center justify-between px-3 py-2 hover:bg-[#F5F5F5] group border-b border-black/5 last:border-b-0">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText className="h-3.5 w-3.5 text-black/25 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <div className="text-xs text-black truncate">{doc.name}</div>
+                          <div className="text-[10px] text-black/35">{doc.size} · {doc.uploaded}{doc.uploader ? ` · ${doc.uploader}` : ""}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                        <span className={`text-[9px] px-1 py-0.5 rounded font-semibold ${doc.status === "Final" || doc.status === "Approved" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{doc.status}</span>
+                        <button onClick={() => act(`Viewing ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors"><Eye className="h-3 w-3" /></button>
+                        <button onClick={() => act(`Downloaded ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors"><Download className="h-3 w-3" /></button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
-            </div>
-          ))}
-        </div>
-      ))}
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1277,51 +2182,95 @@ const ALL_RECORDS: WorkbenchRecord[] = [
   },
 ];
 
-// ─── Hierarchy Strip — shows all 5 levels, highlights current user ────────────
-function HierarchyStrip({ currentRole }: { currentRole: UserHierarchyRole }) {
-  const ROLES: { key: UserHierarchyRole; label: string; short: string }[] = [
-    { key: "Initiator",   label: "Initiator",   short: "1" },
-    { key: "Approver",    label: "Approver",    short: "2" },
-    { key: "Authorizer",  label: "Authorizer",  short: "3" },
-    { key: "Adjudicator", label: "Adjudicator", short: "4" },
-    { key: "Oversight",   label: "Oversight",   short: "5" },
+// ─── Hierarchy Strip — shows all 5 levels with search + filter tabs ──────────
+function HierarchyStrip({
+  currentRole,
+  stageSearch,
+  onStageSearchChange,
+  stageFilter,
+  onStageFilterChange,
+}: {
+  currentRole: UserHierarchyRole;
+  stageSearch: string;
+  onStageSearchChange: (v: string) => void;
+  stageFilter: UserHierarchyRole | "All";
+  onStageFilterChange: (v: UserHierarchyRole | "All") => void;
+}) {
+  const ROLES: { key: UserHierarchyRole; label: string; short: string; color: string }[] = [
+    { key: "Initiator",   label: "Initiator",   short: "1", color: "bg-blue-600   text-white ring-2 ring-blue-300"    },
+    { key: "Approver",    label: "Approver",    short: "2", color: "bg-violet-600 text-white ring-2 ring-violet-300"  },
+    { key: "Authorizer",  label: "Authorizer",  short: "3", color: "bg-emerald-600 text-white ring-2 ring-emerald-300"},
+    { key: "Adjudicator", label: "Adjudicator", short: "4", color: "bg-amber-500  text-white ring-2 ring-amber-300"   },
+    { key: "Oversight",   label: "Oversight",   short: "5", color: "bg-red-600    text-white ring-2 ring-red-300"     },
   ];
-  const roleColors: Record<UserHierarchyRole, string> = {
-    Initiator:   "bg-blue-600   text-white ring-2 ring-blue-300",
-    Approver:    "bg-violet-600 text-white ring-2 ring-violet-300",
-    Authorizer:  "bg-emerald-600 text-white ring-2 ring-emerald-300",
-    Adjudicator: "bg-amber-500  text-white ring-2 ring-amber-300",
-    Oversight:   "bg-red-600    text-white ring-2 ring-red-300",
-  };
+
   return (
-    <div className="flex items-center gap-1 flex-shrink-0">
-      {ROLES.map((r, i) => (
-        <div key={r.key} className="flex items-center gap-1">
-          <div className={`flex flex-col items-center`}>
-            <div className={`h-5 w-5 rounded-full grid place-items-center text-[9px] font-bold transition-all
-              ${currentRole === r.key ? roleColors[r.key] : "bg-black/8 text-black/30"}`}>
-              {r.short}
-            </div>
-            <span className={`text-[8px] mt-0.5 whitespace-nowrap ${currentRole === r.key ? "text-black font-bold" : "text-black/30"}`}>
-              {r.label}
-            </span>
+    <div className="flex items-center gap-3 flex-shrink-0">
+      {/* Role pills */}
+      <div className="flex items-center gap-1">
+        {ROLES.map((r, i) => (
+          <div key={r.key} className="flex items-center gap-1">
+            <button
+              onClick={() => onStageFilterChange(stageFilter === r.key ? "All" : r.key)}
+              className="flex flex-col items-center"
+              title={`Filter by ${r.label}`}
+            >
+              <div className={`h-5 w-5 rounded-full grid place-items-center text-[9px] font-bold transition-all
+                ${currentRole === r.key ? r.color : stageFilter === r.key ? "ring-2 ring-black/30 bg-black/10 text-black" : "bg-black/8 text-black/30 hover:bg-black/15"}`}>
+                {r.short}
+              </div>
+              <span className={`text-[8px] mt-0.5 whitespace-nowrap ${currentRole === r.key ? "text-black font-bold" : stageFilter === r.key ? "text-black font-semibold" : "text-black/30"}`}>
+                {r.label}
+              </span>
+            </button>
+            {i < ROLES.length - 1 && <div className="w-4 h-px bg-black/10 mb-3 flex-shrink-0" />}
           </div>
-          {i < ROLES.length - 1 && <div className="w-4 h-px bg-black/10 mb-3 flex-shrink-0" />}
-        </div>
-      ))}
+        ))}
+      </div>
+
+      {/* Search bar on the strip */}
+      <div className="relative hidden xl:block">
+        <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-black/30" />
+        <input
+          value={stageSearch}
+          onChange={e => onStageSearchChange(e.target.value)}
+          placeholder="Search stages…"
+          className="h-6 pl-6 pr-6 text-[10px] border border-black/15 rounded-lg focus:outline-none focus:ring-1 focus:ring-black/20 w-36 bg-white"
+        />
+        {stageSearch && (
+          <button onClick={() => onStageSearchChange("")} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+            <X className="h-2.5 w-2.5" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
 
 // ─── Main Page Component ───────────────────────────────────────────────────────
 export default function ProcurementWorkbenchPage() {
+  const { user } = useAuth();
+
+  // Access control: filter CASE_FILE_TENDERS to only those the logged-in user is allocated to.
+  // Demo user IDs: u7 = A. Mpofu (procurement_officer), u1 = T. Moyo (cpo), etc.
+  // If no user, show nothing. If user is cpo/procurement_director, show all.
+  const isSuperUser = user && ["cpo", "procurement_director", "permanent_secretary"].includes(user.role);
+  const assignedTenders = CASE_FILE_TENDERS.filter(t =>
+    isSuperUser || (user && t.assignedToUsers.includes(user.id))
+  );
+
   const [activeNav, setActiveNav]         = useState<NavTab>("overview");
   const [queueFilter, setQueueFilter]     = useState<WorkQueueStatus>("My Tasks");
   const [bottomTab, setBottomTab]         = useState<BottomTab>("intelligence");
   const [activeRecord, setActiveRecord]   = useState<WorkbenchRecord>(ALL_RECORDS[0]);
   const [showRecordList, setShowRecordList] = useState(false);
   const [bottomH, setBottomH]             = useState(260);
-  const dragging                          = { y: 0, h: 0 };
+
+  // Hierarchy strip search & filter state
+  const [stageSearch, setStageSearch]     = useState("");
+  const [stageFilter, setStageFilter]     = useState<UserHierarchyRole | "All">("All");
+
+  const dragging = { y: 0, h: 0 };
 
   const startDrag = (e: React.MouseEvent) => {
     dragging.y = e.clientY;
@@ -1336,26 +2285,66 @@ export default function ProcurementWorkbenchPage() {
     High: "bg-red-500", Medium: "bg-amber-400", Low: "bg-emerald-500",
   };
 
+  // Filter ALL_RECORDS by stage search and stage filter for the record-switcher
+  const filteredRecords = ALL_RECORDS.filter(r => {
+    const matchSearch = stageSearch === "" ||
+      r.title.toLowerCase().includes(stageSearch.toLowerCase()) ||
+      r.recordNumber.toLowerCase().includes(stageSearch.toLowerCase()) ||
+      r.currentStage.toLowerCase().includes(stageSearch.toLowerCase());
+    const matchFilter = stageFilter === "All" || r.userRole === stageFilter;
+    return matchSearch && matchFilter;
+  });
+
+  // When a tender is opened from Case File, switch to it in the record switcher
+  const handleOpenTender = (recordNumber: string) => {
+    const found = ALL_RECORDS.find(r => r.recordNumber === recordNumber);
+    if (found) {
+      setActiveRecord(found);
+      setActiveNav("overview");
+    }
+  };
+
   return (
     <AppShell>
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-black/10 px-4 py-2 flex items-center gap-3 flex-shrink-0">
         <div className="min-w-0">
           <h1 className="text-sm font-bold text-black leading-tight">Procurement Workbench</h1>
-          <p className="text-[10px] text-black/40">Where the work gets done · {ALL_RECORDS.length} records in queue</p>
+          <p className="text-[10px] text-black/40">
+            Where the work gets done
+            {user && <> · Signed in as <span className="text-black font-semibold">{user.name}</span></>}
+            {" · "}{assignedTenders.length} tender{assignedTenders.length !== 1 ? "s" : ""} assigned
+          </p>
         </div>
 
-        {/* Hierarchy strip */}
+        {/* Hierarchy strip with search + filter tabs */}
         <div className="hidden lg:flex items-center px-3 py-1 bg-[#F5F5F5] rounded-lg flex-shrink-0">
-          <HierarchyStrip currentRole={activeRecord.userRole} />
+          <HierarchyStrip
+            currentRole={activeRecord.userRole}
+            stageSearch={stageSearch}
+            onStageSearchChange={setStageSearch}
+            stageFilter={stageFilter}
+            onStageFilterChange={setStageFilter}
+          />
         </div>
 
         <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+          {stageFilter !== "All" && (
+            <button
+              onClick={() => setStageFilter("All")}
+              className="h-7 px-2 text-[10px] border border-black/10 rounded-lg flex items-center gap-1 text-black/50 hover:text-black hover:bg-[#F5F5F5]"
+            >
+              <X className="h-2.5 w-2.5" /> Clear filter
+            </button>
+          )}
           <button
             onClick={() => setShowRecordList(v => !v)}
             className={`h-8 px-3 border rounded-lg text-xs flex items-center gap-1.5 transition-colors ${showRecordList ? "bg-black text-white border-black" : "border-black/10 hover:bg-[#F5F5F5]"}`}>
             <Filter className="h-3.5 w-3.5" />
             {activeRecord.recordNumber}
+            {filteredRecords.length < ALL_RECORDS.length && (
+              <span className="text-[9px] bg-amber-400 text-white px-1 rounded">{filteredRecords.length}</span>
+            )}
             <ChevronRight className={`h-3 w-3 transition-transform ${showRecordList ? "rotate-90" : ""}`} />
           </button>
         </div>
@@ -1364,25 +2353,48 @@ export default function ProcurementWorkbenchPage() {
       {/* ── Record switcher dropdown ─────────────────────────────────────── */}
       {showRecordList && (
         <div className="bg-white border-b border-black/10 px-4 py-2.5 flex-shrink-0">
-          <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
-            {ALL_RECORDS.map(r => (
-              <button key={r.recordNumber}
-                onClick={() => { setActiveRecord(r); setShowRecordList(false); setActiveNav("overview"); }}
-                className={`flex-shrink-0 p-2.5 border rounded-xl text-left transition-all min-w-[190px] hover:border-black/30
-                  ${r.recordNumber === activeRecord.recordNumber ? "border-black bg-black/5 shadow-sm" : "border-black/10"}`}>
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${priorityDot[r.priority]}`} />
-                  <span className="text-[10px] font-mono text-black/50">{r.recordNumber}</span>
-                  <span className="text-[9px] bg-black/8 text-black/50 px-1 py-0.5 rounded ml-auto">{r.procurementType}</span>
-                </div>
-                <div className="text-xs font-semibold text-black truncate leading-tight">{r.title}</div>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[9px] text-black/40 truncate">{r.currentStage}</span>
-                  <span className={`text-[9px] font-semibold ml-auto ${r.status === "Pending" ? "text-amber-600" : r.status === "Approved" ? "text-emerald-600" : "text-blue-600"}`}>{r.status}</span>
-                </div>
-              </button>
-            ))}
+          {/* Mobile search bar for the stage strip */}
+          <div className="flex items-center gap-2 mb-2 lg:hidden">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-black/30" />
+              <input
+                value={stageSearch}
+                onChange={e => setStageSearch(e.target.value)}
+                placeholder="Search records or stages…"
+                className="w-full h-7 pl-7 pr-3 text-[10px] border border-black/10 rounded-lg focus:outline-none focus:ring-1 focus:ring-black/20"
+              />
+            </div>
+            <div className="flex items-center gap-0.5 bg-[#F5F5F5] rounded-lg p-0.5">
+              {(["All", "Initiator", "Approver", "Authorizer", "Adjudicator", "Oversight"] as const).map(f => (
+                <button key={f} onClick={() => setStageFilter(f)}
+                  className={`px-2 py-0.5 rounded-md text-[9px] font-semibold transition-colors ${stageFilter === f ? "bg-black text-white" : "text-black/50"}`}>{f}</button>
+              ))}
+            </div>
           </div>
+
+          {filteredRecords.length === 0 ? (
+            <div className="text-[10px] text-black/30 text-center py-2">No records match "{stageSearch}"</div>
+          ) : (
+            <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
+              {filteredRecords.map(r => (
+                <button key={r.recordNumber}
+                  onClick={() => { setActiveRecord(r); setShowRecordList(false); setActiveNav("overview"); }}
+                  className={`flex-shrink-0 p-2.5 border rounded-xl text-left transition-all min-w-[190px] hover:border-black/30
+                    ${r.recordNumber === activeRecord.recordNumber ? "border-black bg-black/5 shadow-sm" : "border-black/10"}`}>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${priorityDot[r.priority]}`} />
+                    <span className="text-[10px] font-mono text-black/50">{r.recordNumber}</span>
+                    <span className="text-[9px] bg-black/8 text-black/50 px-1 py-0.5 rounded ml-auto">{r.procurementType}</span>
+                  </div>
+                  <div className="text-xs font-semibold text-black truncate leading-tight">{r.title}</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[9px] text-black/40 truncate">{r.currentStage}</span>
+                    <span className={`text-[9px] font-semibold ml-auto ${r.status === "Pending" ? "text-amber-600" : r.status === "Approved" ? "text-emerald-600" : "text-blue-600"}`}>{r.status}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -1405,16 +2417,22 @@ export default function ProcurementWorkbenchPage() {
             onTabChange={setActiveNav}
             queueFilter={queueFilter}
             onQueueFilterChange={setQueueFilter}
+            assignedTenders={assignedTenders}
           />
         </div>
 
         {/* 4. Main Work Area — fills remaining space */}
         <div className="flex-1 min-w-0 overflow-y-auto bg-[#F5F5F5]">
-          <MainWorkArea activeTab={activeNav} record={activeRecord} />
+          <MainWorkArea
+            activeTab={activeNav}
+            record={activeRecord}
+            assignedTenders={assignedTenders}
+            onOpenTender={handleOpenTender}
+          />
         </div>
 
         {/* 5. Action Panel — 148px fixed */}
-        <div className="w-37 flex-shrink-0 hidden md:flex flex-col border-l border-black/10 bg-white overflow-hidden" style={{ width: "148px" }}>
+        <div className="flex-shrink-0 hidden md:flex flex-col border-l border-black/10 bg-white overflow-hidden" style={{ width: "148px" }}>
           <ActionPanel record={activeRecord} />
         </div>
 

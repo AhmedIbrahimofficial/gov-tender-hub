@@ -9,7 +9,7 @@ import {
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   Briefcase, CheckCircle, BookOpen, Newspaper, Megaphone, Radio, DollarSign,
   Mail, Send, Clock, AlertTriangle, Settings,
-  Crown, Target, Headphones, Monitor, Users, Star,
+  Crown, Target, Headphones, Monitor, Users, Star, MapPin,
 } from "lucide-react";
 import { navSections } from "@/lib/mock-data";
 import { useAuth, type UserRole } from "@/lib/auth-context";
@@ -544,7 +544,7 @@ const iconMap: Record<string, React.ElementType> = {
   Crown, Target, Headphones, Monitor, Users, Settings,
   Globe, Image, Building2,
   // Extra icons for grouped nav section headers
-  Briefcase, CheckCircle, Bell, Star,
+  Briefcase, CheckCircle, Bell, Star, MapPin,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {

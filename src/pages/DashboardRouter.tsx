@@ -12,6 +12,7 @@ import AuditorDashboard from "./AuditorDashboard";
 import SupplierDashboard from "./SupplierDashboard";
 import MinisterDashboard from "./MinisterDashboard";
 import PresidentDashboard from "./PresidentDashboard";
+import PrimeMinisterDashboard from "./PrimeMinisterDashboard";
 import ChiefExecutiveDashboard from "./ChiefExecutiveDashboard";
 
 // Universal role-specific dashboard (handles all other roles with unique configs)
@@ -32,6 +33,8 @@ export default function DashboardRouter() {
     // ── Head of State ───────────────────────────────────────────────────────
     case "president":
       return <PresidentDashboard />;
+    case "prime_minister":
+      return <PrimeMinisterDashboard />;
 
     // ── Chief Executive ─────────────────────────────────────────────────────
     case "chief_executive":

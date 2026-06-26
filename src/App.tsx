@@ -86,6 +86,7 @@ import SystemAdminPage from "./pages/SystemAdminPage";
 import NotificationsCenterPage from "./pages/NotificationsCenterPage";
 import FinancialReconciliationPage from "./pages/FinancialReconciliationPage";
 import FinalAcceptancePage from "./pages/FinalAcceptancePage";
+import GisMapPage from "./pages/GisMapPage";
 
 // ─── Enterprise Workbench stage pages ────────────────────────────────────────
 import ProcurementPlanningWorkbench   from "./pages/workbench/ProcurementPlanningWorkbench";
@@ -221,6 +222,7 @@ function AppRoutes() {
 
       {/* Existing modules */}
       <Route path="/tenders" element={<ProtectedRoute><TendersPage /></ProtectedRoute>} />
+      <Route path="/gis" element={<ProtectedRoute><GisMapPage /></ProtectedRoute>} />
       <Route path="/evaluations" element={<ProtectedRoute><EvaluationsPage /></ProtectedRoute>} />
       <Route path="/awards" element={<ProtectedRoute><AwardsPage /></ProtectedRoute>} />
       <Route path="/vendors" element={<ProtectedRoute><VendorsPage /></ProtectedRoute>} />

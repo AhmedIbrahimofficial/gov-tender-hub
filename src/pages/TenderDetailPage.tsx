@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AppShell, Card, CardHeader, Badge } from "@/components/AppShell";
 import { toast } from "@/lib/toast";
@@ -7,7 +7,8 @@ import {
   ArrowLeft, FileText, Building2, Tag, Banknote, Calendar, Clock,
   Users, Timer, Download, Send, Eye, ChevronRight, CheckCircle2,
   AlertTriangle, Info, MapPin, Phone, Mail, Globe, Printer,
-  Lock, Unlock, Shield, Award, X, Plus, FileDown,
+  Lock, Unlock, Shield, Award, X, Plus, FileDown, MessageSquare,
+  UserCircle2, ChevronDown, ChevronUp,
 } from "lucide-react";
 import { ZW_MINISTRIES } from "@/lib/zw-ministries";
 
@@ -40,7 +41,21 @@ const MOCK_DETAIL: Record<string, {
   contactName: string; contactEmail: string; contactPhone: string;
   documents: { name: string; size: string; type: string }[];
   timeline: { stage: string; date: string; status: "done" | "active" | "pending" }[];
-  bidders: { name: string; submitted: string; status: string }[];
+  bidders: {
+    name: string;
+    submitted: string;
+    status: string;
+    reviewStatus: "Under Review" | "Assessed" | "Done";
+    contact: string;
+    email: string;
+    phone: string;
+    regNo: string;
+    country: string;
+    experience: string;
+    category: string;
+    certifications: string[];
+    pastProjects: string[];
+  }[];
   qa: { q: string; a: string; date: string }[];
 }> = {
   "ZW-PRA-2026-00184": {
@@ -84,10 +99,42 @@ const MOCK_DETAIL: Record<string, {
       { stage: "Award",         date: "2026-08-15", status: "pending" },
     ],
     bidders: [
-      { name: "SunPower Zimbabwe (Pvt) Ltd",     submitted: "2026-06-10", status: "Registered" },
-      { name: "Highveld Engineering (Pvt) Ltd",  submitted: "2026-06-12", status: "Registered" },
-      { name: "Africa Solar Solutions Ltd",      submitted: "2026-06-14", status: "Registered" },
-      { name: "Harare Green Energy Co.",         submitted: "2026-06-15", status: "Registered" },
+      {
+        name: "SunPower Zimbabwe (Pvt) Ltd",
+        submitted: "2026-06-10", status: "Registered", reviewStatus: "Assessed",
+        contact: "Mr. T. Mupfumi", email: "t.mupfumi@sunpowerzw.co.zw", phone: "+263 77 312 4400",
+        regNo: "ZW/BRE/2018/04821", country: "Zimbabwe", experience: "9 years",
+        category: "Renewable Energy — Solar Systems",
+        certifications: ["ISO 9001:2015", "ZESA Approved Installer", "SEI Solar Professional"],
+        pastProjects: ["ZETDC Rural Electrification (USD 2.4M)", "Harare Hospital Solar (USD 800K)", "Midlands Schools Grid (USD 1.1M)"],
+      },
+      {
+        name: "Highveld Engineering (Pvt) Ltd",
+        submitted: "2026-06-12", status: "Registered", reviewStatus: "Under Review",
+        contact: "Ms. R. Chikwanda", email: "r.chikwanda@highveld.co.zw", phone: "+263 71 584 2201",
+        regNo: "ZW/BRE/2015/03144", country: "Zimbabwe", experience: "12 years",
+        category: "Electrical & Mechanical Engineering",
+        certifications: ["ISO 14001:2015", "ERB Registered", "ZESA Class A Contractor"],
+        pastProjects: ["Bulawayo Water Works Electrification (USD 3.2M)", "ZETDC HV Lines (USD 5.1M)", "Victoria Falls Airport Power (USD 900K)"],
+      },
+      {
+        name: "Africa Solar Solutions Ltd",
+        submitted: "2026-06-14", status: "Registered", reviewStatus: "Under Review",
+        contact: "Mr. K. Asante", email: "k.asante@africasolarsolutions.com", phone: "+263 78 904 1122",
+        regNo: "ZW/BRE/2020/07341", country: "Zimbabwe / South Africa", experience: "7 years",
+        category: "Renewable Energy — Solar & Storage",
+        certifications: ["SAPVIA Accredited", "IEC 62109 Certified Products"],
+        pastProjects: ["Zambia Rural Clinics Solar (USD 4.8M)", "Mozambique Border Posts (USD 1.9M)"],
+      },
+      {
+        name: "Harare Green Energy Co.",
+        submitted: "2026-06-15", status: "Registered", reviewStatus: "Done",
+        contact: "Eng. J. Zimba", email: "j.zimba@harareenergy.co.zw", phone: "+263 4 708 993",
+        regNo: "ZW/BRE/2019/05988", country: "Zimbabwe", experience: "6 years",
+        category: "Renewable Energy — Solar PV",
+        certifications: ["ERB Registered", "SEI Solar Professional"],
+        pastProjects: ["Masvingo Solar Irrigation (USD 750K)", "Harare City Council Offices (USD 420K)"],
+      },
     ],
     qa: [
       { q: "Can a JV bid?", a: "Yes. Joint ventures are permitted provided the lead partner holds ≥51% stake.", date: "2026-05-28" },
@@ -133,9 +180,33 @@ const MOCK_DETAIL: Record<string, {
       { stage: "Award",         date: "2026-07-30", status: "pending"},
     ],
     bidders: [
-      { name: "Zimbabwe Pharma Holdings",   submitted: "2026-05-20", status: "Under Evaluation" },
-      { name: "NATPHARM",                   submitted: "2026-05-22", status: "Under Evaluation" },
-      { name: "Africa Health Supplies Ltd", submitted: "2026-05-25", status: "Under Evaluation" },
+      {
+        name: "Zimbabwe Pharma Holdings",
+        submitted: "2026-05-20", status: "Under Evaluation", reviewStatus: "Assessed",
+        contact: "Dr. P. Mhuriro", email: "p.mhuriro@zpharma.co.zw", phone: "+263 4 703 441",
+        regNo: "ZW/BRE/2010/01248", country: "Zimbabwe", experience: "15 years",
+        category: "Pharmaceuticals & Medical Supplies",
+        certifications: ["WHO GMP Certified", "MCAZ Registered", "ISO 9001:2015"],
+        pastProjects: ["MOHCC ARV Supply 2023 (USD 18M)", "UNFPA Contraceptive Procurement (USD 4.2M)", "UNICEF Paediatric Medicines (USD 2.8M)"],
+      },
+      {
+        name: "NATPHARM",
+        submitted: "2026-05-22", status: "Under Evaluation", reviewStatus: "Under Review",
+        contact: "Mr. D. Machingura", email: "procurement@natpharm.co.zw", phone: "+263 4 621 050",
+        regNo: "ZW/PARA/1982/00001", country: "Zimbabwe", experience: "40 years",
+        category: "Pharmaceuticals — National Distributor",
+        certifications: ["WHO Prequalified", "MCAZ Licensed", "GDP Compliant"],
+        pastProjects: ["National ARV Programme 2020–2024", "COVID-19 Vaccine Cold Chain (USD 6M)", "Essential Medicines Supply (USD 22M/yr)"],
+      },
+      {
+        name: "Africa Health Supplies Ltd",
+        submitted: "2026-05-25", status: "Under Evaluation", reviewStatus: "Done",
+        contact: "Ms. A. Nkomo", email: "a.nkomo@africahealth.com", phone: "+263 77 201 3344",
+        regNo: "ZW/BRE/2017/06112", country: "Zimbabwe / Kenya", experience: "10 years",
+        category: "Pharmaceuticals & Healthcare Logistics",
+        certifications: ["ISO 13485", "KEBS Approved", "MCAZ Licensed Importer"],
+        pastProjects: ["East Africa ARV Framework (USD 11M)", "PEPFAR Supply Chain Support (USD 7.4M)"],
+      },
     ],
     qa: [
       { q: "Are generic ARVs acceptable?", a: "Yes, provided they carry WHO pre-qualification or equivalent NRA approval.", date: "2026-04-12" },
@@ -222,12 +293,219 @@ function EOIModal({ tender, onClose }: { tender: typeof DEFAULT_TENDER; onClose:
   );
 }
 
+// -- Bidder Profile Modal --
+type Bidder = typeof DEFAULT_TENDER.bidders[0];
+
+function BidderProfileModal({ bidder, onClose }: { bidder: Bidder; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg border border-border my-8">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <UserCircle2 className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold">{bidder.name}</h2>
+              <p className="text-xs text-muted-foreground">{bidder.regNo}</p>
+            </div>
+          </div>
+          <button onClick={onClose}><X className="h-5 w-5 text-muted-foreground" /></button>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "Contact Person", value: bidder.contact },
+              { label: "Country", value: bidder.country },
+              { label: "Experience", value: bidder.experience },
+              { label: "Category", value: bidder.category },
+            ].map(row => (
+              <div key={row.label} className="bg-secondary/40 rounded-xl p-3">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">{row.label}</div>
+                <div className="text-sm font-medium text-foreground">{row.value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex items-center gap-2 text-sm">
+              <Mail className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+              <a href={`mailto:${bidder.email}`} className="text-primary hover:underline truncate text-xs">{bidder.email}</a>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Phone className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+              <span className="text-xs">{bidder.phone}</span>
+            </div>
+          </div>
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Certifications</div>
+            <div className="flex flex-wrap gap-1.5">
+              {bidder.certifications.map(c => (
+                <span key={c} className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">{c}</span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Past Projects</div>
+            <ul className="space-y-1.5">
+              {bidder.pastProjects.map((p, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="flex justify-end px-6 py-4 border-t border-border">
+          <button onClick={onClose} className="h-9 px-4 rounded-lg border border-border text-sm hover:bg-secondary">Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// -- Review Status helpers --
+const REVIEW_STATUS_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
+  "Under Review": { bg: "bg-amber-50 border-amber-200",  text: "text-amber-700",  dot: "bg-amber-400"  },
+  "Assessed":     { bg: "bg-blue-50 border-blue-200",    text: "text-blue-700",   dot: "bg-blue-500"   },
+  "Done":         { bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-700", dot: "bg-emerald-500" },
+};
+
+// -- Bidder Card --
+function BidderCard({ bidder, tenderId, onViewProfile }: {
+  bidder: Bidder;
+  tenderId: string;
+  onViewProfile: (b: Bidder) => void;
+}) {
+  const [msgOpen, setMsgOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [sent, setSent] = useState<{ text: string; time: string }[]>([]);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  const rs = REVIEW_STATUS_STYLES[bidder.reviewStatus] ?? REVIEW_STATUS_STYLES["Under Review"];
+
+  const sendMsg = () => {
+    const text = draft.trim();
+    if (!text) return;
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    setSent(prev => [...prev, { text, time }]);
+    setDraft("");
+    toast(`Message sent to ${bidder.name}`, "success");
+    pushNotification(`Procurement notice sent to ${bidder.name} (${tenderId})`, "info");
+  };
+
+  useEffect(() => {
+    if (msgOpen && endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [sent, msgOpen]);
+
+  return (
+    <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+      {/* Card header */}
+      <div className="flex items-start justify-between p-4 gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <Building2 className="h-5 w-5 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-sm font-semibold text-foreground truncate">{bidder.name}</div>
+            <div className="text-xs text-muted-foreground">{bidder.contact} · Submitted {bidder.submitted}</div>
+          </div>
+        </div>
+        {/* Review status badge */}
+        <span className={`flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border flex-shrink-0 ${rs.bg} ${rs.text}`}>
+          <span className={`h-1.5 w-1.5 rounded-full ${rs.dot}`} />
+          {bidder.reviewStatus}
+        </span>
+      </div>
+
+      {/* Contact row */}
+      <div className="px-4 pb-3 flex items-center gap-4 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" />{bidder.email}</span>
+        <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" />{bidder.phone}</span>
+      </div>
+
+      {/* Bid status chip */}
+      <div className="px-4 pb-3">
+        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${bidder.status.includes("Evaluation") ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>
+          {bidder.status}
+        </span>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-2 px-4 pb-4 border-t border-border pt-3">
+        <button
+          onClick={() => onViewProfile(bidder)}
+          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-xs font-medium hover:bg-secondary transition-colors"
+        >
+          <Eye className="h-3.5 w-3.5" /> View Profile
+        </button>
+        <button
+          onClick={() => setMsgOpen(v => !v)}
+          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-xs font-medium hover:bg-secondary transition-colors"
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          Send Notice
+          {sent.length > 0 && (
+            <span className="h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">
+              {sent.length}
+            </span>
+          )}
+          {msgOpen ? <ChevronUp className="h-3 w-3 opacity-60" /> : <ChevronDown className="h-3 w-3 opacity-60" />}
+        </button>
+      </div>
+
+      {/* One-way messaging panel */}
+      {msgOpen && (
+        <div className="border-t border-border bg-secondary/20">
+          {/* Sent messages */}
+          <div className="max-h-48 overflow-y-auto px-4 py-3 space-y-2">
+            {sent.length === 0 ? (
+              <p className="text-xs text-muted-foreground text-center py-3">
+                No notices sent yet. Messages here are one-way — the bidder cannot reply.
+              </p>
+            ) : (
+              sent.map((m, i) => (
+                <div key={i} className="flex flex-col items-end gap-0.5">
+                  <div className="bg-primary text-primary-foreground text-xs px-3 py-2 rounded-2xl rounded-br-sm max-w-[85%] leading-relaxed">
+                    {m.text}
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">{m.time} · Sent (no reply)</span>
+                </div>
+              ))
+            )}
+            <div ref={endRef} />
+          </div>
+          {/* Compose */}
+          <div className="flex gap-2 px-4 pb-4">
+            <textarea
+              rows={2}
+              value={draft}
+              onChange={e => setDraft(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } }}
+              placeholder="Type a procurement notice or instruction… (no reply will be received)"
+              className="flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <button
+              onClick={sendMsg}
+              disabled={!draft.trim()}
+              className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 disabled:opacity-40 flex-shrink-0 self-end"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // -- Main Page --
 export default function TenderDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [tab, setTab] = useState<"overview" | "documents" | "bidders" | "qa" | "timeline">("overview");
   const [showEOI, setShowEOI] = useState(false);
+  const [profileBidder, setProfileBidder] = useState<Bidder | null>(null);
 
   const tender = MOCK_DETAIL[id] ?? DEFAULT_TENDER;
 
@@ -464,33 +742,40 @@ export default function TenderDetailPage() {
         )}
 
         {tab === "bidders" && (
-          <Card>
-            <CardHeader title="Registered Bidders" subtitle={`${tender.bidders.length} bidders registered`} />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-sm font-semibold text-foreground">
+                Registered Bidders & Vendors
+                <span className="ml-2 text-xs font-normal text-muted-foreground">({tender.bidders.length} registered)</span>
+              </h3>
+              <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                {(["Under Review", "Assessed", "Done"] as const).map(s => {
+                  const rs = REVIEW_STATUS_STYLES[s];
+                  return (
+                    <span key={s} className={`flex items-center gap-1 px-2 py-0.5 rounded-full border ${rs.bg} ${rs.text}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${rs.dot}`} />{s}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
             {tender.bidders.length === 0 ? (
-              <div className="px-5 py-12 text-center text-muted-foreground text-sm">No bidders registered yet.</div>
+              <Card>
+                <div className="px-5 py-12 text-center text-muted-foreground text-sm">No bidders registered yet.</div>
+              </Card>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-secondary/50 text-xs text-muted-foreground">
-                    <tr>
-                      {["Company", "Date Submitted", "Status"].map(h => <th key={h} className="text-left px-5 py-3 font-medium">{h}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {tender.bidders.map(b => (
-                      <tr key={b.name} className="hover:bg-secondary/20">
-                        <td className="px-5 py-3 font-medium">{b.name}</td>
-                        <td className="px-5 py-3 text-muted-foreground">{b.submitted}</td>
-                        <td className="px-5 py-3">
-                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${b.status.includes("Evaluation") ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>{b.status}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {tender.bidders.map(b => (
+                  <BidderCard
+                    key={b.name}
+                    bidder={b}
+                    tenderId={tender.id}
+                    onViewProfile={setProfileBidder}
+                  />
+                ))}
               </div>
             )}
-          </Card>
+          </div>
         )}
 
         {tab === "qa" && (
@@ -552,6 +837,7 @@ export default function TenderDetailPage() {
         )}
       </div>
       {showEOI && <EOIModal tender={tender} onClose={() => setShowEOI(false)} />}
+      {profileBidder && <BidderProfileModal bidder={profileBidder} onClose={() => setProfileBidder(null)} />}
     </AppShell>
   );
 }

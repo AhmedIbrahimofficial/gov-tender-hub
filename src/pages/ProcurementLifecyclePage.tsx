@@ -7,6 +7,7 @@ import {
   FileSignature, Wallet, ShieldCheck, TrendingUp, Building2, Star,
   MessageSquare, Bell, BarChart3, Settings, RefreshCcw, Eye, Lock, Unlock,
   AlertOctagon, Scale, PenLine, Send, CalendarDays, DollarSign, Package,
+  Calendar, Hash, Layers, Tag,
 } from "lucide-react";
 import { pushNotification } from "@/lib/local-store";
 
@@ -17,13 +18,19 @@ type ProcRecord = {
   id: string;
   title: string;
   entity: string;
+  ministry: string;
+  department: string;
+  projectCode: string;
+  projectName: string;
   type: ProcType;
   value: string;
   status: string;
   currentStage: number;
   totalStages: number;
   currentStageLabel: string;
+  stageLevel: string;
   closing: string;
+  openedDate: string;
   bids: number;
   riskLevel: "Low" | "Medium" | "High" | "Critical";
   aiAlerts: string[];
@@ -47,52 +54,76 @@ type LifecycleStage = {
 const PROC_RECORDS: ProcRecord[] = [
   {
     id: "ZW-PRA-2026-00184", title: "Supply & Installation of Solar Mini-Grids — 12 Rural Clinics",
-    entity: "Ministry of Energy", type: "Tender", value: "USD 14,800,000",
+    entity: "Ministry of Energy", ministry: "Ministry of Energy", department: "Renewable Energy Dept",
+    projectCode: "MOE-SOLAR-2026-001", projectName: "Rural Electrification Phase III",
+    type: "Tender", value: "USD 14,800,000",
     status: "Bidding", currentStage: 8, totalStages: 26, currentStageLabel: "Bid Submission",
-    closing: "2026-07-08", bids: 11, riskLevel: "Low", aiAlerts: [],
+    stageLevel: "Procurement",
+    closing: "2026-07-08", openedDate: "2026-04-10", bids: 11, riskLevel: "Low", aiAlerts: [],
   },
   {
     id: "ZW-PRA-2026-00183", title: "Procurement of Antiretroviral Medicines (2-Year Framework)",
-    entity: "Ministry of Health & Child Care", type: "Tender", value: "USD 42,500,000",
+    entity: "Ministry of Health & Child Care", ministry: "Ministry of Health & Child Care", department: "Pharmacy & Medicines Control",
+    projectCode: "MOH-ARV-2026-002", projectName: "National ARV Programme 2026–2028",
+    type: "Tender", value: "USD 42,500,000",
     status: "Evaluation", currentStage: 12, totalStages: 26, currentStageLabel: "Technical Evaluation",
-    closing: "2026-06-12", bids: 8, riskLevel: "Medium",
+    stageLevel: "Evaluation",
+    closing: "2026-06-12", openedDate: "2026-02-20", bids: 8, riskLevel: "Medium",
     aiAlerts: ["2 evaluators diverge >15pts — consensus meeting required"],
   },
   {
     id: "ZW-PRA-2026-00182", title: "National Tax Administration System — Phase II",
-    entity: "ZIMRA", type: "Tender", value: "USD 9,200,000",
+    entity: "ZIMRA", ministry: "Ministry of Finance", department: "Revenue & Tax Systems",
+    projectCode: "ZIMRA-NTAS-2026-003", projectName: "Tax Digitalisation Programme",
+    type: "Tender", value: "USD 9,200,000",
     status: "Bidding", currentStage: 5, totalStages: 26, currentStageLabel: "Advertisement",
-    closing: "2026-07-21", bids: 5, riskLevel: "Low", aiAlerts: [],
+    stageLevel: "Procurement",
+    closing: "2026-07-21", openedDate: "2026-05-01", bids: 5, riskLevel: "Low", aiAlerts: [],
   },
   {
     id: "RFQ-2026-0892", title: "Office Stationery — Q3 2026",
-    entity: "Finance Department", type: "RFQ", value: "USD 4,200",
+    entity: "Finance Department", ministry: "Ministry of Finance", department: "Corporate Services",
+    projectCode: "MOF-STAT-2026-004", projectName: "Corporate Supplies Q3 2026",
+    type: "RFQ", value: "USD 4,200",
     status: "Evaluating", currentStage: 9, totalStages: 18, currentStageLabel: "Technical Evaluation",
-    closing: "2026-06-28", bids: 4, riskLevel: "Low", aiAlerts: [],
+    stageLevel: "Evaluation",
+    closing: "2026-06-28", openedDate: "2026-06-10", bids: 4, riskLevel: "Low", aiAlerts: [],
   },
   {
     id: "RFP-2026-0041", title: "Provision of Legal Advisory Services — 3 Years",
-    entity: "Ministry of Justice", type: "RFP", value: "USD 2,400,000",
+    entity: "Ministry of Justice", ministry: "Ministry of Justice", department: "Legal Services Unit",
+    projectCode: "MOJ-LEGAL-2026-005", projectName: "Legal Advisory Framework 2026–2029",
+    type: "RFP", value: "USD 2,400,000",
     status: "Evaluation", currentStage: 10, totalStages: 22, currentStageLabel: "Financial Evaluation",
-    closing: "2026-06-30", bids: 6, riskLevel: "Low", aiAlerts: [],
+    stageLevel: "Evaluation",
+    closing: "2026-06-30", openedDate: "2026-04-15", bids: 6, riskLevel: "Low", aiAlerts: [],
   },
   {
     id: "EOI-2026-0018", title: "Expression of Interest — Water Treatment Consultancy",
-    entity: "Ministry of Water", type: "EOI", value: "Est. USD 800,000",
+    entity: "Ministry of Water", ministry: "Ministry of Environment, Water & Climate", department: "Water Resources Management",
+    projectCode: "MOW-CONS-2026-006", projectName: "Water Treatment Modernisation Study",
+    type: "EOI", value: "Est. USD 800,000",
     status: "Open", currentStage: 3, totalStages: 14, currentStageLabel: "EOI Advertisement",
-    closing: "2026-07-15", bids: 0, riskLevel: "Low", aiAlerts: [],
+    stageLevel: "Procurement",
+    closing: "2026-07-15", openedDate: "2026-06-01", bids: 0, riskLevel: "Low", aiAlerts: [],
   },
   {
     id: "AUC-2026-0007", title: "Disposal of Surplus Government Vehicles (42 Units)",
-    entity: "Ministry of Finance", type: "Auction", value: "Reserve: USD 420,000",
+    entity: "Ministry of Finance", ministry: "Ministry of Finance", department: "Asset Management Unit",
+    projectCode: "MOF-AUC-2026-007", projectName: "Government Fleet Disposal 2026",
+    type: "Auction", value: "Reserve: USD 420,000",
     status: "Bidding", currentStage: 4, totalStages: 10, currentStageLabel: "Live Auction",
-    closing: "2026-06-25", bids: 38, riskLevel: "Low", aiAlerts: [],
+    stageLevel: "Auction",
+    closing: "2026-06-25", openedDate: "2026-06-05", bids: 38, riskLevel: "Low", aiAlerts: [],
   },
   {
     id: "ZW-PRA-2026-00181", title: "Rehabilitation of Beitbridge–Harare Highway (Section 4)",
-    entity: "Ministry of Transport", type: "Tender", value: "USD 88,000,000",
+    entity: "Ministry of Transport", ministry: "Ministry of Transport & Infrastructural Development", department: "Roads Directorate",
+    projectCode: "MOT-ROAD-2026-008", projectName: "Beitbridge-Harare Corridor Upgrade",
+    type: "Tender", value: "USD 88,000,000",
     status: "Published", currentStage: 4, totalStages: 26, currentStageLabel: "Approval",
-    closing: "2026-08-04", bids: 0, riskLevel: "High",
+    stageLevel: "Procurement",
+    closing: "2026-08-04", openedDate: "2026-05-20", bids: 0, riskLevel: "High",
     aiAlerts: ["BOQ incomplete — 3 sections missing before publication"],
   },
 ];
@@ -493,8 +524,51 @@ function ToolRow({ icon: Icon, label }: { icon: React.ElementType; label: string
   );
 }
 
+// ── Tender Compliance Check (extracted to avoid hooks-in-loops) ───────────────
+const TENDER_COMPLIANCE_ITEMS = [
+  "All required tender documents prepared and uploaded",
+  "Procurement method verified and approved by CPO",
+  "Budget availability confirmed in IFMIS",
+  "Evaluation criteria pre-disclosed and approved",
+  "All mandatory approvals obtained before proceeding",
+  "Conflict of interest declarations collected from all evaluators",
+];
+
+function TenderComplianceCheck({ onAction }: { onAction: (msg: string) => void }) {
+  const [checks, setChecks] = useState<boolean[]>([true, true, true, false, false, false]);
+  const toggle = (i: number) => setChecks(prev => prev.map((v, idx) => idx === i ? !v : v));
+  const done = checks.filter(Boolean).length;
+
+  return (
+    <div>
+      <div className="h-1.5 w-full bg-black/8 rounded-full overflow-hidden mb-3">
+        <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${Math.round(done / TENDER_COMPLIANCE_ITEMS.length * 100)}%` }} />
+      </div>
+      {TENDER_COMPLIANCE_ITEMS.map((item, i) => (
+        <label key={i} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer mb-1.5 transition-colors ${checks[i] ? "border-emerald-200 bg-emerald-50/50" : "border-black/8 hover:bg-[#F5F5F5]"}`}>
+          <input type="checkbox" className="h-4 w-4 rounded accent-black" checked={checks[i]} onChange={() => { toggle(i); onAction(`Compliance item ${i + 1} ${!checks[i] ? "checked" : "unchecked"}`); }} />
+          <span className="text-xs text-black">{item}</span>
+          {checks[i] && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 ml-auto flex-shrink-0" />}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function calcAge(openedDate: string): string {
+  const opened = new Date(openedDate);
+  const now = new Date("2026-06-26");
+  const days = Math.floor((now.getTime() - opened.getTime()) / 86400000);
+  if (days < 1) return "Today";
+  if (days === 1) return "1 day";
+  if (days < 30) return `${days} days`;
+  const months = Math.floor(days / 30);
+  return months === 1 ? "1 month" : `${months} months`;
+}
+
 // ── Stage Detail Slide-over Panel ─────────────────────────────────────────────
-type StagePanelTab = "overview" | "documents" | "workflow" | "automation" | "ai" | "approvals" | "comms" | "risk" | "finance";
+type StagePanelTab = "tender" | "overview" | "documents" | "workflow" | "automation" | "ai" | "approvals" | "comms" | "risk" | "finance" | "chat";
 
 function StageDetailPanel({
   record, stage, onClose,
@@ -505,10 +579,14 @@ function StageDetailPanel({
 }) {
   const [tab, setTab] = useState<StagePanelTab>("overview");
   const tools = STAGE_TOOLS[stage.id] ?? STAGE_TOOLS[0];
+  const age = calcAge(record.openedDate);
+  const now = new Date("2026-06-26");
+  const dateTimeStr = now.toLocaleString("en-ZW", { dateStyle: "medium", timeStyle: "short" });
 
   const tabs: { key: StagePanelTab; label: string; icon: React.ElementType }[] = [
+    { key: "tender",     label: "Tender",        icon: FileText      },
     { key: "overview",   label: "Overview",      icon: Eye           },
-    { key: "documents",  label: "Documents",     icon: FileText      },
+    { key: "documents",  label: "Documents",     icon: FileSignature },
     { key: "workflow",   label: "Workflow",      icon: RefreshCcw    },
     { key: "automation", label: "Automation",    icon: Settings      },
     { key: "ai",         label: "AI Assistant",  icon: Sparkles      },
@@ -516,11 +594,22 @@ function StageDetailPanel({
     { key: "comms",      label: "Comms",         icon: MessageSquare },
     { key: "risk",       label: "Risk & Flags",  icon: AlertTriangle },
     { key: "finance",    label: "Finance",       icon: Wallet        },
+    { key: "chat",       label: "Chat Thread",   icon: MessageSquare },
   ];
 
   const handleAction = (action: string) => {
     pushNotification(`${action} — ${stage.label} · ${record.id}`, "success");
   };
+
+  // Demo participants for Chat Thread tab
+  const PARTICIPANTS = [
+    { name: "T. Moyo",      role: "Chief Procurement Officer",  avatar: "TM", action: "Approved stage advancement",          time: "09:14", online: true  },
+    { name: "A. Mpofu",     role: "Procurement Officer",         avatar: "AM", action: "Uploaded compliance checklist",       time: "08:45", online: true  },
+    { name: "R. Chikwanda", role: "Finance Officer",             avatar: "RC", action: "Confirmed budget availability",       time: "Yesterday", online: false },
+    { name: "P. Dube",      role: "Evaluator",                   avatar: "PD", action: "Submitted evaluation scores",         time: "Yesterday", online: false },
+    { name: "L. Ndlovu",    role: "Legal Officer",               avatar: "LN", action: "Issued legal clearance certificate", time: "Mon",  online: false },
+    { name: "CPO",          role: "Oversight / Auditor",         avatar: "CP", action: "Monitoring stage compliance",         time: "Mon",  online: true  },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -531,30 +620,69 @@ function StageDetailPanel({
       <div className="w-full max-w-2xl bg-white shadow-2xl flex flex-col h-full overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-black/8 flex-shrink-0">
-          <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-start justify-between gap-3 mb-2">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
+              {/* Badges row */}
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${TYPE_COLORS[record.type]}`}>{record.type}</span>
                 <Badge tone={stage.status === "active" ? "blue" : stage.status === "completed" ? "green" : "muted"}>
                   Stage {stage.id} of {record.totalStages - 1}
                 </Badge>
+                <Badge tone="muted">{record.stageLevel}</Badge>
                 {stage.status === "active" && (
                   <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
                     ACTIVE
                   </span>
                 )}
+                <Badge tone={
+                  record.status === "Awarded" ? "green" :
+                  record.status === "Evaluation" || record.status === "Evaluating" ? "amber" :
+                  record.status === "Bidding" || record.status === "Open" ? "blue" : "muted"
+                }>{record.status}</Badge>
               </div>
-              <h2 className="text-base font-bold text-black leading-tight">{stage.label}</h2>
-              <p className="text-xs text-black/50 mt-0.5 truncate">{record.id} · {record.title}</p>
+              {/* Tender code and name — bold, large */}
+              <div className="text-[10px] font-mono text-black/50 mb-0.5">{record.id} · {record.projectCode}</div>
+              <h2 className="text-base font-bold text-black leading-tight mb-1">{record.title}</h2>
+              <div className="text-[11px] font-semibold text-black/70 mb-0.5">{record.projectName}</div>
+              {/* Stage label */}
+              <div className="text-xs text-black/50 font-medium">{stage.label}</div>
             </div>
             <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black transition-colors flex-shrink-0">
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* AI role pill */}
-          <div className="flex items-center gap-2">
+          {/* Meta row — Ministry · Dept · Date/Time · Age · Closing */}
+          <div className="grid grid-cols-2 gap-1.5 mb-2">
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <Building2 className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{record.ministry}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <Hash className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{record.department}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <Calendar className="h-3 w-3 flex-shrink-0" />
+              <span>{dateTimeStr}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <Clock className="h-3 w-3 flex-shrink-0" />
+              <span>Age: {age}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <CalendarDays className="h-3 w-3 flex-shrink-0" />
+              <span>Closes: {record.closing}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <Layers className="h-3 w-3 flex-shrink-0" />
+              <span>{record.type} · {record.value}</span>
+            </div>
+          </div>
+
+          {/* AI role + owner pills */}
+          <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 bg-violet-50 border border-violet-100 rounded-full px-2.5 py-1">
               <Sparkles className="h-3 w-3 text-violet-500" />
               <span className="text-[11px] text-violet-700 font-medium">{stage.aiRole}</span>
@@ -779,6 +907,126 @@ function StageDetailPanel({
               </div>
             </div>
           )}
+
+          {tab === "tender" && (
+            <div className="space-y-4">
+              {/* Tender Documents */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-black/60">Tender Documents</span>
+                  <button onClick={() => handleAction("Tender document uploaded")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] font-medium flex items-center gap-1 hover:opacity-90">
+                    <Upload className="h-3 w-3" /> Upload
+                  </button>
+                </div>
+                {tools.documents.map((doc, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors group mb-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <FileText className="h-4 w-4 text-black/30" />
+                      <span className="text-xs text-black">{doc}</span>
+                    </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => handleAction(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                      <button onClick={() => handleAction(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Minutes and Resolutions */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-black/60">Minutes & Resolutions</span>
+                  <button onClick={() => handleAction("Minutes uploaded")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] font-medium flex items-center gap-1 hover:opacity-90">
+                    <Upload className="h-3 w-3" /> Upload
+                  </button>
+                </div>
+                {[
+                  { ref: "MTG-001", date: "2026-06-02", title: "Stage kickoff meeting minutes", status: "Uploaded" },
+                  { ref: "RES-001", date: "2026-06-03", title: "Resolution to proceed to next stage", status: "AI Reviewed" },
+                  { ref: "MTG-002", date: "2026-06-10", title: "Evaluation committee sitting minutes", status: "Pending Review" },
+                ].map((m, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                    <div>
+                      <div className="text-xs font-semibold text-black">{m.title}</div>
+                      <div className="text-[10px] text-black/40 mt-0.5">{m.ref} · {m.date}</div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${m.status === "AI Reviewed" ? "bg-violet-100 text-violet-700" : m.status === "Uploaded" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{m.status}</span>
+                      <button onClick={() => handleAction(`Viewed ${m.ref}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Compliance Check Box */}
+              <div>
+                <span className="text-xs font-semibold text-black/60 block mb-2">Compliance Check</span>
+                <TenderComplianceCheck onAction={handleAction} />
+              </div>
+            </div>
+          )}
+
+          {tab === "chat" && (
+            <div className="space-y-4">
+              {/* Participants list */}
+              <div>
+                <span className="text-xs font-semibold text-black/60 block mb-2">Stage Participants ({PARTICIPANTS.length})</span>
+                {PARTICIPANTS.map((p, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                    <div className="relative flex-shrink-0">
+                      <div className="h-8 w-8 rounded-full bg-black text-white text-xs font-bold grid place-items-center">{p.avatar}</div>
+                      {p.online && <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-white" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-semibold text-black">{p.name}</span>
+                        <span className="text-[10px] text-black/40">· {p.role}</span>
+                      </div>
+                      <div className="text-[10px] text-black/50 truncate">{p.action}</div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-[9px] text-black/30">{p.time}</div>
+                      {p.online && <div className="text-[9px] text-emerald-600 font-semibold mt-0.5">Online</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat thread */}
+              <div>
+                <span className="text-xs font-semibold text-black/60 block mb-2">Chat Thread</span>
+                <div className="space-y-3 mb-3">
+                  {[
+                    { from: "T. Moyo", avatar: "TM", msg: "Stage documentation is complete. Moving to bid submission phase.", time: "09:14", self: false },
+                    { from: "A. Mpofu", avatar: "AM", msg: "Compliance checklist uploaded. Please review and confirm.", time: "08:45", self: false },
+                    { from: "R. Chikwanda", avatar: "RC", msg: "Budget confirmed — USD commitment created in IFMIS.", time: "Yesterday", self: false },
+                    { from: "You", avatar: "ME", msg: "Acknowledged. Proceeding to next stage.", time: "Yesterday", self: true },
+                  ].map((msg, i) => (
+                    <div key={i} className={`flex gap-2 ${msg.self ? "flex-row-reverse" : ""}`}>
+                      <div className={`h-7 w-7 rounded-full text-white text-[10px] font-bold grid place-items-center flex-shrink-0 ${msg.self ? "bg-violet-600" : "bg-black"}`}>{msg.avatar}</div>
+                      <div className={`max-w-[75%] ${msg.self ? "items-end" : "items-start"} flex flex-col`}>
+                        {!msg.self && <span className="text-[10px] text-black/40 mb-0.5">{msg.from}</span>}
+                        <div className={`px-3 py-2 rounded-xl text-xs ${msg.self ? "bg-violet-600 text-white rounded-tr-sm" : "bg-[#F5F5F5] text-black rounded-tl-sm"}`}>
+                          {msg.msg}
+                        </div>
+                        <span className="text-[9px] text-black/25 mt-0.5">{msg.time}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Message input */}
+                <div className="flex gap-2">
+                  <input
+                    placeholder="Type a message to stage participants…"
+                    className="flex-1 h-9 px-3 rounded-xl border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10"
+                  />
+                  <button onClick={() => handleAction("Message sent to stage participants")} className="h-9 px-3 bg-black text-white rounded-xl hover:opacity-90 transition-opacity flex items-center gap-1.5 text-xs font-medium">
+                    <Send className="h-3.5 w-3.5" /> Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -853,48 +1101,63 @@ function RecordCard({
   onClick: () => void;
 }) {
   const progress = Math.round((record.currentStage / (record.totalStages - 1)) * 100);
+  const age = calcAge(record.openedDate);
 
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-3.5 rounded-xl border transition-all hover:border-black/30
+      className={`w-full text-left p-4 rounded-2xl border transition-all hover:border-black/30
         ${selected ? "border-black bg-black/5 shadow-sm" : "border-black/8 bg-white hover:bg-[#F5F5F5]/60"}`}
     >
-      <div className="flex items-start gap-2.5 mb-2">
+      {/* Type badge + title */}
+      <div className="flex items-start gap-2.5 mb-3">
         <div className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border flex-shrink-0 mt-0.5 ${TYPE_COLORS[record.type]}`}>
           {record.type}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-semibold text-black leading-tight truncate">{record.title}</div>
-          <div className="text-[10px] text-black/40 mt-0.5 truncate">{record.entity} · {record.id}</div>
+          <div className="text-xs font-bold text-black leading-tight mb-0.5">{record.title}</div>
+          <div className="text-[10px] text-black/50 font-mono truncate">{record.id}</div>
         </div>
         {record.aiAlerts.length > 0 && (
           <AlertTriangle className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
         )}
       </div>
 
-      <div className="flex items-center gap-2 mb-2">
+      {/* Ministry · Dept */}
+      <div className="flex items-center gap-1.5 mb-1">
+        <Building2 className="h-3 w-3 text-black/25 flex-shrink-0" />
+        <span className="text-[10px] text-black/50 truncate">{record.ministry}</span>
+      </div>
+      <div className="text-[10px] text-black/35 truncate pl-4.5 mb-2">{record.department}</div>
+
+      {/* Status row */}
+      <div className="flex items-center gap-2 mb-3">
         <Badge tone={STATUS_TONE[record.status] ?? "muted"}>{record.status}</Badge>
         <span className="text-[10px] text-black/40">{record.currentStageLabel}</span>
+        <span className="text-[10px] text-black/25 ml-auto">Age: {age}</span>
       </div>
 
       {/* Progress bar */}
-      <div className="h-1.5 rounded-full bg-black/8 overflow-hidden">
+      <div className="h-1.5 rounded-full bg-black/8 overflow-hidden mb-1">
         <div
           className="h-full rounded-full bg-black transition-all duration-500"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className="flex justify-between mt-1">
+      <div className="flex justify-between mb-3">
         <span className="text-[9px] text-black/30">Stage {record.currentStage}/{record.totalStages - 1}</span>
         <span className="text-[9px] text-black/40 font-medium">{progress}%</span>
       </div>
 
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-black/5">
+      {/* Footer — value · risk · closing */}
+      <div className="flex items-center justify-between pt-2 border-t border-black/5">
         <span className="text-[10px] font-semibold text-black/70">{record.value}</span>
-        <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${RISK_COLORS[record.riskLevel]}`}>
-          {record.riskLevel} Risk
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] text-black/35">Closes {record.closing}</span>
+          <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${RISK_COLORS[record.riskLevel]}`}>
+            {record.riskLevel} Risk
+          </span>
+        </div>
       </div>
     </button>
   );
@@ -906,13 +1169,21 @@ export default function ProcurementLifecyclePage() {
   const [selectedStage, setSelectedStage]   = useState<LifecycleStage | null>(null);
   const [typeFilter, setTypeFilter]         = useState<ProcType | "All">("All");
   const [search, setSearch]                 = useState("");
+  const [dateFrom, setDateFrom]             = useState("");
+  const [dateTo, setDateTo]                 = useState("");
+
+  const now = new Date("2026-06-26");
+  const dateTimeStr = now.toLocaleString("en-ZW", { dateStyle: "full", timeStyle: "short" });
 
   const filteredRecords = PROC_RECORDS.filter(r => {
     const matchType = typeFilter === "All" || r.type === typeFilter;
     const matchSearch = !search || r.title.toLowerCase().includes(search.toLowerCase())
       || r.id.toLowerCase().includes(search.toLowerCase())
-      || r.entity.toLowerCase().includes(search.toLowerCase());
-    return matchType && matchSearch;
+      || r.entity.toLowerCase().includes(search.toLowerCase())
+      || r.projectCode.toLowerCase().includes(search.toLowerCase());
+    const matchFrom = !dateFrom || r.openedDate >= dateFrom;
+    const matchTo = !dateTo || r.closing <= dateTo;
+    return matchType && matchSearch && matchFrom && matchTo;
   });
 
   const stages = buildStages(selectedRecord);
@@ -929,11 +1200,21 @@ export default function ProcurementLifecyclePage() {
         <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">Procurement Control Tower</Badge>
           <Badge tone="muted">All Instruments · Full Lifecycle</Badge>
+          {/* Stage/level indicator */}
+          {activeStage && (
+            <Badge tone="violet">
+              <Layers className="h-3 w-3 mr-1" />Stage {selectedRecord.currentStage} · {selectedRecord.stageLevel}
+            </Badge>
+          )}
           {totalAlerts > 0 && (
             <Badge tone="amber">
               <AlertTriangle className="h-3 w-3 mr-1" />{totalAlerts} AI Alerts
             </Badge>
           )}
+          {/* Date and time */}
+          <span className="ml-auto text-[10px] text-black/40 flex items-center gap-1">
+            <Calendar className="h-3 w-3" />{dateTimeStr}
+          </span>
         </div>
         <PageHeader
           title="Procurement Lifecycle Control Tower"
@@ -979,27 +1260,58 @@ export default function ProcurementLifecyclePage() {
                   <input
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder="Search records…"
+                    placeholder="Search by title, ID, project code, entity…"
                     className="w-full h-8 pl-8 pr-3 rounded-lg border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10"
                   />
                 </div>
 
-                {/* Type filter pills */}
-                <div className="flex gap-1.5 flex-wrap">
-                  {(["All", "Tender", "RFQ", "RFP", "EOI", "Auction"] as const).map(t => (
-                    <button
-                      key={t}
-                      onClick={() => setTypeFilter(t)}
-                      className={`h-6 px-2 rounded-full text-[10px] font-semibold transition-colors
-                        ${typeFilter === t ? "bg-black text-white" : "bg-[#F5F5F5] text-black/50 hover:bg-black/10"}`}
-                    >
-                      {t}
-                    </button>
-                  ))}
+                {/* Class filter pills — Tender / RFQ / RFP / EOI / Auction */}
+                <div className="mb-3">
+                  <div className="text-[9px] font-semibold text-black/35 uppercase tracking-wider mb-1.5">Filter by Class</div>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {(["All", "Tender", "RFQ", "RFP", "EOI", "Auction"] as const).map(t => (
+                      <button
+                        key={t}
+                        onClick={() => setTypeFilter(t)}
+                        className={`h-6 px-2.5 rounded-full text-[10px] font-semibold transition-colors
+                          ${typeFilter === t ? "bg-black text-white" : "bg-[#F5F5F5] text-black/50 hover:bg-black/10"}`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Date period filter */}
+                <div>
+                  <div className="text-[9px] font-semibold text-black/35 uppercase tracking-wider mb-1.5">Date Period (Opened → Closing)</div>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <input
+                        type="date"
+                        value={dateFrom}
+                        onChange={e => setDateFrom(e.target.value)}
+                        className="w-full h-7 px-2 rounded-lg border border-black/10 text-[10px] focus:outline-none focus:ring-2 focus:ring-black/10"
+                      />
+                      <div className="text-[9px] text-black/30 mt-0.5 text-center">From</div>
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="date"
+                        value={dateTo}
+                        onChange={e => setDateTo(e.target.value)}
+                        className="w-full h-7 px-2 rounded-lg border border-black/10 text-[10px] focus:outline-none focus:ring-2 focus:ring-black/10"
+                      />
+                      <div className="text-[9px] text-black/30 mt-0.5 text-center">To</div>
+                    </div>
+                    {(dateFrom || dateTo) && (
+                      <button onClick={() => { setDateFrom(""); setDateTo(""); }} className="h-7 px-2 text-[10px] text-black/40 hover:text-black border border-black/10 rounded-lg transition-colors self-start">×</button>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="p-3 space-y-2 max-h-[calc(100vh-380px)] overflow-y-auto">
+              <div className="p-3 space-y-2 max-h-[calc(100vh-420px)] overflow-y-auto">
                 {filteredRecords.length === 0 && (
                   <div className="text-center py-8 text-xs text-black/30">No records match your filter</div>
                 )}
@@ -1018,18 +1330,39 @@ export default function ProcurementLifecyclePage() {
           {/* ── Right: stage map ────────────────────────────────────────── */}
           <div className="space-y-4">
             <Card>
-              <CardHeader
-                title={`${selectedRecord.title}`}
-                subtitle={`${selectedRecord.entity} · ${selectedRecord.id} · ${selectedRecord.value}`}
-                action={
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${TYPE_COLORS[selectedRecord.type]}`}>
-                      {selectedRecord.type}
-                    </span>
-                    <Badge tone={STATUS_TONE[selectedRecord.status] ?? "muted"}>{selectedRecord.status}</Badge>
+              <div className="px-5 pt-5 pb-4 border-b border-black/10">
+                {/* Tender Ref / Code */}
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${TYPE_COLORS[selectedRecord.type]}`}>{selectedRecord.type}</span>
+                  <span className="text-[10px] font-mono text-black/50">{selectedRecord.id}</span>
+                  <span className="text-[10px] font-mono text-black/35">·</span>
+                  <span className="text-[10px] font-mono text-black/50">{selectedRecord.projectCode}</span>
+                  <Badge tone={STATUS_TONE[selectedRecord.status] ?? "muted"}>{selectedRecord.status}</Badge>
+                  <Badge tone="muted">{selectedRecord.stageLevel}</Badge>
+                </div>
+                {/* Tender name — bold, large */}
+                <h2 className="text-lg font-bold text-black leading-tight mb-1">{selectedRecord.title}</h2>
+                <div className="text-sm font-semibold text-black/60 mb-2">{selectedRecord.projectName}</div>
+                {/* Ministry · Dept · Closing · Age */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-black/50">
+                  <div className="flex items-center gap-1">
+                    <Building2 className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{selectedRecord.ministry}</span>
                   </div>
-                }
-              />
+                  <div className="flex items-center gap-1">
+                    <Hash className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{selectedRecord.department}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CalendarDays className="h-3 w-3 flex-shrink-0" />
+                    <span>Closes: {selectedRecord.closing}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3 w-3 flex-shrink-0" />
+                    <span>Age: {calcAge(selectedRecord.openedDate)}</span>
+                  </div>
+                </div>
+              </div>
 
               {/* Active stage callout */}
               {activeStage && (

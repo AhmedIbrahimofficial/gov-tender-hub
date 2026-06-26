@@ -5,7 +5,8 @@ import {
   AlertTriangle, Wallet, Eye, Upload, Download, Lock, DollarSign,
   Users, AlertOctagon, BarChart3, CalendarDays, UserCheck, Landmark,
   Image, Shield, ClipboardCheck, Award, Printer, Share2,
-  BookOpen,
+  BookOpen, Mail, Flag, Send, UserPlus, ChevronDown, ChevronUp,
+  ClipboardList, CheckSquare, FileSignature, ExternalLink, Hash, Building2,
 } from "lucide-react";
 import { Card, CardHeader, Badge } from "@/components/AppShell";
 import { pushNotification } from "@/lib/local-store";
@@ -35,7 +36,8 @@ type StagePanelTab =
   | "overview" | "documents" | "workflow" | "automation" | "ai"
   | "approvals" | "comms" | "risk" | "finance"
   | "meetings" | "team" | "budget" | "governance" | "media"
-  | "ethics" | "legal" | "compliance" | "report" | "certificates";
+  | "ethics" | "legal" | "compliance" | "report" | "certificates"
+  | "tender" | "chat";
 
 // ─── Status styles ────────────────────────────────────────────────────────────
 const STAGE_ICON: Record<TowerStageStatus, React.ElementType> = {
@@ -58,33 +60,556 @@ function StagePin({ status, index }: { status: TowerStageStatus; index: number }
   );
 }
 
+// ─── Risk Register Tab ────────────────────────────────────────────────────────
+type ActionStatus = "Pending" | "In Progress" | "Resolved" | "Escalated";
+
+const ACTION_STATUSES: ActionStatus[] = ["Pending", "In Progress", "Resolved", "Escalated"];
+
+const ACTION_STATUS_STYLE: Record<ActionStatus, string> = {
+  "Pending":     "bg-gray-100 text-gray-600",
+  "In Progress": "bg-amber-100 text-amber-700",
+  "Resolved":    "bg-emerald-100 text-emerald-700",
+  "Escalated":   "bg-red-100 text-red-600",
+};
+
+interface RiskItem {
+  flag: string;
+  actionsTaken: string;
+  actionStatus: ActionStatus;
+  expanded: boolean;
+}
+
+function RiskRegisterTab({
+  stage,
+  onAct,
+}: {
+  stage: TowerStage;
+  onAct: (msg: string) => void;
+}) {
+  const [risks, setRisks] = useState<RiskItem[]>(() =>
+    stage.riskFlags.map((flag) => ({
+      flag,
+      actionsTaken: "",
+      actionStatus: "Pending",
+      expanded: false,
+    }))
+  );
+  const [shareEmail, setShareEmail] = useState("");
+  const [shareUser, setShareUser] = useState("");
+  const [showSharePanel, setShowSharePanel] = useState(false);
+
+  const update = (i: number, patch: Partial<RiskItem>) =>
+    setRisks((prev) => prev.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+
+  const buildReportText = () =>
+    [
+      `Risk Register — Stage ${stage.id}: ${stage.label}`,
+      `Generated: ${new Date().toLocaleString()}`,
+      "",
+      ...risks.map((r, i) =>
+        [
+          `${i + 1}. ${r.flag}`,
+          `   Actions Taken: ${r.actionsTaken || "(none recorded)"}`,
+          `   Status: ${r.actionStatus}`,
+        ].join("\n")
+      ),
+    ].join("\n");
+
+  const handlePrint = () => {
+    const win = window.open("", "_blank");
+    if (!win) return;
+    win.document.write(
+      `<pre style="font-family:sans-serif;font-size:13px;padding:24px;white-space:pre-wrap">${buildReportText()}</pre>`
+    );
+    win.document.close();
+    win.print();
+    onAct("Risk report printed");
+  };
+
+  const handleShareEmail = () => {
+    const subject = encodeURIComponent(`Risk Register — Stage ${stage.id}: ${stage.label}`);
+    const body = encodeURIComponent(buildReportText());
+    window.open(`mailto:${shareEmail}?subject=${subject}&body=${body}`, "_blank");
+    onAct("Risk report shared via email");
+    setShareEmail("");
+  };
+
+  const handleShareWhatsApp = () => {
+    const text = encodeURIComponent(buildReportText().slice(0, 1000) + "\n[…truncated]");
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+    onAct("Risk report shared to WhatsApp");
+  };
+
+  const handleShareUser = () => {
+    if (!shareUser.trim()) return;
+    onAct(`Risk report shared with investigator/user: ${shareUser.trim()}`);
+    setShareUser("");
+  };
+
+  const handleEscalate = (i: number) => {
+    update(i, { actionStatus: "Escalated" });
+    onAct(`Risk escalated: ${risks[i].flag}`);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Header row */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <span className="text-xs font-semibold text-black/60">Risk Register — Stage {stage.id}</span>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={handlePrint}
+            className="h-7 px-2.5 flex items-center gap-1 rounded-lg border border-black/10 text-[10px] font-medium hover:bg-[#F5F5F5] transition-colors"
+          >
+            <Printer className="h-3 w-3" /> Print Report
+          </button>
+          <button
+            onClick={() => setShowSharePanel((v) => !v)}
+            className="h-7 px-2.5 flex items-center gap-1 rounded-lg border border-black/10 text-[10px] font-medium hover:bg-[#F5F5F5] transition-colors"
+          >
+            <Share2 className="h-3 w-3" /> Share
+            {showSharePanel ? <ChevronUp className="h-3 w-3 ml-0.5" /> : <ChevronDown className="h-3 w-3 ml-0.5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Share panel */}
+      {showSharePanel && (
+        <div className="rounded-xl border border-black/8 overflow-hidden">
+          {/* Email */}
+          <div className="p-3 border-b border-black/8 space-y-2">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-black/60">
+              <Mail className="h-3.5 w-3.5" /> Share to Email
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="recipient@email.com"
+                value={shareEmail}
+                onChange={(e) => setShareEmail(e.target.value)}
+                className="flex-1 h-8 px-2.5 rounded-lg border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10"
+              />
+              <button
+                onClick={handleShareEmail}
+                disabled={!shareEmail.trim()}
+                className="h-8 px-3 rounded-lg bg-black text-white text-[10px] font-medium hover:opacity-90 disabled:opacity-40 transition-opacity"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+
+          {/* Share with user/investigator */}
+          <div className="p-3 border-b border-black/8 space-y-2">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-black/60">
+              <UserPlus className="h-3.5 w-3.5" /> Share with User / Investigator
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Username or investigator name…"
+                value={shareUser}
+                onChange={(e) => setShareUser(e.target.value)}
+                className="flex-1 h-8 px-2.5 rounded-lg border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10"
+              />
+              <button
+                onClick={handleShareUser}
+                disabled={!shareUser.trim()}
+                className="h-8 px-3 rounded-lg bg-black text-white text-[10px] font-medium hover:opacity-90 disabled:opacity-40 transition-opacity"
+              >
+                <Send className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+
+          {/* WhatsApp */}
+          <div className="p-3">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-black/60 mb-2">
+              <MessageSquare className="h-3.5 w-3.5" /> Share to WhatsApp Chat Group
+            </div>
+            <button
+              onClick={handleShareWhatsApp}
+              className="w-full h-8 rounded-lg bg-[#25D366] text-white text-[10px] font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+            >
+              <MessageSquare className="h-3.5 w-3.5" /> Open in WhatsApp
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Risk items */}
+      {risks.map((risk, i) => (
+        <div
+          key={i}
+          className={`rounded-xl border overflow-hidden transition-colors ${
+            risk.actionStatus === "Escalated"
+              ? "border-red-200 bg-red-50/50"
+              : risk.actionStatus === "Resolved"
+              ? "border-emerald-200 bg-emerald-50/40"
+              : "border-amber-100 bg-amber-50"
+          }`}
+        >
+          {/* Risk flag row */}
+          <div className="flex items-start gap-2 p-3">
+            <AlertOctagon
+              className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${
+                risk.actionStatus === "Escalated"
+                  ? "text-red-500"
+                  : risk.actionStatus === "Resolved"
+                  ? "text-emerald-500"
+                  : "text-amber-500"
+              }`}
+            />
+            <span className="text-xs text-black/80 flex-1 leading-snug">{risk.flag}</span>
+            <button
+              onClick={() => update(i, { expanded: !risk.expanded })}
+              className="text-[10px] text-black/40 hover:text-black transition-colors flex-shrink-0 flex items-center gap-0.5"
+            >
+              {risk.expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+          </div>
+
+          {/* Status badge + quick escalate */}
+          <div className="flex items-center gap-2 px-3 pb-2">
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${ACTION_STATUS_STYLE[risk.actionStatus]}`}>
+              {risk.actionStatus}
+            </span>
+            {risk.actionStatus !== "Escalated" && risk.actionStatus !== "Resolved" && (
+              <button
+                onClick={() => handleEscalate(i)}
+                className="flex items-center gap-1 text-[10px] text-red-600 hover:text-red-700 font-medium transition-colors"
+              >
+                <Flag className="h-3 w-3" /> Escalate / Flag
+              </button>
+            )}
+          </div>
+
+          {/* Expanded fields */}
+          {risk.expanded && (
+            <div className="px-3 pb-3 space-y-3 border-t border-black/8 pt-3">
+              {/* Actions Taken */}
+              <div>
+                <label className="flex items-center gap-1.5 text-[11px] font-semibold text-black/60 mb-1">
+                  <ClipboardList className="h-3.5 w-3.5" /> Actions Taken
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Describe mitigation or remediation actions taken…"
+                  value={risk.actionsTaken}
+                  onChange={(e) => update(i, { actionsTaken: e.target.value })}
+                  className="w-full rounded-lg border border-black/10 p-2.5 text-xs text-black resize-none focus:outline-none focus:ring-2 focus:ring-black/10"
+                />
+              </div>
+
+              {/* Status of Action */}
+              <div>
+                <label className="flex items-center gap-1.5 text-[11px] font-semibold text-black/60 mb-1">
+                  <CheckSquare className="h-3.5 w-3.5" /> Status of Action
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {ACTION_STATUSES.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => update(i, { actionStatus: s })}
+                      className={`h-7 px-3 rounded-full text-[10px] font-semibold transition-colors ${
+                        risk.actionStatus === s
+                          ? ACTION_STATUS_STYLE[s] + " ring-2 ring-offset-1 ring-current"
+                          : "bg-white border border-black/10 text-black/50 hover:border-black/30"
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Per-item report action */}
+              <div className="flex gap-2 pt-1">
+                <button
+                  onClick={() => onAct(`Risk reported to Ethics/Oversight: ${risk.flag}`)}
+                  className="flex-1 h-8 rounded-lg border border-red-200 text-red-600 bg-red-50 text-[10px] font-medium hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5"
+                >
+                  <Flag className="h-3 w-3" /> Report to Oversight
+                </button>
+                <button
+                  onClick={() => update(i, { expanded: false })}
+                  className="h-8 px-3 rounded-lg border border-black/10 text-[10px] text-black/50 hover:bg-[#F5F5F5] transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Generate report footer */}
+      <button
+        onClick={() => onAct("Risk report generated")}
+        className="w-full h-9 border border-amber-200 text-amber-700 bg-amber-50 rounded-lg text-xs font-medium hover:bg-amber-100 transition-colors flex items-center justify-center gap-1.5"
+      >
+        <BarChart3 className="h-3.5 w-3.5" /> Generate Full Risk Report
+      </button>
+    </div>
+  );
+}
+
+// ─── Compliance Tab ───────────────────────────────────────────────────────────
+type RoleKey = "initiator" | "approver" | "authorizer";
+
+const COMPLIANCE_SECTIONS: { title: string; items: string[] }[] = [
+  {
+    title: "1. Process & Procedures Performed",
+    items: [
+      "All required documents prepared and uploaded",
+      "Procurement method verified and approved",
+      "Budget availability confirmed in IFMIS",
+      "All mandatory approvals obtained",
+    ],
+  },
+  {
+    title: "2. Officer Declarations",
+    items: [
+      "D. Moyo — Independence declaration confirmed",
+      "A. Chikwanda — Conflict of interest: none declared",
+      "L. Ndlovu — Fitness & competency confirmed",
+    ],
+  },
+  {
+    title: "3. Decision Sign-Offs",
+    items: [
+      "CPO — approved stage advancement",
+      "Legal Officer — clearance issued",
+      "Finance Officer — budget confirmed",
+    ],
+  },
+];
+
+// Build a flat key for each (sectionIndex, itemIndex, role)
+type CheckKey = `${number}-${number}-${RoleKey}`;
+
+function buildInitialState(): Record<CheckKey, boolean> {
+  const state: Record<string, boolean> = {};
+  COMPLIANCE_SECTIONS.forEach((sec, si) => {
+    sec.items.forEach((_, ii) => {
+      (["initiator", "approver", "authorizer"] as RoleKey[]).forEach((role) => {
+        state[`${si}-${ii}-${role}` as CheckKey] = false;
+      });
+    });
+  });
+  return state as Record<CheckKey, boolean>;
+}
+
+function ComplianceTab({ stageId, onSubmit }: { stageId: number; onSubmit: () => void }) {
+  const [checks, setChecks] = useState<Record<CheckKey, boolean>>(buildInitialState);
+  const [locked, setLocked] = useState(false);
+
+  const toggle = (key: CheckKey) => {
+    if (locked) return;
+    setChecks((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Total possible = items × 3 roles across all sections
+  const totalBoxes = COMPLIANCE_SECTIONS.reduce((acc, s) => acc + s.items.length * 3, 0);
+  const checkedCount = Object.values(checks).filter(Boolean).length;
+  const pct = totalBoxes === 0 ? 0 : Math.round((checkedCount / totalBoxes) * 100);
+
+  const statusLabel =
+    pct === 100 ? "Complete" : pct >= 50 ? "In Progress" : "Incomplete";
+  const statusColor =
+    pct === 100
+      ? "bg-emerald-100 text-emerald-700"
+      : pct >= 50
+      ? "bg-amber-100 text-amber-700"
+      : "bg-red-100 text-red-600";
+
+  const handleSubmit = () => {
+    setLocked(true);
+    onSubmit();
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Header with status & progress */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <span className="text-xs font-semibold text-black/60">
+          Compliance Checklist — Stage {stageId}
+        </span>
+        <div className="flex items-center gap-2">
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${statusColor}`}>
+            {statusLabel}
+          </span>
+          <span className="text-[10px] text-black/40">{pct}% complete</span>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="h-1.5 w-full bg-black/8 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all ${
+            pct === 100 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-400" : "bg-red-400"
+          }`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+
+      {/* Column header legend */}
+      <div className="flex items-center gap-3 px-3">
+        <span className="flex-1 text-[10px] text-black/0 select-none">item</span>
+        {(["Initiator", "Approver", "Authorizer"] as const).map((r) => (
+          <span key={r} className="w-16 text-center text-[10px] font-semibold text-black/50 uppercase tracking-wide">
+            {r}
+          </span>
+        ))}
+      </div>
+
+      {COMPLIANCE_SECTIONS.map((sec, si) => (
+        <div key={si} className="space-y-2">
+          <div className="text-[11px] font-semibold text-black/50 uppercase tracking-wide">
+            {sec.title}
+          </div>
+          {sec.items.map((item, ii) => {
+            const keys = {
+              initiator:  `${si}-${ii}-initiator`  as CheckKey,
+              approver:   `${si}-${ii}-approver`   as CheckKey,
+              authorizer: `${si}-${ii}-authorizer` as CheckKey,
+            };
+            const rowComplete =
+              checks[keys.initiator] && checks[keys.approver] && checks[keys.authorizer];
+            return (
+              <div
+                key={ii}
+                className={`flex items-center gap-3 p-3 border rounded-xl transition-colors ${
+                  rowComplete
+                    ? "border-emerald-200 bg-emerald-50/60"
+                    : "border-black/8 hover:bg-[#F5F5F5]"
+                }`}
+              >
+                <span className="flex-1 text-xs text-black leading-snug">{item}</span>
+                {(["initiator", "approver", "authorizer"] as RoleKey[]).map((role) => (
+                  <label
+                    key={role}
+                    className={`w-16 flex justify-center ${locked ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+                    title={role.charAt(0).toUpperCase() + role.slice(1)}
+                  >
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded accent-black"
+                      checked={checks[`${si}-${ii}-${role}` as CheckKey]}
+                      onChange={() => toggle(`${si}-${ii}-${role}` as CheckKey)}
+                      disabled={locked}
+                    />
+                  </label>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      {locked ? (
+        <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+          <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+          <span className="text-xs text-emerald-700 font-medium">
+            Compliance record locked and submitted — {pct}% complete
+          </span>
+        </div>
+      ) : (
+        <button
+          onClick={handleSubmit}
+          className="w-full h-9 bg-black text-white rounded-lg text-xs font-medium hover:opacity-90 transition-opacity"
+        >
+          Submit & Lock Compliance Record
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─── Tower Compliance Check (for Tender tab) ─────────────────────────────────
+const TOWER_COMPLIANCE_ITEMS = [
+  "All required stage documents prepared and uploaded",
+  "Procurement method verified and approved by CPO",
+  "Budget availability confirmed in IFMIS",
+  "Evaluation criteria pre-disclosed and approved",
+  "All mandatory approvals obtained before proceeding",
+  "COI declarations collected from all committee members",
+];
+
+function TowerComplianceCheck({ stageId, onAct }: { stageId: number; onAct: (msg: string) => void }) {
+  const [checks, setChecks] = useState<boolean[]>([true, true, false, false, false, false]);
+  const toggle = (i: number) => setChecks(prev => prev.map((v, idx) => idx === i ? !v : v));
+  const done = checks.filter(Boolean).length;
+  const pct = Math.round(done / TOWER_COMPLIANCE_ITEMS.length * 100);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${pct === 100 ? "bg-emerald-100 text-emerald-700" : pct >= 50 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-600"}`}>
+          {pct === 100 ? "Complete" : pct >= 50 ? "In Progress" : "Incomplete"} — {pct}%
+        </span>
+      </div>
+      <div className="h-1.5 w-full bg-black/8 rounded-full overflow-hidden mb-3">
+        <div className={`h-full rounded-full transition-all ${pct === 100 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-400" : "bg-red-400"}`} style={{ width: `${pct}%` }} />
+      </div>
+      {TOWER_COMPLIANCE_ITEMS.map((item, i) => (
+        <label key={i} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer mb-1.5 transition-colors ${checks[i] ? "border-emerald-200 bg-emerald-50/50" : "border-black/8 hover:bg-[#F5F5F5]"}`}>
+          <input type="checkbox" className="h-4 w-4 rounded accent-black" checked={checks[i]}
+            onChange={() => { toggle(i); onAct(`Stage ${stageId} compliance item ${i + 1} ${!checks[i] ? "checked" : "unchecked"}`); }} />
+          <span className="text-xs text-black">{item}</span>
+          {checks[i] && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 ml-auto flex-shrink-0" />}
+        </label>
+      ))}
+    </div>
+  );
+}
+
 // ─── Stage Detail Panel ───────────────────────────────────────────────────────
 function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onClose: () => void; context: string }) {
   const [tab, setTab] = useState<StagePanelTab>("overview");
 
+  // Parse tender ref/name from context string if provided
+  const now = new Date("2026-06-26");
+  const dateTimeStr = now.toLocaleString("en-ZW", { dateStyle: "medium", timeStyle: "short" });
+
+  // Derive age from stage id (demo — stage 0 opened 26 stages ago)
+  const ageDays = Math.max(1, (stage.id + 1) * 3);
+  const ageLabel = ageDays < 30 ? `${ageDays} days` : `${Math.floor(ageDays / 30)} month${Math.floor(ageDays / 30) > 1 ? "s" : ""}`;
+
   const TABS: { key: StagePanelTab; label: string; icon: React.ElementType }[] = [
-    { key: "overview",      label: "Overview",        icon: Eye           },
-    { key: "documents",     label: "Documents",       icon: FileText      },
-    { key: "workflow",      label: "Workflow",        icon: RefreshCcw    },
-    { key: "automation",    label: "Automation",      icon: Settings      },
-    { key: "ai",            label: "AI",              icon: Sparkles      },
-    { key: "approvals",     label: "Approvals",       icon: CheckCircle   },
-    { key: "comms",         label: "Comms",           icon: MessageSquare },
-    { key: "risk",          label: "Risk",            icon: AlertTriangle },
-    { key: "finance",       label: "Finance",         icon: Wallet        },
-    { key: "meetings",      label: "Meetings",        icon: CalendarDays  },
-    { key: "team",          label: "Team",            icon: UserCheck     },
-    { key: "budget",        label: "Budget",          icon: DollarSign    },
-    { key: "governance",    label: "Governance",      icon: Landmark      },
-    { key: "media",         label: "Media",           icon: Image         },
-    { key: "ethics",        label: "Ethics",          icon: Shield        },
-    { key: "legal",         label: "Legal Guide",     icon: BookOpen      },
-    { key: "compliance",    label: "Compliance",      icon: ClipboardCheck },
-    { key: "report",        label: "Report",          icon: BarChart3     },
-    { key: "certificates",  label: "Certificates",    icon: Award         },
+    { key: "tender",        label: "Tender",          icon: FileText        },
+    { key: "overview",      label: "Overview",        icon: Eye             },
+    { key: "documents",     label: "Documents",       icon: FileSignature   },
+    { key: "workflow",      label: "Workflow",        icon: RefreshCcw      },
+    { key: "automation",    label: "Automation",      icon: Settings        },
+    { key: "ai",            label: "AI",              icon: Sparkles        },
+    { key: "approvals",     label: "Approvals",       icon: CheckCircle     },
+    { key: "comms",         label: "Comms",           icon: MessageSquare   },
+    { key: "risk",          label: "Risk",            icon: AlertTriangle   },
+    { key: "finance",       label: "Finance",         icon: Wallet          },
+    { key: "meetings",      label: "Meetings",        icon: CalendarDays    },
+    { key: "team",          label: "Team",            icon: UserCheck       },
+    { key: "budget",        label: "Budget",          icon: DollarSign      },
+    { key: "governance",    label: "Governance",      icon: Landmark        },
+    { key: "media",         label: "Media",           icon: Image           },
+    { key: "ethics",        label: "Ethics",          icon: Shield          },
+    { key: "legal",         label: "Legal Guide",     icon: BookOpen        },
+    { key: "compliance",    label: "Compliance",      icon: ClipboardCheck  },
+    { key: "report",        label: "Report",          icon: BarChart3       },
+    { key: "certificates",  label: "Certificates",    icon: Award           },
+    { key: "chat",          label: "Chat Thread",     icon: MessageSquare   },
   ];
 
   const act = (msg: string) => pushNotification(`${msg} — ${stage.label}`, "success");
+
+  // Demo participants for Chat Thread
+  const PARTICIPANTS = [
+    { name: "T. Moyo",      role: "Chief Procurement Officer",  avatar: "TM", action: "Approved stage advancement",          time: "09:14", online: true  },
+    { name: "A. Mpofu",     role: "Procurement Officer",         avatar: "AM", action: "Uploaded stage documents",            time: "08:45", online: true  },
+    { name: "R. Chikwanda", role: "Finance Officer",             avatar: "RC", action: "Confirmed budget availability",       time: "Yesterday", online: false },
+    { name: "P. Dube",      role: "Evaluator",                   avatar: "PD", action: "Submitted evaluation scores",         time: "Yesterday", online: false },
+    { name: "L. Ndlovu",    role: "Legal Officer",               avatar: "LN", action: "Issued legal clearance certificate",  time: "Mon",  online: false },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -92,9 +617,10 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
       <div className="w-full max-w-2xl bg-white shadow-2xl flex flex-col h-full overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-black/8 flex-shrink-0">
-          <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-start justify-between gap-3 mb-2">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
+              {/* Status badges */}
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <Badge tone={stage.status === "active" ? "blue" : stage.status === "completed" ? "green" : stage.status === "blocked" ? "red" : "muted"}>
                   Stage {stage.id}
                 </Badge>
@@ -104,13 +630,30 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   </span>
                 )}
               </div>
-              <h2 className="text-base font-bold text-black leading-tight">{stage.label}</h2>
-              <p className="text-xs text-black/50 mt-0.5">{context}</p>
+              {/* Tender name/ref — bold, large */}
+              <h2 className="text-base font-bold text-black leading-tight mb-1">{stage.label}</h2>
+              {/* Context = tender ref/name from parent */}
+              {context && <div className="text-[10px] font-mono text-black/50 mb-1">{context}</div>}
+              <p className="text-xs text-black/50">{stage.description}</p>
             </div>
             <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black transition-colors flex-shrink-0">
               <X className="h-4 w-4" />
             </button>
           </div>
+
+          {/* Age · Date/Time row */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 mb-2">
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <Clock className="h-3 w-3 flex-shrink-0" />
+              <span>Age: {ageLabel}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-black/50">
+              <CalendarDays className="h-3 w-3 flex-shrink-0" />
+              <span>{dateTimeStr}</span>
+            </div>
+          </div>
+
+          {/* AI role + owner pills */}
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 bg-violet-50 border border-violet-100 rounded-full px-2.5 py-1">
               <Sparkles className="h-3 w-3 text-violet-500" />
@@ -281,18 +824,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
           )}
 
           {tab === "risk" && (
-            <div className="space-y-2">
-              <span className="text-xs font-semibold text-black/60">Risk Flags & Monitoring</span>
-              {stage.riskFlags.map((r, i) => (
-                <div key={i} className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                  <AlertOctagon className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-xs text-amber-800">{r}</span>
-                </div>
-              ))}
-              <button onClick={() => act("Risk report generated")} className="w-full h-9 mt-2 border border-amber-200 text-amber-700 bg-amber-50 rounded-lg text-xs font-medium hover:bg-amber-100 transition-colors flex items-center justify-center gap-1.5">
-                <BarChart3 className="h-3.5 w-3.5" /> Generate Risk Report
-              </button>
-            </div>
+            <RiskRegisterTab stage={stage} onAct={act} />
           )}
 
           {tab === "finance" && (
@@ -496,40 +1028,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
           )}
 
           {tab === "compliance" && (
-            <div className="space-y-4">
-              <span className="text-xs font-semibold text-black/60">Compliance Checklist — Stage {stage.id}</span>
-              <div className="space-y-2">
-                <div className="text-[11px] font-semibold text-black/50 uppercase tracking-wide">1. Process & Procedures Performed</div>
-                {["All required documents prepared and uploaded", "Procurement method verified and approved", "Budget availability confirmed in IFMIS", "All mandatory approvals obtained"].map((item, i) => (
-                  <label key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl cursor-pointer hover:bg-[#F5F5F5] transition-colors">
-                    <input type="checkbox" defaultChecked={i < 2} className="rounded flex-shrink-0" />
-                    <span className="text-xs text-black flex-1">{item}</span>
-                    <span className="text-[9px] text-black/30">Auto-stamped</span>
-                  </label>
-                ))}
-              </div>
-              <div className="space-y-2">
-                <div className="text-[11px] font-semibold text-black/50 uppercase tracking-wide">2. Officer Declarations</div>
-                {["D. Moyo — Independence declaration confirmed", "A. Chikwanda — Conflict of interest: none declared", "L. Ndlovu — Fitness & competency confirmed"].map((item, i) => (
-                  <label key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl cursor-pointer hover:bg-[#F5F5F5]">
-                    <input type="checkbox" defaultChecked={i === 0} className="rounded flex-shrink-0" />
-                    <span className="text-xs text-black flex-1">{item}</span>
-                  </label>
-                ))}
-              </div>
-              <div className="space-y-2">
-                <div className="text-[11px] font-semibold text-black/50 uppercase tracking-wide">3. Decision Sign-Offs</div>
-                {["CPO — approved stage advancement", "Legal Officer — clearance issued", "Finance Officer — budget confirmed"].map((item, i) => (
-                  <label key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl cursor-pointer hover:bg-[#F5F5F5]">
-                    <input type="checkbox" defaultChecked={i < 2} className="rounded flex-shrink-0" />
-                    <span className="text-xs text-black flex-1">{item}</span>
-                  </label>
-                ))}
-              </div>
-              <button onClick={() => act("Compliance checklist submitted")} className="w-full h-9 bg-black text-white rounded-lg text-xs font-medium hover:opacity-90 transition-opacity">
-                Submit & Lock Compliance Record
-              </button>
-            </div>
+            <ComplianceTab stageId={stage.id} onSubmit={() => act("Compliance checklist submitted")} />
           )}
 
           {tab === "report" && (
@@ -597,6 +1096,128 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* ── Tender Tab ─────────────────────────────────────────────────── */}
+          {tab === "tender" && (
+            <div className="space-y-4">
+              {/* Tender Documents */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-black/60">Tender Documents</span>
+                  <button onClick={() => act("Tender document uploaded")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] font-medium flex items-center gap-1 hover:opacity-90">
+                    <Upload className="h-3 w-3" /> Upload
+                  </button>
+                </div>
+                {stage.documents.map((doc, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors group mb-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <FileText className="h-4 w-4 text-black/30" />
+                      <span className="text-xs text-black">{doc}</span>
+                    </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => act(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                      <button onClick={() => act(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Minutes and Resolutions */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-black/60">Minutes & Resolutions</span>
+                  <button onClick={() => act("Minutes uploaded")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] font-medium flex items-center gap-1 hover:opacity-90">
+                    <Upload className="h-3 w-3" /> Upload
+                  </button>
+                </div>
+                {[
+                  { ref: "MTG-001", date: "2026-06-02", title: `Stage ${stage.id} kickoff meeting minutes`,   status: "Uploaded"      },
+                  { ref: "RES-001", date: "2026-06-03", title: `Resolution to proceed — Stage ${stage.id}`,  status: "AI Reviewed"   },
+                  { ref: "MTG-002", date: "2026-06-10", title: "Committee sitting — review & sign-off",       status: "Pending Review" },
+                ].map((m, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                    <div>
+                      <div className="text-xs font-semibold text-black">{m.title}</div>
+                      <div className="text-[10px] text-black/40 mt-0.5">{m.ref} · {m.date}</div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${m.status === "AI Reviewed" ? "bg-violet-100 text-violet-700" : m.status === "Uploaded" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{m.status}</span>
+                      <button onClick={() => act(`Viewed ${m.ref}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Compliance Check Box */}
+              <div>
+                <span className="text-xs font-semibold text-black/60 block mb-2">Compliance Check</span>
+                <TowerComplianceCheck stageId={stage.id} onAct={act} />
+              </div>
+            </div>
+          )}
+
+          {/* ── Chat Thread Tab ──────────────────────────────────────────── */}
+          {tab === "chat" && (
+            <div className="space-y-4">
+              {/* Participants list */}
+              <div>
+                <span className="text-xs font-semibold text-black/60 block mb-2">Stage Participants ({PARTICIPANTS.length})</span>
+                {PARTICIPANTS.map((p, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                    <div className="relative flex-shrink-0">
+                      <div className="h-8 w-8 rounded-full bg-black text-white text-xs font-bold grid place-items-center">{p.avatar}</div>
+                      {p.online && <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-white" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-semibold text-black">{p.name}</span>
+                        <span className="text-[10px] text-black/40">· {p.role}</span>
+                      </div>
+                      <div className="text-[10px] text-black/50 truncate">{p.action}</div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-[9px] text-black/30">{p.time}</div>
+                      {p.online && <div className="text-[9px] text-emerald-600 font-semibold mt-0.5">Online</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat thread */}
+              <div>
+                <span className="text-xs font-semibold text-black/60 block mb-2">Chat Thread</span>
+                <div className="space-y-3 mb-3">
+                  {[
+                    { from: "T. Moyo",      avatar: "TM", msg: `Stage ${stage.id} documentation complete. Ready to advance.`,  time: "09:14", self: false },
+                    { from: "A. Mpofu",     avatar: "AM", msg: "Compliance checklist uploaded. Please review and confirm.",    time: "08:45", self: false },
+                    { from: "R. Chikwanda", avatar: "RC", msg: "Budget confirmed — commitment created in IFMIS.",              time: "Yesterday", self: false },
+                    { from: "You",          avatar: "ME", msg: "Acknowledged. Stage advancement approved.",                    time: "Yesterday", self: true  },
+                  ].map((msg, i) => (
+                    <div key={i} className={`flex gap-2 ${msg.self ? "flex-row-reverse" : ""}`}>
+                      <div className={`h-7 w-7 rounded-full text-white text-[10px] font-bold grid place-items-center flex-shrink-0 ${msg.self ? "bg-violet-600" : "bg-black"}`}>{msg.avatar}</div>
+                      <div className={`max-w-[75%] ${msg.self ? "items-end" : "items-start"} flex flex-col`}>
+                        {!msg.self && <span className="text-[10px] text-black/40 mb-0.5">{msg.from}</span>}
+                        <div className={`px-3 py-2 rounded-xl text-xs ${msg.self ? "bg-violet-600 text-white rounded-tr-sm" : "bg-[#F5F5F5] text-black rounded-tl-sm"}`}>
+                          {msg.msg}
+                        </div>
+                        <span className="text-[9px] text-black/25 mt-0.5">{msg.time}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Message input */}
+                <div className="flex gap-2">
+                  <input
+                    placeholder="Type a message to stage participants…"
+                    className="flex-1 h-9 px-3 rounded-xl border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10"
+                  />
+                  <button onClick={() => act("Message sent to participants")} className="h-9 px-3 bg-black text-white rounded-xl hover:opacity-90 transition-opacity flex items-center gap-1.5 text-xs font-medium">
+                    <Send className="h-3.5 w-3.5" /> Send
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

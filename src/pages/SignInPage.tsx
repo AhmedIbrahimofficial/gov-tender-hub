@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, ALL_ROLES } from "@/lib/auth-context";
-import { ZW_MINISTRIES } from "@/lib/zw-ministries";
+import { ZW_MINISTRIES, type ZWRole } from "@/lib/zw-ministries";
 import {
   Eye, EyeOff, ArrowRight, Shield, Building2, ChevronLeft, X,
   Phone, User, Mail, Lock, Briefcase, Landmark, Search, Users,
-  ChevronDown, ChevronRight, Crown, Star,
+  ChevronDown, ChevronRight, Crown, Star, AlertTriangle,
 } from "lucide-react";
 import { seedIfEmpty } from "@/lib/local-store";
 
@@ -24,13 +24,21 @@ function GovHierarchyPanel() {
 
   return (
     <div className="space-y-0.5">
-      {/* Prime Minister node */}
-      <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-amber-500/15 border border-amber-500/20 mb-2">
+      {/* President node */}
+      <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-amber-500/15 border border-amber-500/20 mb-0.5">
         <span className="h-5 w-5 rounded-md bg-amber-500 grid place-items-center flex-shrink-0">
           <Crown className="h-2.5 w-2.5 text-white" />
         </span>
-        <span className="text-[11px] font-semibold text-amber-300">Prime Minister</span>
-        <span className="ml-auto text-[9px] text-amber-400/60">Head of Government</span>
+        <span className="text-[11px] font-semibold text-amber-300">President</span>
+        <span className="ml-auto text-[9px] text-amber-400/60">Head of State</span>
+      </div>
+      {/* Prime Minister node */}
+      <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/15 mb-2">
+        <span className="h-5 w-5 rounded-md bg-amber-400/80 grid place-items-center flex-shrink-0">
+          <Crown className="h-2.5 w-2.5 text-white" />
+        </span>
+        <span className="text-[11px] font-semibold text-amber-300/80">Prime Minister</span>
+        <span className="ml-auto text-[9px] text-amber-400/50">Head of Govt</span>
       </div>
 
       {ZW_MINISTRIES.slice(0, 8).map(ministry => (
@@ -48,6 +56,12 @@ function GovHierarchyPanel() {
           </button>
           {openMin === ministry.id && (
             <div className="ml-4 pl-2 border-l border-white/10 space-y-0.5 mb-1">
+              {/* CPO row — always visible under each ministry */}
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-violet-500/15 border border-violet-500/20 mb-0.5">
+                <Shield className="h-3 w-3 text-violet-400 flex-shrink-0" />
+                <span className="text-[9px] font-semibold text-violet-300 truncate flex-1">CPO</span>
+                <span className="text-[8px] text-violet-400/60 truncate max-w-[90px]">{ministry.cpo}</span>
+              </div>
               {ministry.departments.map(dept => (
                 <div key={dept.id}>
                   <button
@@ -80,6 +94,20 @@ function GovHierarchyPanel() {
     </div>
   );
 }
+
+// Procurement workflow roles added to every department
+const PROCUREMENT_WORKFLOW_ROLES: ZWRole[] = [
+  { title: "Chief Procurement Officer (CPO)",    level: "Executive", count: 1 },
+  { title: "Procurement Officer",                level: "Senior",    count: 4 },
+  { title: "Initiator",                          level: "Officer",   count: 6 },
+  { title: "Approver",                           level: "Senior",    count: 3 },
+  { title: "Authorizer",                         level: "Senior",    count: 2 },
+  { title: "Adjudicator / Adjudication Board",   level: "Executive", count: 1 },
+  { title: "Evaluator",                          level: "Officer",   count: 5 },
+  { title: "Oversight / Auditor",                level: "Senior",    count: 2 },
+  { title: "Bid Committee Member",               level: "Officer",   count: 4 },
+  { title: "Contract Manager",                   level: "Senior",    count: 2 },
+];
 
 // ─── Interactive hierarchy selector (Ministry → Department → Role) ────────────
 type HierarchySelection = { ministryId: string; departmentId: string; roleTitle: string };
@@ -135,11 +163,40 @@ function GovHierarchySelector({
         )}
       </div>
 
-      {/* PM node */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 border border-amber-100 mb-2">
+      {/* President node — selectable */}
+      <button
+        onClick={() => selectRole("presidency", "opc-cabinet", "President / Head of State")}
+        className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl border mb-1 transition-all text-left
+          ${value.ministryId === "presidency" && value.roleTitle === "President / Head of State"
+            ? "bg-amber-50 border-amber-300 ring-1 ring-amber-300"
+            : "bg-amber-50 border-amber-100 hover:border-amber-300 hover:bg-amber-100"}`}
+      >
         <Crown className="h-4 w-4 text-amber-500 flex-shrink-0" />
-        <span className="text-xs font-semibold text-amber-700">Prime Minister — Head of Government</span>
-      </div>
+        <div className="flex-1">
+          <span className="text-xs font-semibold text-amber-700 block">President / Head of State</span>
+          <span className="text-[9px] text-amber-500">Office of the President and Cabinet · OPC</span>
+        </div>
+        {value.ministryId === "presidency" && value.roleTitle === "President / Head of State" && (
+          <Star className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
+        )}
+      </button>
+      {/* Prime Minister node — selectable */}
+      <button
+        onClick={() => selectRole("presidency", "opc-cabinet", "Prime Minister")}
+        className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl border mb-2 transition-all text-left
+          ${value.ministryId === "presidency" && value.roleTitle === "Prime Minister"
+            ? "bg-amber-50 border-amber-300 ring-1 ring-amber-300"
+            : "bg-amber-50/60 border-amber-100 hover:border-amber-300 hover:bg-amber-100"}`}
+      >
+        <Crown className="h-4 w-4 text-amber-400 flex-shrink-0" />
+        <div className="flex-1">
+          <span className="text-xs font-semibold text-amber-600 block">Prime Minister</span>
+          <span className="text-[9px] text-amber-400">Office of the President and Cabinet · OPC</span>
+        </div>
+        {value.ministryId === "presidency" && value.roleTitle === "Prime Minister" && (
+          <Star className="h-3.5 w-3.5 text-amber-400 flex-shrink-0" />
+        )}
+      </button>
 
       <div className="max-h-[48vh] overflow-y-auto space-y-0.5 pr-1">
         {filtered.map(ministry => (
@@ -159,6 +216,24 @@ function GovHierarchySelector({
             </button>
             {openMin === ministry.id && (
               <div className="ml-4 pl-3 border-l border-black/8 space-y-0.5 mb-1">
+                {/* CPO pinned at top of each ministry — selectable */}
+                <button
+                  onClick={() => selectRole(ministry.id, `${ministry.id}-cpo`, "Chief Procurement Officer (CPO)")}
+                  className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg border transition-all text-left
+                    ${value.ministryId === ministry.id && value.departmentId === `${ministry.id}-cpo`
+                      ? "bg-violet-600 text-white border-violet-600"
+                      : "bg-violet-50 border-violet-100 hover:bg-violet-600 hover:text-white hover:border-violet-600"}`}
+                >
+                  <Shield className={`h-3.5 w-3.5 flex-shrink-0 ${value.ministryId === ministry.id && value.departmentId === `${ministry.id}-cpo` ? "text-white" : "text-violet-500"}`} />
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[11px] font-semibold block truncate">Chief Procurement Officer (CPO)</span>
+                    <span className={`text-[9px] truncate block ${value.ministryId === ministry.id && value.departmentId === `${ministry.id}-cpo` ? "text-white/70" : "text-violet-500"}`}>
+                      {ministry.cpo}
+                    </span>
+                  </div>
+                  <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 flex-shrink-0">Executive</span>
+                </button>
+
                 {ministry.departments.map(dept => (
                   <div key={dept.id}>
                     <button
@@ -176,9 +251,13 @@ function GovHierarchySelector({
                     </button>
                     {openDept === dept.id && (
                       <div className="ml-4 pl-2.5 border-l border-black/8 space-y-0.5 mb-1">
+                        {/* Departmental roles */}
+                        {dept.roles.length > 0 && (
+                          <div className="px-2 py-1 text-[9px] font-bold text-black/35 uppercase tracking-wider">Departmental Roles</div>
+                        )}
                         {dept.roles.map(role => (
                           <button
-                            key={role.title}
+                            key={`dept-${role.title}`}
                             onClick={() => selectRole(ministry.id, dept.id, role.title)}
                             className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors text-left group
                               ${value.ministryId === ministry.id && value.departmentId === dept.id && value.roleTitle === role.title
@@ -191,6 +270,27 @@ function GovHierarchySelector({
                               ${role.level === "Executive" ? "bg-amber-100 text-amber-700 group-hover:bg-amber-500 group-hover:text-white" :
                                 role.level === "Senior" ? "bg-blue-100 text-blue-700 group-hover:bg-blue-500 group-hover:text-white" :
                                 "bg-gray-100 text-gray-600 group-hover:bg-gray-600 group-hover:text-white"}`}>
+                              {role.level}
+                            </span>
+                          </button>
+                        ))}
+                        {/* Procurement workflow roles */}
+                        <div className="px-2 py-1 mt-1 text-[9px] font-bold text-violet-500 uppercase tracking-wider border-t border-black/8">Procurement Roles</div>
+                        {PROCUREMENT_WORKFLOW_ROLES.map(role => (
+                          <button
+                            key={`proc-${role.title}`}
+                            onClick={() => selectRole(ministry.id, dept.id, role.title)}
+                            className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors text-left group
+                              ${value.ministryId === ministry.id && value.departmentId === dept.id && value.roleTitle === role.title
+                                ? "bg-violet-600 text-white"
+                                : "hover:bg-violet-600 hover:text-white"}`}
+                          >
+                            <Shield className="h-3 w-3 text-violet-400 group-hover:text-white flex-shrink-0" />
+                            <span className="text-[10.5px] text-black/65 group-hover:text-white truncate flex-1">{role.title}</span>
+                            <span className={`text-[9px] px-1.5 py-0.5 rounded-full flex-shrink-0 
+                              ${role.level === "Executive" ? "bg-amber-100 text-amber-700 group-hover:bg-amber-500 group-hover:text-white" :
+                                role.level === "Senior" ? "bg-blue-100 text-blue-700 group-hover:bg-blue-500 group-hover:text-white" :
+                                "bg-violet-100 text-violet-700 group-hover:bg-violet-500 group-hover:text-white"}`}>
                               {role.level}
                             </span>
                           </button>
@@ -268,7 +368,7 @@ function PublicLogin({ onBack }: { onBack: () => void }) {
           <Building2 className="h-5 w-5 text-white" />
         </div>
         <div>
-          <div className="text-lg font-semibold text-black">Company / Supplier Portal</div>
+          <div className="text-lg font-semibold text-black">Supplier Portal</div>
           <div className="text-xs text-black/50">Browse tenders, bid, and track your applications</div>
         </div>
       </div>
@@ -364,35 +464,163 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
   const selectedMinistry = ZW_MINISTRIES.find(m => m.id === hier.ministryId);
   const selectedDept = selectedMinistry?.departments.find(d => d.id === hier.departmentId);
 
-  const resolveRole = (roleTitle: string) => {
-    const lower = roleTitle.toLowerCase();
-    let match = ALL_ROLES.find(r => r.label.toLowerCase() === lower);
-    if (!match) {
-      const keyword = lower.split(",")[0].split(" ").filter(w => w.length > 4)[0];
-      if (keyword) match = ALL_ROLES.find(r => r.label.toLowerCase().includes(keyword));
+  // Deterministic role title → UserRole mapping
+  const resolveRole = (roleTitle: string, ministryId: string) => {
+    const lower = roleTitle.toLowerCase().trim();
+
+    // ── Exact string → role map (covers all PROCUREMENT_WORKFLOW_ROLES + common titles) ──
+    const EXACT_MAP: Record<string, string> = {
+      // Head of State / Govt
+      "president / head of state":       "president",
+      "president":                        "president",
+      "prime minister":                   "prime_minister",
+      // Procurement leadership
+      "chief procurement officer (cpo)":  "cpo",
+      "chief procurement officer":        "cpo",
+      "cpo":                              "cpo",
+      "procurement director":             "procurement_director",
+      "procurement officer":              "procurement_officer",
+      // Procurement workflow roles (from PROCUREMENT_WORKFLOW_ROLES list)
+      "initiator":                        "end_user",
+      "approver":                         "procurement_officer",
+      "authorizer":                       "adjudication_officer",
+      "adjudicator / adjudication board": "adjudication_officer",
+      "adjudicator":                      "adjudication_officer",
+      "evaluator":                        "evaluator",
+      "oversight / auditor":              "audit_officer",
+      "bid committee member":             "evaluator",
+      "contract manager":                 "contract_manager",
+      // Finance
+      "finance officer":                  "finance_officer",
+      "finance manager":                  "finance_manager",
+      "budget officer":                   "budget_officer",
+      "budget manager":                   "budget_manager",
+      "treasury officer":                 "treasury_officer",
+      "treasury manager":                 "treasury_manager",
+      // Audit / compliance
+      "audit officer":                    "audit_officer",
+      "auditor":                          "auditor",
+      "auditor general":                  "auditor",
+      "public auditor":                   "public_auditor",
+      "anti-corruption officer":          "anti_corruption_officer",
+      "compliance officer":               "compliance_officer",
+      "ethics officer":                   "ethics_officer",
+      "risk officer":                     "risk_officer",
+      // Legal / governance
+      "legal officer":                    "legal_officer",
+      "legal counsel":                    "legal_counsel",
+      "governance officer":               "governance_officer",
+      "records officer":                  "records_officer",
+      // HR
+      "hr manager":                       "hr_manager",
+      "hr officer":                       "hr_officer",
+      "welfare officer":                  "welfare_officer",
+      // Operations
+      "stores officer":                   "stores_officer",
+      "logistics officer":                "logistics_officer",
+      "transport officer":                "transport_officer",
+      "facilities manager":               "facilities_manager",
+      "operations manager":               "operations_manager",
+      "asset manager":                    "asset_manager",
+      // IT / systems
+      "it officer":                       "it_officer",
+      "ict manager":                      "ict_manager",
+      "cybersecurity officer":            "cybersecurity_officer",
+      "systems admin":                    "systems_admin",
+      "system administrator":             "system_admin",
+      // Executive / leadership
+      "permanent secretary":              "permanent_secretary",
+      "executive director":               "executive_director",
+      "board member":                     "board_member",
+      "minister":                         "minister",
+      "minister / executive":             "minister",
+      "chief executive officer":          "chief_executive",
+      "chief executive":                  "chief_executive",
+      // Other
+      "project manager":                  "project_manager",
+      "contract officer":                 "contract_officer",
+      "planning officer":                 "planning_officer",
+      "communications officer":           "communications_officer",
+      "performance officer":              "performance_officer",
+      "qa officer":                       "qa_officer",
+      "quality assurance officer":        "qa_officer",
+      "inspection officer":               "inspection_officer",
+      "regulator (praz)":                 "regulator",
+      "regulator":                        "regulator",
+      "ai governance officer":            "ai_governance_officer",
+      "data analytics officer":           "data_analytics_officer",
+      "health & safety officer":          "health_safety_officer",
+      "health and safety officer":        "health_safety_officer",
+      "environment officer":              "environment_officer",
+      "gender officer":                   "gender_officer",
+      "research officer":                 "research_officer",
+      "end user / requisitioner":         "end_user",
+      "end user":                         "end_user",
+      "citizen observer":                 "citizen",
+    };
+
+    // 1. Exact match
+    if (EXACT_MAP[lower]) {
+      return ALL_ROLES.find(r => r.role === EXACT_MAP[lower]) ?? ALL_ROLES[4];
     }
-    return match ?? ALL_ROLES[4];
+
+    // 2. Presidency override — anything from OPC that didn't match above → president
+    if (ministryId === "presidency") {
+      if (lower.includes("prime minister")) return ALL_ROLES.find(r => r.role === "prime_minister") ?? ALL_ROLES[1];
+      return ALL_ROLES.find(r => r.role === "president") ?? ALL_ROLES[0];
+    }
+
+    // 3. Substring scan through EXACT_MAP keys
+    for (const [key, roleVal] of Object.entries(EXACT_MAP)) {
+      if (lower.includes(key) || key.includes(lower)) {
+        return ALL_ROLES.find(r => r.role === roleVal) ?? ALL_ROLES[4];
+      }
+    }
+
+    // 4. ALL_ROLES label match (exact then partial)
+    const labelExact = ALL_ROLES.find(r => r.label.toLowerCase() === lower);
+    if (labelExact) return labelExact;
+    const labelPartial = ALL_ROLES.find(r => r.label.toLowerCase().includes(lower) || lower.includes(r.label.toLowerCase()));
+    if (labelPartial) return labelPartial;
+
+    // 5. Safe fallback → procurement_officer (not CPO)
+    return ALL_ROLES.find(r => r.role === "procurement_officer") ?? ALL_ROLES[5];
   };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault(); setError("");
-    if (!form.email || !form.password) { setError("Email and password are required."); return; }
     if (mode === "register") {
-      if (!form.name) { setError("Full name is required."); return; }
-      if (!form.phone) { setError("Phone number is required."); return; }
-      if (!hier.ministryId || !hier.departmentId || !hier.roleTitle) { setError("Please select your ministry, department and role."); return; }
-      if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
+      const errors: string[] = [];
+      if (!form.name) errors.push("Full name is required.");
+      if (!form.phone) errors.push("Phone number is required.");
+      if (!form.email) errors.push("Work email is required.");
+      if (!form.password) errors.push("Password is required.");
+      if (!hier.ministryId || (!hier.departmentId && hier.ministryId !== "presidency") || !hier.roleTitle) errors.push("Please select your ministry, department and role.");
+      if (form.password && form.password !== form.confirm) errors.push("Passwords do not match.");
+      if (errors.length > 0) { setError(errors.join(" ")); return; }
+    } else {
+      const errors: string[] = [];
+      if (!form.email) errors.push("Email is required.");
+      if (!form.password) errors.push("Password is required.");
+      if (errors.length > 0) { setError(errors.join(" ")); return; }
     }
     setLoading(true);
-    const resolvedRole = hier.roleTitle ? resolveRole(hier.roleTitle) : ALL_ROLES[4];
+    // Use selected role if provided; for login without selection, fallback to procurement_officer
+    const resolvedRole = hier.roleTitle
+      ? resolveRole(hier.roleTitle, hier.ministryId)
+      : (ALL_ROLES.find(r => r.role === "procurement_officer") ?? ALL_ROLES[5]);
     setTimeout(() => {
       loginWithDetails({
         role: resolvedRole.role,
         name: form.name || form.email.split("@")[0],
         email: form.email,
         phone: form.phone,
-        department: selectedDept?.name ?? hier.roleTitle ?? resolvedRole.label,
-        entity: selectedMinistry?.name ?? "Government of Zimbabwe",
+        department: hier.ministryId === "presidency"
+          ? "Office of the President and Cabinet"
+          : selectedDept?.name ?? hier.roleTitle ?? resolvedRole.label,
+        entity: hier.ministryId === "presidency"
+          ? "Office of the President and Cabinet"
+          : selectedMinistry?.name ?? "Government of Zimbabwe",
       });
       seedIfEmpty(form.email);
       navigate("/dashboard");
@@ -455,30 +683,33 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
           </div>
         </div>
 
-        {mode === "register" && (
-          <div>
-            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Ministry / Department / Role *</label>
-            <button type="button" onClick={() => setShowHierarchy(!showHierarchy)}
-              className="w-full mt-1 h-10 px-3 rounded-xl border border-black/10 text-sm text-left flex items-center gap-2 hover:border-black/25 transition-colors bg-white">
-              {hier.roleTitle ? (
-                <div className="flex-1 min-w-0">
-                  <span className="block text-xs text-black truncate">{hier.roleTitle}</span>
-                  <span className="block text-[10px] text-black/40 truncate">
-                    {selectedMinistry?.name} · {selectedDept?.name}
-                  </span>
-                </div>
-              ) : (
-                <span className="flex-1 text-black/35 text-xs">Click to select from government hierarchy…</span>
-              )}
-              <ChevronDown className={`h-4 w-4 text-black/30 flex-shrink-0 transition-transform ${showHierarchy ? "rotate-180" : ""}`} />
-            </button>
-            {showHierarchy && (
-              <div className="mt-2">
-                <GovHierarchySelector value={hier} onChange={setHier} onClose={() => setShowHierarchy(false)} />
+        {/* Hierarchy selector — shown for both register AND login */}
+        <div>
+          <label className="text-xs font-medium text-black/50 uppercase tracking-wider">
+            Ministry / Department / Role {mode === "register" ? "*" : "(optional — routes to correct dashboard)"}
+          </label>
+          <button type="button" onClick={() => setShowHierarchy(!showHierarchy)}
+            className="w-full mt-1 h-10 px-3 rounded-xl border border-black/10 text-sm text-left flex items-center gap-2 hover:border-black/25 transition-colors bg-white">
+            {hier.roleTitle ? (
+              <div className="flex-1 min-w-0">
+                <span className="block text-xs text-black truncate">{hier.roleTitle}</span>
+                <span className="block text-[10px] text-black/40 truncate">
+                  {hier.ministryId === "presidency"
+                    ? "Office of the President and Cabinet · OPC"
+                    : `${selectedMinistry?.name} · ${selectedDept?.name ?? "CPO"}`}
+                </span>
               </div>
+            ) : (
+              <span className="flex-1 text-black/35 text-xs">Click to select from government hierarchy…</span>
             )}
-          </div>
-        )}
+            <ChevronDown className={`h-4 w-4 text-black/30 flex-shrink-0 transition-transform ${showHierarchy ? "rotate-180" : ""}`} />
+          </button>
+          {showHierarchy && (
+            <div className="mt-2">
+              <GovHierarchySelector value={hier} onChange={setHier} onClose={() => setShowHierarchy(false)} />
+            </div>
+          )}
+        </div>
 
         <div>
           <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Password *</label>
@@ -505,7 +736,12 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
           </div>
         )}
 
-        {error && <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>}
+        {error && (
+          <div className="flex items-start gap-2 text-xs text-red-700 bg-red-50 border-2 border-red-300 rounded-xl px-4 py-3 font-medium shadow-sm">
+            <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+            <span>{error}</span>
+          </div>
+        )}
 
         <button type="submit" disabled={loading}
           className="w-full h-10 rounded-xl bg-gray-950 text-white text-sm font-semibold hover:bg-gray-900 disabled:opacity-50 flex items-center justify-center gap-2">
@@ -537,7 +773,7 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
             <Building2 className="h-6 w-6 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-base font-semibold text-white">Company / Supplier Portal</div>
+            <div className="text-base font-semibold text-white">Supplier Portal</div>
             <div className="text-sm text-blue-200">Browse tenders · Bid · Submit applications</div>
             <div className="text-xs text-blue-300 mt-0.5">Sign in or register with company details</div>
           </div>
@@ -577,7 +813,7 @@ export default function SignInPage() {
     <div className="min-h-screen flex bg-[#F5F5F5]">
 
       {/* ── Left dark panel (desktop only) ───────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[42%] flex-col bg-gray-950 border-r border-white/5">
+      <div className="hidden lg:flex lg:w-[50%] flex-col bg-gray-950 border-r border-white/5">
         {/* Logo */}
         <div className="px-8 py-6 border-b border-white/8 flex-shrink-0">
           <Link to="/" className="flex items-center gap-2.5">
@@ -606,7 +842,7 @@ export default function SignInPage() {
             <div>
               <div className="text-xs font-semibold text-white/70">Government Hierarchy</div>
               <div className="text-[10px] text-white/30 mt-0.5">
-                Prime Minister · {ZW_MINISTRIES.length} Ministries · Departments · Roles
+                President · {ZW_MINISTRIES.length} Ministries · {ZW_MINISTRIES.reduce((acc, m) => acc + m.departments.length, 0)} Departments · {ALL_ROLES.length} Roles
               </div>
             </div>
             <div className="flex items-center gap-1.5">
@@ -624,7 +860,7 @@ export default function SignInPage() {
           {[
             { label: "Ministries", val: String(ZW_MINISTRIES.length), color: "text-blue-400" },
             { label: "Departments", val: String(ZW_MINISTRIES.reduce((acc, m) => acc + m.departments.length, 0)), color: "text-emerald-400" },
-            { label: "Roles", val: String(ALL_ROLES.length), color: "text-violet-400" },
+            { label: "Roles", val: String(ALL_ROLES.length + 10), color: "text-violet-400" },
           ].map(s => (
             <div key={s.label} className="text-center">
               <div className={`text-base font-bold ${s.color}`}>{s.val}</div>

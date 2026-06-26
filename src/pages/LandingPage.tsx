@@ -37,9 +37,8 @@ function Navbar() {
   return (
     <nav className="absolute top-0 left-0 right-0 z-20 px-6 py-5">
       <div className="max-w-[88rem] mx-auto flex items-center justify-between">
-        {/* Left: Logo + System Name */}
+        {/* Left: System Name (no logo) */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <LogoIcon className="w-6 h-6 text-black flex-shrink-0" />
           <div className="leading-none">
             <div className="text-[10px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
             <div className="text-[10px] font-bold text-black tracking-tight leading-tight uppercase">Procurement & Oversight</div>
@@ -74,7 +73,7 @@ function HeroSection() {
   return (
     <div className="flex-1 px-6 pt-20 pb-6 flex items-end">
       <div className="relative w-full rounded-2xl overflow-hidden max-w-[88rem] mx-auto" style={{ height: "calc(100vh - 96px)" }}>
-        {/* Background video */}
+        {/* Background video — autoplays behind the page */}
         <video
           autoPlay muted loop playsInline
           className="absolute inset-0 w-full h-full object-cover"
@@ -82,24 +81,19 @@ function HeroSection() {
         />
 
         {/* Content overlay */}
-        <div className="relative z-10 flex flex-col items-start justify-start h-full p-12 pt-36">
+        <div className="relative z-10 flex flex-col items-center justify-start h-full p-6 pt-10">
+          {/* Title — full width, top of card */}
           <h1
-            className="text-black text-5xl md:text-6xl font-medium leading-tight max-w-xl mb-4"
-            style={{ letterSpacing: "-0.04em" }}
+            className="w-full text-center text-black text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-3"
+            style={{ letterSpacing: "-0.03em" }}
           >
-            Procurement<br />Intelligence
+            AI Powered Electronic Public Procurement and Oversight Intelligence System
           </h1>
-          <p
-            className="text-black/70 text-base md:text-lg max-w-md mb-6 leading-relaxed"
-            style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif" }}
-          >
-            AI Powered Electronic Public Procurement and Oversight Intelligence System — where every procurement decision is transparent, automated, and incorruptible.
-          </p>
 
-          {/* Value pillars */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          {/* Tagline — centered, visible, smaller than title */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
             {["Integrity", "Public Trust", "Transparency", "Good Governance", "Clean Procurement"].map(v => (
-              <span key={v} className="px-3 py-1 rounded-full border border-black/25 text-xs font-semibold text-black/80 bg-white/50 backdrop-blur-sm">
+              <span key={v} className="text-sm md:text-base font-semibold text-black bg-white/70 backdrop-blur-sm px-4 py-1.5 rounded-full border border-black/20">
                 {v}
               </span>
             ))}
@@ -117,7 +111,7 @@ function HeroSection() {
           </Link>
 
           {/* Brand marquee */}
-          <div className="mt-24 w-full max-w-md overflow-hidden">
+          <div className="mt-auto w-full max-w-md overflow-hidden">
             <div className="marquee-track">
               {[...HERO_BRANDS, ...HERO_BRANDS].map((b, i) => (
                 <span key={i} className="mx-7 shrink-0 text-black/60 whitespace-nowrap" style={b.style}>{b.name}</span>
@@ -316,12 +310,9 @@ function Footer() {
   return (
     <footer className="bg-[#F5F5F5] px-6 py-12 border-t border-black/10">
       <div className="max-w-[88rem] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-        <div className="flex items-center gap-2">
-          <LogoIcon className="w-6 h-6 text-black flex-shrink-0" />
-          <div className="leading-none">
-            <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public Procurement</div>
-            <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">and Oversight Intelligence System</div>
-          </div>
+        <div className="leading-none">
+          <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public Procurement</div>
+          <div className="text-[9px] font-bold text-black tracking-tight leading-tight uppercase">and Oversight Intelligence System</div>
         </div>
         <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-black/50">
           <span>AI Powered Electronic Public Procurement and Oversight Intelligence System · Integrity · Public Trust · Transparency · Good Governance · Clean Procurement</span>
@@ -337,7 +328,7 @@ function Footer() {
         </div>
       </div>
       <div className="max-w-[88rem] mx-auto mt-8 pt-6 border-t border-black/10 text-xs text-black/30">
-        © 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System · Government of Zimbabwe · PRAZ · All procurement data publicly disclosed
+        © 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System · PRAZ · All procurement data publicly disclosed
       </div>
     </footer>
   );

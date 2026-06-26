@@ -3,7 +3,7 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
 import { toast } from "@/lib/toast";
-import { Sparkles, Brain, FileSearch, ScanLine, CheckCircle2, AlertTriangle, Download, Send } from "lucide-react";
+import { Sparkles, Brain, FileSearch, ScanLine, CheckCircle2, AlertTriangle, Download, Send, ExternalLink, Trophy } from "lucide-react";
 
 const EVAL_SAMPLES = [
   { tender: "ZW-PRA-2026-00183 — ARV Medicines Framework", phase: "Technical Evaluation", method: "QCBS", bidders: 8, status: "Scoring" },
@@ -116,30 +116,54 @@ export default function EvaluationsPage() {
           </div>
         </Card>
 
-        {/* Evaluator Workbench */}
+        {/* Evaluator Workbench — Technical Evaluation (Supplies) */}
         <Card>
           <CardHeader
-            title="Evaluator Workbench — Technical Scoring"
-            subtitle="ZW-PRA-2026-00183 · ARV Medicines Framework"
+            title="Technical Evaluation Workbench (Supplies Evaluation)"
+            subtitle="ZW-PRA-2026-00183 · ARV Medicines Framework · 8 Bidders"
             action={<Badge tone="blue"><Sparkles className="h-3 w-3 mr-1" />AI assisted</Badge>}
           />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-secondary/50 text-xs text-muted-foreground">
                 <tr>
-                  {["Bidder", "Specification (40%)", "Delivery (20%)", "Mfr Auth. (15%)", "Warranty (10%)", "Quality (15%)", "Weighted Score", "AI Rec."].map((h) => (
-                    <th key={h} className="text-left font-medium px-5 py-2.5 whitespace-nowrap">{h}</th>
+                  {["#", "Bidder", "Specification (40%)", "Delivery (20%)", "Mfr Auth. (15%)", "Warranty (10%)", "Quality (15%)", "Weighted Score", "Result", "AI Rec.", "File"].map((h) => (
+                    <th key={h} className="text-left font-medium px-3 py-2.5 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {BIDS.map((r, bi) => {
-                  const score = scores[bi].reduce((a, b, i) => a + b * W[i], 0);
+                  // Compute all weighted scores for ranking
+                  const allScores = scores.map((s) => s.reduce((a, b, i) => a + b * W[i], 0));
+                  const sorted = [...allScores].sort((a, b) => b - a);
+                  const score = allScores[bi];
+                  const rank = sorted.indexOf(score) + 1;
+
+                  const resultLabel =
+                    rank === 1 ? "1. Winner" :
+                    rank === 2 ? "2. Runner-up" :
+                    rank === 3 ? "3. Unsuccessful" :
+                    `${rank}. Unsuccessful`;
+
+                  const resultStyle =
+                    rank === 1 ? "bg-emerald-100 text-emerald-700 border-emerald-200" :
+                    rank === 2 ? "bg-blue-100 text-blue-700 border-blue-200" :
+                    "bg-gray-100 text-gray-500 border-gray-200";
+
                   return (
-                    <tr key={r.v} className="hover:bg-secondary/40">
-                      <td className="px-5 py-3 font-medium text-foreground whitespace-nowrap">{r.v}</td>
+                    <tr key={r.v} className={`hover:bg-secondary/40 ${rank === 1 ? "bg-emerald-50/30" : ""}`}>
+                      {/* Number / Rank */}
+                      <td className="px-3 py-3">
+                        <div className={`h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${rank === 1 ? "bg-amber-400 text-white border-amber-400" : rank === 2 ? "bg-blue-100 text-blue-700 border-blue-200" : "bg-gray-100 text-gray-500 border-gray-200"}`}>
+                          {rank === 1 ? <Trophy className="h-3 w-3" /> : rank}
+                        </div>
+                      </td>
+                      {/* Bidder */}
+                      <td className="px-3 py-3 font-medium text-foreground whitespace-nowrap">{r.v}</td>
+                      {/* Score inputs */}
                       {scores[bi].map((sc, ci) => (
-                        <td key={ci} className="px-3 py-3">
+                        <td key={ci} className="px-2 py-3">
                           <input
                             type="number" min={0} max={100}
                             value={sc}
@@ -154,12 +178,29 @@ export default function EvaluationsPage() {
                           />
                         </td>
                       ))}
-                      <td className="px-5 py-3 font-bold text-primary">{score.toFixed(2)}</td>
-                      <td className="px-5 py-3">
+                      {/* Weighted Score */}
+                      <td className="px-3 py-3 font-bold text-primary whitespace-nowrap">{score.toFixed(2)}</td>
+                      {/* Result */}
+                      <td className="px-3 py-3">
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ${resultStyle}`}>
+                          {resultLabel}
+                        </span>
+                      </td>
+                      {/* AI Rec */}
+                      <td className="px-3 py-3">
                         <div className="flex items-center gap-1.5">
                           {r.rec === "Strong" ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />}
                           <Badge tone={r.rec === "Strong" ? "green" : r.rec === "Acceptable" ? "blue" : "amber"}>{r.rec}</Badge>
                         </div>
+                      </td>
+                      {/* View File */}
+                      <td className="px-3 py-3">
+                        <button
+                          onClick={() => { pushNotification(`Opened evaluation form: ${r.v}`, "info"); }}
+                          className="flex items-center gap-1 text-[10px] font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors whitespace-nowrap"
+                        >
+                          <ExternalLink className="h-3 w-3" /> View file
+                        </button>
                       </td>
                     </tr>
                   );

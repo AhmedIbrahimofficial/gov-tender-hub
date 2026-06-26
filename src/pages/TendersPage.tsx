@@ -8,8 +8,10 @@ import { toast } from "@/lib/toast";
 import {
   Plus, Download, Search, FileText, Clock, CheckCircle2, XCircle,
   Filter, LayoutGrid, Table2, ChevronDown, X, Timer, Calendar,
-  Building2, Tag, Banknote, Users, Bell, Eye, FileDown, Send,
+  Building2, Tag, Banknote, Users, Bell, Eye, FileDown, Send, MapPin,
 } from "lucide-react";
+import GisMapView from "@/components/GisMapView";
+import { TENDER_PINS } from "@/lib/gis-data";
 import { ZW_MINISTRIES, getMinistryOptions, getDepartmentsForMinistry } from "@/lib/zw-ministries";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -566,8 +568,12 @@ function FilterSidebar({ filters, setFilters, onClose }: {
 
 // ── Main Page ─────────────────────────────────────────────────────────────
 
+type MainTab = "Tenders Register" | "GIS Map";
+const MAIN_TABS: MainTab[] = ["Tenders Register", "GIS Map"];
+
 export default function TendersPage() {
   const navigate = useNavigate();
+  const [mainTab, setMainTab] = useState<MainTab>("Tenders Register");
   const [search, setSearch] = useState("");
   const [view, setView] = useState<"card" | "table">("card");
   const [showNew, setShowNew] = useState(false);
@@ -603,7 +609,7 @@ export default function TendersPage() {
 
   return (
     <AppShell>
-      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+      <div className={`p-4 sm:p-6 mx-auto ${mainTab === "GIS Map" ? "max-w-[1800px] flex flex-col h-[calc(100vh-56px)]" : "max-w-[1600px]"}`}>
         <div className="mb-3 flex items-center gap-2 flex-wrap">
           <span className="text-[11px] font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Phases 3–10</span>
           <span className="text-[11px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Government of Zimbabwe</span>
@@ -612,11 +618,46 @@ export default function TendersPage() {
           title="Tenders Register"
           description="NITB-style tender hub — full lifecycle from preparation to contract signing with real-time countdowns."
           actions={
-            <button onClick={() => setShowNew(true)} className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium flex items-center gap-1.5 hover:opacity-90">
-              <Plus className="h-4 w-4" /> New Tender
-            </button>
+            mainTab === "Tenders Register" ? (
+              <button onClick={() => setShowNew(true)} className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium flex items-center gap-1.5 hover:opacity-90">
+                <Plus className="h-4 w-4" /> New Tender
+              </button>
+            ) : null
           }
         />
+
+        {/* Main tab bar */}
+        <div className="flex gap-1 border-b border-border mb-5">
+          {MAIN_TABS.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setMainTab(tab)}
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+                mainTab === tab
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab === "GIS Map" && <MapPin className="h-3.5 w-3.5" />}
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* ── GIS Map Tab ─────────────────────────────────────────────── */}
+        {mainTab === "GIS Map" && (
+          <div className="flex-1 rounded-2xl overflow-hidden border border-border shadow-sm min-h-0" style={{ minHeight: "500px" }}>
+            <GisMapView
+              pins={TENDER_PINS}
+              height="100%"
+              title="Tenders GIS Map"
+              onNavigate={pin => navigate(`/tenders/${pin.id}`)}
+            />
+          </div>
+        )}
+
+        {/* ── Tenders Register Tab ─────────────────────────────────────── */}
+        {mainTab === "Tenders Register" && (<>
 
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -701,6 +742,7 @@ export default function TendersPage() {
         {showNew && <NewTenderModal onClose={() => setShowNew(false)} onSave={t => setLocalTenders(p => [t, ...p])} />}
         {showFilters && <FilterSidebar filters={filters} setFilters={setFilters} onClose={() => setShowFilters(false)} />}
         {eoiTender && <EOIModal tender={eoiTender} onClose={() => setEoiTender(null)} />}
+        </>)}
       </div>
     </AppShell>
   );

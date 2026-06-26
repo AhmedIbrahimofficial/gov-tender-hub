@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import {
   Building2, Landmark, GitBranch, Users, Plus, ChevronRight, ChevronDown,
-  Search, X, Check, UserPlus, Trash2, Edit2, Building,
+  Search, X, Check, UserPlus, Trash2, Edit2, Building, Crown, Shield,
 } from "lucide-react";
 import { getAll, addItem, deleteItem } from "@/lib/local-store";
 import type {
@@ -10,6 +10,7 @@ import type {
 } from "@/lib/local-store";
 import { useAuth } from "@/lib/auth-context";
 import { ALL_ROLES } from "@/lib/auth-context";
+import { ZW_PRESIDENCY, ZW_MINISTRIES } from "@/lib/zw-ministries";
 import { toast } from "@/lib/toast";
 
 // ── Seed demo orgs if store is empty ─────────────────────────────────────────
@@ -559,6 +560,25 @@ export default function OrganisationsPage() {
         {/* ── Hierarchy Tree Tab ─────────────────────────────────────────── */}
         {activeTab === "tree" && (
           <div>
+            {/* President / OPC root node — always shown at top */}
+            <TreeNode
+              icon={Crown}
+              label={ZW_PRESIDENCY.name}
+              code={ZW_PRESIDENCY.code}
+              badge="Head of State"
+              badgeTone="yellow"
+              userCount={userCountFor("presidency")}
+              onAddUser={() => openMap("presidency", "ministry", ZW_PRESIDENCY.name)}
+              defaultOpen
+            >
+              {ZW_PRESIDENCY.departments.map(dept => (
+                <TreeNode key={dept.id} icon={Building2} label={dept.name} code={dept.code}
+                  badge="OPC Department" badgeTone="muted" userCount={0}
+                  onAddUser={() => openMap(dept.id, "department", dept.name)}
+                />
+              ))}
+            </TreeNode>
+
             {filteredMinistries.length === 0 && (
               <div className="text-center py-16 text-muted-foreground">
                 <Landmark className="h-10 w-10 mx-auto mb-3 opacity-30" />
@@ -571,6 +591,9 @@ export default function OrganisationsPage() {
               const minBranches = branches.filter((b) => b.ministryId === ministry.id);
               const totalMinUsers = userCountFor(ministry.id) + minDepts.reduce((s, d) => s + userCountFor(d.id), 0) + minEntities.reduce((s, e) => s + userCountFor(e.id), 0) + minBranches.reduce((s, b) => s + userCountFor(b.id), 0);
 
+              // Look up CPO from ZW_MINISTRIES by matching code
+              const zwMin = ZW_MINISTRIES.find(m => m.code === ministry.code);
+
               return (
                 <TreeNode key={ministry.id} icon={Landmark} label={ministry.name} code={ministry.code}
                   badge="Ministry" badgeTone="blue" userCount={totalMinUsers}
@@ -578,7 +601,24 @@ export default function OrganisationsPage() {
                   onDelete={() => deleteMinistry(ministry.id)}
                   defaultOpen>
 
-                  {/* Level 2a — Departments */}
+                  {/* CPO row — pinned under each ministry */}
+                  <div className="mb-2">
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1.5 pl-1">Chief Procurement Officer</div>
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <div className="flex items-center gap-2 px-3 py-2.5 bg-violet-50 dark:bg-violet-950/20">
+                        <Shield className="h-4 w-4 text-violet-600 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-semibold text-violet-700 dark:text-violet-300 truncate block">Chief Procurement Officer (CPO)</span>
+                          <span className="text-xs text-violet-500">{zwMin?.cpo ?? "CPO — " + ministry.code}</span>
+                        </div>
+                        <Badge tone="purple">Executive</Badge>
+                        <button onClick={() => openMap(`${ministry.id}-cpo`, "department", `CPO — ${ministry.name}`)}
+                          title="Map Users" className="h-7 w-7 rounded border border-border bg-card flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-colors">
+                          <UserPlus className="h-3.5 w-3.5 text-primary" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                   {minDepts.length > 0 && (
                     <div className="mb-2">
                       <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1.5 pl-1">Departments</div>

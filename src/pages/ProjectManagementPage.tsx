@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import AIAssistantPanel from "@/components/AIAssistantPanel";
+import GisMapView from "@/components/GisMapView";
+import { PROJECT_PINS } from "@/lib/gis-data";
 import {
   projects, projectMilestones, projectRisks, projectTasks,
   projectSpendTrend, projectsByStatus, projectAIAgents, contractorPerformance,
@@ -15,7 +18,7 @@ import {
   Briefcase, LayoutDashboard, ClipboardList, BarChart3, Wallet, ShieldCheck,
   CheckCircle, UsersRound, Building2, FileText, Sparkles, TrendingUp,
   AlertTriangle, Clock, CheckCircle2, Activity, Plus, Download, RefreshCcw,
-  ChevronRight, Star,
+  ChevronRight, Star, MapPin,
 } from "lucide-react";
 import { pushNotification } from "@/lib/local-store";
 
@@ -23,7 +26,7 @@ import { pushNotification } from "@/lib/local-store";
 const TABS = [
   "Dashboard", "Project Portfolio", "Planning & WBS", "Schedule & Gantt",
   "Cost & Finance", "Risk & Issues", "Quality Management", "Resource Management",
-  "Contractor Management", "Documents Repository", "Reports & Analytics",
+  "Contractor Management", "Documents Repository", "Reports & Analytics", "GIS Map",
 ] as const;
 type Tab = typeof TABS[number];
 
@@ -1092,6 +1095,7 @@ function AIAgentsTab() {
 // ── Main Page ──────────────────────────────────────────────────────────────
 export default function ProjectManagementPage() {
   const [tab, setTab] = useState<Tab>("Dashboard");
+  const navigate = useNavigate();
 
   return (
     <AppShell>
@@ -1117,16 +1121,17 @@ export default function ProjectManagementPage() {
         <div className="flex items-center gap-0.5 px-4 sm:px-6 border-b border-black/8 overflow-x-auto flex-shrink-0 bg-white">
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
+              className={`flex items-center gap-1 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
                 tab === t ? "border-black text-black" : "border-transparent text-black/45 hover:text-black/70"
               }`}>
+              {t === "GIS Map" && <MapPin className="h-3 w-3" />}
               {t}
             </button>
           ))}
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+        <div className={`flex-1 overflow-y-auto ${tab === "GIS Map" ? "p-0 overflow-hidden" : "px-4 sm:px-6 py-5"}`}>
           {tab === "Dashboard"              && <DashboardTab />}
           {tab === "Project Portfolio"      && <ProjectPortfolioTab />}
           {tab === "Planning & WBS"         && <PlanningWBSTab />}
@@ -1138,6 +1143,14 @@ export default function ProjectManagementPage() {
           {tab === "Contractor Management"  && <ContractorManagementTab />}
           {tab === "Documents Repository"   && <DocumentsRepositoryTab />}
           {tab === "Reports & Analytics"    && <ReportsAnalyticsTab />}
+          {tab === "GIS Map"                && (
+            <GisMapView
+              pins={PROJECT_PINS}
+              height="100%"
+              title="Projects GIS Map"
+              onNavigate={() => navigate("/projects")}
+            />
+          )}
         </div>
       </div>
 
