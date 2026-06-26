@@ -130,6 +130,9 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/portal" element={<PortalPage />} />
+      {/* Public tender browsing (no login required) */}
+      <Route path="/public/tenders" element={<PortalPage />} />
+      <Route path="/public/tenders/:id" element={<TenderDetailPage />} />
 
       {/* Supplier Portal (public users) */}
       <Route path="/supplier-portal" element={<ProtectedRoute><SupplierPortalPage /></ProtectedRoute>} />
