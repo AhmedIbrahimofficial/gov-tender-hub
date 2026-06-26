@@ -52,6 +52,7 @@ import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
 import CorporatePage from "./pages/CorporatePage";
 import CorporateDepartmentPage from "./pages/CorporateDepartmentPage";
 import WorkstationDetailPage from "./pages/WorkstationDetailPage";
+import NotFound from "./pages/NotFound";
 import DrillDownPage from "./pages/DrillDownPage";
 import TenderDetailPage from "./pages/TenderDetailPage";
 import TenderStagePage from "./pages/TenderStagePage";
@@ -60,7 +61,6 @@ import PresidentDashboard from "./pages/PresidentDashboard";
 import PrimeMinisterDashboard from "./pages/PrimeMinisterDashboard";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectManagementPage from "./pages/ProjectManagementPage";
-import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
 import MinistryWorkbenchPage from "./pages/MinistryWorkbenchPage";
 import SeniorDashboardPage from "./pages/SeniorDashboardPage";
 import ProcurementPlanningPage from "./pages/ProcurementPlanningPage";
@@ -323,9 +323,6 @@ function AppRoutes() {
 
       {/* Certificates, Notices & Acknowledgements */}
       <Route path="/certificates" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
-
-      {/* Workbench Route */}
-      <Route path="/workbench" element={<ProtectedRoute><ProcurementWorkbenchPage /></ProtectedRoute>} />
 
       {/* Corporate Module */}
       <Route path="/corporate" element={<ProtectedRoute><CorporatePage /></ProtectedRoute>} />

@@ -557,8 +557,9 @@ function FormTabContent({ stage, tabName, procType }: { stage: Stage; tabName: s
 }
 
 // ─── Dynamic form fields per stage/tab ───────────────────────────────────────
-function getFormFields(stage: Stage, tab: string, procType: ProcType) {
-  type FieldDef = { label: string; type?: string; defaultValue?: string; placeholder?: string; options?: string[]; fullWidth?: boolean; system?: boolean; };
+type FieldDef = { label: string; type?: string; defaultValue?: string; placeholder?: string; options?: string[]; fullWidth?: boolean; system?: boolean; };
+
+function getFormFields(stage: Stage, tab: string, procType: ProcType): FieldDef[] {
   const fields: FieldDef[] = [];
 
   // Stage 1 - Planning
