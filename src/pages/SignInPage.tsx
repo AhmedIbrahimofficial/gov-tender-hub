@@ -761,7 +761,7 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
           <LogoIcon className="h-10 w-10 text-black" />
         </div>
         <h1 className="text-2xl font-bold text-black" style={{ letterSpacing: "-0.02em" }}>
-          AI Powered Electronic Public Procurement and Oversight Intelligence System
+          APPOIS — AI-Powered Public Procurement &amp; Oversight Intelligence System
         </h1>
         <p className="text-sm text-black/50 mt-2">Integrity · Public Trust · Transparency · Good Governance · Clean Procurement</p>
       </div>
@@ -819,9 +819,9 @@ export default function SignInPage() {
           <Link to="/" className="flex items-center gap-2.5">
             <LogoIcon className="w-7 h-7 text-white flex-shrink-0" />
             <div className="leading-none">
-              <div className="text-[9px] font-bold text-white tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
-              <div className="text-[9px] font-bold text-white tracking-tight leading-tight uppercase">Procurement &amp; Oversight</div>
-              <div className="text-[9px] font-bold text-white/60 tracking-tight leading-tight uppercase">Intelligence System</div>
+              <div className="text-[11px] font-bold text-white tracking-tight leading-tight uppercase">APPOIS</div>
+              <div className="text-[9px] font-bold text-white/80 tracking-tight leading-tight">AI-Powered Public Procurement</div>
+              <div className="text-[9px] font-bold text-white/60 tracking-tight leading-tight">&amp; Oversight Intelligence System</div>
             </div>
           </Link>
         </div>
@@ -832,7 +832,7 @@ export default function SignInPage() {
             Integrity.<br />Public Trust.<br />Transparency.<br />Good Governance.<br />Clean Procurement.
           </h2>
           <p className="text-sm text-white/45 leading-relaxed">
-            AI Powered Electronic Public Procurement and Oversight Intelligence System — Government of Zimbabwe.
+            AI-Powered Public Procurement &amp; Oversight Intelligence System (APPOIS).
           </p>
         </div>
 
@@ -870,7 +870,7 @@ export default function SignInPage() {
         </div>
 
         <div className="px-6 py-3 border-t border-white/8 flex-shrink-0">
-          <p className="text-[10px] text-white/20">© 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System · Government of Zimbabwe</p>
+          <p className="text-[10px] text-white/20">© 2026 APPOIS — AI-Powered Public Procurement &amp; Oversight Intelligence System</p>
         </div>
       </div>
 
