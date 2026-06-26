@@ -247,7 +247,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#EAF1F8] flex flex-col">
+    <div className="h-full w-full overflow-y-auto bg-[#EAF1F8] flex flex-col">
       <TopBar />
       <Header />
 
