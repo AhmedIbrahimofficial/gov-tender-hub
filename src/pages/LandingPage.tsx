@@ -98,7 +98,7 @@ function Header() {
               className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10 border-r border-white/15">
               <Mail className="w-3.5 h-3.5" /> Contact Us
             </a>
-            <Link to="/organisations"
+            <Link to="/portal"
               className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10">
               <Map className="w-3.5 h-3.5" /> Site Map
             </Link>
