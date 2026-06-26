@@ -48,10 +48,10 @@ import MinistryDashboardPage from "./pages/MinistryDashboardPage";
 import DepartmentDashboardPage from "./pages/DepartmentDashboardPage";
 import OrganisationsPage from "./pages/OrganisationsPage";
 import CertificatesPage from "./pages/CertificatesPage";
+import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
 import CorporatePage from "./pages/CorporatePage";
 import CorporateDepartmentPage from "./pages/CorporateDepartmentPage";
 import WorkstationDetailPage from "./pages/WorkstationDetailPage";
-import NotFound from "./pages/NotFound";
 import DrillDownPage from "./pages/DrillDownPage";
 import TenderDetailPage from "./pages/TenderDetailPage";
 import TenderStagePage from "./pages/TenderStagePage";
@@ -323,6 +323,9 @@ function AppRoutes() {
 
       {/* Certificates, Notices & Acknowledgements */}
       <Route path="/certificates" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
+
+      {/* Workbench Route */}
+      <Route path="/workbench" element={<ProtectedRoute><ProcurementWorkbenchPage /></ProtectedRoute>} />
 
       {/* Corporate Module */}
       <Route path="/corporate" element={<ProtectedRoute><CorporatePage /></ProtectedRoute>} />
