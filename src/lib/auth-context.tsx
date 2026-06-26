@@ -72,12 +72,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithDetails = (details: Partial<AuthUser> & { role: UserRole }) => {
-    const base = DEMO_USERS.find((u) => u.role === details.role) ?? DEMO_USERS[0];
+    // Find a demo user with that exact role, or fall back but ALWAYS keep the requested role
+    const base = DEMO_USERS.find((u) => u.role === details.role) ?? {
+      id: `user-${details.role}`,
+      name: details.name ?? "Government Official",
+      email: details.email ?? `${details.role}@gov.zw`,
+      role: details.role,
+      avatar: (details.name ?? "U").split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2),
+      department: details.department ?? details.role,
+      entity: details.entity ?? "Government of Zimbabwe",
+    };
     const name = details.name ?? base.name;
     const initials = name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
     setUser({
       ...base,
       ...details,
+      // CRITICAL: always use the requested role, never the fallback role
+      role: details.role,
       id: `custom-${Date.now()}`,
       avatar: initials,
     });

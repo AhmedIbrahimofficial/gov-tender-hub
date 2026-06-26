@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth, ALL_ROLES } from "@/lib/auth-context";
+import { useAuth, ALL_ROLES, type UserRole } from "@/lib/auth-context";
 import { ZW_MINISTRIES } from "@/lib/zw-ministries";
 import {
-  Eye, EyeOff, ArrowRight, Shield, Building2, ChevronLeft, X,
-  Phone, User, Mail, Lock, Briefcase, Landmark, Search, Users,
-  ChevronDown, ChevronRight, Crown, Star,
+  ArrowRight, Shield, Eye, EyeOff, ChevronLeft, ChevronRight,
+  Search, X, Crown, Landmark, Building2, Users, User, Mail, Lock,
+  Phone, Briefcase, CheckCircle2, Sparkles, Star,
 } from "lucide-react";
 import { seedIfEmpty } from "@/lib/local-store";
 
+/* ─── Logo ──────────────────────────────────────────────────────────────── */
 function LogoIcon({ className = "" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 256 256" fill="currentColor">
@@ -17,182 +18,115 @@ function LogoIcon({ className = "" }: { className?: string }) {
   );
 }
 
-// ─── Hierarchy tree for left decorative panel ─────────────────────────────────
-function GovHierarchyPanel() {
-  const [openMin, setOpenMin] = useState<string | null>(null);
-  const [openDept, setOpenDept] = useState<string | null>(null);
-
-  return (
-    <div className="space-y-0.5">
-      {/* Prime Minister node */}
-      <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-amber-500/15 border border-amber-500/20 mb-2">
-        <span className="h-5 w-5 rounded-md bg-amber-500 grid place-items-center flex-shrink-0">
-          <Crown className="h-2.5 w-2.5 text-white" />
-        </span>
-        <span className="text-[11px] font-semibold text-amber-300">Prime Minister</span>
-        <span className="ml-auto text-[9px] text-amber-400/60">Head of Government</span>
-      </div>
-
-      {ZW_MINISTRIES.slice(0, 8).map(ministry => (
-        <div key={ministry.id}>
-          <button
-            onClick={() => setOpenMin(openMin === ministry.id ? null : ministry.id)}
-            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/8 transition-colors text-left"
-          >
-            <span className="h-4 w-4 rounded bg-blue-500/70 grid place-items-center flex-shrink-0">
-              <Landmark className="h-2 w-2 text-white" />
-            </span>
-            <span className="flex-1 text-[10px] font-medium text-white/75 truncate">{ministry.name.replace("Ministry of ", "")}</span>
-            <span className="text-[8px] text-white/30 mr-1 flex-shrink-0">{ministry.code}</span>
-            <ChevronRight className={`h-2.5 w-2.5 text-white/25 flex-shrink-0 transition-transform ${openMin === ministry.id ? "rotate-90" : ""}`} />
-          </button>
-          {openMin === ministry.id && (
-            <div className="ml-4 pl-2 border-l border-white/10 space-y-0.5 mb-1">
-              {ministry.departments.map(dept => (
-                <div key={dept.id}>
-                  <button
-                    onClick={() => setOpenDept(openDept === dept.id ? null : dept.id)}
-                    className="w-full flex items-center gap-1.5 px-2 py-1 rounded hover:bg-white/6 transition-colors text-left"
-                  >
-                    <span className="h-3.5 w-3.5 rounded bg-emerald-500/60 grid place-items-center flex-shrink-0">
-                      <Building2 className="h-2 w-2 text-white" />
-                    </span>
-                    <span className="text-[9.5px] text-white/55 truncate flex-1">{dept.name}</span>
-                    <ChevronRight className={`h-2 w-2 text-white/20 flex-shrink-0 transition-transform ${openDept === dept.id ? "rotate-90" : ""}`} />
-                  </button>
-                  {openDept === dept.id && (
-                    <div className="ml-4 pl-2 border-l border-white/8 space-y-0.5">
-                      {dept.roles.map(r => (
-                        <div key={r.title} className="flex items-center gap-1.5 py-0.5 px-1.5">
-                          <span className="h-1 w-1 rounded-full bg-white/15 flex-shrink-0" />
-                          <span className="text-[9px] text-white/35 truncate">{r.title}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
-      <div className="px-2 pt-1 text-[9px] text-white/25">+{ZW_MINISTRIES.length - 8} more ministries…</div>
-    </div>
-  );
-}
-
-// ─── Interactive hierarchy selector (Ministry → Department → Role) ────────────
-type HierarchySelection = { ministryId: string; departmentId: string; roleTitle: string };
-
-function GovHierarchySelector({
-  value,
-  onChange,
-  onClose,
-}: {
-  value: HierarchySelection;
-  onChange: (v: HierarchySelection) => void;
-  onClose: () => void;
+/* ─── Full Government Hierarchy Panel (left side, no scroll, fills height) ── */
+function GovHierarchyPanel({ onSelectRole }: {
+  onSelectRole?: (roleTitle: string, deptName: string, ministryName: string) => void;
 }) {
+  const [openMin, setOpenMin] = useState<string>("mof"); // default open first
+  const [openDept, setOpenDept] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [openMin, setOpenMin] = useState<string | null>(value.ministryId || null);
-  const [openDept, setOpenDept] = useState<string | null>(value.departmentId || null);
 
-  const filtered = search.length > 1
-    ? ZW_MINISTRIES.map(m => ({
+  const filtered = useMemo(() => {
+    if (search.length < 2) return ZW_MINISTRIES;
+    const q = search.toLowerCase();
+    return ZW_MINISTRIES
+      .map(m => ({
         ...m,
         departments: m.departments.map(d => ({
           ...d,
           roles: d.roles.filter(r =>
-            r.title.toLowerCase().includes(search.toLowerCase()) ||
-            d.name.toLowerCase().includes(search.toLowerCase()) ||
-            m.name.toLowerCase().includes(search.toLowerCase())
+            r.title.toLowerCase().includes(q) ||
+            d.name.toLowerCase().includes(q) ||
+            m.name.toLowerCase().includes(q)
           ),
         })).filter(d => d.roles.length > 0),
-      })).filter(m => m.departments.length > 0)
-    : ZW_MINISTRIES;
-
-  const selectRole = (ministryId: string, departmentId: string, roleTitle: string) => {
-    onChange({ ministryId, departmentId, roleTitle });
-    onClose();
-  };
+      }))
+      .filter(m => m.departments.length > 0);
+  }, [search]);
 
   return (
-    <div className="bg-white rounded-2xl border border-black/10 shadow-xl p-4 w-full">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold text-black">Select Role from Hierarchy</span>
-        <button onClick={onClose} className="text-black/30 hover:text-black"><X className="h-4 w-4" /></button>
-      </div>
-
-      <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
-        <input value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Search ministries, departments, roles…"
-          className="w-full h-9 pl-9 pr-8 rounded-xl border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10 bg-white" />
+    <div className="flex flex-col h-full min-h-0">
+      {/* Search */}
+      <div className="relative mb-3 flex-shrink-0">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search ministry, department, role…"
+          className="w-full h-9 pl-9 pr-7 rounded-xl bg-white/8 border border-white/10 text-[11px] text-white/80 placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-white/20"
+        />
         {search && (
-          <button onClick={() => setSearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
-            <X className="h-3.5 w-3.5" />
+          <button onClick={() => setSearch("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
+            <X className="h-3 w-3" />
           </button>
         )}
       </div>
 
-      {/* PM node */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 border border-amber-100 mb-2">
-        <Crown className="h-4 w-4 text-amber-500 flex-shrink-0" />
-        <span className="text-xs font-semibold text-amber-700">Prime Minister — Head of Government</span>
+      {/* Prime Minister node */}
+      <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-500/12 border border-amber-400/20 mb-2 flex-shrink-0">
+        <div className="h-5 w-5 rounded-lg bg-amber-400 grid place-items-center flex-shrink-0">
+          <Crown className="h-2.5 w-2.5 text-white" />
+        </div>
+        <span className="text-[11px] font-semibold text-amber-300 leading-tight">Prime Minister</span>
+        <span className="ml-auto text-[9px] text-amber-400/50 flex-shrink-0">Head of Govt</span>
       </div>
 
-      <div className="max-h-[48vh] overflow-y-auto space-y-0.5 pr-1">
+      {/* Scrollable ministry tree - takes remaining height */}
+      <div className="flex-1 overflow-y-auto min-h-0 space-y-0.5 pr-0.5"
+        style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.1) transparent" }}>
         {filtered.map(ministry => (
           <div key={ministry.id}>
             <button
-              onClick={() => setOpenMin(openMin === ministry.id ? null : ministry.id)}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-all text-left"
+              onClick={() => setOpenMin(openMin === ministry.id ? "" : ministry.id)}
+              className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-xl transition-all text-left group
+                ${openMin === ministry.id ? "bg-white/10 border border-white/15" : "hover:bg-white/6 border border-transparent"}`}
             >
-              <span className="h-6 w-6 rounded-lg bg-blue-600 grid place-items-center flex-shrink-0">
-                <Landmark className="h-3 w-3 text-white" />
-              </span>
-              <div className="flex-1 min-w-0">
-                <span className="text-xs font-semibold text-black block truncate">{ministry.name}</span>
-                <span className="text-[9px] text-black/40">{ministry.code} · {ministry.departments.length} depts</span>
+              <div className="h-5 w-5 rounded-md bg-blue-500/50 grid place-items-center flex-shrink-0">
+                <Landmark className="h-2.5 w-2.5 text-white/80" />
               </div>
-              <ChevronRight className={`h-3.5 w-3.5 text-black/25 flex-shrink-0 transition-transform ${openMin === ministry.id ? "rotate-90" : ""}`} />
+              <div className="flex-1 min-w-0">
+                <span className="text-[10px] font-semibold text-white/75 block truncate leading-tight">
+                  {ministry.name.replace("Ministry of ", "Min. ")}
+                </span>
+                <span className="text-[8px] text-white/30">{ministry.code} · {ministry.departments.length} depts</span>
+              </div>
+              <ChevronRight className={`h-3 w-3 text-white/20 flex-shrink-0 transition-transform ${openMin === ministry.id ? "rotate-90" : ""}`} />
             </button>
+
             {openMin === ministry.id && (
-              <div className="ml-4 pl-3 border-l border-black/8 space-y-0.5 mb-1">
+              <div className="ml-3.5 pl-2.5 border-l border-white/10 space-y-0.5 mt-0.5 mb-1">
                 {ministry.departments.map(dept => (
                   <div key={dept.id}>
                     <button
                       onClick={() => setOpenDept(openDept === dept.id ? null : dept.id)}
-                      className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-emerald-50 border border-transparent hover:border-emerald-100 transition-all text-left"
+                      className={`w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-all text-left
+                        ${openDept === dept.id ? "bg-emerald-500/15 border border-emerald-500/20" : "hover:bg-white/5 border border-transparent"}`}
                     >
-                      <span className="h-5 w-5 rounded-md bg-emerald-600 grid place-items-center flex-shrink-0">
-                        <Building2 className="h-2.5 w-2.5 text-white" />
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[11px] font-medium text-black truncate block">{dept.name}</span>
-                        <span className="text-[9px] text-black/40">{dept.code} · {dept.roles.length} roles</span>
+                      <div className="h-4 w-4 rounded-md bg-emerald-500/40 grid place-items-center flex-shrink-0">
+                        <Building2 className="h-2 w-2 text-white/70" />
                       </div>
-                      <ChevronRight className={`h-3 w-3 text-black/25 flex-shrink-0 transition-transform ${openDept === dept.id ? "rotate-90" : ""}`} />
+                      <span className="text-[9.5px] text-white/55 truncate flex-1 leading-tight">{dept.name}</span>
+                      <span className="text-[8px] text-white/25 flex-shrink-0">{dept.roles.length}</span>
+                      <ChevronRight className={`h-2.5 w-2.5 text-white/15 flex-shrink-0 transition-transform ${openDept === dept.id ? "rotate-90" : ""}`} />
                     </button>
+
                     {openDept === dept.id && (
-                      <div className="ml-4 pl-2.5 border-l border-black/8 space-y-0.5 mb-1">
+                      <div className="ml-3 pl-2 border-l border-white/8 space-y-0.5 mt-0.5 mb-0.5">
                         {dept.roles.map(role => (
                           <button
                             key={role.title}
-                            onClick={() => selectRole(ministry.id, dept.id, role.title)}
-                            className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors text-left group
-                              ${value.ministryId === ministry.id && value.departmentId === dept.id && value.roleTitle === role.title
-                                ? "bg-black text-white"
-                                : "hover:bg-black hover:text-white"}`}
+                            onClick={() => onSelectRole?.(role.title, dept.name, ministry.name)}
+                            className="w-full flex items-center gap-1.5 px-1.5 py-1 rounded-md hover:bg-white/12 transition-colors text-left group"
                           >
-                            <Users className="h-3 w-3 text-black/30 group-hover:text-white flex-shrink-0" />
-                            <span className="text-[10.5px] text-black/65 group-hover:text-white truncate flex-1">{role.title}</span>
-                            <span className={`text-[9px] px-1.5 py-0.5 rounded-full flex-shrink-0 
-                              ${role.level === "Executive" ? "bg-amber-100 text-amber-700 group-hover:bg-amber-500 group-hover:text-white" :
-                                role.level === "Senior" ? "bg-blue-100 text-blue-700 group-hover:bg-blue-500 group-hover:text-white" :
-                                "bg-gray-100 text-gray-600 group-hover:bg-gray-600 group-hover:text-white"}`}>
-                              {role.level}
+                            <span className="h-1.5 w-1.5 rounded-full bg-white/15 flex-shrink-0 group-hover:bg-white/40" />
+                            <span className="text-[9px] text-white/40 group-hover:text-white/70 truncate flex-1 leading-tight">{role.title}</span>
+                            <span className={`text-[7px] px-1 py-0.5 rounded flex-shrink-0 leading-none
+                              ${role.level === "Executive" ? "bg-amber-500/20 text-amber-300/70" :
+                                role.level === "Senior" ? "bg-blue-500/20 text-blue-300/70" :
+                                "bg-white/5 text-white/25"}`}>
+                              {role.level.slice(0, 3)}
                             </span>
+                            {onSelectRole && <ArrowRight className="h-2 w-2 text-white/10 group-hover:text-white/40 flex-shrink-0" />}
                           </button>
                         ))}
                       </div>
@@ -203,453 +137,600 @@ function GovHierarchySelector({
             )}
           </div>
         ))}
-        {filtered.length === 0 && (
-          <div className="py-8 text-center text-xs text-black/40">No results for "{search}"</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Supplier / Company Portal ────────────────────────────────────────────────
-function PublicLogin({ onBack }: { onBack: () => void }) {
-  const { loginPublic } = useAuth();
-  const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "register">("login");
-  const [showPwd, setShowPwd] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const [form, setForm] = useState({
-    name: "", company: "", email: "", phone: "",
-    businessReg: "", taxId: "", password: "", confirm: "",
-  });
-  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault(); setError("");
-    if (!form.email || !form.password) { setError("Email and password are required."); return; }
-    if (mode === "register") {
-      if (!form.name || !form.company) { setError("Full name and company name are required."); return; }
-      if (!form.phone) { setError("Phone number is required."); return; }
-      if (!form.businessReg) { setError("Business Registration Number is required."); return; }
-      if (!form.taxId) { setError("Tax Identification Number is required."); return; }
-      if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
-    }
-    setLoading(true);
-    setTimeout(() => {
-      loginPublic(form.email, form.name || form.email.split("@")[0], form.company || "Company");
-      seedIfEmpty(form.email);
-      navigate("/supplier-portal");
-    }, 600);
-  };
-
-  const Field = ({ label, icon: Icon, name, type = "text", placeholder, required = false }: {
-    label: string; icon: React.ElementType; name: string; type?: string; placeholder: string; required?: boolean;
-  }) => (
-    <div>
-      <label className="text-xs font-medium text-black/50 uppercase tracking-wider">{label}{required && " *"}</label>
-      <div className="relative mt-1">
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-        <input type={type} value={(form as Record<string, string>)[name]}
-          onChange={e => set(name, e.target.value)} placeholder={placeholder}
-          className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="w-full max-w-md">
-      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-black/50 hover:text-black mb-6 transition-colors">
-        <ChevronLeft className="h-4 w-4" /> Back
-      </button>
-      <div className="flex items-center gap-3 mb-5">
-        <div className="h-10 w-10 rounded-xl bg-blue-600 grid place-items-center flex-shrink-0">
-          <Building2 className="h-5 w-5 text-white" />
-        </div>
-        <div>
-          <div className="text-lg font-semibold text-black">Company / Supplier Portal</div>
-          <div className="text-xs text-black/50">Browse tenders, bid, and track your applications</div>
-        </div>
       </div>
 
-      <div className="flex rounded-xl bg-black/5 p-1 mb-5">
-        {(["login", "register"] as const).map(m => (
-          <button key={m} onClick={() => setMode(m)}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${mode === m ? "bg-white text-black shadow-sm" : "text-black/50 hover:text-black"}`}>
-            {m === "login" ? "Sign In" : "Register"}
-          </button>
+      {/* Stats bar */}
+      <div className="flex-shrink-0 mt-3 pt-3 border-t border-white/8 grid grid-cols-3 gap-2">
+        {[
+          { val: String(ZW_MINISTRIES.length), label: "Ministries", color: "text-blue-400" },
+          { val: String(ZW_MINISTRIES.reduce((s, m) => s + m.departments.length, 0)), label: "Departments", color: "text-emerald-400" },
+          { val: ALL_ROLES.length + "+", label: "Roles", color: "text-violet-400" },
+        ].map(s => (
+          <div key={s.label} className="text-center">
+            <div className={`text-sm font-bold ${s.color}`}>{s.val}</div>
+            <div className="text-[8px] text-white/25 mt-0.5">{s.label}</div>
+          </div>
         ))}
       </div>
-
-      <form onSubmit={submit} className="space-y-3">
-        {mode === "register" && (
-          <>
-            <Field label="Full Name" icon={User} name="name" placeholder="John Banda" required />
-            <Field label="Company Name" icon={Briefcase} name="company" placeholder="Highveld Engineering (Pvt) Ltd" required />
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Email" icon={Mail} name="email" type="email" placeholder="you@company.com" required />
-              <Field label="Phone Number" icon={Phone} name="phone" placeholder="+263 77 000 0000" required />
-            </div>
-            <Field label="Business Registration Number" icon={Star} name="businessReg" placeholder="BR-2024-XXXXXX" required />
-            <Field label="Tax Identification Number" icon={Shield} name="taxId" placeholder="TIN-XXXXXXXXX" required />
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Password *</label>
-                <div className="relative mt-1">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-                  <input type={showPwd ? "text" : "password"} value={form.password}
-                    onChange={e => set("password", e.target.value)} placeholder="••••••••"
-                    className="w-full h-10 pl-9 pr-9 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-                  <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
-                    {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Confirm *</label>
-                <div className="relative mt-1">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-                  <input type="password" value={form.confirm}
-                    onChange={e => set("confirm", e.target.value)} placeholder="••••••••"
-                    className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-        {mode === "login" && (
-          <>
-            <Field label="Email" icon={Mail} name="email" type="email" placeholder="you@company.com" required />
-            <div>
-              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Password *</label>
-              <div className="relative mt-1">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-                <input type={showPwd ? "text" : "password"} value={form.password}
-                  onChange={e => set("password", e.target.value)} placeholder="••••••••"
-                  className="w-full h-10 pl-9 pr-10 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
-                <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
-                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-        {error && <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>}
-        <button type="submit" disabled={loading}
-          className="w-full h-11 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 mt-1">
-          {loading ? "Please wait…" : <><Building2 className="h-4 w-4" /> {mode === "login" ? "Sign In" : "Create Account"}</>}
-        </button>
-      </form>
     </div>
   );
 }
 
-// ─── Government Staff Registration Form ──────────────────────────────────────
-function GovStaffForm({ onBack }: { onBack: () => void }) {
+/* ─── Role resolver: map any role title string → UserRole key ────────────── */
+function resolveRoleKey(roleTitle: string): UserRole {
+  const t = roleTitle.toLowerCase();
+  const exact = ALL_ROLES.find(r => r.label.toLowerCase() === t);
+  if (exact) return exact.role;
+  // keyword fallback map
+  const MAP: Array<[string, UserRole]> = [
+    ["president",             "president"],
+    ["prime minister",        "permanent_secretary"],
+    ["permanent secretary",   "permanent_secretary"],
+    ["chief executive",       "chief_executive"],
+    ["minister",              "minister"],
+    ["director",              "procurement_director"],
+    ["chief procurement",     "cpo"],
+    ["cpo",                   "cpo"],
+    ["chief financial",       "finance_officer"],
+    ["finance manager",       "finance_officer"],
+    ["budget manager",        "budget_officer"],
+    ["treasury manager",      "treasury_officer"],
+    ["financial accountant",  "finance_officer"],
+    ["management accountant", "finance_officer"],
+    ["revenue accountant",    "finance_officer"],
+    ["payroll officer",       "finance_officer"],
+    ["accounts payable",      "finance_officer"],
+    ["accounts receivable",   "finance_officer"],
+    ["finance officer",       "finance_officer"],
+    ["accounting officer",    "finance_officer"],
+    ["finance clerk",         "finance_officer"],
+    ["procurement manager",   "cpo"],
+    ["procurement officer",   "procurement_officer"],
+    ["tender",                "procurement_officer"],
+    ["contract manag",        "contract_manager"],
+    ["contract officer",      "contract_officer"],
+    ["supplier manag",        "procurement_officer"],
+    ["inventory manag",       "stores_officer"],
+    ["stores officer",        "stores_officer"],
+    ["logistics",             "logistics_officer"],
+    ["warehouse",             "stores_officer"],
+    ["asset disposal",        "asset_manager"],
+    ["evaluator",             "evaluator"],
+    ["adjudication",          "adjudication_officer"],
+    ["award",                 "adjudication_officer"],
+    ["project manager",       "project_manager"],
+    ["planning officer",      "planning_officer"],
+    ["strategic planning",    "planning_officer"],
+    ["policy manager",        "planning_officer"],
+    ["policy analyst",        "planning_officer"],
+    ["research officer",      "planning_officer"],
+    ["monitoring",            "performance_officer"],
+    ["evaluation officer",    "performance_officer"],
+    ["statistics officer",    "data_analytics_officer"],
+    ["data analyst",          "data_analytics_officer"],
+    ["performance manag",     "performance_officer"],
+    ["hr manager",            "it_officer"],
+    ["hr officer",            "it_officer"],
+    ["recruitment",           "it_officer"],
+    ["talent manag",          "it_officer"],
+    ["learning",              "it_officer"],
+    ["employee relations",    "ethics_officer"],
+    ["compensation",          "finance_officer"],
+    ["wellness officer",      "health_safety_officer"],
+    ["occupational health",   "health_safety_officer"],
+    ["director, ict",         "it_officer"],
+    ["ict manager",           "it_officer"],
+    ["systems admin",         "system_admin"],
+    ["network admin",         "system_admin"],
+    ["database admin",        "system_admin"],
+    ["cybersecurity",         "it_officer"],
+    ["software developer",    "it_officer"],
+    ["ict support",           "it_officer"],
+    ["service desk",          "it_officer"],
+    ["business systems",      "it_officer"],
+    ["data officer",          "data_analytics_officer"],
+    ["digital transform",     "it_officer"],
+    ["communications officer","communications_officer"],
+    ["public relations",      "communications_officer"],
+    ["marketing officer",     "communications_officer"],
+    ["media relations",       "communications_officer"],
+    ["stakeholder",           "communications_officer"],
+    ["community outreach",    "communications_officer"],
+    ["social media",          "communications_officer"],
+    ["graphic designer",      "communications_officer"],
+    ["events officer",        "communications_officer"],
+    ["admin manager",         "records_officer"],
+    ["office manager",        "records_officer"],
+    ["executive secretary",   "records_officer"],
+    ["admin officer",         "records_officer"],
+    ["records manager",       "records_officer"],
+    ["records officer",       "records_officer"],
+    ["registry clerk",        "records_officer"],
+    ["facilities manager",    "records_officer"],
+    ["facilities officer",    "records_officer"],
+    ["transport officer",     "logistics_officer"],
+    ["security officer",      "security_officer"],
+    ["receptionist",          "end_user"],
+    ["legal counsel",         "legal_officer"],
+    ["legal officer",         "legal_officer"],
+    ["compliance manager",    "compliance_officer"],
+    ["compliance officer",    "compliance_officer"],
+    ["governance officer",    "compliance_officer"],
+    ["regulatory",            "regulator"],
+    ["ethics officer",        "ethics_officer"],
+    ["risk",                  "risk_officer"],
+    ["chief internal auditor","auditor"],
+    ["audit manager",         "audit_officer"],
+    ["internal auditor",      "audit_officer"],
+    ["fraud prevention",      "anti_corruption_officer"],
+    ["business continuity",   "risk_officer"],
+    ["internal controls",     "audit_officer"],
+    ["director, research",    "planning_officer"],
+    ["research manager",      "planning_officer"],
+    ["statistician",          "data_analytics_officer"],
+    ["knowledge manag",       "data_analytics_officer"],
+    ["survey officer",        "data_analytics_officer"],
+    ["regional director",     "procurement_director"],
+    ["district coordinator",  "planning_officer"],
+    ["district officer",      "planning_officer"],
+    ["field officer",         "inspection_officer"],
+    ["community liaison",     "citizen"],
+    ["customer service",      "end_user"],
+    ["cashier",               "end_user"],
+    ["call centre",           "end_user"],
+    ["complaints officer",    "end_user"],
+    ["permit officer",        "end_user"],
+    ["licensing officer",     "end_user"],
+    ["applications officer",  "end_user"],
+    ["approval officer",      "end_user"],
+    ["revenue collection",    "treasury_officer"],
+    ["front office",          "end_user"],
+    ["quality assurance",     "qa_officer"],
+    ["inspection officer",    "inspection_officer"],
+    ["fleet officer",         "logistics_officer"],
+    ["operations manager",    "project_manager"],
+    ["operations officer",    "planning_officer"],
+    ["field supervisor",      "inspection_officer"],
+    ["field inspector",       "inspection_officer"],
+    ["chief of staff",        "permanent_secretary"],
+    ["strategic advisor",     "permanent_secretary"],
+    ["public affairs",        "communications_officer"],
+    ["board affairs",         "board_member"],
+    ["executive assistant",   "end_user"],
+    ["secretariat",           "end_user"],
+    ["protocol officer",      "end_user"],
+    ["asset manager",         "asset_manager"],
+    ["asset",                 "asset_manager"],
+    ["audit",                 "audit_officer"],
+    ["health & safety",       "health_safety_officer"],
+    ["health safety",         "health_safety_officer"],
+    ["environment officer",   "environment_officer"],
+    ["gender",                "gender_officer"],
+    ["public auditor",        "public_auditor"],
+    ["board member",          "board_member"],
+    ["executive director",    "executive_director"],
+    ["regulator",             "regulator"],
+    ["system admin",          "system_admin"],
+    ["ai governance",         "ai_governance_officer"],
+    ["inspector",             "inspection_officer"],
+  ];
+  for (const [keyword, role] of MAP) {
+    if (t.includes(keyword)) return role;
+  }
+  return "end_user";
+}
+
+/* ─── Quick Demo Roles ──────────────────────────────────────────────────── */
+const QUICK_ROLES: { label: string; role: UserRole; name: string; dept: string; entity: string; color: string }[] = [
+  { label: "Prime Minister",  role: "permanent_secretary", name: "Hon. E. Mnangagwa", dept: "Office of the President",     entity: "Government of Zimbabwe", color: "bg-amber-600" },
+  { label: "Minister",        role: "minister",           name: "Hon. B. Mutasa",    dept: "Cabinet Office",              entity: "Cabinet Office",         color: "bg-slate-800" },
+  { label: "CPO",             role: "cpo",                name: "T. Moyo",           dept: "Procurement",                 entity: "PRAZ",                   color: "bg-gray-900" },
+  { label: "Finance Officer", role: "finance_officer",    name: "R. Chikwanda",      dept: "Finance",                     entity: "Ministry of Finance",    color: "bg-emerald-700" },
+  { label: "Auditor",         role: "auditor",            name: "S. Nkosi",          dept: "Audit",                       entity: "OAG",                    color: "bg-amber-700" },
+  { label: "Evaluator",       role: "evaluator",          name: "P. Dube",           dept: "Procurement",                 entity: "Ministry of Health",     color: "bg-indigo-700" },
+  { label: "IT Officer",      role: "it_officer",         name: "A. Mpofu",          dept: "ICT",                         entity: "PRAZ",                   color: "bg-sky-700" },
+  { label: "Risk Officer",    role: "risk_officer",       name: "J. Banda",          dept: "Risk & Audit",                entity: "Treasury",               color: "bg-red-700" },
+];
+
+/* ─── Government Staff Login Form ──────────────────────────────────────── */
+function StaffLoginForm({ prefilledRole, prefilledDept, prefilledEntity, onBack }: {
+  prefilledRole?: string;
+  prefilledDept?: string;
+  prefilledEntity?: string;
+  onBack: () => void;
+}) {
   const { loginWithDetails } = useAuth();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [form, setForm] = useState({
+    name: "", email: "", phone: "", password: "",
+    roleTitle: prefilledRole ?? "",
+    dept: prefilledDept ?? "",
+    entity: prefilledEntity ?? "Government of Zimbabwe",
+  });
   const [showPwd, setShowPwd] = useState(false);
-  const [showHierarchy, setShowHierarchy] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const [form, setForm] = useState({
-    name: "", email: "", phone: "", password: "", confirm: "",
-  });
-  const [hier, setHier] = useState<HierarchySelection>({ ministryId: "", departmentId: "", roleTitle: "" });
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
-  const selectedMinistry = ZW_MINISTRIES.find(m => m.id === hier.ministryId);
-  const selectedDept = selectedMinistry?.departments.find(d => d.id === hier.departmentId);
-
-  const resolveRole = (roleTitle: string) => {
-    const lower = roleTitle.toLowerCase();
-    let match = ALL_ROLES.find(r => r.label.toLowerCase() === lower);
-    if (!match) {
-      const keyword = lower.split(",")[0].split(" ").filter(w => w.length > 4)[0];
-      if (keyword) match = ALL_ROLES.find(r => r.label.toLowerCase().includes(keyword));
-    }
-    return match ?? ALL_ROLES[4];
-  };
+  const resolvedRole = resolveRoleKey(form.roleTitle || "end_user");
+  const roleEntry = ALL_ROLES.find(r => r.role === resolvedRole) ?? ALL_ROLES[4];
 
   const submit = (e: React.FormEvent) => {
-    e.preventDefault(); setError("");
-    if (!form.email || !form.password) { setError("Email and password are required."); return; }
-    if (mode === "register") {
-      if (!form.name) { setError("Full name is required."); return; }
-      if (!form.phone) { setError("Phone number is required."); return; }
-      if (!hier.ministryId || !hier.departmentId || !hier.roleTitle) { setError("Please select your ministry, department and role."); return; }
-      if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
-    }
+    e.preventDefault();
+    setError("");
+    if (!form.name.trim()) { setError("Full name is required."); return; }
+    if (!form.email.trim()) { setError("Email is required."); return; }
+    if (!form.password) { setError("Password is required."); return; }
+    if (!form.roleTitle.trim()) { setError("Please select your role from the hierarchy or type your role title."); return; }
     setLoading(true);
-    const resolvedRole = hier.roleTitle ? resolveRole(hier.roleTitle) : ALL_ROLES[4];
     setTimeout(() => {
       loginWithDetails({
-        role: resolvedRole.role,
-        name: form.name || form.email.split("@")[0],
+        role: resolvedRole,
+        name: form.name,
         email: form.email,
         phone: form.phone,
-        department: selectedDept?.name ?? hier.roleTitle ?? resolvedRole.label,
-        entity: selectedMinistry?.name ?? "Government of Zimbabwe",
+        department: form.dept || form.roleTitle,
+        entity: form.entity,
       });
       seedIfEmpty(form.email);
       navigate("/dashboard");
-    }, 600);
+    }, 700);
   };
 
   return (
-    <div className="w-full max-w-lg">
-      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-black/50 hover:text-black mb-6 transition-colors">
+    <div className="w-full max-w-md">
+      {/* Back */}
+      <button onClick={onBack}
+        className="flex items-center gap-1.5 mb-6 text-black/50 hover:text-black text-sm transition-colors">
         <ChevronLeft className="h-4 w-4" /> Back
       </button>
 
-      <div className="flex items-center gap-3 mb-5">
-        <div className="h-10 w-10 rounded-xl bg-gray-950 grid place-items-center flex-shrink-0">
+      {/* Role badge */}
+      <div className={`flex items-center gap-3 mb-6 p-4 rounded-2xl ${roleEntry.color}`}>
+        <div className="h-10 w-10 rounded-xl bg-white/20 grid place-items-center flex-shrink-0">
           <Shield className="h-5 w-5 text-white" />
         </div>
         <div>
-          <div className="text-lg font-semibold text-black">Government Staff Portal</div>
-          <div className="text-xs text-black/50">Sign in with your government credentials</div>
+          <div className="text-base font-semibold text-white leading-tight">{form.roleTitle || "Government Staff"}</div>
+          <div className="text-xs text-white/60 mt-0.5">{form.dept || "Select role from hierarchy"}</div>
+        </div>
+        <div className="ml-auto text-right">
+          <div className="text-[10px] text-white/40">System role</div>
+          <div className="text-[11px] text-white/70 font-mono">{resolvedRole}</div>
         </div>
       </div>
 
-      <div className="flex rounded-xl bg-black/5 p-1 mb-5">
-        {(["login", "register"] as const).map(m => (
-          <button key={m} onClick={() => setMode(m)}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${mode === m ? "bg-white text-black shadow-sm" : "text-black/50 hover:text-black"}`}>
-            {m === "login" ? "Sign In" : "Register"}
-          </button>
-        ))}
-      </div>
-
-      <form onSubmit={submit} className="space-y-3">
-        {mode === "register" && (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Full Name *</label>
-              <div className="relative mt-1">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
-                <input value={form.name} onChange={e => set("name", e.target.value)} placeholder="T. Moyo"
-                  className="w-full h-9 pl-8 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
-              </div>
-            </div>
-            <div>
-              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Phone Number *</label>
-              <div className="relative mt-1">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
-                <input value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="+263 77 000 0000"
-                  className="w-full h-9 pl-8 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
-              </div>
-            </div>
-          </div>
-        )}
-
+      <form onSubmit={submit} className="space-y-4">
+        {/* Role title field */}
         <div>
-          <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Work Email *</label>
-          <div className="relative mt-1">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
-            <input type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="name@gov.zw"
-              className="w-full h-9 pl-8 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
+          <label className="text-xs font-semibold text-black/50 uppercase tracking-wider block mb-1.5">
+            Role / Position Title *
+          </label>
+          <div className="relative">
+            <Star className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+            <input
+              value={form.roleTitle}
+              onChange={e => set("roleTitle", e.target.value)}
+              placeholder="e.g. Finance Officer, Procurement Manager…"
+              className="w-full h-11 pl-10 pr-4 rounded-2xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15 bg-white"
+            />
           </div>
-        </div>
-
-        {mode === "register" && (
-          <div>
-            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Ministry / Department / Role *</label>
-            <button type="button" onClick={() => setShowHierarchy(!showHierarchy)}
-              className="w-full mt-1 h-10 px-3 rounded-xl border border-black/10 text-sm text-left flex items-center gap-2 hover:border-black/25 transition-colors bg-white">
-              {hier.roleTitle ? (
-                <div className="flex-1 min-w-0">
-                  <span className="block text-xs text-black truncate">{hier.roleTitle}</span>
-                  <span className="block text-[10px] text-black/40 truncate">
-                    {selectedMinistry?.name} · {selectedDept?.name}
-                  </span>
-                </div>
-              ) : (
-                <span className="flex-1 text-black/35 text-xs">Click to select from government hierarchy…</span>
-              )}
-              <ChevronDown className={`h-4 w-4 text-black/30 flex-shrink-0 transition-transform ${showHierarchy ? "rotate-180" : ""}`} />
-            </button>
-            {showHierarchy && (
-              <div className="mt-2">
-                <GovHierarchySelector value={hier} onChange={setHier} onClose={() => setShowHierarchy(false)} />
-              </div>
-            )}
-          </div>
-        )}
-
-        <div>
-          <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Password *</label>
-          <div className="relative mt-1">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
-            <input type={showPwd ? "text" : "password"} value={form.password}
-              onChange={e => set("password", e.target.value)} placeholder="••••••••"
-              className="w-full h-9 pl-8 pr-10 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
-            <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
-              {showPwd ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-            </button>
-          </div>
-        </div>
-
-        {mode === "register" && (
-          <div>
-            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Confirm Password *</label>
-            <div className="relative mt-1">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
-              <input type="password" value={form.confirm}
-                onChange={e => set("confirm", e.target.value)} placeholder="••••••••"
-                className="w-full h-9 pl-8 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
-            </div>
-          </div>
-        )}
-
-        {error && <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>}
-
-        <button type="submit" disabled={loading}
-          className="w-full h-10 rounded-xl bg-gray-950 text-white text-sm font-semibold hover:bg-gray-900 disabled:opacity-50 flex items-center justify-center gap-2">
-          {loading ? "Please wait…" : <><Shield className="h-4 w-4" /> {mode === "login" ? "Sign In" : "Create Account"}</>}
-        </button>
-      </form>
-    </div>
-  );
-}
-
-// ─── Entry Choice ─────────────────────────────────────────────────────────────
-function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () => void }) {
-  return (
-    <div className="w-full max-w-md">
-      <div className="mb-8 text-center">
-        <div className="flex justify-center mb-4">
-          <LogoIcon className="h-10 w-10 text-black" />
-        </div>
-        <h1 className="text-2xl font-bold text-black" style={{ letterSpacing: "-0.02em" }}>
-          AI Powered Electronic Public Procurement and Oversight Intelligence System
-        </h1>
-        <p className="text-sm text-black/50 mt-2">Integrity · Public Trust · Transparency · Good Governance · Clean Procurement</p>
-      </div>
-
-      <div className="space-y-3">
-        <button onClick={onPublic}
-          className="w-full flex items-center gap-4 p-5 rounded-2xl bg-blue-600 hover:bg-blue-700 transition-colors text-left group">
-          <div className="h-12 w-12 rounded-xl bg-white/20 grid place-items-center flex-shrink-0">
-            <Building2 className="h-6 w-6 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-base font-semibold text-white">Company / Supplier Portal</div>
-            <div className="text-sm text-blue-200">Browse tenders · Bid · Submit applications</div>
-            <div className="text-xs text-blue-300 mt-0.5">Sign in or register with company details</div>
-          </div>
-          <ArrowRight className="h-5 w-5 text-white/60 group-hover:text-white flex-shrink-0" />
-        </button>
-
-        <button onClick={onStaff}
-          className="w-full flex items-center gap-4 p-5 rounded-2xl bg-gray-950 hover:bg-gray-900 transition-colors text-left group border border-white/5">
-          <div className="h-12 w-12 rounded-xl bg-white/10 grid place-items-center flex-shrink-0">
-            <Shield className="h-6 w-6 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-base font-semibold text-white">Government Staff Portal</div>
-            <div className="text-sm text-white/55">Ministry · Department · Role access</div>
-            <div className="text-xs text-white/35 mt-0.5">
-              {ALL_ROLES.length} roles · {ZW_MINISTRIES.length} ministries
-            </div>
-          </div>
-          <ArrowRight className="h-5 w-5 text-white/30 group-hover:text-white flex-shrink-0" />
-        </button>
-      </div>
-
-      <div className="mt-8 text-center">
-        <Link to="/" className="text-sm text-black/40 hover:text-black transition-colors">← Back to home</Link>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main SignInPage ───────────────────────────────────────────────────────────
-type Screen = "choice" | "public" | "staff";
-
-export default function SignInPage() {
-  const [screen, setScreen] = useState<Screen>("choice");
-
-  return (
-    <div className="min-h-screen flex bg-[#F5F5F5]">
-
-      {/* ── Left dark panel (desktop only) ───────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[42%] flex-col bg-gray-950 border-r border-white/5">
-        {/* Logo */}
-        <div className="px-8 py-6 border-b border-white/8 flex-shrink-0">
-          <Link to="/" className="flex items-center gap-2.5">
-            <LogoIcon className="w-7 h-7 text-white flex-shrink-0" />
-            <div className="leading-none">
-              <div className="text-[9px] font-bold text-white tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
-              <div className="text-[9px] font-bold text-white tracking-tight leading-tight uppercase">Procurement &amp; Oversight</div>
-              <div className="text-[9px] font-bold text-white/60 tracking-tight leading-tight uppercase">Intelligence System</div>
-            </div>
-          </Link>
-        </div>
-
-        {/* Tag line */}
-        <div className="px-8 py-6 flex-shrink-0 border-b border-white/8">
-          <h2 className="text-2xl font-semibold text-white leading-tight mb-2" style={{ letterSpacing: "-0.025em" }}>
-            Integrity.<br />Public Trust.<br />Transparency.<br />Good Governance.<br />Clean Procurement.
-          </h2>
-          <p className="text-sm text-white/45 leading-relaxed">
-            AI Powered Electronic Public Procurement and Oversight Intelligence System — Government of Zimbabwe.
+          <p className="text-[10px] text-black/35 mt-1 pl-1">
+            Auto-detected: <span className="font-semibold text-black/50">{roleEntry.label}</span>
           </p>
         </div>
 
-        {/* Government hierarchy panel */}
-        <div className="flex-1 px-4 py-4 overflow-hidden flex flex-col min-h-0">
-          <div className="flex items-center justify-between mb-3 px-2 flex-shrink-0">
-            <div>
-              <div className="text-xs font-semibold text-white/70">Government Hierarchy</div>
-              <div className="text-[10px] text-white/30 mt-0.5">
-                Prime Minister · {ZW_MINISTRIES.length} Ministries · Departments · Roles
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-white/30">Live</span>
+        {/* Name + Phone row */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-semibold text-black/50 uppercase tracking-wider block mb-1.5">Full Name *</label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+              <input value={form.name} onChange={e => set("name", e.target.value)}
+                placeholder="T. Moyo"
+                className="w-full h-11 pl-10 pr-3 rounded-2xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15 bg-white" />
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto min-h-0 scrollbar-none">
-            <GovHierarchyPanel />
+          <div>
+            <label className="text-xs font-semibold text-black/50 uppercase tracking-wider block mb-1.5">Phone</label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+              <input value={form.phone} onChange={e => set("phone", e.target.value)}
+                placeholder="+263 77 000 0000"
+                className="w-full h-11 pl-10 pr-3 rounded-2xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15 bg-white" />
+            </div>
           </div>
         </div>
 
-        {/* Stats bar */}
-        <div className="px-6 py-4 border-t border-white/8 flex-shrink-0 grid grid-cols-3 gap-3">
-          {[
-            { label: "Ministries", val: String(ZW_MINISTRIES.length), color: "text-blue-400" },
-            { label: "Departments", val: String(ZW_MINISTRIES.reduce((acc, m) => acc + m.departments.length, 0)), color: "text-emerald-400" },
-            { label: "Roles", val: String(ALL_ROLES.length), color: "text-violet-400" },
-          ].map(s => (
-            <div key={s.label} className="text-center">
-              <div className={`text-base font-bold ${s.color}`}>{s.val}</div>
-              <div className="text-[9px] text-white/30 mt-0.5">{s.label}</div>
-            </div>
+        {/* Email */}
+        <div>
+          <label className="text-xs font-semibold text-black/50 uppercase tracking-wider block mb-1.5">Work Email *</label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+            <input type="email" value={form.email} onChange={e => set("email", e.target.value)}
+              placeholder="name@gov.zw"
+              className="w-full h-11 pl-10 pr-4 rounded-2xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15 bg-white" />
+          </div>
+        </div>
+
+        {/* Entity */}
+        <div>
+          <label className="text-xs font-semibold text-black/50 uppercase tracking-wider block mb-1.5">Ministry / Entity</label>
+          <div className="relative">
+            <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+            <input value={form.entity} onChange={e => set("entity", e.target.value)}
+              placeholder="Ministry of Finance"
+              className="w-full h-11 pl-10 pr-4 rounded-2xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15 bg-white" />
+          </div>
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="text-xs font-semibold text-black/50 uppercase tracking-wider block mb-1.5">Password *</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+            <input
+              type={showPwd ? "text" : "password"}
+              value={form.password}
+              onChange={e => set("password", e.target.value)}
+              placeholder="••••••••"
+              className="w-full h-11 pl-10 pr-11 rounded-2xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15 bg-white"
+            />
+            <button type="button" onClick={() => setShowPwd(v => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+              {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        {error && (
+          <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{error}</p>
+        )}
+
+        <button type="submit" disabled={loading}
+          className="w-full h-12 rounded-full bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-3 mt-2">
+          {loading ? "Signing in…" : (
+            <>
+              Enter as {roleEntry.label}
+              <span className="bg-white rounded-full p-1.5">
+                <ArrowRight className="h-3.5 w-3.5 text-black" />
+              </span>
+            </>
+          )}
+        </button>
+      </form>
+
+      <p className="text-xs text-black/35 text-center mt-4">
+        Demo: any credentials work. Role auto-detected from your title.
+      </p>
+    </div>
+  );
+}
+
+/* ─── Main SignInPage ──────────────────────────────────────────────────── */
+type Screen = "landing" | "login-form";
+
+export default function SignInPage() {
+  const { loginWithDetails } = useAuth();
+  const navigate = useNavigate();
+  const [screen, setScreen] = useState<Screen>("landing");
+  const [prefilledRole, setPrefilledRole] = useState("");
+  const [prefilledDept, setPrefilledDept] = useState("");
+  const [prefilledEntity, setPrefilledEntity] = useState("");
+
+  /* Quick demo login — one click, no form */
+  const quickLogin = (q: typeof QUICK_ROLES[number]) => {
+    loginWithDetails({
+      role: q.role,
+      name: q.name,
+      email: `${q.name.toLowerCase().replace(/[\s.]/g, "")}@gov.zw`,
+      department: q.dept,
+      entity: q.entity,
+    });
+    seedIfEmpty(q.name);
+    navigate("/dashboard");
+  };
+
+  /* Hierarchy tree role click → pre-fill form */
+  const handleHierarchySelect = (roleTitle: string, deptName: string, ministryName: string) => {
+    setPrefilledRole(roleTitle);
+    setPrefilledDept(deptName);
+    setPrefilledEntity(ministryName);
+    setScreen("login-form");
+  };
+
+  return (
+    /* Outer wrapper — same #F5F5F5 background as LandingPage */
+    <div className="min-h-screen flex flex-col bg-[#F5F5F5]">
+
+      {/* ── Navbar (landing-page style) ─────────────────────────────────── */}
+      <nav className="flex-shrink-0 px-6 py-5 flex items-center justify-between max-w-[88rem] mx-auto w-full">
+        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+          <LogoIcon className="w-6 h-6 text-black flex-shrink-0" />
+          <div className="leading-none hidden sm:block">
+            <div className="text-[10px] font-bold text-black tracking-tight leading-tight uppercase">AI Powered Electronic Public</div>
+            <div className="text-[10px] font-bold text-black tracking-tight leading-tight uppercase">Procurement &amp; Oversight</div>
+            <div className="text-[10px] font-bold text-black/60 tracking-tight leading-tight uppercase">Intelligence System</div>
+          </div>
+        </Link>
+        <div className="hidden md:flex items-center gap-8">
+          {[{label:"Tenders",to:"/tenders"},{label:"Analytics",to:"/analytics"},{label:"About",to:"/portal"}].map(l => (
+            <Link key={l.label} to={l.to} className="text-base text-gray-700 hover:text-black font-medium transition-colors duration-200">{l.label}</Link>
           ))}
         </div>
+        <Link to="/" className="text-sm text-black/50 hover:text-black transition-colors duration-200">
+          ← Home
+        </Link>
+      </nav>
 
-        <div className="px-6 py-3 border-t border-white/8 flex-shrink-0">
-          <p className="text-[10px] text-white/20">© 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System · Government of Zimbabwe</p>
+      {/* ── Main two-column body ─────────────────────────────────────────── */}
+      <div className="flex-1 flex min-h-0 px-6 pb-6 gap-6 max-w-[88rem] mx-auto w-full">
+
+        {/* ── LEFT: Dark hierarchy panel (large, no external scroll) ──── */}
+        <div
+          className="hidden lg:flex flex-col rounded-2xl overflow-hidden flex-shrink-0"
+          style={{
+            width: "420px",
+            minHeight: "calc(100vh - 120px)",
+            background: "linear-gradient(160deg,#0f0f0f 0%,#1a1a1a 100%)",
+          }}
+        >
+          {/* Panel header */}
+          <div className="px-5 pt-6 pb-4 flex-shrink-0 border-b border-white/8">
+            <h2
+              className="text-2xl font-medium text-white mb-1"
+              style={{ letterSpacing: "-0.03em" }}
+            >
+              Government<br />Hierarchy
+            </h2>
+            <p className="text-white/40 text-xs leading-relaxed">
+              Browse ministries, departments and roles.<br />Click any role to pre-fill your login.
+            </p>
+          </div>
+
+          {/* Hierarchy tree — fills remaining height */}
+          <div className="flex-1 px-4 py-4 min-h-0">
+            <GovHierarchyPanel onSelectRole={handleHierarchySelect} />
+          </div>
+        </div>
+
+        {/* ── RIGHT: Login area ────────────────────────────────────────── */}
+        <div className="flex-1 flex flex-col min-h-0">
+
+          {screen === "landing" && (
+            <div className="flex flex-col h-full">
+
+              {/* Welcome heading */}
+              <div className="mb-8 mt-4">
+                <h1
+                  className="text-4xl md:text-5xl font-medium text-black leading-tight mb-3"
+                  style={{ letterSpacing: "-0.04em" }}
+                >
+                  Staff Portal
+                </h1>
+                <p className="text-black/60 text-base max-w-md leading-relaxed">
+                  Sign in with your government credentials to access your role-specific dashboard, procurement workbench, and management tools.
+                </p>
+              </div>
+
+              {/* Quick access roles — landing page card style */}
+              <div className="mb-8">
+                <p className="text-black/60 text-sm mb-4 font-medium">Quick Access — Demo Roles</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {QUICK_ROLES.map(q => (
+                    <button
+                      key={q.role}
+                      onClick={() => quickLogin(q)}
+                      className="flex flex-col items-start p-4 rounded-2xl bg-white border border-black/8 hover:border-black/20 hover:shadow-md transition-all text-left group"
+                    >
+                      <div className={`h-8 w-8 rounded-xl ${q.color} grid place-items-center mb-3`}>
+                        <Shield className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="text-xs font-semibold text-black leading-tight mb-0.5">{q.label}</div>
+                      <div className="text-[10px] text-black/40 truncate w-full">{q.name}</div>
+                      <div className="mt-2 flex items-center gap-1 text-[10px] text-black/30 group-hover:text-black/60 transition-colors">
+                        Enter <ArrowRight className="h-2.5 w-2.5" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex-1 h-px bg-black/10" />
+                <span className="text-xs text-black/40 font-medium">or sign in with your own credentials</span>
+                <div className="flex-1 h-px bg-black/10" />
+              </div>
+
+              {/* Sign in with role entry */}
+              <div
+                className="rounded-2xl overflow-hidden border border-black/8 bg-white p-6 max-w-md"
+              >
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="h-10 w-10 rounded-xl bg-black grid place-items-center flex-shrink-0">
+                    <Shield className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-base font-medium text-black">Government Staff</div>
+                    <div className="text-xs text-black/50">Sign in with any role</div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setScreen("login-form")}
+                  className="w-full inline-flex items-center justify-between gap-3 bg-black text-white text-base font-medium pl-7 pr-3 py-3 rounded-full hover:bg-gray-800 transition-colors duration-200"
+                >
+                  Sign in as Staff
+                  <span className="bg-white rounded-full p-1.5">
+                    <ArrowRight className="w-4 h-4 text-black" />
+                  </span>
+                </button>
+
+                <p className="text-xs text-black/35 mt-4 leading-relaxed">
+                  Browse the hierarchy on the left, click your role, and proceed to sign in. Or click above to enter credentials manually.
+                </p>
+              </div>
+
+              {/* Features strip (landing page style) */}
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { label: "Integrity", desc: "Every action is immutably logged with a full audit trail." },
+                  { label: "Transparency", desc: "All procurement decisions are transparent and AI-enforced." },
+                  { label: "Good Governance", desc: "Role-based access ensures the right people see the right data." },
+                ].map(f => (
+                  <div key={f.label} className="p-5 rounded-2xl border border-black/8 bg-white">
+                    <div className="text-sm font-semibold text-black mb-1">{f.label}</div>
+                    <div className="text-xs text-black/50 leading-relaxed">{f.desc}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Stats (landing-page style) */}
+              <div className="mt-6 grid grid-cols-3 gap-4">
+                {[
+                  { value: "1,287", label: "Active Tenders" },
+                  { value: "94.2%", label: "Compliance Score" },
+                  { value: "USD 2.84B", label: "Managed Spend" },
+                ].map(s => (
+                  <div key={s.label} className="text-center py-4 rounded-2xl border border-black/8 bg-white">
+                    <div className="text-2xl font-medium text-black" style={{ letterSpacing: "-0.03em" }}>{s.value}</div>
+                    <div className="text-xs text-black/50 mt-1">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {screen === "login-form" && (
+            <div className="flex items-start justify-center pt-4">
+              <StaffLoginForm
+                prefilledRole={prefilledRole}
+                prefilledDept={prefilledDept}
+                prefilledEntity={prefilledEntity}
+                onBack={() => {
+                  setScreen("landing");
+                  setPrefilledRole("");
+                  setPrefilledDept("");
+                  setPrefilledEntity("");
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── Right content panel ───────────────────────────────────────────── */}
-      <div className="flex-1 flex items-start justify-center p-6 lg:p-12 overflow-y-auto">
-        {screen === "choice" && (
-          <EntryChoice onPublic={() => setScreen("public")} onStaff={() => setScreen("staff")} />
-        )}
-        {screen === "public" && (
-          <PublicLogin onBack={() => setScreen("choice")} />
-        )}
-        {screen === "staff" && (
-          <GovStaffForm onBack={() => setScreen("choice")} />
-        )}
-      </div>
+      {/* ── Footer (landing-page style) ──────────────────────────────────── */}
+      <footer className="flex-shrink-0 px-6 py-6 border-t border-black/10 max-w-[88rem] mx-auto w-full flex items-center justify-between gap-4 flex-wrap">
+        <div className="text-xs text-black/30">
+          © 2026 AI Powered Electronic Public Procurement and Oversight Intelligence System · Government of Zimbabwe
+        </div>
+        <div className="flex gap-6 text-sm text-black/40">
+          <Link to="/portal" className="hover:text-black transition-colors">Privacy</Link>
+          <Link to="/portal" className="hover:text-black transition-colors">Terms</Link>
+          <Link to="/" className="hover:text-black transition-colors">Home</Link>
+        </div>
+      </footer>
     </div>
   );
 }

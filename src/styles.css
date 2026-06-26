@@ -136,3 +136,135 @@
 .main-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(0,0,0,0.25);
 }
+
+/* ── Hide scrollbar utility (use sparingly) ───────────────────────────── */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Tab strips that scroll horizontally ─────────────────────────────── */
+.tab-strip {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-strip::-webkit-scrollbar { display: none; }
+
+/* ── Workbench content area ───────────────────────────────────────────── */
+.workbench-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.10) transparent;
+}
+.workbench-scroll::-webkit-scrollbar { width: 5px; }
+.workbench-scroll::-webkit-scrollbar-track { background: transparent; }
+.workbench-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.10);
+  border-radius: 4px;
+}
+
+/* ── Fix: prevent content from jumping when dropdown opens ───────────── */
+.dropdown-open-fix { overflow-anchor: none; }
+
+/* ── Prevent invisible text on white backgrounds ─────────────────────── */
+.text-visible { color: #111827 !important; }
+
+/* ── Smooth animated transitions for workbench tabs ─────────────────── */
+.tab-panel-enter {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.tab-panel-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+/* ── Email window overlay ────────────────────────────────────────────── */
+.email-window {
+  position: fixed;
+  bottom: 0;
+  right: 1.5rem;
+  width: 480px;
+  max-width: calc(100vw - 2rem);
+  z-index: 100;
+  box-shadow: 0 -4px 40px rgba(0,0,0,0.18);
+  border-radius: 12px 12px 0 0;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+}
+.email-window-minimized {
+  max-height: 48px;
+  overflow: hidden;
+}
+
+/* ── Procurement stage connector lines ───────────────────────────────── */
+.stage-connector {
+  position: relative;
+}
+.stage-connector::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 2px;
+  height: 16px;
+  background: rgba(0,0,0,0.10);
+  transform: translateX(-50%);
+}
+
+/* ── Form field focus ring fix ───────────────────────────────────────── */
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid rgba(0,0,0,0.15);
+  outline-offset: 1px;
+}
+
+/* ── Ensure dropdown menus are always visible ─────────────────────────── */
+[data-dropdown] {
+  isolation: isolate;
+}
+
+/* ── Table horizontal scroll fix ─────────────────────────────────────── */
+.table-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+.table-container::-webkit-scrollbar { height: 5px; }
+.table-container::-webkit-scrollbar-track { background: #f1f5f9; }
+.table-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+
+/* ── Fix for modals going behind header ──────────────────────────────── */
+.modal-overlay { z-index: 9999; }
+
+/* ── Animated loading spinner ────────────────────────────────────────── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 2s linear infinite; }
+
+/* ── Badge visibility fixes ──────────────────────────────────────────── */
+.badge-visible {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 2px 8px;
+}
+
+/* ── Prevent content overlap with fixed header ───────────────────────── */
+.content-below-header {
+  padding-top: 56px;
+}
