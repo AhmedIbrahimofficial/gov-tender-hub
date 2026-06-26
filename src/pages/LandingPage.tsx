@@ -159,8 +159,8 @@ function SearchCard() {
   const [query, setQuery] = useState("");
 
   const handleSearch = () => {
-    if (query.trim()) navigate(`/tenders?q=${encodeURIComponent(query.trim())}`);
-    else navigate("/tenders");
+    if (query.trim()) navigate(`/portal?q=${encodeURIComponent(query.trim())}`);
+    else navigate("/portal");
   };
 
   return (
