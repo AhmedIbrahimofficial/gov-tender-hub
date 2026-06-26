@@ -5,6 +5,7 @@ import type {
   StoredAsset, StoredWorkOrder, StoredAssetTransfer,
   StoredInventoryItem, StoredInventoryReceipt, StoredInventoryRequest,
   StoredStockAdjustment, StoredStockCount,
+  StoredTenderPrep, StoredAdvertisement, StoredBidSubmission,
 } from "@/lib/local-store";
 
 export function useTenders() {

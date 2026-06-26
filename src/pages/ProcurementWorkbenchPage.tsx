@@ -1101,10 +1101,11 @@ function StatusBar({ record }: { record: WorkbenchRecord }) {
 }
 
 // ─── 11 & 12. Search & Knowledge Centre (bottom tabs) ────────────────────────
-type BottomTab = "search" | "knowledge" | "documents" | "notes" | "audit" | "intelligence";
+type BottomTab = "search" | "knowledge" | "documents" | "notes" | "audit" | "intelligence" | "stages";
 
 function BottomSection({ tab, setTab }: { tab: BottomTab; setTab: (t: BottomTab) => void }) {
   const tabs: { key: BottomTab; label: string }[] = [
+    { key: "stages",       label: "📋 Stage Modules"   },
     { key: "documents",    label: "6. Documents"      },
     { key: "notes",        label: "7. Communications" },
     { key: "audit",        label: "8. Audit Trail"    },
@@ -1126,12 +1127,54 @@ function BottomSection({ tab, setTab }: { tab: BottomTab; setTab: (t: BottomTab)
       </div>
       {/* Content */}
       <div className="flex-1 overflow-y-auto min-h-0">
+        {tab === "stages"       && <StageModulesPanel />}
         {tab === "documents"    && <DocumentsPanel />}
         {tab === "notes"        && <NotesPanel />}
         {tab === "audit"        && <AuditTrailPanel />}
         {tab === "intelligence" && <IntelligencePanel />}
         {tab === "search"       && <SearchPanel />}
         {tab === "knowledge"    && <KnowledgePanel />}
+      </div>
+    </div>
+  );
+}
+
+function StageModulesPanel() {
+  const stages = [
+    { num: 1, label: "Procurement Planning",   route: "/procurement/planning",             status: "completed", desc: "Annual plan · Budget · Demand"          },
+    { num: 2, label: "Requisition",             route: "/procurement/requisition",          status: "completed", desc: "Purchase requisition · Items · Approval" },
+    { num: 3, label: "Procurement Strategy",   route: "/procurement/strategy",             status: "completed", desc: "Method · Market · Supplier analysis"    },
+    { num: 4, label: "Tender Preparation",     route: "/procurement/tender-preparation",   status: "active",    desc: "BOQ · Specs · Evaluation criteria"      },
+    { num: 5, label: "Advertisement",          route: "/procurement/advertisement",        status: "pending",   desc: "Publication · Clarifications · Q&A"     },
+    { num: 6, label: "Bid Submission",         route: "/procurement/bid-submission",       status: "pending",   desc: "Encrypted vault · Validation · Receipt"  },
+    { num: 7, label: "Bid Opening",            route: "/lifecycle",                        status: "pending",   desc: "Opening ceremony · Register · Records"  },
+    { num: 8, label: "Evaluation",             route: "/evaluations",                      status: "pending",   desc: "Admin · Technical · Financial scoring"  },
+    { num: 9, label: "Award",                  route: "/awards",                           status: "pending",   desc: "Adjudication · Notice · Standstill"     },
+    { num: 10, label: "Contract",              route: "/contracts",                        status: "pending",   desc: "Draft · Execute · Manage"               },
+  ];
+  return (
+    <div className="p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-xs font-semibold">Procurement Stage Modules — Full Lifecycle</div>
+        <a href="/lifecycle" className="text-[10px] text-black/40 hover:text-black underline">View full lifecycle tower →</a>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+        {stages.map(s => (
+          <a key={s.num} href={s.route}
+            className={`block p-2.5 rounded-xl border transition-all hover:border-black/30 hover:shadow-sm cursor-pointer
+              ${s.status === "completed" ? "border-emerald-200 bg-emerald-50" : s.status === "active" ? "border-black bg-black text-white" : "border-black/8 bg-white hover:bg-[#F9F9F9]"}`}>
+            <div className="flex items-center gap-1.5 mb-1">
+              <div className={`h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold flex-shrink-0
+                ${s.status === "completed" ? "bg-emerald-500 text-white" : s.status === "active" ? "bg-white text-black" : "bg-black/10 text-black/50"}`}>
+                {s.num}
+              </div>
+              <span className={`text-[10px] font-bold truncate ${s.status === "active" ? "text-white" : s.status === "completed" ? "text-emerald-700" : "text-black"}`}>
+                {s.label}
+              </span>
+            </div>
+            <div className={`text-[9px] leading-tight ${s.status === "active" ? "text-white/70" : "text-black/40"}`}>{s.desc}</div>
+          </a>
+        ))}
       </div>
     </div>
   );

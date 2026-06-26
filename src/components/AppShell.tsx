@@ -280,10 +280,10 @@ const FULL_ACCESS_ROLES = new Set<string>(["minister", "system_admin", "cpo", "p
 
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
-  procurement_officer: ["/dashboard", "/teams", "/workbench", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements"],
+  procurement_officer: ["/dashboard", "/teams", "/workbench", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission"],
 
   // Evaluator — only evaluation-related pages
-  evaluator: ["/dashboard", "/teams", "/workbench", "/tenders", "/evaluations", "/awards", "/certificates"],
+  evaluator: ["/dashboard", "/teams", "/workbench", "/tenders", "/evaluations", "/awards", "/certificates", "/procurement/bid-submission"],
 
   // Finance officer — payments, invoices, budget
   finance_officer: ["/dashboard", "/teams", "/workbench", "/finance", "/budget", "/budget/execution", "/budget/expenditure", "/budget/commitments", "/budget/revenue", "/budget/treasury", "/utility/catalogue"],
@@ -300,13 +300,13 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   treasury_officer:  ["/dashboard", "/teams", "/budget", "/budget/treasury", "/budget/revenue", "/budget/execution", "/finance"],
 
   // Planning officer
-  planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue"],
+  planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement"],
 
   // Compliance officer
-  compliance_officer:["/dashboard", "/teams", "/audit", "/anti-corruption", "/governance", "/utility/public-records", "/utility/announcements", "/corporate"],
+  compliance_officer:["/dashboard", "/teams", "/audit", "/anti-corruption", "/governance", "/utility/public-records", "/utility/announcements", "/corporate", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission"],
 
   // Legal officer
-  legal_officer:     ["/dashboard", "/teams", "/contracts", "/audit", "/governance", "/utility/announcements"],
+  legal_officer:     ["/dashboard", "/teams", "/contracts", "/audit", "/governance", "/utility/announcements", "/procurement/tender-preparation", "/procurement/advertisement"],
 
   // Stores officer
   stores_officer:    ["/dashboard", "/teams", "/inventory", "/inventory/items", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/inventory/stock-count", "/inventory/reconciliation", "/inventory/ai-agents", "/contracts", "/utility/catalogue"],
@@ -329,7 +329,7 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
 
   // Adjudication officer
-  adjudication_officer: ["/dashboard", "/teams", "/evaluations", "/awards", "/tenders", "/certificates", "/utility/announcements"],
+  adjudication_officer: ["/dashboard", "/teams", "/evaluations", "/awards", "/tenders", "/certificates", "/utility/announcements", "/procurement/bid-submission", "/procurement/advertisement"],
 
   // Audit officer / public auditor
   audit_officer:  ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics"],
@@ -349,12 +349,12 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   logistics_officer: ["/dashboard", "/teams", "/inventory", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/contracts", "/vendors", "/utility/catalogue"],
 
   // Vendor / supplier access
-  supplier:     ["/dashboard", "/portal"],
-  sme_supplier: ["/dashboard", "/portal"],
-  vendor_user:  ["/dashboard", "/portal"],
+  supplier:     ["/dashboard", "/portal", "/procurement/bid-submission", "/procurement/advertisement"],
+  sme_supplier: ["/dashboard", "/portal", "/procurement/bid-submission", "/procurement/advertisement"],
+  vendor_user:  ["/dashboard", "/portal", "/procurement/bid-submission", "/procurement/advertisement"],
 
-  // Communications officer — gets full utility access
-  communications_officer: ["/dashboard", "/teams", "/tenders", "/portal", "/governance", "/utility", "/utility/communications", "/utility/gazette", "/utility/announcements", "/utility/public-records", "/utility/media"],
+  // Communications officer — gets full utility access + advertisement management
+  communications_officer: ["/dashboard", "/teams", "/tenders", "/portal", "/governance", "/utility", "/utility/communications", "/utility/gazette", "/utility/announcements", "/utility/public-records", "/utility/media", "/procurement/advertisement", "/procurement/tender-preparation"],
 
   // HSE / environment
   health_safety_officer: ["/dashboard", "/teams", "/contracts", "/governance"],
@@ -362,7 +362,7 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
 
   // Citizen / end user
   citizen:  ["/dashboard", "/portal"],
-  end_user: ["/dashboard", "/teams", "/tenders", "/planning"],
+  end_user: ["/dashboard", "/teams", "/tenders", "/planning", "/procurement/requisition", "/procurement/bid-submission"],
 
   // Board / executive director — strategic overview only
   executive_director: ["/dashboard", "/teams", "/analytics", "/contracts", "/finance", "/utility/announcements", "/corporate"],
@@ -391,6 +391,7 @@ const iconMap: Record<string, React.ElementType> = {
   Landmark, UsersRound, Globe2, ScaleIcon: Scale, ShoppingCart, Gavel,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   BookOpen, MessageSquare, Newspaper, Megaphone, Radio, DollarSign,
+  Send,
   // Corporate Module icons
   Crown, Target, Headphones, Monitor, Users, Settings, Scale,
   OfficeBuildingIcon: Building2,

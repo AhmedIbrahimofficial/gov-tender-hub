@@ -63,6 +63,12 @@ import ProjectManagementPage from "./pages/ProjectManagementPage";
 import ProcurementWorkbenchPage from "./pages/ProcurementWorkbenchPage";
 import MinistryWorkbenchPage from "./pages/MinistryWorkbenchPage";
 import SeniorDashboardPage from "./pages/SeniorDashboardPage";
+import ProcurementPlanningPage from "./pages/ProcurementPlanningPage";
+import ProcurementRequisitionPage from "./pages/ProcurementRequisitionPage";
+import ProcurementStrategyPage from "./pages/ProcurementStrategyPage";
+import TenderPreparationPage from "./pages/TenderPreparationPage";
+import AdvertisementPage from "./pages/AdvertisementPage";
+import BidSubmissionPage from "./pages/BidSubmissionPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -91,6 +97,16 @@ function AppRoutes() {
       <Route path="/workbench" element={<ProtectedRoute><ProcurementWorkbenchPage /></ProtectedRoute>} />
       {/* Per-ministry Procurement Workbench */}
       <Route path="/workbench/:ministryId" element={<ProtectedRoute><MinistryWorkbenchPage /></ProtectedRoute>} />
+
+      {/* Procurement Stages 1–3 */}
+      <Route path="/procurement/planning" element={<ProtectedRoute><ProcurementPlanningPage /></ProtectedRoute>} />
+      <Route path="/procurement/requisition" element={<ProtectedRoute><ProcurementRequisitionPage /></ProtectedRoute>} />
+      <Route path="/procurement/strategy" element={<ProtectedRoute><ProcurementStrategyPage /></ProtectedRoute>} />
+
+      {/* Procurement Stages 4–6 */}
+      <Route path="/procurement/tender-preparation" element={<ProtectedRoute><TenderPreparationPage /></ProtectedRoute>} />
+      <Route path="/procurement/advertisement" element={<ProtectedRoute><AdvertisementPage /></ProtectedRoute>} />
+      <Route path="/procurement/bid-submission" element={<ProtectedRoute><BidSubmissionPage /></ProtectedRoute>} />
 
       {/* Procurement Lifecycle Control Tower */}
       <Route path="/lifecycle" element={<ProtectedRoute><ProcurementLifecyclePage /></ProtectedRoute>} />

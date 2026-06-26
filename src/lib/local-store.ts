@@ -302,6 +302,31 @@ export type StoredNotification = {
   forCPO?: boolean;    // true = shows in CPO's senior feed
 };
 
+// ── Stage 4–6 Types ───────────────────────────────────────────────────────────
+export type StoredTenderPrep = {
+  id: string; tenderNumber: string; tenderTitle: string;
+  ministry: string; department: string; procurementMethod: string;
+  budgetAllocation: string; currency: string; approvalStatus: string;
+  workflowProgress: number; closingDate: string; complianceScore: number;
+  owner: string; createdAt: string; updatedAt: string;
+};
+
+export type StoredAdvertisement = {
+  id: string; advertisementNumber: string; tenderTitle: string; tenderNumber: string;
+  ministry: string; publicationDate: string; closingDate: string;
+  status: string; workflowProgress: number; supplierCount: number;
+  pendingClarifications: number; owner: string; createdAt: string;
+};
+
+export type StoredBidSubmission = {
+  id: string; bidReference: string; tenderTitle: string; tenderNumber: string;
+  supplierName: string; supplierEmail: string; financialProposalAmount: string;
+  currency: string; status: string; workflowProgress: number;
+  isEncrypted: boolean; isDigitallySigned: boolean;
+  submissionReceiptNo: string; submissionTime: string;
+  complianceScore: number; createdAt: string; updatedAt: string;
+};
+
 type Store = {
   tenders: StoredTender[];
   rfqs: StoredRFQ[];
@@ -325,6 +350,9 @@ type Store = {
   stateEntities: StoredStateEntity[];
   branches: StoredBranch[];
   orgUsers: StoredOrgUser[];
+  tenderPreps: StoredTenderPrep[];
+  advertisements: StoredAdvertisement[];
+  bidSubmissions: StoredBidSubmission[];
 };
 
 export type AIReport = {
@@ -362,6 +390,7 @@ function load(): Store {
         inventoryItems: [], inventoryReceipts: [], inventoryRequests: [],
         stockAdjustments: [], stockCounts: [],
         ministries: [], departments: [], stateEntities: [], branches: [], orgUsers: [],
+        tenderPreps: [], advertisements: [], bidSubmissions: [],
         ...parsed
       };
     }
@@ -372,6 +401,7 @@ function load(): Store {
     assetTransfers: [], inventoryItems: [], inventoryReceipts: [], inventoryRequests: [],
     stockAdjustments: [], stockCounts: [],
     ministries: [], departments: [], stateEntities: [], branches: [], orgUsers: [],
+    tenderPreps: [], advertisements: [], bidSubmissions: [],
   };
 }
 
