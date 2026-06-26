@@ -376,10 +376,10 @@ export default function LandingPage() {
               <li><Link to="/signin" className="hover:underline">Bidder Login</Link></li>
               <li><Link to="/portal" className="hover:underline">Public Portal</Link></li>
               <li><Link to="/signin" className="hover:underline">Officer Login</Link></li>
-              <li><Link to="/knowledge-base" className="hover:underline">Help &amp; Support</Link></li>
-              <li><Link to="/tenders" className="hover:underline">Active Tenders</Link></li>
-              <li><Link to="/awards" className="hover:underline">Bid Awards</Link></li>
-              <li><Link to="/anti-corruption" className="hover:underline">Debarment List</Link></li>
+              <li><Link to="/portal" className="hover:underline">Help &amp; Support</Link></li>
+              <li><Link to="/portal" className="hover:underline">Active Tenders</Link></li>
+              <li><Link to="/portal" className="hover:underline">Bid Awards</Link></li>
+              <li><Link to="/portal" className="hover:underline">Debarment List</Link></li>
             </ul>
           </div>
           <div>
