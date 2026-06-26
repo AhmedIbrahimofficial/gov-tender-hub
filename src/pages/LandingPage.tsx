@@ -52,12 +52,12 @@ function Header() {
   const navigate = useNavigate();
 
   const navLinks = [
-    { label: "Search",                  icon: Search,       to: "/tenders"           },
-    { label: "Active Tenders",          icon: FileText,     to: "/tenders"           },
-    { label: "Tenders by Closing Date", icon: Calendar,     to: "/tenders"           },
-    { label: "Corrigendum",             icon: Bell,         to: "/utility/gazette"   },
-    { label: "Bid Awards",              icon: CheckCircle2, to: "/awards"            },
-    { label: "APPOIS Home",             icon: Home,         to: "/"                  },
+    { label: "Search",                  icon: Search,       to: "/portal"          },
+    { label: "Active Tenders",          icon: FileText,     to: "/portal"          },
+    { label: "Tenders by Closing Date", icon: Calendar,     to: "/portal"          },
+    { label: "Corrigendum",             icon: Bell,         to: "/portal"          },
+    { label: "Bid Awards",              icon: CheckCircle2, to: "/portal"          },
+    { label: "APPOIS Home",             icon: Home,         to: "/"                },
   ];
 
   return (
@@ -98,7 +98,7 @@ function Header() {
               className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10 border-r border-white/15">
               <Mail className="w-3.5 h-3.5" /> Contact Us
             </a>
-            <Link to="/organisations"
+            <Link to="/portal"
               className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10">
               <Map className="w-3.5 h-3.5" /> Site Map
             </Link>
@@ -146,7 +146,7 @@ function LoginCard() {
         <Link to="/signin" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
           <KeyRound className="w-4 h-4" /> Generate / Forgot Password?
         </Link>
-        <Link to="/organisations" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
+        <Link to="/portal" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
           <UserSearch className="w-4 h-4" /> Find My Nodal Officer
         </Link>
       </div>
@@ -159,8 +159,8 @@ function SearchCard() {
   const [query, setQuery] = useState("");
 
   const handleSearch = () => {
-    if (query.trim()) navigate(`/tenders?q=${encodeURIComponent(query.trim())}`);
-    else navigate("/tenders");
+    if (query.trim()) navigate(`/portal?q=${encodeURIComponent(query.trim())}`);
+    else navigate("/portal");
   };
 
   return (
@@ -185,7 +185,7 @@ function SearchCard() {
             Go
           </button>
         </div>
-        <Link to="/tenders" className="text-xs text-primary hover:underline mt-2 inline-block">
+        <Link to="/portal" className="text-xs text-primary hover:underline mt-2 inline-block">
           Advanced Search
         </Link>
       </div>
@@ -195,9 +195,9 @@ function SearchCard() {
 
 function HelpCard() {
   const items = [
-    { icon: HelpCircle, label: "Help For Contractors",                  to: "/knowledge-base"  },
-    { icon: BookOpen,   label: "Guidelines for Hassle-Free Bid Submission", to: "/knowledge-base" },
-    { icon: Info,       label: "Information About DSC",                 to: "/utility/gazette" },
+    { icon: HelpCircle, label: "Help For Contractors",                       to: "/portal" },
+    { icon: BookOpen,   label: "Guidelines for Hassle-Free Bid Submission",  to: "/portal" },
+    { icon: Info,       label: "Information About DSC",                      to: "/portal" },
   ];
   return (
     <div className="space-y-2">
@@ -220,34 +220,43 @@ function TenderTable({ title, rows }: { title: string; rows: { t: string; ref: s
         📁 {title}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-fixed">
+          <colgroup>
+            <col className="w-[55%]" />
+            <col className="w-[20%]" />
+            <col className="w-[12.5%]" />
+            <col className="w-[12.5%]" />
+          </colgroup>
           <thead className="bg-primary/5 text-primary text-left">
             <tr>
               <th className="px-3 py-2 font-semibold">Title</th>
               <th className="px-3 py-2 font-semibold">Reference No</th>
-              <th className="px-3 py-2 font-semibold whitespace-nowrap">Closing Date</th>
-              <th className="px-3 py-2 font-semibold whitespace-nowrap">Bid Opening Date</th>
+              <th className="px-3 py-2 font-semibold whitespace-nowrap">Closing</th>
+              <th className="px-3 py-2 font-semibold whitespace-nowrap">Bid Opening</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-primary/10">
-            {rows.map((r, i) => (
-              <tr key={i} className="hover:bg-primary/5 cursor-pointer" onClick={() => navigate("/tenders")}>
-                <td className="px-3 py-2.5 text-foreground">
-                  <span className="text-primary font-medium mr-1">{i + 1}.</span>
-                  <button onClick={e => { e.stopPropagation(); navigate("/tenders"); }}
-                    className="text-primary hover:underline text-left">{r.t}</button>
-                </td>
-                <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.ref}</td>
-                <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.close}</td>
-                <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.open}</td>
-              </tr>
-            ))}
+            {rows.map((r, i) => {
+              const to = `/public/tenders/${encodeURIComponent(r.ref)}`;
+              return (
+                <tr key={i} className="hover:bg-primary/5 cursor-pointer align-top" onClick={() => navigate(to)}>
+                  <td className="px-3 py-2.5 text-foreground">
+                    <span className="text-primary font-medium mr-1">{i + 1}.</span>
+                    <button onClick={e => { e.stopPropagation(); navigate(to); }}
+                      className="text-primary hover:underline text-left">{r.t}</button>
+                  </td>
+                  <td className="px-3 py-2.5 text-foreground/80 truncate">{r.ref}</td>
+                  <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.close}</td>
+                  <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.open}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
       <div className="px-3 py-2 text-xs text-muted-foreground border-t border-primary/10 flex items-center justify-between">
         <span>Updates every 15 mins.</span>
-        <Link to="/tenders" className="text-primary hover:underline flex items-center gap-0.5">
+        <Link to="/portal" className="text-primary hover:underline flex items-center gap-0.5">
           More <ChevronRight className="w-3 h-3" />
         </Link>
       </div>
@@ -278,15 +287,15 @@ function Welcome() {
 /* ───────────────────────── Page ───────────────────────── */
 export default function LandingPage() {
   const railLeft = [
-    { icon: FileText,    label: "MIS Reports",               to: "/analytics"              },
-    { icon: MapPin,      label: "Tenders by Location",       to: "/gis"                    },
-    { icon: Building2,   label: "Tenders by Organisation",   to: "/organisations"          },
-    { icon: Tag,         label: "Tenders by Classification", to: "/tenders"                },
-    { icon: Archive,     label: "Tenders in Archive",        to: "/tenders"                },
-    { icon: ListChecks,  label: "Tenders Status",            to: "/tenders"                },
-    { icon: XCircle,     label: "Cancelled / Retendered",    to: "/tenders"                },
-    { icon: Download,    label: "Downloads",                 to: "/utility/public-records" },
-    { icon: ShieldCheck, label: "Debarment List",            to: "/anti-corruption"        },
+    { icon: FileText,    label: "MIS Reports",               to: "/portal" },
+    { icon: MapPin,      label: "Tenders by Location",       to: "/gis"    },
+    { icon: Building2,   label: "Tenders by Organisation",   to: "/portal" },
+    { icon: Tag,         label: "Tenders by Classification", to: "/portal" },
+    { icon: Archive,     label: "Tenders in Archive",        to: "/portal" },
+    { icon: ListChecks,  label: "Tenders Status",            to: "/portal" },
+    { icon: XCircle,     label: "Cancelled / Retendered",    to: "/portal" },
+    { icon: Download,    label: "Downloads",                 to: "/portal" },
+    { icon: ShieldCheck, label: "Debarment List",            to: "/portal" },
   ];
 
   const latest = [
@@ -367,10 +376,10 @@ export default function LandingPage() {
               <li><Link to="/signin" className="hover:underline">Bidder Login</Link></li>
               <li><Link to="/portal" className="hover:underline">Public Portal</Link></li>
               <li><Link to="/signin" className="hover:underline">Officer Login</Link></li>
-              <li><Link to="/knowledge-base" className="hover:underline">Help &amp; Support</Link></li>
-              <li><Link to="/tenders" className="hover:underline">Active Tenders</Link></li>
-              <li><Link to="/awards" className="hover:underline">Bid Awards</Link></li>
-              <li><Link to="/anti-corruption" className="hover:underline">Debarment List</Link></li>
+              <li><Link to="/portal" className="hover:underline">Help &amp; Support</Link></li>
+              <li><Link to="/portal" className="hover:underline">Active Tenders</Link></li>
+              <li><Link to="/portal" className="hover:underline">Bid Awards</Link></li>
+              <li><Link to="/portal" className="hover:underline">Debarment List</Link></li>
             </ul>
           </div>
           <div>
