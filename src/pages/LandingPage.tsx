@@ -220,34 +220,43 @@ function TenderTable({ title, rows }: { title: string; rows: { t: string; ref: s
         📁 {title}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-fixed">
+          <colgroup>
+            <col className="w-[55%]" />
+            <col className="w-[20%]" />
+            <col className="w-[12.5%]" />
+            <col className="w-[12.5%]" />
+          </colgroup>
           <thead className="bg-primary/5 text-primary text-left">
             <tr>
               <th className="px-3 py-2 font-semibold">Title</th>
               <th className="px-3 py-2 font-semibold">Reference No</th>
-              <th className="px-3 py-2 font-semibold whitespace-nowrap">Closing Date</th>
-              <th className="px-3 py-2 font-semibold whitespace-nowrap">Bid Opening Date</th>
+              <th className="px-3 py-2 font-semibold whitespace-nowrap">Closing</th>
+              <th className="px-3 py-2 font-semibold whitespace-nowrap">Bid Opening</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-primary/10">
-            {rows.map((r, i) => (
-              <tr key={i} className="hover:bg-primary/5 cursor-pointer" onClick={() => navigate("/tenders")}>
-                <td className="px-3 py-2.5 text-foreground">
-                  <span className="text-primary font-medium mr-1">{i + 1}.</span>
-                  <button onClick={e => { e.stopPropagation(); navigate("/tenders"); }}
-                    className="text-primary hover:underline text-left">{r.t}</button>
-                </td>
-                <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.ref}</td>
-                <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.close}</td>
-                <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.open}</td>
-              </tr>
-            ))}
+            {rows.map((r, i) => {
+              const to = `/public/tenders/${encodeURIComponent(r.ref)}`;
+              return (
+                <tr key={i} className="hover:bg-primary/5 cursor-pointer align-top" onClick={() => navigate(to)}>
+                  <td className="px-3 py-2.5 text-foreground">
+                    <span className="text-primary font-medium mr-1">{i + 1}.</span>
+                    <button onClick={e => { e.stopPropagation(); navigate(to); }}
+                      className="text-primary hover:underline text-left">{r.t}</button>
+                  </td>
+                  <td className="px-3 py-2.5 text-foreground/80 truncate">{r.ref}</td>
+                  <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.close}</td>
+                  <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.open}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
       <div className="px-3 py-2 text-xs text-muted-foreground border-t border-primary/10 flex items-center justify-between">
         <span>Updates every 15 mins.</span>
-        <Link to="/tenders" className="text-primary hover:underline flex items-center gap-0.5">
+        <Link to="/portal" className="text-primary hover:underline flex items-center gap-0.5">
           More <ChevronRight className="w-3 h-3" />
         </Link>
       </div>
