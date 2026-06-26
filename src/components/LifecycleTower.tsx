@@ -4,8 +4,8 @@ import {
   FileText, RefreshCcw, Settings, Sparkles, CheckCircle, MessageSquare,
   AlertTriangle, Wallet, Eye, Upload, Download, Lock, DollarSign,
   Users, AlertOctagon, BarChart3, CalendarDays, UserCheck, Landmark,
-  Image, Shield, Scale, ClipboardCheck, Award, Printer, Share2,
-  Mic, Video, Flag, BookOpen,
+  Image, Shield, ClipboardCheck, Award, Printer, Share2,
+  BookOpen,
 } from "lucide-react";
 import { Card, CardHeader, Badge } from "@/components/AppShell";
 import { pushNotification } from "@/lib/local-store";

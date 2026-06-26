@@ -327,6 +327,75 @@ export type StoredBidSubmission = {
   complianceScore: number; createdAt: string; updatedAt: string;
 };
 
+// ── Stage 11 – Contract Award ─────────────────────────────────────────────────
+export type StoredContractAward = {
+  id: string; awardReferenceNumber: string; tenderReference: string;
+  contractNumber: string; winningSupplier: string; contractTitle: string;
+  contractAmount: string; currency: string; awardDate: string;
+  awardStatus: string; workflowProgress: number; ministry: string;
+  complianceScore: number; owner: string; createdAt: string; updatedAt: string;
+};
+
+// ── Stage 12 – Contract Execution ────────────────────────────────────────────
+export type StoredContractExecution = {
+  id: string; contractNumber: string; contractTitle: string;
+  supplierName: string; contractValue: string; currency: string;
+  startDate: string; endDate: string; status: string;
+  overallProgress: number; budgetUtilization: number;
+  riskLevel: string; complianceScore: number;
+  owner: string; createdAt: string; updatedAt: string;
+};
+
+// ── Stage 13 – Contract Closure ───────────────────────────────────────────────
+export type StoredContractClosure = {
+  id: string; contractNumber: string; tenderNumber: string;
+  supplierName: string; projectTitle: string; ministry: string;
+  contractValue: string; finalContractValue: string;
+  completionDate: string; actualCompletionDate: string;
+  contractStatus: string; finalPaymentStatus: string;
+  warrantyStatus: string; retentionReleased: boolean;
+  closureCertificate: boolean; complianceScore: number;
+  workflowProgress: number; closedBy: string;
+  createdAt: string; updatedAt: string;
+};
+
+export type StoredWarrantyClaim = {
+  id: string; warrantyId: string; contractNumber: string;
+  claimTitle: string; description: string; claimDate: string;
+  priority: string; status: string; supplierResponse: string;
+  resolvedDate: string; resolutionNotes: string;
+};
+
+export type StoredAssetHandover = {
+  id: string; handoverNumber: string; contractNumber: string;
+  projectTitle: string; supplierName: string; ministry: string;
+  department: string; handoverDate: string; receivingOfficer: string;
+  receivingDept: string; status: string; handoverCertificate: boolean;
+  assetCount: number; notes: string; createdAt: string;
+};
+
+export type StoredSupplierEvaluation = {
+  id: string; evalNumber: string; contractNumber: string;
+  supplierName: string; supplierId: string; projectTitle: string;
+  ministry: string; evaluationDate: string; evaluatorName: string;
+  overallScore: number; rating: number; grade: string;
+  recommendForFuture: boolean; comments: string; createdAt: string;
+};
+
+export type StoredLessonLearned = {
+  id: string; refNumber: string; contractNumber: string;
+  projectTitle: string; ministry: string; category: string;
+  status: string; projectSummary: string; authorName: string;
+  authorRole: string; submittedDate: string; tags: string[];
+};
+
+export type StoredAuditEntry = {
+  id: string; event: string; user: string; role: string;
+  module: string; previousValue: string; newValue: string;
+  ipAddress: string; deviceInfo: string; browserInfo: string;
+  digitalSignature: string; timestamp: string; risk: string;
+};
+
 type Store = {
   tenders: StoredTender[];
   rfqs: StoredRFQ[];
@@ -353,6 +422,14 @@ type Store = {
   tenderPreps: StoredTenderPrep[];
   advertisements: StoredAdvertisement[];
   bidSubmissions: StoredBidSubmission[];
+  contractAwards: StoredContractAward[];
+  contractExecutions: StoredContractExecution[];
+  contractClosures: StoredContractClosure[];
+  warrantyClaims: StoredWarrantyClaim[];
+  assetHandovers: StoredAssetHandover[];
+  supplierEvaluations: StoredSupplierEvaluation[];
+  lessonsLearned: StoredLessonLearned[];
+  auditEntries: StoredAuditEntry[];
 };
 
 export type AIReport = {
@@ -391,6 +468,9 @@ function load(): Store {
         stockAdjustments: [], stockCounts: [],
         ministries: [], departments: [], stateEntities: [], branches: [], orgUsers: [],
         tenderPreps: [], advertisements: [], bidSubmissions: [],
+        contractAwards: [], contractExecutions: [],
+        contractClosures: [], warrantyClaims: [], assetHandovers: [],
+        supplierEvaluations: [], lessonsLearned: [], auditEntries: [],
         ...parsed
       };
     }
@@ -402,6 +482,9 @@ function load(): Store {
     stockAdjustments: [], stockCounts: [],
     ministries: [], departments: [], stateEntities: [], branches: [], orgUsers: [],
     tenderPreps: [], advertisements: [], bidSubmissions: [],
+    contractAwards: [], contractExecutions: [],
+    contractClosures: [], warrantyClaims: [], assetHandovers: [],
+    supplierEvaluations: [], lessonsLearned: [], auditEntries: [],
   };
 }
 

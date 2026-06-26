@@ -6,6 +6,9 @@ import type {
   StoredInventoryItem, StoredInventoryReceipt, StoredInventoryRequest,
   StoredStockAdjustment, StoredStockCount,
   StoredTenderPrep, StoredAdvertisement, StoredBidSubmission,
+  StoredContractAward, StoredContractExecution,
+  StoredContractClosure, StoredWarrantyClaim, StoredAssetHandover,
+  StoredSupplierEvaluation, StoredLessonLearned, StoredAuditEntry,
 } from "@/lib/local-store";
 
 export function useTenders() {
@@ -126,4 +129,72 @@ export function useStockCounts() {
   const add = (c: StoredStockCount) => { addItem("stockCounts", c); pushNotification(`Stock count created: ${c.id}`, "info"); refresh(); };
   const update = (id: string, patch: Partial<StoredStockCount>) => { updateItem("stockCounts", id, patch); refresh(); };
   return { counts, add, update, refresh };
+}
+
+export function useContractAwards() {
+  const [awards, setAwards] = useState<StoredContractAward[]>(() => getAll("contractAwards"));
+  const refresh = useCallback(() => setAwards(getAll("contractAwards")), []);
+  const add = (a: StoredContractAward) => { addItem("contractAwards", a); pushNotification(`Contract award created: ${a.contractNumber}`, "success"); refresh(); };
+  const update = (id: string, patch: Partial<StoredContractAward>) => { updateItem("contractAwards", id, patch); refresh(); };
+  const remove = (id: string) => { deleteItem("contractAwards", id); refresh(); };
+  return { awards, add, update, remove, refresh };
+}
+
+export function useContractExecutions() {
+  const [executions, setExecutions] = useState<StoredContractExecution[]>(() => getAll("contractExecutions"));
+  const refresh = useCallback(() => setExecutions(getAll("contractExecutions")), []);
+  const add = (e: StoredContractExecution) => { addItem("contractExecutions", e); pushNotification(`Contract execution started: ${e.contractNumber}`, "success"); refresh(); };
+  const update = (id: string, patch: Partial<StoredContractExecution>) => { updateItem("contractExecutions", id, patch); refresh(); };
+  const remove = (id: string) => { deleteItem("contractExecutions", id); refresh(); };
+  return { executions, add, update, remove, refresh };
+}
+
+// ── Stage 13 hooks ────────────────────────────────────────────────────────────
+
+export function useContractClosures() {
+  const [closures, setClosures] = useState<StoredContractClosure[]>(() => getAll("contractClosures"));
+  const refresh = useCallback(() => setClosures(getAll("contractClosures")), []);
+  const add = (c: StoredContractClosure) => { addItem("contractClosures", c); pushNotification(`Contract closure created: ${c.contractNumber}`, "success"); refresh(); };
+  const update = (id: string, patch: Partial<StoredContractClosure>) => { updateItem("contractClosures", id, patch); refresh(); };
+  const remove = (id: string) => { deleteItem("contractClosures", id); refresh(); };
+  return { closures, add, update, remove, refresh };
+}
+
+export function useWarrantyClaims() {
+  const [claims, setClaims] = useState<StoredWarrantyClaim[]>(() => getAll("warrantyClaims"));
+  const refresh = useCallback(() => setClaims(getAll("warrantyClaims")), []);
+  const add = (c: StoredWarrantyClaim) => { addItem("warrantyClaims", c); pushNotification(`Warranty claim submitted: ${c.claimTitle}`, "info"); refresh(); };
+  const update = (id: string, patch: Partial<StoredWarrantyClaim>) => { updateItem("warrantyClaims", id, patch); refresh(); };
+  return { claims, add, update, refresh };
+}
+
+export function useAssetHandovers() {
+  const [handovers, setHandovers] = useState<StoredAssetHandover[]>(() => getAll("assetHandovers"));
+  const refresh = useCallback(() => setHandovers(getAll("assetHandovers")), []);
+  const add = (h: StoredAssetHandover) => { addItem("assetHandovers", h); pushNotification(`Asset handover created: ${h.handoverNumber}`, "success"); refresh(); };
+  const update = (id: string, patch: Partial<StoredAssetHandover>) => { updateItem("assetHandovers", id, patch); refresh(); };
+  return { handovers, add, update, refresh };
+}
+
+export function useSupplierEvaluations() {
+  const [evaluations, setEvaluations] = useState<StoredSupplierEvaluation[]>(() => getAll("supplierEvaluations"));
+  const refresh = useCallback(() => setEvaluations(getAll("supplierEvaluations")), []);
+  const add = (e: StoredSupplierEvaluation) => { addItem("supplierEvaluations", e); pushNotification(`Supplier evaluation added: ${e.supplierName}`, "success"); refresh(); };
+  const update = (id: string, patch: Partial<StoredSupplierEvaluation>) => { updateItem("supplierEvaluations", id, patch); refresh(); };
+  return { evaluations, add, update, refresh };
+}
+
+export function useLessonsLearned() {
+  const [lessons, setLessons] = useState<StoredLessonLearned[]>(() => getAll("lessonsLearned"));
+  const refresh = useCallback(() => setLessons(getAll("lessonsLearned")), []);
+  const add = (l: StoredLessonLearned) => { addItem("lessonsLearned", l); pushNotification(`Lesson learned recorded: ${l.projectTitle}`, "success"); refresh(); };
+  const update = (id: string, patch: Partial<StoredLessonLearned>) => { updateItem("lessonsLearned", id, patch); refresh(); };
+  return { lessons, add, update, refresh };
+}
+
+export function useAuditEntries() {
+  const [entries, setEntries] = useState<StoredAuditEntry[]>(() => getAll("auditEntries"));
+  const refresh = useCallback(() => setEntries(getAll("auditEntries")), []);
+  const add = (e: StoredAuditEntry) => { addItem("auditEntries", e); refresh(); };
+  return { entries, add, refresh };
 }

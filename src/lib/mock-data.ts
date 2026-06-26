@@ -341,6 +341,14 @@ export const navSections = [
       { to: "/procurement/tender-preparation", label: "Tender Preparation", icon: "FileText"    },
       { to: "/procurement/advertisement",label: "Advertisement",           icon: "Newspaper"     },
       { to: "/procurement/bid-submission",label: "Bid Submission",         icon: "Send"          },
+      { to: "/procurement/contract-award",         label: "Contract Award",         icon: "Trophy"        },
+      { to: "/procurement/contract-execution",      label: "Contract Execution",     icon: "FileSignature" },
+      { to: "/procurement/contract-closure",        label: "Contract Closure",       icon: "CheckCircle"   },
+      { to: "/procurement/final-acceptance",        label: "Final Acceptance",       icon: "CheckCircle"   },
+      { to: "/procurement/warranty-management",     label: "Warranty Management",    icon: "ShieldCheck"   },
+      { to: "/procurement/asset-handover",          label: "Asset Handover",         icon: "Package"       },
+      { to: "/procurement/supplier-evaluation",     label: "Supplier Evaluation",    icon: "Star"          },
+      { to: "/procurement/financial-reconciliation",label: "Financial Reconciliation",icon: "DollarSign"   },
       { to: "/lifecycle",                label: "Lifecycle Tower",        icon: "BarChart3"     },
       { to: "/tenders-lifecycle",        label: "Tender Management",      icon: "FileText"      },
       { to: "/rfq",                      label: "RFQ Management",         icon: "ShoppingCart"  },
@@ -452,6 +460,32 @@ export const navSections = [
       { to: "/projects/ai-tower",  label: "PM AI Tower",         icon: "Sparkles"  },
       { to: "/budget/ai-agents",   label: "Budget AI",           icon: "Sparkles"  },
       { to: "/inventory/ai-agents",label: "Inventory AI",        icon: "Sparkles"  },
+    ],
+  },
+  {
+    label: "Knowledge & Learning",
+    icon: "BookOpen",
+    items: [
+      { to: "/lessons-learned",  label: "Lessons Learned",      icon: "BookOpen"  },
+      { to: "/knowledge-base",   label: "Knowledge Base",       icon: "BookOpen"  },
+    ],
+  },
+  {
+    label: "Executive & Reports",
+    icon: "BarChart3",
+    items: [
+      { to: "/executive-dashboard", label: "Executive Dashboard", icon: "LayoutDashboard" },
+      { to: "/reports",             label: "Reports & BI",        icon: "BarChart3"       },
+      { to: "/notifications",       label: "Notifications Center",icon: "Bell"            },
+    ],
+  },
+  {
+    label: "Administration",
+    icon: "Settings",
+    items: [
+      { to: "/system-admin",    label: "System Administration", icon: "Settings"  },
+      { to: "/roles",           label: "Roles & Permissions",   icon: "UsersRound"},
+      { to: "/organisations",   label: "Organisation Registry", icon: "Building2" },
     ],
   },
 ];

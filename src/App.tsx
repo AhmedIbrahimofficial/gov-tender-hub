@@ -69,6 +69,23 @@ import ProcurementStrategyPage from "./pages/ProcurementStrategyPage";
 import TenderPreparationPage from "./pages/TenderPreparationPage";
 import AdvertisementPage from "./pages/AdvertisementPage";
 import BidSubmissionPage from "./pages/BidSubmissionPage";
+import ContractAwardWorkbenchPage from "./pages/ContractAwardWorkbenchPage";
+import ContractExecutionWorkbenchPage from "./pages/ContractExecutionWorkbenchPage";
+import ContractClosureWorkbenchPage from "./pages/ContractClosureWorkbenchPage";
+import CompletionVerificationPage from "./pages/CompletionVerificationPage";
+import AIAnalyticsEnginePage from "./pages/AIAnalyticsEnginePage";
+import GlobalSearchPage from "./pages/GlobalSearchPage";
+import WarrantyManagementPage from "./pages/WarrantyManagementPage";
+import AssetHandoverPage from "./pages/AssetHandoverPage";
+import SupplierEvaluationPage from "./pages/SupplierEvaluationPage";
+import LessonsLearnedPage from "./pages/LessonsLearnedPage";
+import KnowledgeBasePage from "./pages/KnowledgeBasePage";
+import ExecutiveDashboardPage from "./pages/ExecutiveDashboardPage";
+import ReportsPage from "./pages/ReportsPage";
+import SystemAdminPage from "./pages/SystemAdminPage";
+import NotificationsCenterPage from "./pages/NotificationsCenterPage";
+import FinancialReconciliationPage from "./pages/FinancialReconciliationPage";
+import FinalAcceptancePage from "./pages/FinalAcceptancePage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -107,6 +124,29 @@ function AppRoutes() {
       <Route path="/procurement/tender-preparation" element={<ProtectedRoute><TenderPreparationPage /></ProtectedRoute>} />
       <Route path="/procurement/advertisement" element={<ProtectedRoute><AdvertisementPage /></ProtectedRoute>} />
       <Route path="/procurement/bid-submission" element={<ProtectedRoute><BidSubmissionPage /></ProtectedRoute>} />
+
+      {/* Procurement Stages 11–12 */}
+      <Route path="/procurement/contract-award" element={<ProtectedRoute><ContractAwardWorkbenchPage /></ProtectedRoute>} />
+      <Route path="/procurement/contract-execution" element={<ProtectedRoute><ContractExecutionWorkbenchPage /></ProtectedRoute>} />
+
+      {/* Stage 13 — Contract Closure & Post-Contract Modules */}
+      <Route path="/procurement/contract-closure" element={<ProtectedRoute><ContractClosureWorkbenchPage /></ProtectedRoute>} />
+      <Route path="/procurement/completion-verification" element={<ProtectedRoute><CompletionVerificationPage /></ProtectedRoute>} />
+      <Route path="/procurement/warranty-management" element={<ProtectedRoute><WarrantyManagementPage /></ProtectedRoute>} />
+      <Route path="/procurement/asset-handover" element={<ProtectedRoute><AssetHandoverPage /></ProtectedRoute>} />
+      <Route path="/procurement/supplier-evaluation" element={<ProtectedRoute><SupplierEvaluationPage /></ProtectedRoute>} />
+      <Route path="/procurement/final-acceptance" element={<ProtectedRoute><FinalAcceptancePage /></ProtectedRoute>} />
+      <Route path="/procurement/financial-reconciliation" element={<ProtectedRoute><FinancialReconciliationPage /></ProtectedRoute>} />
+      <Route path="/lessons-learned" element={<ProtectedRoute><LessonsLearnedPage /></ProtectedRoute>} />
+      <Route path="/knowledge-base" element={<ProtectedRoute><KnowledgeBasePage /></ProtectedRoute>} />
+      <Route path="/executive-dashboard" element={<ProtectedRoute><ExecutiveDashboardPage /></ProtectedRoute>} />
+      <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
+      <Route path="/system-admin" element={<ProtectedRoute><SystemAdminPage /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><NotificationsCenterPage /></ProtectedRoute>} />
+
+      {/* AI Analytics Engine & Global Search */}
+      <Route path="/ai-analytics" element={<ProtectedRoute><AIAnalyticsEnginePage /></ProtectedRoute>} />
+      <Route path="/search" element={<ProtectedRoute><GlobalSearchPage /></ProtectedRoute>} />
 
       {/* Procurement Lifecycle Control Tower */}
       <Route path="/lifecycle" element={<ProtectedRoute><ProcurementLifecyclePage /></ProtectedRoute>} />

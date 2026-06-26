@@ -280,7 +280,7 @@ const FULL_ACCESS_ROLES = new Set<string>(["minister", "system_admin", "cpo", "p
 
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
-  procurement_officer: ["/dashboard", "/teams", "/workbench", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission"],
+  procurement_officer: ["/dashboard", "/teams", "/workbench", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission", "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure", "/procurement/final-acceptance", "/procurement/warranty-management", "/procurement/supplier-evaluation", "/knowledge-base", "/notifications"],
 
   // Evaluator — only evaluation-related pages
   evaluator: ["/dashboard", "/teams", "/workbench", "/tenders", "/evaluations", "/awards", "/certificates", "/procurement/bid-submission"],
@@ -292,15 +292,15 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   auditor: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/bi-dashboards", "/utility/public-records", "/budget", "/budget/fraud", "/budget/execution"],
 
   // Contract manager / officer
-  contract_manager:  ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance", "/certificates", "/utility/catalogue", "/utility/communications"],
-  contract_officer:  ["/dashboard", "/teams", "/contracts", "/vendors", "/certificates"],
+  contract_manager:  ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance", "/certificates", "/utility/catalogue", "/utility/communications", "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure", "/procurement/final-acceptance", "/procurement/warranty-management", "/procurement/asset-handover", "/procurement/supplier-evaluation", "/procurement/financial-reconciliation", "/lessons-learned", "/knowledge-base"],
+  contract_officer:  ["/dashboard", "/teams", "/contracts", "/vendors", "/certificates", "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure", "/procurement/final-acceptance", "/knowledge-base"],
 
   // Budget / treasury officer
   budget_officer:    ["/dashboard", "/teams", "/budget", "/budget/centres", "/budget/formulation", "/budget/execution", "/budget/commitments", "/budget/expenditure", "/budget/revenue", "/budget/treasury", "/budget/fraud", "/budget/ai-agents", "/finance", "/analytics", "/utility/catalogue"],
   treasury_officer:  ["/dashboard", "/teams", "/budget", "/budget/treasury", "/budget/revenue", "/budget/execution", "/finance"],
 
   // Planning officer
-  planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement"],
+  planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/contract-award"],
 
   // Compliance officer
   compliance_officer:["/dashboard", "/teams", "/audit", "/anti-corruption", "/governance", "/utility/public-records", "/utility/announcements", "/corporate", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission"],
@@ -312,7 +312,7 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   stores_officer:    ["/dashboard", "/teams", "/inventory", "/inventory/items", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/inventory/stock-count", "/inventory/reconciliation", "/inventory/ai-agents", "/contracts", "/utility/catalogue"],
 
   // Project manager
-  project_manager:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/contracts", "/performance", "/vendors", "/utility/catalogue"],
+  project_manager:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/contracts", "/performance", "/vendors", "/utility/catalogue", "/procurement/contract-execution"],
 
   // Anti-corruption / ethics
   anti_corruption_officer: ["/dashboard", "/teams", "/anti-corruption", "/audit", "/vendors"],
@@ -322,8 +322,8 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics", "/corporate"],
 
   // IT officer / system admin — full access
-  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity"],
-  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity"],
+  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity", "/system-admin", "/notifications", "/reports", "/executive-dashboard", "/knowledge-base"],
+  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity", "/system-admin", "/notifications", "/reports", "/executive-dashboard", "/knowledge-base", "/lessons-learned"],
 
   // Risk officer
   risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
@@ -387,17 +387,16 @@ function LogoIcon({ className = "" }: { className?: string }) {
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, BarChart3, Sparkles, ClipboardList, FileText, Trophy,
-  Building2, FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
-  Landmark, UsersRound, Globe2, ScaleIcon: Scale, ShoppingCart, Gavel,
+  FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
+  Landmark, UsersRound, Globe2, Scale, ShoppingCart, Gavel,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   BookOpen, MessageSquare, Newspaper, Megaphone, Radio, DollarSign,
   Send,
   // Corporate Module icons
-  Crown, Target, Headphones, Monitor, Users, Settings, Scale,
-  OfficeBuildingIcon: Building2,
-  Globe, Image,
+  Crown, Target, Headphones, Monitor, Users, Settings,
+  Globe, Image, Building2,
   // Extra icons for grouped nav section headers
-  Briefcase, CheckCircle, Bell: Bell, Star,
+  Briefcase, CheckCircle, Bell, Star,
 };
 
 export function AppShell({ children }: { children: ReactNode }) {

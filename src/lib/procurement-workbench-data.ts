@@ -916,3 +916,404 @@ export const BID_WORKFLOW_STAGES: BidStatus[] = [
   "Draft", "Validation", "Digital Signature", "Encrypted Submission",
   "Submission Confirmation", "Receipt Generated",
 ];
+
+// ─── Stage 11: Contract Award ─────────────────────────────────────────────────
+export type AwardStatus =
+  | "Draft" | "Under Review" | "Pending Approval" | "Approved" | "Award Issued"
+  | "Standstill" | "Contract Signed" | "Rejected";
+
+export type AwardWorkflowStage =
+  | "Draft" | "Legal Review" | "Finance Review" | "CPO Approval"
+  | "Minister Approval" | "Award Issued" | "Signed";
+
+export type AwardDocument = {
+  id: string;
+  name: string;
+  type: "Award Letter" | "Notice of Award" | "Regret Letter" | "Public Award Notice"
+      | "Contract Summary" | "Contract Document" | "Supporting";
+  version: string;
+  generatedAt: string;
+  generatedBy: string;
+  isSigned: boolean;
+  signedAt: string;
+  signedBy: string;
+  status: "Draft" | "Finalised" | "Signed" | "Sent";
+};
+
+export type AwardCondition = {
+  id: string;
+  condition: string;
+  responsible: string;
+  dueDate: string;
+  status: "Pending" | "Met" | "Waived";
+};
+
+export type ContractClause = {
+  id: string;
+  clauseNumber: string;
+  title: string;
+  category: "General" | "Special" | "Financial" | "Performance" | "Dispute";
+  content: string;
+  isStandard: boolean;
+};
+
+export type ContractAward = {
+  id: string;
+  awardReferenceNumber: string;
+  tenderReference: string;
+  contractNumber: string;
+  winningSupplier: string;
+  supplierEmail: string;
+  supplierPhone: string;
+  contractTitle: string;
+  contractAmount: string;
+  currency: string;
+  awardDate: string;
+  awardApprovalDate: string;
+  effectiveDate: string;
+  contractDurationMonths: number;
+  startDate: string;
+  endDate: string;
+  awardStatus: AwardStatus;
+  workflowStage: AwardWorkflowStage;
+  workflowProgress: number;
+  awardJustification: string;
+  awardConditions: AwardCondition[];
+  documents: AwardDocument[];
+  digitalSignatureRef: string;
+  version: string;
+  approvedBy: string;
+  approvedAt: string;
+  ministry: string;
+  department: string;
+  procurementMethod: ProcurementMethod;
+  complianceScore: number;
+  aiRecommendations: string[];
+  contractClauses: ContractClause[];
+  owner: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const AWARD_WORKFLOW_STAGES: AwardWorkflowStage[] = [
+  "Draft", "Legal Review", "Finance Review", "CPO Approval", "Minister Approval", "Award Issued", "Signed",
+];
+
+// ─── Stage 12: Contract Execution ────────────────────────────────────────────
+export type ExecutionStatus =
+  | "Mobilisation" | "In Progress" | "On Track" | "At Risk" | "Delayed"
+  | "Suspended" | "Completed" | "Terminated";
+
+export type MilestoneStatus = "Pending" | "On Track" | "At Risk" | "Delayed" | "Completed";
+
+export type ContractMilestone = {
+  id: string;
+  milestoneName: string;
+  plannedDate: string;
+  actualDate: string;
+  completionPercent: number;
+  responsibleOfficer: string;
+  supportingDocuments: string[];
+  status: MilestoneStatus;
+  comments: string;
+};
+
+export type ContractDeliverable = {
+  id: string;
+  deliverableName: string;
+  dueDate: string;
+  submissionDate: string;
+  reviewStatus: "Pending" | "Under Review" | "Reviewed" | "Rejected";
+  approvalStatus: "Pending" | "Approved" | "Rejected";
+  qualityStatus: "Pending" | "Passed" | "Failed";
+  acceptanceStatus: "Pending" | "Accepted" | "Rejected";
+  documents: string[];
+};
+
+export type PaymentCertificate = {
+  id: string;
+  certificateNumber: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  paymentRequest: string;
+  approvedAmount: string;
+  tax: string;
+  retention: string;
+  deductions: string;
+  netPayment: string;
+  status: "Pending" | "Verified" | "Approved" | "Paid" | "Rejected";
+  paymentDate: string;
+  financeApprovalRef: string;
+  isFinal: boolean;
+  paymentMethod: string;
+};
+
+export type ContractVariation = {
+  id: string;
+  variationNumber: string;
+  variationType: "Scope Change" | "Budget Change" | "Time Extension" | "Additional Deliverables";
+  description: string;
+  originalContractValue: string;
+  revisedContractValue: string;
+  originalCompletionDate: string;
+  revisedCompletionDate: string;
+  justification: string;
+  supportingDocuments: string[];
+  status: "Draft" | "Under Review" | "Approved" | "Rejected";
+  approvedBy: string;
+  approvedAt: string;
+  requestedBy: string;
+  requestedAt: string;
+  version: number;
+};
+
+export type ContractRisk = {
+  id: string;
+  riskCategory: string;
+  riskDescription: string;
+  probability: "Low" | "Medium" | "High";
+  impact: "Low" | "Medium" | "High";
+  riskScore: number;
+  mitigationPlan: string;
+  responsibleOfficer: string;
+  monitoringStatus: "Open" | "Mitigating" | "Escalated" | "Closed";
+  dateLogged: string;
+};
+
+export type SupplierPerformanceScore = {
+  quality: number;
+  costControl: number;
+  deliveryPerformance: number;
+  responsiveness: number;
+  compliance: number;
+  communication: number;
+  innovation: number;
+  overallRating: number;
+  evaluatedBy: string;
+  evaluatedAt: string;
+  comments: string;
+};
+
+export type CommunicationLog = {
+  id: string;
+  type: "Internal" | "Supplier" | "Email" | "Meeting Notes" | "Clarification";
+  subject: string;
+  from: string;
+  to: string;
+  content: string;
+  timestamp: string;
+  attachments: string[];
+};
+
+export type ContractExecution = {
+  id: string;
+  contractNumber: string;
+  contractTitle: string;
+  supplierName: string;
+  supplierEmail: string;
+  supplierPhone: string;
+  contractValue: string;
+  currency: string;
+  startDate: string;
+  endDate: string;
+  contractDurationMonths: number;
+  status: ExecutionStatus;
+  overallProgress: number;
+  budgetUtilization: number;
+  ministry: string;
+  department: string;
+  projectManager: string;
+  contractManager: string;
+  linkedAwardId: string;
+  milestones: ContractMilestone[];
+  deliverables: ContractDeliverable[];
+  payments: PaymentCertificate[];
+  variations: ContractVariation[];
+  risks: ContractRisk[];
+  performanceScore: SupplierPerformanceScore | null;
+  communications: CommunicationLog[];
+  complianceScore: number;
+  aiRecommendations: string[];
+  riskLevel: "Low" | "Medium" | "High" | "Critical";
+  owner: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// ─── Seed Data: Contract Awards ───────────────────────────────────────────────
+export const SEED_CONTRACT_AWARDS: ContractAward[] = [
+  {
+    id: "award-001",
+    awardReferenceNumber: "AWD-2026-0041",
+    tenderReference: "ZW-PRA-2026-00186",
+    contractNumber: "CN-2026-0441",
+    winningSupplier: "Sable ICT Solutions",
+    supplierEmail: "contracts@sableict.co.zw",
+    supplierPhone: "+263-4-776120",
+    contractTitle: "ICT Equipment — Secondary Schools Digital Programme",
+    contractAmount: "1,184,400",
+    currency: "USD",
+    awardDate: "2026-10-05",
+    awardApprovalDate: "2026-10-03",
+    effectiveDate: "2026-10-15",
+    contractDurationMonths: 6,
+    startDate: "2026-10-15",
+    endDate: "2027-04-15",
+    awardStatus: "Contract Signed",
+    workflowStage: "Signed",
+    workflowProgress: 100,
+    awardJustification: "Sable ICT Solutions achieved the highest combined technical and financial score of 87.4/100. Their proposal offered superior technical specifications, lower life-cycle costs, and a comprehensive 3-year support plan.",
+    ministry: "Ministry of Education",
+    department: "ICT Services",
+    procurementMethod: "Request for Proposals",
+    complianceScore: 98,
+    aiRecommendations: [
+      "Contract value within approved budget — no variance approval required",
+      "Performance bond should be lodged within 14 days of signing",
+      "Advance payment not recommended given supplier's strong financial position",
+      "Include milestone-based payment schedule to manage delivery risk",
+    ],
+    awardConditions: [
+      { id: "ac-001", condition: "Performance Bond: 10% of contract value (USD 118,440) within 14 days", responsible: "Sable ICT Solutions", dueDate: "2026-10-29", status: "Met" },
+      { id: "ac-002", condition: "Insurance Certificate (All-Risks) submitted", responsible: "Sable ICT Solutions", dueDate: "2026-10-15", status: "Met" },
+      { id: "ac-003", condition: "Detailed Implementation Plan approved by MoE", responsible: "Project Manager", dueDate: "2026-10-22", status: "Met" },
+    ],
+    documents: [
+      { id: "adoc-001", name: "Award Letter — Sable ICT Solutions.pdf", type: "Award Letter", version: "v1.0", generatedAt: "2026-10-05", generatedBy: "System", isSigned: true, signedAt: "2026-10-05", signedBy: "T. Moyo (CPO)", status: "Sent" },
+      { id: "adoc-002", name: "Notice of Award — ZW-PRA-2026-00186.pdf", type: "Notice of Award", version: "v1.0", generatedAt: "2026-10-05", generatedBy: "System", isSigned: true, signedAt: "2026-10-05", signedBy: "T. Moyo (CPO)", status: "Sent" },
+      { id: "adoc-003", name: "Regret Letter — Dell Technologies.pdf", type: "Regret Letter", version: "v1.0", generatedAt: "2026-10-05", generatedBy: "System", isSigned: true, signedAt: "2026-10-06", signedBy: "T. Moyo (CPO)", status: "Sent" },
+      { id: "adoc-004", name: "Public Award Notice.pdf", type: "Public Award Notice", version: "v1.0", generatedAt: "2026-10-07", generatedBy: "System", isSigned: true, signedAt: "2026-10-07", signedBy: "T. Moyo (CPO)", status: "Sent" },
+      { id: "adoc-005", name: "CN-2026-0441 Contract Document.pdf", type: "Contract Document", version: "v2.0", generatedAt: "2026-10-12", generatedBy: "System", isSigned: true, signedAt: "2026-10-14", signedBy: "R. Chikwanda / CEO Sable ICT", status: "Finalised" },
+    ],
+    digitalSignatureRef: "DSIG-AWARD-2026-0441",
+    version: "v2.0",
+    approvedBy: "Minister of Education",
+    approvedAt: "2026-10-03",
+    contractClauses: [
+      { id: "cc-001", clauseNumber: "1.1", title: "Scope of Work", category: "General", content: "The Supplier shall supply, deliver, install, configure and commission 1,200 student laptops, 48 managed network switches, and 240 wireless access points at 40 designated secondary schools.", isStandard: true },
+      { id: "cc-002", clauseNumber: "2.1", title: "Payment Terms", category: "Financial", content: "Payment shall be made in three tranches: 30% on delivery to central warehouse, 50% on installation completion at all 40 schools, 20% upon final acceptance.", isStandard: false },
+      { id: "cc-003", clauseNumber: "3.1", title: "Performance Security", category: "Performance", content: "The Supplier shall provide a performance bond equal to 10% of the contract value within 14 days of contract signing.", isStandard: true },
+      { id: "cc-004", clauseNumber: "4.1", title: "Penalty Clauses", category: "Performance", content: "For each day of delay beyond the agreed delivery schedule, a penalty of 0.1% of the undelivered portion's value shall be deducted, up to a maximum of 10%.", isStandard: true },
+      { id: "cc-005", clauseNumber: "5.1", title: "Dispute Resolution", category: "Dispute", content: "Any dispute shall first be referred to the Contract Manager. If unresolved within 30 days, the matter proceeds to arbitration under the Zimbabwe Arbitration Act.", isStandard: true },
+    ],
+    owner: "T. Moyo",
+    createdAt: "2026-10-01",
+    updatedAt: "2026-10-14",
+  },
+  {
+    id: "award-002",
+    awardReferenceNumber: "AWD-2026-0040",
+    tenderReference: "ZW-PRA-2026-00185",
+    contractNumber: "CN-2026-0440",
+    winningSupplier: "Zimbabwe Pharma Holdings",
+    supplierEmail: "contracts@zph.co.zw",
+    supplierPhone: "+263-4-776000",
+    contractTitle: "Supply of Essential Medicines — ARV Framework 2026/27",
+    contractAmount: "8,200,000",
+    currency: "USD",
+    awardDate: "2026-11-01",
+    awardApprovalDate: "2026-10-29",
+    effectiveDate: "2026-11-15",
+    contractDurationMonths: 24,
+    startDate: "2026-11-15",
+    endDate: "2028-11-15",
+    awardStatus: "Award Issued",
+    workflowStage: "Award Issued",
+    workflowProgress: 85,
+    awardJustification: "Zimbabwe Pharma Holdings submitted the most technically compliant and financially competitive bid, scoring 90.4/100. All medicines offered are WHO prequalified with proven cold chain capacity.",
+    ministry: "Ministry of Health & Child Care",
+    department: "Pharmacy & Medicines Control",
+    procurementMethod: "Open Tender",
+    complianceScore: 95,
+    aiRecommendations: [
+      "Recommend call-off order mechanism for framework — avoids large single orders",
+      "Performance bond lodgement deadline is 2026-11-29",
+      "Cold chain compliance audit recommended within first 30 days",
+    ],
+    awardConditions: [
+      { id: "ac-004", condition: "Performance Bond: 5% of contract value (USD 410,000)", responsible: "Zimbabwe Pharma Holdings", dueDate: "2026-11-29", status: "Pending" },
+      { id: "ac-005", condition: "Cold Chain Facility Inspection by MCAZ", responsible: "Project Manager", dueDate: "2026-12-15", status: "Pending" },
+    ],
+    documents: [
+      { id: "adoc-006", name: "Award Letter — ZPH.pdf", type: "Award Letter", version: "v1.0", generatedAt: "2026-11-01", generatedBy: "System", isSigned: true, signedAt: "2026-11-01", signedBy: "T. Moyo (CPO)", status: "Sent" },
+      { id: "adoc-007", name: "Notice of Award — ARV Framework.pdf", type: "Notice of Award", version: "v1.0", generatedAt: "2026-11-01", generatedBy: "System", isSigned: false, signedAt: "", signedBy: "", status: "Draft" },
+    ],
+    digitalSignatureRef: "",
+    version: "v1.0",
+    approvedBy: "Permanent Secretary — MoHCC",
+    approvedAt: "2026-10-29",
+    contractClauses: [],
+    owner: "Dr. P. Dube",
+    createdAt: "2026-10-25",
+    updatedAt: "2026-11-01",
+  },
+];
+
+// ─── Seed Data: Contract Executions ──────────────────────────────────────────
+export const SEED_CONTRACT_EXECUTIONS: ContractExecution[] = [
+  {
+    id: "exec-001",
+    contractNumber: "CN-2026-0441",
+    contractTitle: "ICT Equipment — Secondary Schools Digital Programme",
+    supplierName: "Sable ICT Solutions",
+    supplierEmail: "contracts@sableict.co.zw",
+    supplierPhone: "+263-4-776120",
+    contractValue: "1,184,400",
+    currency: "USD",
+    startDate: "2026-10-15",
+    endDate: "2027-04-15",
+    contractDurationMonths: 6,
+    status: "In Progress",
+    overallProgress: 52,
+    budgetUtilization: 48,
+    ministry: "Ministry of Education",
+    department: "ICT Services",
+    projectManager: "R. Chikwanda",
+    contractManager: "T. Moyo",
+    linkedAwardId: "award-001",
+    riskLevel: "Low",
+    complianceScore: 94,
+    aiRecommendations: [
+      "Progress is on schedule — all key milestones met",
+      "Retention release of 5% due at final acceptance",
+      "Recommend site visits to 5 schools to verify installation quality",
+      "3-year support commencement date should be confirmed in writing",
+    ],
+    milestones: [
+      { id: "ms-001", milestoneName: "Contract Commencement / Mobilisation", plannedDate: "2026-10-15", actualDate: "2026-10-15", completionPercent: 100, responsibleOfficer: "R. Chikwanda", supportingDocuments: ["Commencement Notice.pdf"], status: "Completed", comments: "Supplier mobilised on time" },
+      { id: "ms-002", milestoneName: "Delivery to Central Warehouse (All Equipment)", plannedDate: "2026-11-30", actualDate: "2026-11-28", completionPercent: 100, responsibleOfficer: "R. Chikwanda", supportingDocuments: ["GRN-001.pdf", "Delivery Note.pdf"], status: "Completed", comments: "All 1,488 units delivered — verified against BOQ" },
+      { id: "ms-003", milestoneName: "Installation Complete — Harare Schools (10)", plannedDate: "2026-12-31", actualDate: "2026-12-30", completionPercent: 100, responsibleOfficer: "R. Chikwanda", supportingDocuments: ["Installation Certificate Batch 1.pdf"], status: "Completed", comments: "10 Harare schools commissioned" },
+      { id: "ms-004", milestoneName: "Installation Complete — Bulawayo & Midlands (15)", plannedDate: "2027-01-31", actualDate: "", completionPercent: 65, responsibleOfficer: "R. Chikwanda", supportingDocuments: [], status: "On Track", comments: "10 of 15 schools complete" },
+      { id: "ms-005", milestoneName: "Installation Complete — Remaining Provinces (15)", plannedDate: "2027-02-28", actualDate: "", completionPercent: 0, responsibleOfficer: "R. Chikwanda", supportingDocuments: [], status: "Pending", comments: "" },
+      { id: "ms-006", milestoneName: "Teacher Training — All 40 Schools", plannedDate: "2027-03-31", actualDate: "", completionPercent: 25, responsibleOfficer: "R. Chikwanda", supportingDocuments: [], status: "On Track", comments: "Training commenced for Harare batch" },
+      { id: "ms-007", milestoneName: "Final Acceptance & Handover", plannedDate: "2027-04-15", actualDate: "", completionPercent: 0, responsibleOfficer: "T. Moyo", supportingDocuments: [], status: "Pending", comments: "" },
+    ],
+    deliverables: [
+      { id: "del-001", deliverableName: "1,200 Student Laptops", dueDate: "2026-11-30", submissionDate: "2026-11-28", reviewStatus: "Reviewed", approvalStatus: "Approved", qualityStatus: "Passed", acceptanceStatus: "Accepted", documents: ["GRN-001.pdf"] },
+      { id: "del-002", deliverableName: "48 Managed Network Switches", dueDate: "2026-11-30", submissionDate: "2026-11-28", reviewStatus: "Reviewed", approvalStatus: "Approved", qualityStatus: "Passed", acceptanceStatus: "Accepted", documents: ["GRN-001.pdf"] },
+      { id: "del-003", deliverableName: "240 Wireless Access Points", dueDate: "2026-11-30", submissionDate: "2026-11-28", reviewStatus: "Reviewed", approvalStatus: "Approved", qualityStatus: "Passed", acceptanceStatus: "Accepted", documents: ["GRN-001.pdf"] },
+      { id: "del-004", deliverableName: "Installation & Configuration — 40 Schools", dueDate: "2027-02-28", submissionDate: "", reviewStatus: "Pending", approvalStatus: "Pending", qualityStatus: "Pending", acceptanceStatus: "Pending", documents: [] },
+      { id: "del-005", deliverableName: "Teacher Training Programme", dueDate: "2027-03-31", submissionDate: "", reviewStatus: "Pending", approvalStatus: "Pending", qualityStatus: "Pending", acceptanceStatus: "Pending", documents: [] },
+    ],
+    payments: [
+      { id: "pay-001", certificateNumber: "PC-001", invoiceNumber: "INV-SABLE-2026-001", invoiceDate: "2026-12-01", paymentRequest: "355,320", approvedAmount: "355,320", tax: "0", retention: "17,766", deductions: "0", netPayment: "337,554", status: "Paid", paymentDate: "2026-12-15", financeApprovalRef: "FA-2026-1201", isFinal: false, paymentMethod: "EFT" },
+      { id: "pay-002", certificateNumber: "PC-002", invoiceNumber: "INV-SABLE-2027-001", invoiceDate: "2027-01-15", paymentRequest: "592,200", approvedAmount: "592,200", tax: "0", retention: "29,610", deductions: "0", netPayment: "562,590", status: "Approved", paymentDate: "", financeApprovalRef: "FA-2027-0115", isFinal: false, paymentMethod: "EFT" },
+    ],
+    variations: [],
+    risks: [
+      { id: "rsk-001", riskCategory: "Technical", riskDescription: "Connectivity issues at rural school sites may delay network configuration", probability: "Medium", impact: "Low", riskScore: 4, mitigationPlan: "Offline configuration mode enabled; site visits scheduled", responsibleOfficer: "R. Chikwanda", monitoringStatus: "Open", dateLogged: "2026-11-20" },
+    ],
+    performanceScore: {
+      quality: 4.7, costControl: 4.5, deliveryPerformance: 4.8, responsiveness: 4.6,
+      compliance: 4.9, communication: 4.7, innovation: 4.2, overallRating: 4.63,
+      evaluatedBy: "R. Chikwanda", evaluatedAt: "2026-12-31", comments: "Excellent delivery performance. Responsive to queries."
+    },
+    communications: [
+      { id: "comm-001", type: "Internal", subject: "Delivery Inspection Report", from: "R. Chikwanda", to: "T. Moyo", content: "All equipment inspected and verified against delivery note. No defects found. Recommend 30% payment.", timestamp: "2026-11-28 16:00", attachments: ["Inspection Report.pdf"] },
+      { id: "comm-002", type: "Supplier", subject: "Installation Schedule — Batch 2", from: "Sable ICT Solutions", to: "R. Chikwanda", content: "We confirm installation will commence at Bulawayo schools on 2027-01-08 as scheduled.", timestamp: "2026-12-20 09:30", attachments: [] },
+    ],
+    owner: "T. Moyo",
+    createdAt: "2026-10-15",
+    updatedAt: "2027-01-15",
+  },
+];
