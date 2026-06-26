@@ -195,9 +195,9 @@ function SearchCard() {
 
 function HelpCard() {
   const items = [
-    { icon: HelpCircle, label: "Help For Contractors",                  to: "/knowledge-base"  },
-    { icon: BookOpen,   label: "Guidelines for Hassle-Free Bid Submission", to: "/knowledge-base" },
-    { icon: Info,       label: "Information About DSC",                 to: "/utility/gazette" },
+    { icon: HelpCircle, label: "Help For Contractors",                       to: "/portal" },
+    { icon: BookOpen,   label: "Guidelines for Hassle-Free Bid Submission",  to: "/portal" },
+    { icon: Info,       label: "Information About DSC",                      to: "/portal" },
   ];
   return (
     <div className="space-y-2">
