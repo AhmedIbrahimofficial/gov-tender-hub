@@ -24,55 +24,47 @@ function GovHierarchyPanel() {
 
   return (
     <div className="space-y-0.5">
-      {/* President node */}
-      <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-amber-500/15 border border-amber-500/20 mb-0.5">
-        <span className="h-5 w-5 rounded-md bg-amber-500 grid place-items-center flex-shrink-0">
-          <Crown className="h-2.5 w-2.5 text-white" />
+      {/* President node — only Head of State shown at top */}
+      <div className="flex items-center gap-2 px-2 py-2.5 rounded-lg bg-amber-500/15 border border-amber-500/20 mb-2">
+        <span className="h-6 w-6 rounded-md bg-amber-500 grid place-items-center flex-shrink-0">
+          <Crown className="h-3 w-3 text-white" />
         </span>
-        <span className="text-[11px] font-semibold text-amber-300">President</span>
-        <span className="ml-auto text-[9px] text-amber-400/60">Head of State</span>
-      </div>
-      {/* Prime Minister node */}
-      <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/15 mb-2">
-        <span className="h-5 w-5 rounded-md bg-amber-400/80 grid place-items-center flex-shrink-0">
-          <Crown className="h-2.5 w-2.5 text-white" />
-        </span>
-        <span className="text-[11px] font-semibold text-amber-300/80">Prime Minister</span>
-        <span className="ml-auto text-[9px] text-amber-400/50">Head of Govt</span>
+        <span className="text-[12px] font-semibold text-amber-300">President</span>
+        <span className="ml-auto text-[10px] text-amber-400/60">Head of State</span>
       </div>
 
       {ZW_MINISTRIES.slice(0, 8).map(ministry => (
         <div key={ministry.id}>
           <button
             onClick={() => setOpenMin(openMin === ministry.id ? null : ministry.id)}
-            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/8 transition-colors text-left"
+            className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/8 transition-colors text-left"
           >
-            <span className="h-4 w-4 rounded bg-blue-500/70 grid place-items-center flex-shrink-0">
-              <Landmark className="h-2 w-2 text-white" />
+            <span className="h-5 w-5 rounded bg-blue-500/70 grid place-items-center flex-shrink-0">
+              <Landmark className="h-2.5 w-2.5 text-white" />
             </span>
-            <span className="flex-1 text-[10px] font-medium text-white/75 truncate">{ministry.name.replace("Ministry of ", "")}</span>
-            <span className="text-[8px] text-white/30 mr-1 flex-shrink-0">{ministry.code}</span>
-            <ChevronRight className={`h-2.5 w-2.5 text-white/25 flex-shrink-0 transition-transform ${openMin === ministry.id ? "rotate-90" : ""}`} />
+            <span className="flex-1 text-[11px] font-medium text-white/75 truncate">{ministry.name.replace("Ministry of ", "")}</span>
+            <span className="text-[9px] text-white/30 mr-1 flex-shrink-0">{ministry.code}</span>
+            <ChevronRight className={`h-3 w-3 text-white/25 flex-shrink-0 transition-transform ${openMin === ministry.id ? "rotate-90" : ""}`} />
           </button>
           {openMin === ministry.id && (
             <div className="ml-4 pl-2 border-l border-white/10 space-y-0.5 mb-1">
               {/* CPO row — always visible under each ministry */}
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-violet-500/15 border border-violet-500/20 mb-0.5">
-                <Shield className="h-3 w-3 text-violet-400 flex-shrink-0" />
-                <span className="text-[9px] font-semibold text-violet-300 truncate flex-1">CPO</span>
-                <span className="text-[8px] text-violet-400/60 truncate max-w-[90px]">{ministry.cpo}</span>
+              <div className="flex items-center gap-1.5 px-2 py-1.5 rounded bg-violet-500/15 border border-violet-500/20 mb-0.5">
+                <Shield className="h-3.5 w-3.5 text-violet-400 flex-shrink-0" />
+                <span className="text-[10px] font-semibold text-violet-300 truncate flex-1">CPO</span>
+                <span className="text-[9px] text-violet-400/60 truncate max-w-[90px]">{ministry.cpo}</span>
               </div>
               {ministry.departments.map(dept => (
                 <div key={dept.id}>
                   <button
                     onClick={() => setOpenDept(openDept === dept.id ? null : dept.id)}
-                    className="w-full flex items-center gap-1.5 px-2 py-1 rounded hover:bg-white/6 transition-colors text-left"
+                    className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded hover:bg-white/6 transition-colors text-left"
                   >
-                    <span className="h-3.5 w-3.5 rounded bg-emerald-500/60 grid place-items-center flex-shrink-0">
+                    <span className="h-4 w-4 rounded bg-emerald-500/60 grid place-items-center flex-shrink-0">
                       <Building2 className="h-2 w-2 text-white" />
                     </span>
-                    <span className="text-[9.5px] text-white/55 truncate flex-1">{dept.name}</span>
-                    <ChevronRight className={`h-2 w-2 text-white/20 flex-shrink-0 transition-transform ${openDept === dept.id ? "rotate-90" : ""}`} />
+                    <span className="text-[10px] text-white/55 truncate flex-1">{dept.name}</span>
+                    <ChevronRight className={`h-2.5 w-2.5 text-white/20 flex-shrink-0 transition-transform ${openDept === dept.id ? "rotate-90" : ""}`} />
                   </button>
                   {openDept === dept.id && (
                     <div className="ml-4 pl-2 border-l border-white/8 space-y-0.5">
@@ -166,7 +158,7 @@ function GovHierarchySelector({
       {/* President node — selectable */}
       <button
         onClick={() => selectRole("presidency", "opc-cabinet", "President / Head of State")}
-        className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl border mb-1 transition-all text-left
+        className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl border mb-2 transition-all text-left
           ${value.ministryId === "presidency" && value.roleTitle === "President / Head of State"
             ? "bg-amber-50 border-amber-300 ring-1 ring-amber-300"
             : "bg-amber-50 border-amber-100 hover:border-amber-300 hover:bg-amber-100"}`}
@@ -178,23 +170,6 @@ function GovHierarchySelector({
         </div>
         {value.ministryId === "presidency" && value.roleTitle === "President / Head of State" && (
           <Star className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
-        )}
-      </button>
-      {/* Prime Minister node — selectable */}
-      <button
-        onClick={() => selectRole("presidency", "opc-cabinet", "Prime Minister")}
-        className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl border mb-2 transition-all text-left
-          ${value.ministryId === "presidency" && value.roleTitle === "Prime Minister"
-            ? "bg-amber-50 border-amber-300 ring-1 ring-amber-300"
-            : "bg-amber-50/60 border-amber-100 hover:border-amber-300 hover:bg-amber-100"}`}
-      >
-        <Crown className="h-4 w-4 text-amber-400 flex-shrink-0" />
-        <div className="flex-1">
-          <span className="text-xs font-semibold text-amber-600 block">Prime Minister</span>
-          <span className="text-[9px] text-amber-400">Office of the President and Cabinet · OPC</span>
-        </div>
-        {value.ministryId === "presidency" && value.roleTitle === "Prime Minister" && (
-          <Star className="h-3.5 w-3.5 text-amber-400 flex-shrink-0" />
         )}
       </button>
 
@@ -768,9 +743,6 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
-        <div className="flex justify-center mb-4">
-          <LogoIcon className="h-10 w-10 text-black" />
-        </div>
         <h1 className="text-2xl font-bold text-black" style={{ letterSpacing: "-0.02em" }}>
           APPOIS — AI-Powered Public Procurement &amp; Oversight Intelligence System
         </h1>
@@ -825,34 +797,32 @@ export default function SignInPage() {
 
       {/* ── Left dark panel (desktop only) ───────────────────────────────── */}
       <div className="hidden lg:flex lg:w-[50%] flex-col bg-gray-950 border-r border-white/5">
-        {/* Logo */}
-        <div className="px-8 py-6 border-b border-white/8 flex-shrink-0">
-          <Link to="/" className="flex items-center gap-2.5">
-            <LogoIcon className="w-7 h-7 text-white flex-shrink-0" />
-            <div className="leading-none">
-              <div className="text-[11px] font-bold text-white tracking-tight leading-tight uppercase">APPOIS</div>
-              <div className="text-[9px] font-bold text-white/80 tracking-tight leading-tight">AI-Powered Public Procurement</div>
-              <div className="text-[9px] font-bold text-white/60 tracking-tight leading-tight">&amp; Oversight Intelligence System</div>
+
+        {/* Header — full-width title, no logo icon */}
+        <div className="px-8 py-5 border-b border-white/8 flex-shrink-0">
+          <Link to="/" className="block w-full">
+            <div className="text-[13px] font-extrabold text-white tracking-widest leading-snug uppercase w-full">
+              AI POWERED ELECTRONIC PUBLIC PROCUREMENT &amp; OVERSIGHT INTELLIGENCE SYSTEM
             </div>
           </Link>
         </div>
 
-        {/* Tag line */}
-        <div className="px-8 py-6 flex-shrink-0 border-b border-white/8">
-          <h2 className="text-2xl font-semibold text-white leading-tight mb-2" style={{ letterSpacing: "-0.025em" }}>
+        {/* Tag line — smaller */}
+        <div className="px-8 py-5 flex-shrink-0 border-b border-white/8">
+          <h2 className="text-lg font-semibold text-white leading-snug mb-2" style={{ letterSpacing: "-0.02em" }}>
             Integrity.<br />Public Trust.<br />Transparency.<br />Good Governance.<br />Clean Procurement.
           </h2>
-          <p className="text-sm text-white/45 leading-relaxed">
-            AI-Powered Public Procurement &amp; Oversight Intelligence System (APPOIS).
+          <p className="text-xs text-white/45 leading-relaxed">
+            AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System (APPOIS).
           </p>
         </div>
 
-        {/* Government hierarchy panel */}
+        {/* Government hierarchy panel — larger window */}
         <div className="flex-1 px-4 py-4 overflow-hidden flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-3 px-2 flex-shrink-0">
             <div>
-              <div className="text-xs font-semibold text-white/70">Government Hierarchy</div>
-              <div className="text-[10px] text-white/30 mt-0.5">
+              <div className="text-sm font-semibold text-white/80">Government Hierarchy</div>
+              <div className="text-[11px] text-white/40 mt-0.5">
                 President · {ZW_MINISTRIES.length} Ministries · {ZW_MINISTRIES.reduce((acc, m) => acc + m.departments.length, 0)} Departments · {ALL_ROLES.length} Roles
               </div>
             </div>
@@ -881,7 +851,7 @@ export default function SignInPage() {
         </div>
 
         <div className="px-6 py-3 border-t border-white/8 flex-shrink-0">
-          <p className="text-[10px] text-white/20">© 2026 APPOIS — AI-Powered Public Procurement &amp; Oversight Intelligence System</p>
+          <p className="text-[10px] text-white/20">© 2026 APPOIS — AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System</p>
         </div>
       </div>
 
