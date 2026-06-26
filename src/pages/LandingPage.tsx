@@ -146,7 +146,7 @@ function LoginCard() {
         <Link to="/signin" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
           <KeyRound className="w-4 h-4" /> Generate / Forgot Password?
         </Link>
-        <Link to="/organisations" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
+        <Link to="/portal" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
           <UserSearch className="w-4 h-4" /> Find My Nodal Officer
         </Link>
       </div>
