@@ -52,12 +52,12 @@ function Header() {
   const navigate = useNavigate();
 
   const navLinks = [
-    { label: "Search",                  icon: Search,       to: "/tenders"           },
-    { label: "Active Tenders",          icon: FileText,     to: "/tenders"           },
-    { label: "Tenders by Closing Date", icon: Calendar,     to: "/tenders"           },
-    { label: "Corrigendum",             icon: Bell,         to: "/utility/gazette"   },
-    { label: "Bid Awards",              icon: CheckCircle2, to: "/awards"            },
-    { label: "APPOIS Home",             icon: Home,         to: "/"                  },
+    { label: "Search",                  icon: Search,       to: "/portal"          },
+    { label: "Active Tenders",          icon: FileText,     to: "/portal"          },
+    { label: "Tenders by Closing Date", icon: Calendar,     to: "/portal"          },
+    { label: "Corrigendum",             icon: Bell,         to: "/portal"          },
+    { label: "Bid Awards",              icon: CheckCircle2, to: "/portal"          },
+    { label: "APPOIS Home",             icon: Home,         to: "/"                },
   ];
 
   return (
