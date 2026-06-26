@@ -607,8 +607,13 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
     setLoading(true);
     setTimeout(() => {
       if (mode === "login" && !hier.roleTitle) {
-        // No role selected — use email-based demo login (no forced role)
-        login(form.email, form.password);
+        // No role selected — use email-based demo login only
+        const success = login(form.email, form.password);
+        if (!success) {
+          setLoading(false);
+          setError("No account found with that email. Please select your Ministry / Department / Role to continue.");
+          return;
+        }
       } else {
         // Role explicitly selected OR register mode — use loginWithDetails
         const resolvedRole = hier.roleTitle
@@ -628,6 +633,7 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
         });
       }
       seedIfEmpty(form.email);
+      setLoading(false);
       navigate("/dashboard");
     }, 600);
   };

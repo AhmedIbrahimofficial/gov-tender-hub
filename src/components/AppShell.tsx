@@ -752,15 +752,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         </button>
 
         <Link to="/dashboard" className="flex items-center gap-2 flex-shrink-0">
-          <LogoIcon className="h-6 w-6 text-black flex-shrink-0" />
+          <LogoIcon className="h-7 w-7 text-black flex-shrink-0" />
           <div className="leading-none hidden sm:block">
-            <div className="text-[11px] font-bold text-black tracking-tight leading-tight uppercase">APPOIS</div>
-            <div className="text-[9px] font-bold text-black tracking-tight leading-tight">AI-Powered Public Procurement</div>
-            <div className="text-[9px] font-bold text-black/60 tracking-tight leading-tight">&amp; Oversight Intelligence System</div>
+            <div className="text-[13px] font-extrabold text-black tracking-wide leading-tight uppercase">APPOIS</div>
+            <div className="text-[10px] font-semibold text-black/80 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
+            <div className="text-[10px] font-semibold text-black/60 tracking-tight leading-snug">Oversight Intelligence System</div>
           </div>
           <div className="leading-tight sm:hidden">
-            <div className="text-[10px] font-bold text-black tracking-tight">APPOIS</div>
-            <div className="text-[9px] font-bold text-black/60 tracking-tight">AI-Powered Procurement &amp; Oversight</div>
+            <div className="text-[11px] font-extrabold text-black tracking-wide uppercase">APPOIS</div>
+            <div className="text-[9px] font-semibold text-black/60 tracking-tight">AI-Powered Procurement &amp; Oversight</div>
           </div>
         </Link>
 
@@ -945,11 +945,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         `}>
           <div className="flex items-center justify-between px-4 h-14 border-b border-black/10 flex-shrink-0">
             <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-              <LogoIcon className="h-6 w-6 text-black flex-shrink-0" />
+              <LogoIcon className="h-7 w-7 text-black flex-shrink-0" />
               <div className="leading-none">
-                <div className="text-[11px] font-bold text-black tracking-tight leading-tight uppercase">APPOIS</div>
-                <div className="text-[9px] font-bold text-black tracking-tight leading-tight">AI-Powered Public Procurement</div>
-                <div className="text-[9px] font-bold text-black/60 tracking-tight leading-tight">&amp; Oversight Intelligence System</div>
+                <div className="text-[13px] font-extrabold text-black tracking-wide leading-tight uppercase">APPOIS</div>
+                <div className="text-[10px] font-semibold text-black/80 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
+                <div className="text-[10px] font-semibold text-black/60 tracking-tight leading-snug">Oversight Intelligence System</div>
               </div>
             </Link>
             <button onClick={() => setMobileOpen(false)} className="h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40">

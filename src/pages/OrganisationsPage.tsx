@@ -348,30 +348,30 @@ function TreeNode({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border border-border rounded-lg overflow-hidden mb-2">
-      <div className="flex items-center gap-2 px-3 py-2.5 bg-card hover:bg-secondary/40 transition-colors">
+    <div className="border border-border rounded-xl overflow-hidden mb-2.5 shadow-sm">
+      <div className="flex items-center gap-2.5 px-4 py-3 bg-card hover:bg-secondary/40 transition-colors">
         {children
-          ? <button onClick={() => setOpen((o) => !o)} className="text-muted-foreground">{open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}</button>
+          ? <button onClick={() => setOpen((o) => !o)} className="text-muted-foreground">{open ? <ChevronDown className="h-4.5 w-4.5" /> : <ChevronRight className="h-4.5 w-4.5" />}</button>
           : <span className="w-4" />}
-        <Icon className="h-4 w-4 text-primary flex-shrink-0" />
+        <Icon className="h-5 w-5 text-primary flex-shrink-0" />
         <div className="flex-1 min-w-0">
-          <span className="text-sm font-semibold truncate">{label}</span>
-          <span className="ml-2 text-xs text-muted-foreground">{code}</span>
+          <span className="text-sm font-semibold leading-tight">{label}</span>
+          <span className="ml-2 text-xs text-muted-foreground font-medium">{code}</span>
         </div>
         <Badge tone={badgeTone}>{badge}</Badge>
-        <span className="flex items-center gap-1 text-xs text-muted-foreground border border-border rounded px-1.5 py-0.5 bg-secondary/40">
-          <Users className="h-3 w-3" />{userCount}
+        <span className="flex items-center gap-1 text-xs text-muted-foreground border border-border rounded px-2 py-1 bg-secondary/40">
+          <Users className="h-3.5 w-3.5" />{userCount}
         </span>
-        <button onClick={onAddUser} title="Map Users" className="h-7 w-7 rounded border border-border bg-card flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-colors">
-          <UserPlus className="h-3.5 w-3.5 text-primary" />
+        <button onClick={onAddUser} title="Map Users" className="h-8 w-8 rounded border border-border bg-card flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-colors">
+          <UserPlus className="h-4 w-4 text-primary" />
         </button>
         {onDelete && (
-          <button onClick={onDelete} title="Delete" className="h-7 w-7 rounded border border-border bg-card flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/40 transition-colors">
-            <Trash2 className="h-3.5 w-3.5 text-destructive" />
+          <button onClick={onDelete} title="Delete" className="h-8 w-8 rounded border border-border bg-card flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/40 transition-colors">
+            <Trash2 className="h-4 w-4 text-destructive" />
           </button>
         )}
       </div>
-      {open && children && <div className="pl-8 pr-3 py-2 bg-secondary/20 border-t border-border">{children}</div>}
+      {open && children && <div className="pl-10 pr-4 py-3 bg-secondary/20 border-t border-border space-y-1">{children}</div>}
     </div>
   );
 }
@@ -507,7 +507,7 @@ export default function OrganisationsPage() {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <AppShell>
-      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="mb-3 flex items-center gap-2 flex-wrap">
           <Badge tone="blue">Administration</Badge>
@@ -602,26 +602,26 @@ export default function OrganisationsPage() {
                   defaultOpen>
 
                   {/* CPO row — pinned under each ministry */}
-                  <div className="mb-2">
-                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1.5 pl-1">Chief Procurement Officer</div>
-                    <div className="border border-border rounded-lg overflow-hidden">
-                      <div className="flex items-center gap-2 px-3 py-2.5 bg-violet-50 dark:bg-violet-950/20">
-                        <Shield className="h-4 w-4 text-violet-600 flex-shrink-0" />
+                  <div className="mb-3">
+                    <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold mb-2 pl-1">Chief Procurement Officer</div>
+                    <div className="border border-border rounded-xl overflow-hidden shadow-sm">
+                      <div className="flex items-center gap-2.5 px-4 py-3 bg-violet-50 dark:bg-violet-950/20">
+                        <Shield className="h-5 w-5 text-violet-600 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <span className="text-sm font-semibold text-violet-700 dark:text-violet-300 truncate block">Chief Procurement Officer (CPO)</span>
+                          <span className="text-sm font-semibold text-violet-700 dark:text-violet-300 block">Chief Procurement Officer (CPO)</span>
                           <span className="text-xs text-violet-500">{zwMin?.cpo ?? "CPO — " + ministry.code}</span>
                         </div>
                         <Badge tone="purple">Executive</Badge>
                         <button onClick={() => openMap(`${ministry.id}-cpo`, "department", `CPO — ${ministry.name}`)}
-                          title="Map Users" className="h-7 w-7 rounded border border-border bg-card flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-colors">
-                          <UserPlus className="h-3.5 w-3.5 text-primary" />
+                          title="Map Users" className="h-8 w-8 rounded border border-border bg-card flex items-center justify-center hover:bg-primary/10 hover:border-primary/40 transition-colors">
+                          <UserPlus className="h-4 w-4 text-primary" />
                         </button>
                       </div>
                     </div>
                   </div>
                   {minDepts.length > 0 && (
-                    <div className="mb-2">
-                      <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1.5 pl-1">Departments</div>
+                    <div className="mb-3">
+                      <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold mb-2 pl-1">Departments</div>
                       {minDepts.map((dept) => {
                         const deptBranches = branches.filter((b) => b.parentId === dept.id && b.parentType === "department");
                         return (
@@ -649,7 +649,7 @@ export default function OrganisationsPage() {
                   {/* Level 2b — State Entities */}
                   {minEntities.length > 0 && (
                     <div>
-                      <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1.5 pl-1">State-Owned Entities</div>
+                      <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold mb-2 pl-1">State-Owned Entities</div>
                       {minEntities.map((entity) => {
                         const entityBranches = branches.filter((b) => b.parentId === entity.id && b.parentType === "state_entity");
                         return (

@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (email: string, _password: string): boolean => {
     const found = DEMO_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase());
     if (found) { setUser(found); return true; }
-    if (email && _password) { setUser(DEMO_USERS[0]); return true; }
+    // Do NOT auto-fallback to any demo user — require valid credentials
     return false;
   };
 
