@@ -447,7 +447,7 @@ function PublicLogin({ onBack }: { onBack: () => void }) {
 
 // ─── Government Staff Registration Form ──────────────────────────────────────
 function GovStaffForm({ onBack }: { onBack: () => void }) {
-  const { loginWithDetails } = useAuth();
+  const { loginWithDetails, login } = useAuth();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [showPwd, setShowPwd] = useState(false);
@@ -605,23 +605,28 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
       if (errors.length > 0) { setError(errors.join(" ")); return; }
     }
     setLoading(true);
-    // Use selected role if provided; for login without selection, fallback to procurement_officer
-    const resolvedRole = hier.roleTitle
-      ? resolveRole(hier.roleTitle, hier.ministryId)
-      : (ALL_ROLES.find(r => r.role === "procurement_officer") ?? ALL_ROLES[5]);
     setTimeout(() => {
-      loginWithDetails({
-        role: resolvedRole.role,
-        name: form.name || form.email.split("@")[0],
-        email: form.email,
-        phone: form.phone,
-        department: hier.ministryId === "presidency"
-          ? "Office of the President and Cabinet"
-          : selectedDept?.name ?? hier.roleTitle ?? resolvedRole.label,
-        entity: hier.ministryId === "presidency"
-          ? "Office of the President and Cabinet"
-          : selectedMinistry?.name ?? "Government of Zimbabwe",
-      });
+      if (mode === "login" && !hier.roleTitle) {
+        // No role selected — use email-based demo login (no forced role)
+        login(form.email, form.password);
+      } else {
+        // Role explicitly selected OR register mode — use loginWithDetails
+        const resolvedRole = hier.roleTitle
+          ? resolveRole(hier.roleTitle, hier.ministryId)
+          : (ALL_ROLES.find(r => r.role === "procurement_officer") ?? ALL_ROLES[5]);
+        loginWithDetails({
+          role: resolvedRole.role,
+          name: form.name || form.email.split("@")[0],
+          email: form.email,
+          phone: form.phone,
+          department: hier.ministryId === "presidency"
+            ? "Office of the President and Cabinet"
+            : selectedDept?.name ?? hier.roleTitle ?? resolvedRole.label,
+          entity: hier.ministryId === "presidency"
+            ? "Office of the President and Cabinet"
+            : selectedMinistry?.name ?? "Government of Zimbabwe",
+        });
+      }
       seedIfEmpty(form.email);
       navigate("/dashboard");
     }, 600);

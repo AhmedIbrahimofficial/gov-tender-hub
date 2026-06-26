@@ -136,6 +136,9 @@ function AppRoutes() {
 
       {/* Protected */}
       <Route path="/dashboard" element={<ProtectedRoute><DashboardRouter /></ProtectedRoute>} />
+
+      {/* GIS Map — public access (no login required) */}
+      <Route path="/gis" element={<GisMapPage />} />
       <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
       <Route path="/ai-agents" element={<ProtectedRoute><AiAgentsPage /></ProtectedRoute>} />
       <Route path="/planning" element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
@@ -222,7 +225,6 @@ function AppRoutes() {
 
       {/* Existing modules */}
       <Route path="/tenders" element={<ProtectedRoute><TendersPage /></ProtectedRoute>} />
-      <Route path="/gis" element={<ProtectedRoute><GisMapPage /></ProtectedRoute>} />
       <Route path="/evaluations" element={<ProtectedRoute><EvaluationsPage /></ProtectedRoute>} />
       <Route path="/awards" element={<ProtectedRoute><AwardsPage /></ProtectedRoute>} />
       <Route path="/vendors" element={<ProtectedRoute><VendorsPage /></ProtectedRoute>} />
