@@ -1141,16 +1141,16 @@ function BottomSection({ tab, setTab }: { tab: BottomTab; setTab: (t: BottomTab)
 
 function StageModulesPanel() {
   const stages = [
-    { num: 1, label: "Procurement Planning",   route: "/procurement/planning",             status: "completed", desc: "Annual plan · Budget · Demand"          },
-    { num: 2, label: "Requisition",             route: "/procurement/requisition",          status: "completed", desc: "Purchase requisition · Items · Approval" },
-    { num: 3, label: "Procurement Strategy",   route: "/procurement/strategy",             status: "completed", desc: "Method · Market · Supplier analysis"    },
-    { num: 4, label: "Tender Preparation",     route: "/procurement/tender-preparation",   status: "active",    desc: "BOQ · Specs · Evaluation criteria"      },
-    { num: 5, label: "Advertisement",          route: "/procurement/advertisement",        status: "pending",   desc: "Publication · Clarifications · Q&A"     },
-    { num: 6, label: "Bid Submission",         route: "/procurement/bid-submission",       status: "pending",   desc: "Encrypted vault · Validation · Receipt"  },
-    { num: 7, label: "Bid Opening",            route: "/lifecycle",                        status: "pending",   desc: "Opening ceremony · Register · Records"  },
-    { num: 8, label: "Evaluation",             route: "/evaluations",                      status: "pending",   desc: "Admin · Technical · Financial scoring"  },
-    { num: 9, label: "Award",                  route: "/awards",                           status: "pending",   desc: "Adjudication · Notice · Standstill"     },
-    { num: 10, label: "Contract",              route: "/contracts",                        status: "pending",   desc: "Draft · Execute · Manage"               },
+    { num: 1, label: "Procurement Planning",   route: "/workbench/planning",            status: "completed", desc: "Annual plan · Budget · Demand"          },
+    { num: 2, label: "Requisition",             route: "/workbench/requisition",         status: "completed", desc: "Purchase requisition · Items · Approval" },
+    { num: 3, label: "Procurement Strategy",   route: "/workbench/strategy",            status: "completed", desc: "Method · Market · Supplier analysis"    },
+    { num: 4, label: "Tender Preparation",     route: "/workbench/tender-preparation",  status: "active",    desc: "BOQ · Specs · Evaluation criteria"      },
+    { num: 5, label: "Tender Management",      route: "/workbench/tender-management",   status: "pending",   desc: "Publication · Clarifications · Q&A"     },
+    { num: 6, label: "Bid Submission",         route: "/workbench/bid-submission",      status: "pending",   desc: "Encrypted vault · Validation · Receipt"  },
+    { num: 7, label: "Bid Opening",            route: "/workbench/bid-opening",         status: "pending",   desc: "Opening ceremony · Register · Records"  },
+    { num: 8, label: "Bid Evaluation",           route: "/workbench/bid-evaluation",      status: "pending",   desc: "Admin · Technical · Financial scoring"  },
+    { num: 9, label: "Award",                    route: "/workbench/contract-award",      status: "pending",   desc: "Adjudication · Notice · Standstill"     },
+    { num: 10, label: "Contract Management",     route: "/workbench/contract-management", status: "pending",   desc: "Execute · Manage · Monitor"             },
   ];
   return (
     <div className="p-4">

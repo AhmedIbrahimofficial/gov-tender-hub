@@ -87,6 +87,35 @@ import NotificationsCenterPage from "./pages/NotificationsCenterPage";
 import FinancialReconciliationPage from "./pages/FinancialReconciliationPage";
 import FinalAcceptancePage from "./pages/FinalAcceptancePage";
 
+// ─── Enterprise Workbench stage pages ────────────────────────────────────────
+import ProcurementPlanningWorkbench   from "./pages/workbench/ProcurementPlanningWorkbench";
+import RequisitionWorkbench           from "./pages/workbench/RequisitionWorkbench";
+import StrategyWorkbench              from "./pages/workbench/StrategyWorkbench";
+import TenderPreparationWorkbench     from "./pages/workbench/TenderPreparationWorkbench";
+import TenderManagementWorkbench      from "./pages/workbench/TenderManagementWorkbench";
+import RFQWorkbench                   from "./pages/workbench/RFQWorkbench";
+import RFPWorkbench                   from "./pages/workbench/RFPWorkbench";
+import EOIWorkbench                   from "./pages/workbench/EOIWorkbench";
+import AuctionWorkbench               from "./pages/workbench/AuctionWorkbench";
+import BidSubmissionWorkbench         from "./pages/workbench/BidSubmissionWorkbench";
+import BidOpeningWorkbench            from "./pages/workbench/BidOpeningWorkbench";
+import BidEvaluationWorkbench         from "./pages/workbench/BidEvaluationWorkbench";
+import RecommendationWorkbench        from "./pages/workbench/RecommendationWorkbench";
+import ContractAwardWorkbench         from "./pages/workbench/ContractAwardWorkbench";
+import ContractExecutionWorkbench     from "./pages/workbench/ContractExecutionWorkbench";
+import ContractManagementWorkbench    from "./pages/workbench/ContractManagementWorkbench";
+import ProjectMonitoringWorkbench     from "./pages/workbench/ProjectMonitoringWorkbench";
+import PaymentManagementWorkbench     from "./pages/workbench/PaymentManagementWorkbench";
+import ContractClosureWorkbench       from "./pages/workbench/ContractClosureWorkbench";
+import AssetManagementWorkbench       from "./pages/workbench/AssetManagementWorkbench";
+import PerformanceEvalWorkbench       from "./pages/workbench/PerformanceEvalWorkbench";
+import GovernanceWorkbench            from "./pages/workbench/GovernanceWorkbench";
+import AppealsWorkbench               from "./pages/workbench/AppealsWorkbench";
+import AuditWorkbench                 from "./pages/workbench/AuditWorkbench";
+import ReportsWorkbench               from "./pages/workbench/ReportsWorkbench";
+import AIAnalyticsWorkbench           from "./pages/workbench/AIAnalyticsWorkbench";
+import VendorPortalWorkbench          from "./pages/workbench/VendorPortalWorkbench";
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/signin" replace />;
@@ -110,8 +139,41 @@ function AppRoutes() {
       <Route path="/ai-agents" element={<ProtectedRoute><AiAgentsPage /></ProtectedRoute>} />
       <Route path="/planning" element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
 
-      {/* Procurement Workbench — global */}
+      {/* Procurement Workbench — global (legacy) */}
       <Route path="/workbench" element={<ProtectedRoute><ProcurementWorkbenchPage /></ProtectedRoute>} />
+
+      {/* ── Enterprise Workbench — all 26 procurement lifecycle stages ─── */}
+      <Route path="/workbench/planning"            element={<ProtectedRoute><ProcurementPlanningWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/requisition"         element={<ProtectedRoute><RequisitionWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/strategy"            element={<ProtectedRoute><StrategyWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/tender-preparation"  element={<ProtectedRoute><TenderPreparationWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/tender-management"   element={<ProtectedRoute><TenderManagementWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/rfq"                 element={<ProtectedRoute><RFQWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/rfp"                 element={<ProtectedRoute><RFPWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/eoi"                 element={<ProtectedRoute><EOIWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/auction"             element={<ProtectedRoute><AuctionWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/bid-submission"      element={<ProtectedRoute><BidSubmissionWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/bid-opening"         element={<ProtectedRoute><BidOpeningWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/bid-evaluation"      element={<ProtectedRoute><BidEvaluationWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/recommendation"      element={<ProtectedRoute><RecommendationWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/contract-award"      element={<ProtectedRoute><ContractAwardWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/contract-execution"  element={<ProtectedRoute><ContractExecutionWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/contract-management" element={<ProtectedRoute><ContractManagementWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/project-monitoring"  element={<ProtectedRoute><ProjectMonitoringWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/payment-management"  element={<ProtectedRoute><PaymentManagementWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/contract-closure"    element={<ProtectedRoute><ContractClosureWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/asset-management"    element={<ProtectedRoute><AssetManagementWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/performance-eval"    element={<ProtectedRoute><PerformanceEvalWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/governance"          element={<ProtectedRoute><GovernanceWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/appeals"             element={<ProtectedRoute><AppealsWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/audit"               element={<ProtectedRoute><AuditWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/reports"             element={<ProtectedRoute><ReportsWorkbench /></ProtectedRoute>} />
+      <Route path="/workbench/ai-analytics"        element={<ProtectedRoute><AIAnalyticsWorkbench /></ProtectedRoute>} />
+
+      {/* ── Enterprise Workbench — Vendor Portal (17 modules) ─────────── */}
+      <Route path="/vendor-workbench"              element={<ProtectedRoute><VendorPortalWorkbench /></ProtectedRoute>} />
+      <Route path="/vendor-workbench/:moduleId"    element={<ProtectedRoute><VendorPortalWorkbench /></ProtectedRoute>} />
+
       {/* Per-ministry Procurement Workbench */}
       <Route path="/workbench/:ministryId" element={<ProtectedRoute><MinistryWorkbenchPage /></ProtectedRoute>} />
 

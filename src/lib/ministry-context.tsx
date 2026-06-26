@@ -1,38 +1,66 @@
+/**
+ * ministry-context.tsx
+ * Dynamic multi-ministry context — no hardcoded ministry names.
+ * Derives the ministry/dept list from ZW_MINISTRIES (full government structure).
+ */
 import { createContext, useContext, useState, ReactNode } from "react";
+import { ZW_MINISTRIES } from "@/lib/zw-ministries";
+
+// Re-export ministry list derived from ZW_MINISTRIES for backwards-compat
+export const MINISTRIES = ZW_MINISTRIES.map(m => ({
+  id:        m.id,
+  name:      m.name,
+  shortName: m.code,
+  badge:     "🏛️",
+  departments: m.departments,
+  stateEntities: m.stateEntities,
+}));
+
+// Legacy simple list kept for components that only need id/name/shortName/badge
+export const MINISTRY_LIST = [
+  ...MINISTRIES,
+  { id: "prime", name: "Prime Entity (Super Admin)", shortName: "PRAZ", badge: "🏛️", departments: [], stateEntities: [] },
+];
 
 type MinistryContextType = {
   currentMinistryId: string | null;
   setCurrentMinistry: (id: string | null) => void;
   currentDeptId: string | null;
   setCurrentDept: (id: string | null) => void;
+  /** Resolved ministry name for display in context headers */
+  currentMinistryName: string;
+  /** Resolved department name for display */
+  currentDeptName: string;
+  /** All departments for the selected ministry */
+  currentDepartments: Array<{ id: string; name: string; code: string; head: string }>;
 };
 
 const MinistryContext = createContext<MinistryContextType | null>(null);
 
-export const MINISTRIES = [
-  { id: "min-001", name: "Ministry of Health & Child Care",      shortName: "MoH",  badge: "🏥" },
-  { id: "min-002", name: "Ministry of Transport & Infra",        shortName: "MoT",  badge: "🛣️" },
-  { id: "min-003", name: "Ministry of Education",                shortName: "MoE",  badge: "📚" },
-  { id: "min-004", name: "Ministry of Agriculture",              shortName: "MoA",  badge: "🌾" },
-  { id: "min-005", name: "Ministry of Energy & Power",           shortName: "MoEP", badge: "⚡" },
-  { id: "min-006", name: "Ministry of Finance",                  shortName: "MoF",  badge: "💰" },
-  { id: "min-007", name: "Ministry of Water & Sanitation",       shortName: "MoW",  badge: "💧" },
-  { id: "min-008", name: "Ministry of ICT & Digital Economy",    shortName: "MoICT",badge: "💻" },
-  { id: "prime",   name: "Prime Entity (Super Admin)",           shortName: "PRAZ", badge: "🏛️" },
-];
-
 export function MinistryProvider({ children }: { children: ReactNode }) {
   const [currentMinistryId, setCurrentMinistryId] = useState<string | null>(null);
-  const [currentDeptId, setCurrentDeptId] = useState<string | null>(null);
+  const [currentDeptId, setCurrentDeptId]         = useState<string | null>(null);
 
   const setCurrentMinistry = (id: string | null) => {
     setCurrentMinistryId(id);
-    setCurrentDeptId(null);
+    setCurrentDeptId(null);  // reset dept when ministry changes
   };
   const setCurrentDept = (id: string | null) => setCurrentDeptId(id);
 
+  const foundMinistry  = MINISTRIES.find(m => m.id === currentMinistryId);
+  const currentMinistryName = foundMinistry?.name ?? "Government of Zimbabwe";
+
+  const currentDepartments = (foundMinistry?.departments ?? []) as Array<{ id: string; name: string; code: string; head: string }>;
+  const foundDept      = currentDepartments.find(d => d.id === currentDeptId);
+  const currentDeptName = foundDept?.name ?? "";
+
   return (
-    <MinistryContext.Provider value={{ currentMinistryId, setCurrentMinistry, currentDeptId, setCurrentDept }}>
+    <MinistryContext.Provider value={{
+      currentMinistryId, setCurrentMinistry,
+      currentDeptId, setCurrentDept,
+      currentMinistryName, currentDeptName,
+      currentDepartments,
+    }}>
       {children}
     </MinistryContext.Provider>
   );

@@ -306,6 +306,7 @@ export default function CompletionVerificationPage() {
               <LifecycleTower
                 stages={CONTRACT_CLOSURE_STAGES}
                 title="Contract Closure Tower"
+                subtitle="Completion verification stages"
                 context="closure"
               />
             </div>

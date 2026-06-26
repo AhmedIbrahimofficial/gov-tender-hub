@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { tenders } from "@/lib/mock-data";
 import {
   Search, Download, FileText, Clock, CheckCircle2, LogOut,
-  ChevronDown, Bell, X, Upload, Send, Eye, AlertCircle,
+  ChevronDown, ChevronRight, Bell, X, Upload, Send, Eye, AlertCircle,
   Building2, Paperclip, ArrowRight, Tag, Calendar,
   Hash, Users, ShieldCheck, Info, Package, CreditCard,
   MessageSquare, Settings, Filter, Star, Plus, Trash2,
@@ -559,6 +559,13 @@ export default function SupplierPortalPage() {
         </Link>
         <div className="h-5 w-px bg-black/10 hidden sm:block" />
         <span className="text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full hidden sm:inline">Supplier Portal</span>
+        <Link
+          to="/vendor-workbench/dashboard"
+          className="hidden md:flex items-center gap-1.5 h-8 px-3 bg-black text-white text-xs font-medium rounded-lg hover:bg-black/80 transition-colors flex-shrink-0"
+        >
+          <span>Enterprise Workbench</span>
+          <ChevronRight className="h-3 w-3" />
+        </Link>
         <div className="flex-1" />
         <button className="relative h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black">
           <Bell className="h-4 w-4" />

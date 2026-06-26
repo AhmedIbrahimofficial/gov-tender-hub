@@ -280,81 +280,217 @@ const FULL_ACCESS_ROLES = new Set<string>(["minister", "system_admin", "cpo", "p
 
 const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
   // Procurement officer — manages tenders, RFQs, lifecycle
-  procurement_officer: ["/dashboard", "/teams", "/workbench", "/tenders", "/tenders-lifecycle", "/lifecycle", "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates", "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission", "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure", "/procurement/final-acceptance", "/procurement/warranty-management", "/procurement/supplier-evaluation", "/knowledge-base", "/notifications"],
+  procurement_officer: [
+    "/dashboard", "/teams", "/workbench", "/tenders", "/tenders-lifecycle", "/lifecycle",
+    "/rfq", "/rfp-eoi", "/planning", "/vendors", "/certificates",
+    "/utility", "/utility/catalogue", "/utility/communications", "/utility/gazette", "/utility/announcements",
+    "/procurement/planning", "/procurement/requisition", "/procurement/strategy",
+    "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission",
+    "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure",
+    "/procurement/final-acceptance", "/procurement/warranty-management",
+    "/procurement/supplier-evaluation",
+    // New workbench routes
+    "/workbench/planning", "/workbench/requisition", "/workbench/strategy",
+    "/workbench/tender-preparation", "/workbench/tender-management", "/workbench/rfq",
+    "/workbench/rfp", "/workbench/eoi", "/workbench/auction", "/workbench/bid-submission",
+    "/workbench/bid-opening", "/workbench/bid-evaluation", "/workbench/recommendation",
+    "/workbench/contract-award", "/workbench/contract-execution", "/workbench/contract-management",
+    "/workbench/project-monitoring", "/workbench/payment-management", "/workbench/contract-closure",
+    "/workbench/asset-management", "/workbench/performance-eval", "/workbench/governance",
+    "/workbench/appeals", "/workbench/audit", "/workbench/reports", "/workbench/ai-analytics",
+    "/knowledge-base", "/notifications",
+  ],
 
   // Evaluator — only evaluation-related pages
-  evaluator: ["/dashboard", "/teams", "/workbench", "/tenders", "/evaluations", "/awards", "/certificates", "/procurement/bid-submission"],
+  evaluator: [
+    "/dashboard", "/teams", "/workbench", "/tenders", "/evaluations", "/awards", "/certificates",
+    "/workbench/bid-evaluation", "/workbench/recommendation", "/workbench/bid-submission",
+    "/procurement/bid-submission",
+  ],
 
   // Finance officer — payments, invoices, budget
-  finance_officer: ["/dashboard", "/teams", "/workbench", "/finance", "/budget", "/budget/execution", "/budget/expenditure", "/budget/commitments", "/budget/revenue", "/budget/treasury", "/utility/catalogue"],
+  finance_officer: [
+    "/dashboard", "/teams", "/workbench", "/finance",
+    "/budget", "/budget/execution", "/budget/expenditure", "/budget/commitments",
+    "/budget/revenue", "/budget/treasury", "/utility/catalogue",
+    "/workbench/payment-management", "/workbench/contract-management",
+  ],
 
   // Auditor — audit, anti-corruption, compliance
-  auditor: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/bi-dashboards", "/utility/public-records", "/budget", "/budget/fraud", "/budget/execution"],
+  auditor: [
+    "/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics",
+    "/bi-dashboards", "/utility/public-records", "/budget", "/budget/fraud", "/budget/execution",
+    "/workbench/audit", "/workbench/governance", "/workbench/reports",
+  ],
 
   // Contract manager / officer
-  contract_manager:  ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance", "/certificates", "/utility/catalogue", "/utility/communications", "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure", "/procurement/final-acceptance", "/procurement/warranty-management", "/procurement/asset-handover", "/procurement/supplier-evaluation", "/procurement/financial-reconciliation", "/lessons-learned", "/knowledge-base"],
-  contract_officer:  ["/dashboard", "/teams", "/contracts", "/vendors", "/certificates", "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure", "/procurement/final-acceptance", "/knowledge-base"],
+  contract_manager: [
+    "/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/finance",
+    "/certificates", "/utility/catalogue", "/utility/communications",
+    "/procurement/contract-award", "/procurement/contract-execution", "/procurement/contract-closure",
+    "/procurement/final-acceptance", "/procurement/warranty-management",
+    "/procurement/asset-handover", "/procurement/supplier-evaluation",
+    "/procurement/financial-reconciliation", "/lessons-learned", "/knowledge-base",
+    "/workbench/contract-award", "/workbench/contract-execution", "/workbench/contract-management",
+    "/workbench/project-monitoring", "/workbench/payment-management", "/workbench/contract-closure",
+    "/workbench/performance-eval",
+  ],
+  contract_officer: [
+    "/dashboard", "/teams", "/contracts", "/vendors", "/certificates",
+    "/procurement/contract-award", "/procurement/contract-execution",
+    "/procurement/contract-closure", "/procurement/final-acceptance", "/knowledge-base",
+    "/workbench/contract-award", "/workbench/contract-execution", "/workbench/contract-closure",
+  ],
 
   // Budget / treasury officer
-  budget_officer:    ["/dashboard", "/teams", "/budget", "/budget/centres", "/budget/formulation", "/budget/execution", "/budget/commitments", "/budget/expenditure", "/budget/revenue", "/budget/treasury", "/budget/fraud", "/budget/ai-agents", "/finance", "/analytics", "/utility/catalogue"],
-  treasury_officer:  ["/dashboard", "/teams", "/budget", "/budget/treasury", "/budget/revenue", "/budget/execution", "/finance"],
+  budget_officer: [
+    "/dashboard", "/teams", "/budget", "/budget/centres", "/budget/formulation",
+    "/budget/execution", "/budget/commitments", "/budget/expenditure", "/budget/revenue",
+    "/budget/treasury", "/budget/fraud", "/budget/ai-agents", "/finance", "/analytics",
+    "/utility/catalogue", "/workbench/payment-management",
+  ],
+  treasury_officer: [
+    "/dashboard", "/teams", "/budget", "/budget/treasury", "/budget/revenue",
+    "/budget/execution", "/finance", "/workbench/payment-management",
+  ],
 
   // Planning officer
-  planning_officer:  ["/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue", "/procurement/planning", "/procurement/requisition", "/procurement/strategy", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/contract-award"],
+  planning_officer: [
+    "/dashboard", "/teams", "/planning", "/tenders", "/utility/catalogue",
+    "/procurement/planning", "/procurement/requisition", "/procurement/strategy",
+    "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/contract-award",
+    "/workbench/planning", "/workbench/requisition", "/workbench/strategy",
+    "/workbench/tender-preparation", "/workbench/tender-management",
+  ],
 
   // Compliance officer
-  compliance_officer:["/dashboard", "/teams", "/audit", "/anti-corruption", "/governance", "/utility/public-records", "/utility/announcements", "/corporate", "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission"],
+  compliance_officer: [
+    "/dashboard", "/teams", "/audit", "/anti-corruption", "/governance",
+    "/utility/public-records", "/utility/announcements", "/corporate",
+    "/procurement/tender-preparation", "/procurement/advertisement", "/procurement/bid-submission",
+    "/workbench/governance", "/workbench/appeals", "/workbench/audit",
+  ],
 
   // Legal officer
-  legal_officer:     ["/dashboard", "/teams", "/contracts", "/audit", "/governance", "/utility/announcements", "/procurement/tender-preparation", "/procurement/advertisement"],
+  legal_officer: [
+    "/dashboard", "/teams", "/contracts", "/audit", "/governance",
+    "/utility/announcements",
+    "/procurement/tender-preparation", "/procurement/advertisement",
+    "/workbench/contract-award", "/workbench/contract-execution", "/workbench/governance",
+  ],
 
   // Stores officer
-  stores_officer:    ["/dashboard", "/teams", "/inventory", "/inventory/items", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/inventory/stock-count", "/inventory/reconciliation", "/inventory/ai-agents", "/contracts", "/utility/catalogue"],
+  stores_officer: [
+    "/dashboard", "/teams", "/inventory", "/inventory/items", "/inventory/receiving",
+    "/inventory/requests", "/inventory/warehouse", "/inventory/stock-count",
+    "/inventory/reconciliation", "/inventory/ai-agents", "/contracts", "/utility/catalogue",
+    "/workbench/asset-management",
+  ],
 
   // Project manager
-  project_manager:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/contracts", "/performance", "/vendors", "/utility/catalogue", "/procurement/contract-execution"],
+  project_manager: [
+    "/dashboard", "/teams", "/staff-productivity", "/department-activities",
+    "/contracts", "/performance", "/vendors", "/utility/catalogue",
+    "/procurement/contract-execution",
+    "/workbench/project-monitoring", "/workbench/contract-management",
+    "/workbench/payment-management",
+  ],
 
   // Anti-corruption / ethics
-  anti_corruption_officer: ["/dashboard", "/teams", "/anti-corruption", "/audit", "/vendors"],
-  ethics_officer:          ["/dashboard", "/teams", "/anti-corruption", "/governance"],
+  anti_corruption_officer: ["/dashboard", "/teams", "/anti-corruption", "/audit", "/vendors", "/workbench/audit"],
+  ethics_officer:          ["/dashboard", "/teams", "/anti-corruption", "/governance", "/workbench/governance"],
 
   // Performance officer
-  performance_officer: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/performance", "/vendors", "/contracts", "/analytics", "/corporate"],
+  performance_officer: [
+    "/dashboard", "/teams", "/staff-productivity", "/department-activities",
+    "/performance", "/vendors", "/contracts", "/analytics", "/corporate",
+    "/workbench/performance-eval",
+  ],
 
   // IT officer / system admin — full access
-  it_officer:   ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity", "/system-admin", "/notifications", "/reports", "/executive-dashboard", "/knowledge-base"],
-  system_admin: ["/dashboard", "/teams", "/staff-productivity", "/department-activities", "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance", "/organisations", "/utility", "/corporate", "/prime-entity", "/system-admin", "/notifications", "/reports", "/executive-dashboard", "/knowledge-base", "/lessons-learned"],
+  it_officer: [
+    "/dashboard", "/teams", "/staff-productivity", "/department-activities",
+    "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance",
+    "/organisations", "/utility", "/corporate", "/prime-entity", "/system-admin",
+    "/notifications", "/reports", "/executive-dashboard", "/knowledge-base",
+  ],
+  system_admin: [
+    "/dashboard", "/teams", "/staff-productivity", "/department-activities",
+    "/analytics", "/bi-dashboards", "/ai-agents", "/roles", "/governance",
+    "/organisations", "/utility", "/corporate", "/prime-entity", "/system-admin",
+    "/notifications", "/reports", "/executive-dashboard", "/knowledge-base", "/lessons-learned",
+  ],
 
   // Risk officer
-  risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts"],
+  risk_officer: ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/contracts", "/workbench/audit"],
 
   // Adjudication officer
-  adjudication_officer: ["/dashboard", "/teams", "/evaluations", "/awards", "/tenders", "/certificates", "/utility/announcements", "/procurement/bid-submission", "/procurement/advertisement"],
+  adjudication_officer: [
+    "/dashboard", "/teams", "/evaluations", "/awards", "/tenders", "/certificates",
+    "/utility/announcements", "/procurement/bid-submission", "/procurement/advertisement",
+    "/workbench/bid-evaluation", "/workbench/recommendation",
+  ],
 
   // Audit officer / public auditor
-  audit_officer:  ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics"],
+  audit_officer:  ["/dashboard", "/teams", "/audit", "/anti-corruption", "/analytics", "/workbench/audit"],
   public_auditor: ["/dashboard", "/audit", "/portal", "/utility/public-records"],
 
   // Records officer
   records_officer: ["/dashboard", "/teams", "/audit", "/governance", "/utility/public-records"],
 
   // Inspection / QA
-  inspection_officer: ["/dashboard", "/teams", "/contracts", "/performance"],
-  qa_officer:         ["/dashboard", "/teams", "/contracts", "/vendors", "/performance"],
+  inspection_officer: ["/dashboard", "/teams", "/contracts", "/performance", "/workbench/project-monitoring"],
+  qa_officer:         ["/dashboard", "/teams", "/contracts", "/vendors", "/performance", "/workbench/performance-eval"],
 
   // Asset manager
-  asset_manager: ["/dashboard", "/teams", "/assets", "/assets/maintenance", "/assets/financials", "/assets/disposal", "/contracts", "/governance", "/utility/catalogue"],
+  asset_manager: [
+    "/dashboard", "/teams", "/assets", "/assets/maintenance", "/assets/financials",
+    "/assets/disposal", "/contracts", "/governance", "/utility/catalogue",
+    "/workbench/asset-management",
+  ],
 
   // Logistics officer
-  logistics_officer: ["/dashboard", "/teams", "/inventory", "/inventory/receiving", "/inventory/requests", "/inventory/warehouse", "/contracts", "/vendors", "/utility/catalogue"],
+  logistics_officer: [
+    "/dashboard", "/teams", "/inventory", "/inventory/receiving", "/inventory/requests",
+    "/inventory/warehouse", "/contracts", "/vendors", "/utility/catalogue",
+    "/workbench/asset-management",
+  ],
 
-  // Vendor / supplier access
-  supplier:     ["/dashboard", "/portal", "/procurement/bid-submission", "/procurement/advertisement"],
-  sme_supplier: ["/dashboard", "/portal", "/procurement/bid-submission", "/procurement/advertisement"],
-  vendor_user:  ["/dashboard", "/portal", "/procurement/bid-submission", "/procurement/advertisement"],
+  // Vendor / supplier access — vendor portal workbench
+  supplier: [
+    "/dashboard", "/portal", "/supplier-portal",
+    "/procurement/bid-submission", "/procurement/advertisement",
+    "/vendor-workbench", "/vendor-workbench/dashboard", "/vendor-workbench/tasks",
+    "/vendor-workbench/tender-search", "/vendor-workbench/rfq-search",
+    "/vendor-workbench/rfp-search", "/vendor-workbench/eoi-search",
+    "/vendor-workbench/auctions", "/vendor-workbench/bid-submission",
+    "/vendor-workbench/submitted-bids", "/vendor-workbench/clarifications",
+    "/vendor-workbench/contracts", "/vendor-workbench/payments",
+    "/vendor-workbench/notifications", "/vendor-workbench/messages",
+    "/vendor-workbench/documents", "/vendor-workbench/ai", "/vendor-workbench/audit",
+  ],
+  sme_supplier: [
+    "/dashboard", "/portal", "/supplier-portal",
+    "/vendor-workbench", "/vendor-workbench/dashboard", "/vendor-workbench/tasks",
+    "/vendor-workbench/tender-search", "/vendor-workbench/bid-submission",
+    "/vendor-workbench/submitted-bids", "/vendor-workbench/clarifications",
+    "/vendor-workbench/payments", "/vendor-workbench/documents",
+  ],
+  vendor_user: [
+    "/dashboard", "/portal", "/supplier-portal",
+    "/vendor-workbench", "/vendor-workbench/dashboard", "/vendor-workbench/tasks",
+    "/vendor-workbench/tender-search", "/vendor-workbench/bid-submission",
+    "/vendor-workbench/submitted-bids", "/vendor-workbench/notifications",
+  ],
 
   // Communications officer — gets full utility access + advertisement management
-  communications_officer: ["/dashboard", "/teams", "/tenders", "/portal", "/governance", "/utility", "/utility/communications", "/utility/gazette", "/utility/announcements", "/utility/public-records", "/utility/media", "/procurement/advertisement", "/procurement/tender-preparation"],
+  communications_officer: [
+    "/dashboard", "/teams", "/tenders", "/portal", "/governance",
+    "/utility", "/utility/communications", "/utility/gazette", "/utility/announcements",
+    "/utility/public-records", "/utility/media",
+    "/procurement/advertisement", "/procurement/tender-preparation",
+    "/workbench/tender-management",
+  ],
 
   // HSE / environment
   health_safety_officer: ["/dashboard", "/teams", "/contracts", "/governance"],
@@ -362,18 +498,30 @@ const ROLE_NAV_WHITELIST: Partial<Record<UserRole, string[]>> = {
 
   // Citizen / end user
   citizen:  ["/dashboard", "/portal"],
-  end_user: ["/dashboard", "/teams", "/tenders", "/planning", "/procurement/requisition", "/procurement/bid-submission"],
+  end_user: [
+    "/dashboard", "/teams", "/tenders", "/planning",
+    "/procurement/requisition", "/procurement/bid-submission",
+    "/vendor-workbench/tender-search",
+  ],
 
   // Board / executive director — strategic overview only
-  executive_director: ["/dashboard", "/teams", "/analytics", "/contracts", "/finance", "/utility/announcements", "/corporate"],
-  board_member:       ["/dashboard", "/analytics", "/governance", "/corporate"],
+  executive_director: [
+    "/dashboard", "/teams", "/analytics", "/contracts", "/finance",
+    "/utility/announcements", "/corporate",
+    "/workbench/reports", "/workbench/ai-analytics",
+  ],
+  board_member: ["/dashboard", "/analytics", "/governance", "/corporate", "/workbench/reports"],
 
   // Regulator
-  regulator: ["/dashboard", "/teams", "/analytics", "/audit", "/anti-corruption", "/governance", "/vendors", "/tenders", "/utility/public-records", "/utility/gazette", "/prime-entity"],
+  regulator: [
+    "/dashboard", "/teams", "/analytics", "/audit", "/anti-corruption", "/governance",
+    "/vendors", "/tenders", "/utility/public-records", "/utility/gazette", "/prime-entity",
+    "/workbench/audit", "/workbench/reports",
+  ],
 
   // AI governance
-  ai_governance_officer:  ["/dashboard", "/teams", "/ai-agents", "/analytics", "/governance"],
-  data_analytics_officer: ["/dashboard", "/teams", "/staff-productivity", "/analytics", "/bi-dashboards", "/ai-agents"],
+  ai_governance_officer:  ["/dashboard", "/teams", "/ai-agents", "/analytics", "/governance", "/workbench/ai-analytics"],
+  data_analytics_officer: ["/dashboard", "/teams", "/staff-productivity", "/analytics", "/bi-dashboards", "/ai-agents", "/workbench/ai-analytics"],
 };
 
 
@@ -391,7 +539,7 @@ const iconMap: Record<string, React.ElementType> = {
   Landmark, UsersRound, Globe2, Scale, ShoppingCart, Gavel,
   Package, Wrench, PiggyBank, Trash2, Tag, Boxes, PackageCheck, Warehouse, ScanLine, RefreshCcw,
   BookOpen, MessageSquare, Newspaper, Megaphone, Radio, DollarSign,
-  Send,
+  Send, Search,
   // Corporate Module icons
   Crown, Target, Headphones, Monitor, Users, Settings,
   Globe, Image, Building2,
