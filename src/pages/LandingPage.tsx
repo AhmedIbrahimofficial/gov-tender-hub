@@ -185,7 +185,7 @@ function SearchCard() {
             Go
           </button>
         </div>
-        <Link to="/tenders" className="text-xs text-primary hover:underline mt-2 inline-block">
+        <Link to="/portal" className="text-xs text-primary hover:underline mt-2 inline-block">
           Advanced Search
         </Link>
       </div>
