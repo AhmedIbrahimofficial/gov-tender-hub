@@ -318,6 +318,13 @@ export const projectCostData = [
 
 export const navSections = [
   {
+    label: "Briefing",
+    icon: "Sparkles",
+    items: [
+      { to: "/briefing", label: "AI Briefing", icon: "Sparkles" },
+    ],
+  },
+  {
     label: "My Work Space",
     icon: "LayoutDashboard",
     items: [
@@ -408,7 +415,8 @@ export const navSections = [
       { to: "/budget/expenditure", label: "Expenditure",      icon: "DollarSign"    },
       { to: "/budget/revenue",     label: "Revenue",          icon: "PiggyBank"     },
       { to: "/budget/treasury",    label: "Treasury & Cash",  icon: "Landmark"      },
-      { to: "/finance",            label: "Finance Audit",    icon: "Wallet"        },
+      { to: "/financial-statements",  label: "Financial Statements",  icon: "FileText"      },
+      { to: "/finance",              label: "Finance Audit",         icon: "Wallet"        },
       { to: "/budget/fraud",       label: "Fraud Detection",  icon: "AlertOctagon"  },
     ],
   },
@@ -434,6 +442,21 @@ export const navSections = [
       { to: "/inventory/receiving",    label: "Receiving",          icon: "PackageCheck"},
       { to: "/inventory/requests",     label: "Issue Requests",     icon: "ScanLine"   },
       { to: "/inventory/warehouse",    label: "Warehouse",          icon: "Warehouse"  },
+    ],
+  },
+  {
+    label: "Human Resources",
+    icon: "UsersRound",
+    items: [
+      { to: "/human-resources",            label: "HR Dashboard",          icon: "UsersRound"    },
+      { to: "/human-resources",            label: "Recruitment & Hiring",  icon: "UserPlus"      },
+      { to: "/human-resources",            label: "Staff Records",         icon: "FileText"      },
+      { to: "/human-resources",            label: "Performance Management",icon: "TrendingUp"    },
+      { to: "/human-resources",            label: "Payroll & Benefits",    icon: "DollarSign"    },
+      { to: "/human-resources",            label: "Leave Management",      icon: "CalendarDays"  },
+      { to: "/human-resources",            label: "Training & Development",icon: "BookOpen"      },
+      { to: "/human-resources",            label: "Disciplinary & Grievance",icon: "ShieldCheck" },
+      { to: "/human-resources",            label: "Retirement & Exit",     icon: "Star"          },
     ],
   },
   {

@@ -8,8 +8,7 @@ import { useState, useRef, ReactNode } from "react";
 import { AppShell, Badge } from "@/components/AppShell";
 import {
   FileText, CheckCircle2, Clock, ChevronRight, ChevronLeft, ChevronDown,
-  Sparkles, Users, Upload, Download, Eye, MessageSquare,
-  AlertTriangle, DollarSign, Shield, BarChart3, Search,
+  Sparkles, Users, Upload, Download, Eye, MessageSquare,  AlertTriangle, DollarSign, Shield, BarChart3, Search,
   BookOpen, Save, Send, RotateCcw, HelpCircle, ArrowUp,
   UserPlus, PauseCircle, XCircle, Check, X, Filter, Plus,
   Flag, Lock, FolderOpen, Link2,
@@ -59,7 +58,8 @@ export type WorkbenchRecord = {
 export type NavTab =
   | "overview" | "details" | "participants" | "suppliers"
   | "documents" | "approvals" | "communications" | "risks"
-  | "compliance" | "financials" | "performance" | "audit" | "ai" | "casefile";
+  | "compliance" | "financials" | "performance" | "audit" | "ai" | "casefile"
+  | "docprocessor";
 
 type WorkQueueStatus =
   | "My Tasks" | "Pending Tasks" | "Overdue Tasks"
@@ -686,6 +686,7 @@ const NAV_TABS: { key: NavTab; label: string; icon: React.ElementType }[] = [
   { key: "participants",   label: "Participants",   icon: Users         },
   { key: "suppliers",      label: "Suppliers",      icon: Users         },
   { key: "documents",      label: "Documents",      icon: FileText      },
+  { key: "docprocessor",   label: "Doc Processor",  icon: FolderOpen    },
   { key: "approvals",      label: "Approvals",      icon: CheckCircle2  },
   { key: "communications", label: "Comms",          icon: MessageSquare },
   { key: "risks",          label: "Risks",          icon: AlertTriangle },
@@ -885,6 +886,262 @@ function CaseFileTab({ record }: { record: WorkbenchRecord }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Doc Processor Tab ───────────────────────────────────────────────────────
+type DocAction = "View" | "Edit" | "Share" | "Comment" | "Accept" | "Reject" | "Return" | "Escalate" | "Approve" | "Review Only" | "Authorize";
+type MarkScore = { section: string; maxMark: number; allocated: number; comment: string };
+
+function DocProcessorTab({ record, moduleLabel }: { record: WorkbenchRecord; moduleLabel: string }) {
+  const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
+  const [action, setAction] = useState<DocAction | null>(null);
+  const [showMarkKey, setShowMarkKey] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
+  const [comment, setComment] = useState("");
+  const [aiMarking, setAiMarking] = useState(false);
+  const [markScores, setMarkScores] = useState<MarkScore[]>([
+    { section: "Technical Compliance",    maxMark: 30, allocated: 0, comment: "" },
+    { section: "Delivery Capability",     maxMark: 20, allocated: 0, comment: "" },
+    { section: "Experience & References", maxMark: 25, allocated: 0, comment: "" },
+    { section: "Financial Capacity",      maxMark: 15, allocated: 0, comment: "" },
+    { section: "Warranty & After-Sales",  maxMark: 10, allocated: 0, comment: "" },
+  ]);
+  const [checklist, setChecklist] = useState([
+    { item: "Document is legible and complete",          checked: false },
+    { item: "All required signatures present",           checked: false },
+    { item: "Document matches submission requirements",  checked: false },
+    { item: "Version matches latest issued",             checked: false },
+    { item: "No unauthorized amendments",                checked: false },
+    { item: "All attachments accounted for",             checked: false },
+  ]);
+  const act = (msg: string) => pushNotification(msg, "success");
+
+  const totalMax = markScores.reduce((a, s) => a + s.maxMark, 0);
+  const totalAllocated = markScores.reduce((a, s) => a + s.allocated, 0);
+  const pct = totalMax > 0 ? Math.round((totalAllocated / totalMax) * 100) : 0;
+
+  const handleAiMark = () => {
+    setAiMarking(true);
+    setTimeout(() => {
+      setMarkScores(p => p.map(s => ({
+        ...s,
+        allocated: Math.round(s.maxMark * (0.65 + Math.random() * 0.3)),
+        comment: "AI assessed based on document content, database cross-reference, and compliance standards.",
+      })));
+      setAiMarking(false);
+      act("AI auto-marking completed");
+    }, 1400);
+  };
+
+  const DOC_ACTIONS: DocAction[] = ["View", "Edit", "Share", "Comment", "Accept", "Reject", "Return", "Escalate", "Approve", "Review Only", "Authorize"];
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Header */}
+      <div className="flex-shrink-0 bg-[#0f172a] text-white px-4 py-2 flex items-center gap-2 flex-wrap">
+        <span className="text-[10px] font-bold text-blue-300 uppercase tracking-wider">Document Explorer</span>
+        <span className="text-white/30">·</span>
+        <span className="text-[10px] text-white/60">{moduleLabel}</span>
+        <div className="ml-auto flex gap-1.5">
+          <button onClick={() => setShowMarkKey(v => !v)}
+            className={`h-6 px-2 text-[10px] font-semibold transition-colors appois-glow-on-hover ${showMarkKey ? "bg-amber-500 text-white" : "bg-white/10 text-white hover:bg-white/20"}`}
+            style={{ borderRadius: 0 }}>
+            ✏️ Marking Key
+          </button>
+          <button onClick={() => setShowChecklist(v => !v)}
+            className={`h-6 px-2 text-[10px] font-semibold transition-colors appois-glow-on-hover ${showChecklist ? "bg-emerald-600 text-white" : "bg-white/10 text-white hover:bg-white/20"}`}
+            style={{ borderRadius: 0 }}>
+            ☑️ Checklist
+          </button>
+          <button onClick={() => act("Document uploaded")}
+            className="h-6 px-2 text-[10px] font-semibold bg-blue-600 text-white hover:bg-blue-500 appois-glow-on-hover" style={{ borderRadius: 0 }}>
+            + Upload
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Document list */}
+        <div className="w-52 flex-shrink-0 border-r border-black/10 overflow-y-auto bg-[#FAFAFA]">
+          <div className="px-2 py-1.5 text-[9px] font-bold text-black/40 uppercase tracking-wider border-b border-black/8">
+            Attached Documents ({MOCK_DOCUMENTS.length})
+          </div>
+          {MOCK_DOCUMENTS.map((doc, i) => (
+            <button key={i} onClick={() => setSelectedDoc(doc.name)}
+              className={`w-full text-left px-2 py-2.5 border-b border-black/5 transition-colors group ${selectedDoc === doc.name ? "bg-[#0f172a] text-white" : "hover:bg-[#F5F5F5]"}`}>
+              <div className="flex items-start gap-1.5">
+                <FileText className={`h-3 w-3 flex-shrink-0 mt-0.5 ${selectedDoc === doc.name ? "text-blue-300" : "text-black/30"}`} />
+                <div className="min-w-0 flex-1">
+                  <div className={`text-[10px] font-semibold leading-tight truncate ${selectedDoc === doc.name ? "text-white" : "text-black"}`}>{doc.name}</div>
+                  <div className={`text-[9px] mt-0.5 ${selectedDoc === doc.name ? "text-blue-200" : "text-black/40"}`}>{doc.category} · v1.0 · {doc.size}</div>
+                  <div className={`text-[9px] ${doc.status === "Final" || doc.status === "Approved" ? "text-emerald-600" : "text-amber-600"} font-semibold`}>{doc.status}</div>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Main doc area */}
+        <div className="flex-1 min-w-0 overflow-y-auto flex flex-col">
+          {selectedDoc ? (
+            <>
+              {/* Action toolbar */}
+              <div className="flex-shrink-0 bg-white border-b border-black/10 px-3 py-2 flex items-center gap-1.5 flex-wrap">
+                {DOC_ACTIONS.map(a => (
+                  <button key={a} onClick={() => { setAction(a); act(`${a}: ${selectedDoc}`); }}
+                    className={`h-6 px-2 text-[10px] font-semibold transition-all appois-glow-on-hover ${action === a ? "bg-[#0f172a] text-white" : "bg-[#F5F5F5] text-black/70 hover:bg-[#0f172a] hover:text-white"}`}
+                    style={{ borderRadius: 0 }}>
+                    {a}
+                  </button>
+                ))}
+              </div>
+
+              {/* Document viewer simulation */}
+              <div className="flex-1 bg-[#F0F0F0] p-4 flex items-center justify-center relative">
+                <div className="bg-white shadow-lg w-full max-w-2xl" style={{ minHeight: "400px", borderRadius: 0 }}>
+                  {/* MS Word-style toolbar */}
+                  <div className="bg-[#2b579a] text-white px-3 py-1.5 flex items-center gap-4 text-[10px]">
+                    <span className="font-semibold">{selectedDoc}</span>
+                    <div className="flex items-center gap-2 ml-auto">
+                      {["File", "Home", "Insert", "Review", "View"].map(t => (
+                        <button key={t} className="hover:bg-white/20 px-1.5 py-0.5 transition-colors">{t}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Formatting toolbar */}
+                  <div className="bg-[#f3f3f3] border-b border-black/10 px-3 py-1 flex items-center gap-2 text-[10px]">
+                    {["B", "I", "U"].map(f => (
+                      <button key={f} className="h-5 w-5 border border-black/15 bg-white font-bold hover:bg-blue-50 transition-colors" style={{ borderRadius: 0 }}>{f}</button>
+                    ))}
+                    <div className="h-4 w-px bg-black/15" />
+                    {["Align L", "Center", "Align R"].map(f => (
+                      <button key={f} className="h-5 px-1.5 border border-black/10 bg-white hover:bg-blue-50 text-[9px] transition-colors" style={{ borderRadius: 0 }}>{f}</button>
+                    ))}
+                    <div className="h-4 w-px bg-black/15" />
+                    <span className="text-black/50">Font: </span>
+                    <select className="h-5 px-1 border border-black/10 bg-white text-[9px]" style={{ borderRadius: 0 }}>
+                      <option>Calibri</option><option>Arial</option><option>Times New Roman</option>
+                    </select>
+                    <input type="number" defaultValue={11} className="h-5 w-8 border border-black/10 bg-white text-[9px] text-center" style={{ borderRadius: 0 }} />
+                  </div>
+                  {/* Document content area */}
+                  <div className="p-6 min-h-64">
+                    <div className="text-center text-xs font-bold mb-2">GOVERNMENT OF ZIMBABWE</div>
+                    <div className="text-center text-xs font-semibold mb-4">{record.ministry.toUpperCase()}</div>
+                    <div className="text-center text-[11px] mb-6">{selectedDoc}</div>
+                    <div className="text-xs text-black/60 leading-relaxed space-y-2">
+                      <p><strong>Reference:</strong> {record.recordNumber} · {record.referenceNumber}</p>
+                      <p><strong>Subject Matter:</strong> {record.title}</p>
+                      <p><strong>Department:</strong> {record.department}</p>
+                      <p><strong>Financial Year:</strong> {record.financialYear}</p>
+                      <p className="mt-4">This document has been prepared in accordance with the Public Procurement and Disposal of Public Assets Act (PPDPA) 2018 and Treasury Instructions. All procurement activities have been conducted transparently and in compliance with applicable regulations.</p>
+                      <p>For any queries regarding this document, please contact the Procurement Department at the above-referenced ministry.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Glow overlay when reviewing */}
+                {action === "Review Only" && (
+                  <div className="absolute top-2 right-2 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 flex items-center gap-1" style={{ boxShadow: "0 0 12px rgba(139,92,246,0.5)", borderRadius: 0 }}>
+                    <Sparkles className="h-3 w-3" /> Review Mode
+                  </div>
+                )}
+              </div>
+
+              {/* Comment / report box */}
+              <div className="flex-shrink-0 border-t border-black/10 bg-white p-3">
+                <div className="text-[10px] font-bold text-black/50 uppercase tracking-wider mb-1.5">Comment / Report on Document</div>
+                <textarea value={comment} onChange={e => setComment(e.target.value)} rows={2}
+                  placeholder="Type a comment, justification, or review report about this document…"
+                  className="w-full px-2.5 py-2 text-xs border border-black/10 resize-none focus:outline-none focus:ring-1 focus:ring-blue-300" style={{ borderRadius: 0 }} />
+                <div className="flex gap-2 mt-1.5">
+                  <button onClick={() => act("Comment saved")}
+                    className="h-7 px-3 bg-[#0f172a] text-white text-[10px] font-semibold appois-glow-on-hover" style={{ borderRadius: 0 }}>Save Comment</button>
+                  <button onClick={() => act("Document shared")}
+                    className="h-7 px-3 border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] appois-glow-on-hover" style={{ borderRadius: 0 }}>Share</button>
+                  <button onClick={() => act("PDF exported")}
+                    className="h-7 px-3 border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] appois-glow-on-hover" style={{ borderRadius: 0 }}>Export PDF</button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-black/30 gap-2 p-8">
+              <FileText className="h-12 w-12 opacity-30" />
+              <span className="text-sm">Select a document from the list to view</span>
+              <span className="text-xs">or upload a new document</span>
+            </div>
+          )}
+        </div>
+
+        {/* Marking Key & Checklist panel */}
+        {(showMarkKey || showChecklist) && (
+          <div className="w-64 flex-shrink-0 border-l border-black/10 overflow-y-auto bg-white flex flex-col">
+            {showMarkKey && (
+              <div className="flex-1 p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#0f172a]">Marking Key Score Card</span>
+                  <div className="flex gap-1">
+                    <button onClick={handleAiMark} disabled={aiMarking}
+                      className="h-6 px-2 bg-violet-600 text-white text-[9px] font-bold flex items-center gap-1 disabled:opacity-50 appois-glow-on-hover" style={{ borderRadius: 0 }}>
+                      <Sparkles className="h-2.5 w-2.5" /> {aiMarking ? "Marking…" : "AI Mark"}
+                    </button>
+                  </div>
+                </div>
+                {/* Score summary */}
+                <div className="bg-[#0f172a] text-white p-2.5" style={{ borderRadius: 0 }}>
+                  <div className="text-[9px] text-blue-300 uppercase tracking-wider">Total Score</div>
+                  <div className="text-2xl font-bold">{totalAllocated}<span className="text-sm text-white/50">/{totalMax}</span></div>
+                  <div className="mt-1 bg-white/10 h-1.5 overflow-hidden" style={{ borderRadius: 0 }}>
+                    <div className={`h-full transition-all ${pct >= 70 ? "bg-emerald-400" : pct >= 50 ? "bg-amber-400" : "bg-red-400"}`} style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="text-[10px] text-blue-300 mt-0.5">{pct}% — {pct >= 70 ? "Pass" : pct >= 50 ? "Marginal" : "Fail"}</div>
+                </div>
+                {/* Per-section scores */}
+                {markScores.map((s, i) => (
+                  <div key={i} className="border border-black/8 p-2" style={{ borderRadius: 0 }}>
+                    <div className="text-[10px] font-semibold text-black mb-1">{s.section}</div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <label className="text-[9px] text-black/40">Score:</label>
+                      <input type="number" min={0} max={s.maxMark} value={s.allocated}
+                        onChange={e => setMarkScores(p => p.map((sc, idx) => idx === i ? { ...sc, allocated: Math.min(s.maxMark, Math.max(0, Number(e.target.value))) } : sc))}
+                        className="w-12 h-6 px-1.5 text-xs border border-black/10 text-center" style={{ borderRadius: 0 }} />
+                      <span className="text-[9px] text-black/40">/ {s.maxMark}</span>
+                    </div>
+                    <textarea rows={1} value={s.comment}
+                      onChange={e => setMarkScores(p => p.map((sc, idx) => idx === i ? { ...sc, comment: e.target.value } : sc))}
+                      placeholder="Comment…"
+                      className="w-full px-1.5 py-1 text-[9px] border border-black/8 resize-none focus:outline-none" style={{ borderRadius: 0 }} />
+                  </div>
+                ))}
+                <button onClick={() => act("Marking submitted")}
+                  className="w-full h-8 bg-emerald-600 text-white text-xs font-semibold appois-glow-on-hover" style={{ borderRadius: 0 }}>
+                  Submit Marks
+                </button>
+              </div>
+            )}
+            {showChecklist && (
+              <div className="p-3 space-y-2 border-t border-black/8">
+                <div className="text-xs font-bold text-[#0f172a]">Document Checklist</div>
+                {checklist.map((item, i) => (
+                  <label key={i} className={`flex items-center gap-2 p-2 border cursor-pointer text-xs transition-colors ${item.checked ? "bg-emerald-50 border-emerald-200" : "border-black/8 hover:bg-[#F5F5F5]"}`}
+                    style={{ borderRadius: 0 }}>
+                    <input type="checkbox" checked={item.checked}
+                      onChange={() => setChecklist(p => p.map((c, idx) => idx === i ? { ...c, checked: !c.checked } : c))}
+                      className="accent-emerald-600" />
+                    <span className={item.checked ? "line-through text-black/40" : ""}>{item.item}</span>
+                    {item.checked && <CheckCircle2 className="h-3 w-3 text-emerald-500 ml-auto flex-shrink-0" />}
+                  </label>
+                ))}
+                <div className="text-[10px] text-black/50 text-center pt-1">
+                  {checklist.filter(c => c.checked).length}/{checklist.length} items verified
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -1378,6 +1635,8 @@ function MainWorkArea({ activeTab, record, moduleLabel, children }: {
 
   if (activeTab === "casefile") return <CaseFileTab record={record} />;
 
+  if (activeTab === "docprocessor") return <DocProcessorTab record={record} moduleLabel={moduleLabel} />;
+
   return (
     <div className="p-4 flex flex-col items-center justify-center h-32 text-black/30">
       <FileText className="h-8 w-8 mb-2 opacity-40" />
@@ -1423,15 +1682,15 @@ function ActionPanel({ record }: { record: WorkbenchRecord }) {
   const isOvernight = effectiveRole === "Oversight";
 
   const ALL_ACTIONS = [
-    { label: "Save Draft",            icon: Save,        cls: "border border-black/10 text-black hover:bg-[#F5F5F5]",         fn: () => act("Draft saved — " + record.recordNumber)            },
-    { label: "Submit",                icon: Send,        cls: "bg-black text-white hover:bg-black/90",                        fn: () => act("Submitted — " + record.recordNumber)              },
-    { label: "Approve",               icon: CheckCircle2,cls: "bg-emerald-600 text-white hover:bg-emerald-700",               fn: () => act("Approved — " + record.recordNumber)               },
-    { label: "Return for Correction", icon: RotateCcw,   cls: "bg-amber-500 text-white hover:bg-amber-600",                   fn: () => act("Returned for correction")                         },
-    { label: "Reject",                icon: XCircle,     cls: "bg-red-600 text-white hover:bg-red-700",                       fn: () => act("Rejected — " + record.recordNumber)               },
-    { label: "Request Clarification", icon: HelpCircle,  cls: "border border-blue-200 text-blue-700 hover:bg-blue-50",        fn: () => act("Clarification requested")                         },
-    { label: "Escalate",              icon: ArrowUp,     cls: "border border-amber-200 text-amber-700 hover:bg-amber-50",     fn: () => act("Escalated to higher authority")                   },
-    { label: "Delegate",              icon: UserPlus,    cls: "border border-violet-200 text-violet-700 hover:bg-violet-50",  fn: () => act("Delegated to another user")                       },
-    { label: "Hold",                  icon: PauseCircle, cls: "border border-gray-200 text-gray-600 hover:bg-gray-50",        fn: () => act("Process placed on hold")                          },
+    { label: "Save Draft",            icon: Save,        cls: "border border-black/10 text-black hover:bg-[#F5F5F5] appois-glow-on-hover",         fn: () => act("Draft saved — " + record.recordNumber)            },
+    { label: "Submit",                icon: Send,        cls: "bg-black text-white hover:bg-black/90 appois-glow-white",                        fn: () => act("Submitted — " + record.recordNumber)              },
+    { label: "Approve",               icon: CheckCircle2,cls: "bg-emerald-600 text-white hover:bg-emerald-700 appois-glow-on-hover",               fn: () => act("Approved — " + record.recordNumber)               },
+    { label: "Return for Correction", icon: RotateCcw,   cls: "bg-amber-500 text-white hover:bg-amber-600 appois-glow-on-hover",                   fn: () => act("Returned for correction")                         },
+    { label: "Reject",                icon: XCircle,     cls: "bg-red-600 text-white hover:bg-red-700 appois-glow-on-hover",                       fn: () => act("Rejected — " + record.recordNumber)               },
+    { label: "Request Clarification", icon: HelpCircle,  cls: "border border-blue-200 text-blue-700 hover:bg-blue-50 appois-glow-on-hover",        fn: () => act("Clarification requested")                         },
+    { label: "Escalate",              icon: ArrowUp,     cls: "border border-amber-200 text-amber-700 hover:bg-amber-50 appois-glow-on-hover",     fn: () => act("Escalated to higher authority")                   },
+    { label: "Delegate",              icon: UserPlus,    cls: "border border-violet-200 text-violet-700 hover:bg-violet-50 appois-glow-on-hover",  fn: () => act("Delegated to another user")                       },
+    { label: "Hold",                  icon: PauseCircle, cls: "border border-gray-200 text-gray-600 hover:bg-gray-50 appois-glow-on-hover",        fn: () => act("Process placed on hold")                          },
     { label: "Close",                 icon: X,           cls: "border border-black/10 text-black/50 hover:bg-[#F5F5F5]",      fn: () => act("Task closed")                                     },
   ];
 
@@ -1460,7 +1719,8 @@ function ActionPanel({ record }: { record: WorkbenchRecord }) {
         <div className="flex-1 overflow-y-auto px-2 pb-3 min-h-0 space-y-1">
           {ALL_ACTIONS.filter(a => allowed.includes(a.label)).map(a => (
             <button key={a.label} onClick={a.fn}
-              className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${a.cls}`}>
+              className={`w-full flex items-center gap-2 px-2.5 py-2 text-xs font-medium transition-colors ${a.cls}`}
+              style={{ borderRadius: 0 }}>
               <a.icon className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="truncate text-left">{a.label}</span>
             </button>
@@ -1477,9 +1737,11 @@ function ActionPanel({ record }: { record: WorkbenchRecord }) {
         </div>
       )}
 
-      <div className="flex-shrink-0 mx-2 mb-2 p-2.5 bg-violet-50 border border-violet-100 rounded-xl">
+      <div className="flex-shrink-0 mx-2 mb-2 p-2.5 bg-violet-50 border border-violet-100" style={{ borderRadius: 0 }}>
         <div className="flex items-center gap-1.5 mb-1">
-          <Sparkles className="h-3 w-3 text-violet-500" />
+          <div className="h-5 w-5 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center">
+            <Sparkles className="h-3 w-3 text-white" />
+          </div>
           <span className="text-[10px] font-semibold text-violet-700">AI Recommends</span>
         </div>
         <p className="text-[10px] text-violet-600 leading-snug">Complete all required fields and submit for approval to maintain stage timeline.</p>
@@ -2254,8 +2516,30 @@ export default function EnterpriseWorkbench({
   return (
     <AppShell>
       {/* ── Top bar ──────────────────────────────────────────────────────── */}
+      <div className="bg-[#0f172a] border-b border-blue-900/50 px-4 py-1 flex-shrink-0">
+        <div className="text-center text-[9px] text-blue-300 font-semibold uppercase tracking-widest">
+          GOVERNMENT OF THE REPUBLIC OF ZIMBABWE
+        </div>
+        <div className="text-center text-[10px] text-white font-bold uppercase tracking-wide">
+          AI-POWERED ELECTRONIC PUBLIC PROCUREMENT & OVERSIGHT INTELLIGENCE MANAGEMENT SYSTEM (APPOIS)
+        </div>
+        {activeRecord.ministry && (
+          <div className="flex items-center justify-between text-[9px] text-blue-300 mt-0.5">
+            <span>{activeRecord.ministry}</span>
+            <span>·</span>
+            <span>{activeRecord.department}</span>
+            <span>·</span>
+            <span>FY {activeRecord.financialYear}</span>
+            <span>·</span>
+            <span>{new Date().toLocaleDateString("en-GB")}</span>
+            <span>·</span>
+            <span>{new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</span>
+          </div>
+        )}
+      </div>
+
       <div className="bg-white border-b border-black/10 px-4 py-2 flex items-center gap-3 flex-shrink-0 relative">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="text-sm font-bold text-black leading-tight">
             {title ?? `Enterprise Workbench — ${module.label}`}
           </h1>
@@ -2263,13 +2547,18 @@ export default function EnterpriseWorkbench({
             {subtitle ?? `${activeRecord.ministry} · ${activeRecord.department} · ${module.label}`}
           </p>
         </div>
+        {/* AI Logo on every workbench */}
+        <div className="h-7 w-7 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center flex-shrink-0">
+          <Sparkles className="h-3.5 w-3.5 text-white" />
+        </div>
         <div className="hidden lg:flex items-center px-3 py-1 bg-[#F5F5F5] rounded-lg flex-shrink-0">
           <HierarchyStrip currentRole={activeRecord.userRole} />
         </div>
         <div className="ml-auto flex items-center gap-2 flex-shrink-0 relative">
           <button
             onClick={() => setShowRecords(v => !v)}
-            className={`h-8 px-3 border rounded-lg text-xs flex items-center gap-1.5 transition-colors ${showRecords ? "bg-indigo-600 text-white border-indigo-600" : "border-black/10 hover:bg-[#F5F5F5]"}`}>
+            className={`h-8 px-3 border text-xs flex items-center gap-1.5 transition-colors appois-glow-on-hover ${showRecords ? "bg-[#0f172a] text-white border-[#0f172a]" : "border-black/10 hover:bg-[#F5F5F5]"}`}
+            style={{ borderRadius: 0 }}>
             <Filter className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">{activeRecord.recordNumber}</span>
             <span className="sm:hidden">Switch Tender</span>

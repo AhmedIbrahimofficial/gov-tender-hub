@@ -14,9 +14,11 @@ const STEPS = [
   { label: "Review & Submit",   icon: CheckCircle2 },
 ];
 
-const METHODS = ["Open Tender", "Restricted Tender", "Request for Quotation (RFQ)", "Request for Proposal (RFP)", "Framework Agreement", "Direct Procurement", "Emergency Procurement"];
+const METHODS = ["Open Tender", "Restricted Tender", "Request for Quotation (RFQ)", "Request for Proposal (RFP)", "Framework Agreement", "Direct Procurement", "Emergency Procurement", "RFI (Request for Information)"];
 const CATEGORIES = ["Infrastructure / Works", "Health & Pharmaceuticals", "ICT & Digital", "Agriculture", "Education", "Services / Consultancy", "Transport & Fleet", "Security Services", "Office Supplies", "Other"];
 const ENTITIES = ["Ministry of Finance", "Ministry of Health & Child Care", "ZIMRA", "Ministry of Transport", "Ministry of Energy", "Ministry of Agriculture", "Ministry of Education", "ZINARA", "City of Harare", "PRAZ"];
+const PROCUREMENT_METHODS_DIRECT = ["Direct Procurement", "Restricted", "Open Competitive", "Framework", "Emergency"];
+const MINISTRIES_LIST = ["Ministry of Finance and Investment Promotion", "Ministry of Health and Child Care", "Ministry of Primary and Secondary Education", "Ministry of Transport and Infrastructural Development", "Ministry of Agriculture", "Ministry of Mines and Mining Development", "Ministry of Energy and Power Development", "Ministry of Environment, Climate and Tourism", "Ministry of Home Affairs", "Ministry of Defence", "Office of the President and Cabinet"];
 
 const AI_SUGGESTIONS: Record<number, { title: string; text: string; actions: string[] }> = {
   1: { title: "Procurement Method Suggestion", text: "Based on estimated value of USD 14.8M, Open Competitive Tendering is recommended. This exceeds the USD 5M threshold per PPDPA Section 32.", actions: ["Apply Open Tender", "Review thresholds"] },
@@ -34,16 +36,27 @@ export default function NewTenderModal({ open, onClose }: Props) {
   const [form, setForm] = useState({
     title: "",
     entity: "",
+    ministry: "",
+    department: "",
     category: "",
     method: "Open Tender",
+    procurementMethod: "Open Competitive",
     estimatedValue: "",
     currency: "USD",
     fundingSource: "",
     closingDate: "",
+    closingTime: "10:00",
+    openingDate: "",
+    openingTime: "10:00",
     description: "",
     specs: "",
     evalMethod: "QCBS",
     passmark: "70",
+    financialYear: "2026/2027",
+    budgetCode: "",
+    ppaPBCode: "",
+    tenderPeriod: "90",
+    tenderType: "National",
     weights: { technical: "70", financial: "30" },
     committee: ["", "", "", "", ""],
   });
@@ -149,60 +162,157 @@ export default function NewTenderModal({ open, onClose }: Props) {
           <div className="flex-1 min-w-0">
             {step === 1 && (
               <div className="space-y-3">
-                <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tender Title *</label>
-                  <input value={form.title} onChange={e => set("title", e.target.value)} placeholder="e.g. Supply of Solar Mini-Grids — 12 Rural Clinics" className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                {/* Auto-generated reference */}
+                <div className="flex items-center gap-2 p-2 bg-[#F9F9F9] border border-black/8 text-xs">
+                  <span className="text-black/40 font-semibold">Tender Ref (Auto-generated):</span>
+                  <span className="font-mono font-bold text-[#0f172a]">{tenderRef}</span>
                 </div>
+
+                {/* Title — enlarged */}
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Procurement Title *</label>
+                  <input value={form.title} onChange={e => set("title", e.target.value)}
+                    placeholder="e.g. Supply of Solar Mini-Grids — 12 Rural Clinics"
+                    className="mt-1 w-full h-10 px-3 border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring font-semibold" style={{ borderRadius: 0 }} />
+                </div>
+
+                {/* Ministry + Department */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Procuring Entity *</label>
-                    <select value={form.entity} onChange={e => set("entity", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                      <option value="">Select entity…</option>
-                      {ENTITIES.map(e => <option key={e}>{e}</option>)}
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Select Ministry *</label>
+                    <select value={form.ministry} onChange={e => set("ministry", e.target.value)}
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" style={{ borderRadius: 0 }}>
+                      <option value="">Select ministry…</option>
+                      {MINISTRIES_LIST.map(m => <option key={m}>{m}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category *</label>
-                    <select value={form.category} onChange={e => set("category", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                      <option value="">Select category…</option>
-                      {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Select Department *</label>
+                    <input value={form.department} onChange={e => set("department", e.target.value)}
+                      placeholder="Department / Division name…"
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" style={{ borderRadius: 0 }} />
+                  </div>
+                </div>
+
+                {/* Procurement Type + Method */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Procurement Type *</label>
+                    <div className="mt-1 grid grid-cols-2 gap-1.5">
+                      {["Open Tender", "RFQ", "RFP", "EOI", "Auction", "RFI"].map(t => (
+                        <label key={t} className={`flex items-center gap-1.5 px-2 py-1.5 border cursor-pointer text-xs font-medium transition-colors ${form.method === t ? "bg-[#0f172a] text-white border-[#0f172a]" : "bg-secondary border-border hover:bg-secondary/80"}`} style={{ borderRadius: 0 }}>
+                          <input type="radio" name="type" checked={form.method === t} onChange={() => set("method", t)} className="hidden" />{t}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Procurement Method (Direct/Restricted/Open) *</label>
+                    <select value={form.procurementMethod} onChange={e => set("procurementMethod", e.target.value)}
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }}>
+                      {PROCUREMENT_METHODS_DIRECT.map(m => <option key={m}>{m}</option>)}
                     </select>
                   </div>
                 </div>
-                <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Procurement Method *</label>
-                  <select value={form.method} onChange={e => set("method", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring">
-                    {METHODS.map(m => <option key={m}>{m}</option>)}
-                  </select>
+
+                {/* Financial Year + Budget Code + PPADB Codes */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Financial Year *</label>
+                    <select value={form.financialYear} onChange={e => set("financialYear", e.target.value)}
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }}>
+                      <option>2026/2027</option><option>2025/2026</option><option>2027/2028</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget Code</label>
+                    <input value={form.budgetCode} onChange={e => set("budgetCode", e.target.value)}
+                      placeholder="BC-MOH-2026-0001"
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">PPADB Codes</label>
+                    <input value={form.ppaPBCode} onChange={e => set("ppaPBCode", e.target.value)}
+                      placeholder="Search & select…"
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }} />
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <div className="col-span-1 sm:col-span-2">
+
+                {/* Value + Currency + Category */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="col-span-2">
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Estimated Value *</label>
                     <div className="relative mt-1">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted-foreground">{form.currency}</span>
-                      <input type="number" value={form.estimatedValue} onChange={e => set("estimatedValue", e.target.value)} placeholder="0.00" className="w-full h-9 pl-12 pr-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                      <input type="number" value={form.estimatedValue} onChange={e => set("estimatedValue", e.target.value)}
+                        placeholder="0.00"
+                        className="w-full h-9 pl-12 pr-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }} />
                     </div>
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Currency</label>
-                    <select value={form.currency} onChange={e => set("currency", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm">
+                    <select value={form.currency} onChange={e => set("currency", e.target.value)}
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }}>
                       <option>USD</option><option>ZWL</option><option>EUR</option><option>GBP</option>
                     </select>
                   </div>
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tender Type</label>
+                    <select value={form.tenderType} onChange={e => set("tenderType", e.target.value)}
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }}>
+                      <option>National</option><option>International</option><option>Regional</option>
+                    </select>
+                  </div>
                 </div>
+
+                {/* Category + Funding Source */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category *</label>
+                    <select value={form.category} onChange={e => set("category", e.target.value)}
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }}>
+                      <option value="">Select category…</option>
+                      {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div>
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Funding Source</label>
-                    <select value={form.fundingSource} onChange={e => set("fundingSource", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm">
+                    <select value={form.fundingSource} onChange={e => set("fundingSource", e.target.value)}
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }}>
                       <option value="">Select…</option>
                       <option>Treasury</option><option>World Bank</option><option>AfDB</option><option>Donor Grant</option><option>Loan</option>
                     </select>
                   </div>
+                </div>
+
+                {/* Tender Period + Closing Date + Opening Date */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bid Closing Date</label>
-                    <input type="date" value={form.closingDate} onChange={e => set("closingDate", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tender Period (days)</label>
+                    <input type="number" value={form.tenderPeriod} onChange={e => set("tenderPeriod", e.target.value)}
+                      placeholder="e.g. 90"
+                      className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Closing Date & Time *</label>
+                    <div className="flex gap-1 mt-1">
+                      <input type="date" value={form.closingDate} onChange={e => set("closingDate", e.target.value)}
+                        className="flex-1 h-9 px-2 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }} />
+                      <input type="time" value={form.closingTime} onChange={e => set("closingTime", e.target.value)}
+                        className="w-20 h-9 px-1 border border-border bg-secondary text-xs" style={{ borderRadius: 0 }} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Opening Date & Time</label>
+                    <div className="flex gap-1 mt-1">
+                      <input type="date" value={form.openingDate} onChange={e => set("openingDate", e.target.value)}
+                        className="flex-1 h-9 px-2 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }} />
+                      <input type="time" value={form.openingTime} onChange={e => set("openingTime", e.target.value)}
+                        className="w-20 h-9 px-1 border border-border bg-secondary text-xs" style={{ borderRadius: 0 }} />
+                    </div>
                   </div>
                 </div>
+
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Brief Description</label>
                   <textarea value={form.description} onChange={e => set("description", e.target.value)} rows={2} placeholder="Briefly describe the procurement need…" className="mt-1 w-full px-3 py-2 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none" />
@@ -390,22 +500,68 @@ export default function NewTenderModal({ open, onClose }: Props) {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between px-4 sm:px-6 pb-5 pt-2">
-          <button onClick={() => setStep(s => Math.max(1, s - 1))} disabled={step === 1}
-            className="h-9 px-4 rounded-md border border-border text-sm hover:bg-secondary disabled:opacity-40 transition-colors">
-            ← Back
-          </button>
-          <div className="flex gap-2">
-            <button onClick={onClose} className="h-9 px-4 rounded-md border border-border text-sm hover:bg-secondary">Cancel</button>
-            {step < STEPS.length
-              ? <button onClick={() => setStep(s => s + 1)} className="h-9 px-5 rounded-md bg-primary text-white text-sm font-semibold hover:opacity-90 flex items-center gap-1.5 transition-opacity">
-                  Continue <ChevronRight className="h-4 w-4" />
-                </button>
-              : <button onClick={handleSubmit} className="h-9 px-5 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:opacity-90 flex items-center gap-1.5 transition-opacity">
-                  <Zap className="h-4 w-4" /> Submit Tender
-                </button>
-            }
+        {/* Footer — metadata + navigation */}
+        <div className="border-t border-border">
+          {/* Metadata row — Initiator, Approver, Authorizer + attachment */}
+          <div className="px-4 sm:px-6 py-3 bg-[#F9F9F9] border-b border-border flex flex-wrap items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="text-black/40 font-semibold">Created by:</span>
+              <span className="font-medium text-[#0f172a]">{user?.name ?? "Current User"}</span>
+            </div>
+            <div className="text-black/20">·</div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-black/40 font-semibold">Initiator:</span>
+              <span className="font-medium text-blue-700">{user?.name ?? "Initiator"}</span>
+            </div>
+            <div className="text-black/20">·</div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-black/40 font-semibold">Approver:</span>
+              <span className="font-medium text-violet-700">Procurement Manager</span>
+            </div>
+            <div className="text-black/20">·</div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-black/40 font-semibold">Authorizer:</span>
+              <span className="font-medium text-emerald-700">CPO / Director</span>
+            </div>
+            <div className="text-black/20">·</div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-black/40 font-semibold">Date:</span>
+              <span className="font-medium text-[#0f172a]">{new Date().toLocaleDateString()}</span>
+            </div>
+          </div>
+
+          {/* Action row */}
+          <div className="flex items-center justify-between px-4 sm:px-6 pb-5 pt-3 flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <button onClick={() => setStep(s => Math.max(1, s - 1))} disabled={step === 1}
+                className="h-9 px-4 border border-border text-sm hover:bg-secondary disabled:opacity-40 transition-colors appois-glow-on-hover" style={{ borderRadius: 0 }}>
+                ← Back
+              </button>
+              <button onClick={onClose}
+                className="h-9 px-4 border border-border text-sm hover:bg-secondary appois-glow-on-hover" style={{ borderRadius: 0 }}>
+                Cancel
+              </button>
+              <button onClick={() => window.print()}
+                className="h-9 px-3 border border-border text-xs hover:bg-secondary appois-glow-on-hover flex items-center gap-1.5" style={{ borderRadius: 0 }}>
+                🖨 Print Preview
+              </button>
+              <button
+                className="h-9 px-3 border border-dashed border-border text-xs text-black/50 hover:bg-secondary flex items-center gap-1.5" style={{ borderRadius: 0 }}>
+                📎 Attach Files
+              </button>
+            </div>
+            <div className="flex gap-2">
+              {step < STEPS.length
+                ? <button onClick={() => setStep(s => s + 1)}
+                    className="h-9 px-5 bg-[#0f172a] text-white text-sm font-semibold hover:opacity-90 flex items-center gap-1.5 transition-opacity appois-glow-on-hover" style={{ borderRadius: 0 }}>
+                    Continue <ChevronRight className="h-4 w-4" />
+                  </button>
+                : <button onClick={handleSubmit}
+                    className="h-9 px-5 bg-emerald-600 text-white text-sm font-semibold hover:opacity-90 flex items-center gap-1.5 transition-opacity appois-glow-on-hover" style={{ borderRadius: 0 }}>
+                    <Zap className="h-4 w-4" /> Submit Tender
+                  </button>
+              }
+            </div>
           </div>
         </div>
       </div>

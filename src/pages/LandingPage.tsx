@@ -1,32 +1,28 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Home, Mail, Map, Search, FileText, MapPin, Building2, Tag,
   Archive, CheckCircle2, XCircle, Download, ListChecks,
   LogIn, UserPlus, KeyRound, UserSearch, HelpCircle, BookOpen, Info,
-  Bell, ShieldCheck, Globe2, ChevronRight, Calendar, Phone,
+  Bell, ShieldCheck, Globe2, ChevronRight, Calendar, Phone, Sparkles, Send, X,
 } from "lucide-react";
 
-/* ── Full system name ─────────────────────────────────────────────────────── */
 const SYSTEM_SHORT = "APPOIS";
-const SYSTEM_FULL  = "AI-Powered Public Procurement & Oversight Intelligence System";
+const SYSTEM_FULL  = "AI-Powered Electronic Public Procurement & Oversight Intelligence System";
 const SYSTEM_SUB   = "Integrity · Public Trust · Transparency · Good Governance · Clean Procurement";
 
-/* ───────────────────────── Logo ───────────────────────── */
 function CoatOfArms({ className = "" }: { className?: string }) {
   return (
     <div className={`flex items-center justify-center rounded-full bg-white border-2 border-white shadow ${className}`}>
-      <ShieldCheck className="w-8 h-8 text-primary" />
+      <ShieldCheck className="w-8 h-8 text-[#0f172a]" />
     </div>
   );
 }
 
-/* ─────────────────────── Top bar ─────────────────────── */
 function TopBar() {
   const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-  const navigate = useNavigate();
   return (
-    <div className="bg-primary text-white text-xs">
+    <div className="bg-[#0f172a] text-white text-xs">
       <div className="max-w-[1280px] mx-auto px-4 py-1.5 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" />{today}</span>
@@ -47,67 +43,105 @@ function TopBar() {
   );
 }
 
-/* ─────────────────────── Header ─────────────────────── */
 function Header() {
   const navigate = useNavigate();
+  const [aiQuery, setAiQuery] = useState("");
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiResponse, setAiResponse] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
   const navLinks = [
-    { label: "Search",                  icon: Search,       to: "/portal"          },
-    { label: "Active Tenders",          icon: FileText,     to: "/portal"          },
-    { label: "Tenders by Closing Date", icon: Calendar,     to: "/portal"          },
-    { label: "Corrigendum",             icon: Bell,         to: "/portal"          },
-    { label: "Bid Awards",              icon: CheckCircle2, to: "/portal"          },
-    { label: "APPOIS Home",             icon: Home,         to: "/"                },
+    { label: "Search",                  icon: Search,       to: "/portal"  },
+    { label: "Active Tenders",          icon: FileText,     to: "/portal"  },
+    { label: "Tenders by Closing Date", icon: Calendar,     to: "/portal"  },
+    { label: "Corrigendum",             icon: Bell,         to: "/portal"  },
+    { label: "Bid Awards",              icon: CheckCircle2, to: "/portal"  },
+    { label: "APPOIS Home",             icon: Home,         to: "/"        },
   ];
 
+  const handleAiAsk = () => {
+    if (!aiQuery.trim()) return;
+    setAiLoading(true);
+    setTimeout(() => {
+      setAiResponse(`Based on your query "${aiQuery}", there are currently 1,287 active tenders on the APPOIS portal. You can search by ministry, category, closing date, or value. Visit the portal for full details.`);
+      setAiLoading(false);
+    }, 900);
+  };
+
   return (
-    <header className="bg-primary text-white">
+    <header className="appois-header">
       <div className="max-w-[1280px] mx-auto px-4 py-4 flex items-center gap-4">
-        <CoatOfArms className="w-14 h-14" />
+        <CoatOfArms className="w-14 h-14 flex-shrink-0" />
         <div className="flex-1">
-          <div className="text-xl md:text-2xl font-bold leading-tight">
+          <div className="text-[10px] font-semibold text-blue-300 uppercase tracking-widest mb-0.5">GOVERNMENT OF THE REPUBLIC OF ZIMBABWE</div>
+          <div className="text-xl md:text-2xl font-bold leading-tight text-white">
             {SYSTEM_SHORT} — Central Public Procurement Portal
           </div>
-          <div className="text-sm text-white/85 mt-0.5">
-            {SYSTEM_FULL}
-          </div>
+          <div className="text-sm text-white/80 mt-0.5">{SYSTEM_FULL}</div>
         </div>
-        <div className="hidden lg:flex items-center gap-2 text-xs">
-          <span className="px-2 py-1 rounded bg-white/10 border border-white/20">Integrity</span>
-          <span className="px-2 py-1 rounded bg-white/10 border border-white/20">Transparency</span>
-          <span className="px-2 py-1 rounded bg-white/10 border border-white/20">Public Trust</span>
+        <div className="hidden lg:flex items-center gap-2 text-xs flex-shrink-0">
+          <span className="px-2 py-1 border border-blue-400/40 text-blue-300 appois-glow-on-hover cursor-default">Integrity</span>
+          <span className="px-2 py-1 border border-blue-400/40 text-blue-300 appois-glow-on-hover cursor-default">Transparency</span>
+          <span className="px-2 py-1 border border-blue-400/40 text-blue-300 appois-glow-on-hover cursor-default">Public Trust</span>
+        </div>
+        {/* AI Ask Me Anything */}
+        <div className="relative flex-shrink-0">
+          <button onClick={() => setAiOpen(v => !v)}
+            className="flex flex-col items-center gap-0.5 group cursor-pointer">
+            <div className="h-10 w-10 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center">
+              <Sparkles className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-[9px] text-blue-300 font-semibold uppercase tracking-wider">Ask Me</span>
+          </button>
+          {aiOpen && (
+            <div className="absolute right-0 top-full mt-2 w-80 bg-[#1e293b] border border-blue-500/40 shadow-2xl z-50"
+              style={{ boxShadow: "0 0 24px 4px rgba(59,130,246,0.25)" }}>
+              <div className="flex items-center gap-2 px-3 py-2 border-b border-blue-500/20">
+                <div className="h-6 w-6 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center">
+                  <Sparkles className="h-3 w-3 text-white" />
+                </div>
+                <span className="text-sm font-bold text-white">Ask APPOIS AI</span>
+                <button onClick={() => setAiOpen(false)} className="ml-auto text-white/40 hover:text-white"><X className="h-4 w-4" /></button>
+              </div>
+              <div className="p-3 space-y-2">
+                {aiResponse && (
+                  <div className="bg-blue-900/40 border border-blue-500/20 rounded p-2 text-xs text-blue-100 leading-relaxed">{aiResponse}</div>
+                )}
+                {aiLoading && <div className="text-xs text-blue-300 animate-pulse">Thinking…</div>}
+                <div className="flex gap-2">
+                  <input value={aiQuery} onChange={e => setAiQuery(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleAiAsk()}
+                    placeholder="Ask anything about tenders, bids…"
+                    className="flex-1 h-8 px-2 text-xs bg-[#0f172a] border border-blue-500/30 text-white placeholder-white/30 focus:outline-none focus:border-blue-400" />
+                  <button onClick={handleAiAsk} disabled={!aiQuery.trim() || aiLoading}
+                    className="h-8 px-3 bg-blue-600 text-white text-xs flex items-center gap-1 hover:bg-blue-500 disabled:opacity-40 appois-glow-on-hover">
+                    <Send className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Secondary nav */}
-      <div className="bg-primary/90 border-t border-white/15">
+      <div className="border-t border-white/10 bg-[#1e293b]/80">
         <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between flex-wrap">
           <div className="flex items-center gap-0 text-sm">
             {navLinks.map((l) => (
               <Link key={l.label} to={l.to}
-                className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10 border-r border-white/15 last:border-r-0 whitespace-nowrap">
+                className="flex items-center gap-1.5 px-3 py-2.5 text-white/80 hover:text-white appois-nav-link border-r border-white/10 last:border-r-0 whitespace-nowrap text-xs font-medium">
                 <l.icon className="w-3.5 h-3.5" />{l.label}
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-0 text-sm">
-            <Link to="/" className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10 border-r border-white/15">
-              <Home className="w-3.5 h-3.5" /> Home
-            </Link>
-            <a href="mailto:support@appois.gov.zw"
-              className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10 border-r border-white/15">
-              <Mail className="w-3.5 h-3.5" /> Contact Us
-            </a>
-            <Link to="/portal"
-              className="flex items-center gap-1.5 px-3 py-2.5 hover:bg-white/10">
-              <Map className="w-3.5 h-3.5" /> Site Map
-            </Link>
+          <div className="flex items-center gap-0 text-xs">
+            <Link to="/" className="flex items-center gap-1.5 px-3 py-2.5 text-white/80 hover:text-white appois-nav-link border-r border-white/10"><Home className="w-3.5 h-3.5" /> Home</Link>
+            <a href="mailto:support@appois.gov.zw" className="flex items-center gap-1.5 px-3 py-2.5 text-white/80 hover:text-white appois-nav-link border-r border-white/10"><Mail className="w-3.5 h-3.5" /> Contact Us</a>
+            <Link to="/portal" className="flex items-center gap-1.5 px-3 py-2.5 text-white/80 hover:text-white appois-nav-link"><Map className="w-3.5 h-3.5" /> Site Map</Link>
           </div>
         </div>
       </div>
-
-      <div className="bg-white text-primary border-t border-primary/10">
-        <div className="max-w-[1280px] mx-auto px-4 py-2 text-sm font-semibold">
+      <div className="bg-[#0f172a] border-t border-blue-900/50">
+        <div className="max-w-[1280px] mx-auto px-4 py-1.5 text-xs font-semibold text-blue-300">
           {SYSTEM_FULL} ({SYSTEM_SHORT})
         </div>
       </div>
@@ -115,38 +149,36 @@ function Header() {
   );
 }
 
-/* ─────────────────────── Left rail button ─────────────────────── */
 function RailButton({ icon: Icon, label, to }: { icon: any; label: string; to: string }) {
   return (
     <Link to={to}
-      className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-primary bg-white border border-primary/30 rounded hover:bg-primary hover:text-white transition-colors shadow-sm">
+      className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#0f172a] bg-white border border-[#1e3a5f]/30 appois-glow-on-hover transition-all"
+      style={{ borderRadius: 0 }}>
       <Icon className="w-4 h-4 flex-shrink-0" />
       <span className="flex-1 truncate">{label}</span>
     </Link>
   );
 }
 
-/* ─────────────────────── Right column login card ─────────────────────── */
 function LoginCard() {
   return (
-    <div className="border border-primary/30 rounded bg-white">
-      <div className="bg-primary text-white text-sm font-semibold px-3 py-2 rounded-t">
+    <div className="border border-[#1e3a5f]/30 bg-white" style={{ borderRadius: 0 }}>
+      <div className="bg-[#0f172a] text-white text-sm font-semibold px-3 py-2">
         Bidder / Officer Access
       </div>
       <div className="p-4 space-y-2">
-        <Link
-          to="/signin"
-          className="block w-full text-center bg-primary text-white font-semibold py-3 rounded shadow hover:bg-primary/90 transition-colors ring-4 ring-primary/15"
-        >
+        <Link to="/signin"
+          className="block w-full text-center bg-[#0f172a] text-white font-semibold py-3 appois-glow-on-hover transition-all"
+          style={{ borderRadius: 0 }}>
           <span className="inline-flex items-center gap-2"><LogIn className="w-4 h-4" /> Click here to Login</span>
         </Link>
-        <Link to="/signin" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
+        <Link to="/vendor-register" className="flex items-center gap-2 text-sm text-[#0f172a] hover:underline py-1.5">
           <UserPlus className="w-4 h-4" /> Online Bidder Enrolment
         </Link>
-        <Link to="/signin" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
+        <Link to="/signin" className="flex items-center gap-2 text-sm text-[#0f172a] hover:underline py-1.5">
           <KeyRound className="w-4 h-4" /> Generate / Forgot Password?
         </Link>
-        <Link to="/portal" className="flex items-center gap-2 text-sm text-primary hover:underline py-1.5">
+        <Link to="/portal" className="flex items-center gap-2 text-sm text-[#0f172a] hover:underline py-1.5">
           <UserSearch className="w-4 h-4" /> Find My Nodal Officer
         </Link>
       </div>
@@ -157,37 +189,26 @@ function LoginCard() {
 function SearchCard() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-
   const handleSearch = () => {
     if (query.trim()) navigate(`/portal?q=${encodeURIComponent(query.trim())}`);
     else navigate("/portal");
   };
-
   return (
-    <div className="border border-primary/30 rounded bg-white">
-      <div className="bg-primary text-white text-xs font-semibold px-3 py-2 rounded-t flex items-center gap-2">
+    <div className="border border-[#1e3a5f]/30 bg-white" style={{ borderRadius: 0 }}>
+      <div className="bg-[#0f172a] text-white text-xs font-semibold px-3 py-2 flex items-center gap-2">
         <Search className="w-3.5 h-3.5" /> Search with ID / Title / Reference No
       </div>
       <div className="p-3">
-        <div className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
+        <div className="text-sm font-semibold text-[#0f172a] mb-2 flex items-center gap-2">
           <Search className="w-4 h-4" /> Tender Search
         </div>
         <div className="flex gap-2">
-          <input
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleSearch()}
+          <input value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSearch()}
             placeholder="Title / Ref No…"
-            className="flex-1 h-9 px-2 text-sm border border-primary/30 rounded focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-          <button onClick={handleSearch}
-            className="px-4 h-9 bg-primary text-white text-sm font-medium rounded hover:bg-primary/90">
-            Go
-          </button>
+            className="flex-1 h-9 px-2 text-sm border border-[#1e3a5f]/30 focus:outline-none focus:ring-2 focus:ring-blue-500/30" style={{ borderRadius: 0 }} />
+          <button onClick={handleSearch} className="px-4 h-9 bg-[#0f172a] text-white text-sm font-medium appois-glow-on-hover" style={{ borderRadius: 0 }}>Go</button>
         </div>
-        <Link to="/portal" className="text-xs text-primary hover:underline mt-2 inline-block">
-          Advanced Search
-        </Link>
+        <Link to="/portal" className="text-xs text-[#0f172a] hover:underline mt-2 inline-block">Advanced Search</Link>
       </div>
     </div>
   );
@@ -195,15 +216,16 @@ function SearchCard() {
 
 function HelpCard() {
   const items = [
-    { icon: HelpCircle, label: "Help For Contractors",                       to: "/portal" },
-    { icon: BookOpen,   label: "Guidelines for Hassle-Free Bid Submission",  to: "/portal" },
-    { icon: Info,       label: "Information About DSC",                      to: "/portal" },
+    { icon: HelpCircle, label: "Help For Contractors",                      to: "/portal" },
+    { icon: BookOpen,   label: "Guidelines for Hassle-Free Bid Submission", to: "/portal" },
+    { icon: Info,       label: "Information About DSC",                     to: "/portal" },
   ];
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {items.map((it) => (
         <Link key={it.label} to={it.to}
-          className="flex items-center gap-2 px-3 py-2.5 bg-white border border-primary/30 rounded text-sm font-medium text-primary hover:bg-primary hover:text-white transition-colors">
+          className="flex items-center gap-2 px-3 py-2.5 bg-white border border-[#1e3a5f]/30 text-sm font-medium text-[#0f172a] hover:bg-[#0f172a] hover:text-white appois-glow-on-hover transition-all"
+          style={{ borderRadius: 0 }}>
           <it.icon className="w-4 h-4 flex-shrink-0" /> {it.label}
         </Link>
       ))}
@@ -211,80 +233,86 @@ function HelpCard() {
   );
 }
 
-/* ─────────────────────── Tender table block ─────────────────────── */
-function TenderTable({ title, rows }: { title: string; rows: { t: string; ref: string; close: string; open: string }[] }) {
+/* Auto-scrolling tender table — rows scroll up, pause on hover */
+function ScrollingTenderTable({ title, rows }: {
+  title: string;
+  rows: { t: string; ref: string; close: string; open: string }[];
+}) {
   const navigate = useNavigate();
+  const doubled = [...rows, ...rows]; // duplicate for seamless loop
   return (
-    <div className="border border-primary/30 rounded bg-white">
-      <div className="bg-primary/10 text-primary font-semibold text-sm px-3 py-2 border-b border-primary/20 flex items-center gap-2">
-        📁 {title}
+    <div className="border border-[#1e3a5f]/30 bg-white" style={{ borderRadius: 0 }}>
+      <div className="bg-[#0f172a] text-white font-semibold text-sm px-3 py-2 border-b border-white/10 flex items-center gap-2">
+        <FileText className="w-4 h-4" /> {title}
       </div>
-      <div className="overflow-x-auto">
+      {/* Fixed header */}
+      <div className="overflow-hidden">
         <table className="w-full text-sm table-fixed">
-          <colgroup>
-            <col className="w-[55%]" />
-            <col className="w-[20%]" />
-            <col className="w-[12.5%]" />
-            <col className="w-[12.5%]" />
-          </colgroup>
-          <thead className="bg-primary/5 text-primary text-left">
+          <colgroup><col className="w-[55%]" /><col className="w-[20%]" /><col className="w-[12.5%]" /><col className="w-[12.5%]" /></colgroup>
+          <thead className="bg-[#1e293b] text-white text-left">
             <tr>
-              <th className="px-3 py-2 font-semibold">Title</th>
-              <th className="px-3 py-2 font-semibold">Reference No</th>
-              <th className="px-3 py-2 font-semibold whitespace-nowrap">Closing</th>
-              <th className="px-3 py-2 font-semibold whitespace-nowrap">Bid Opening</th>
+              <th className="px-3 py-2 font-semibold text-xs">Title</th>
+              <th className="px-3 py-2 font-semibold text-xs">Reference No</th>
+              <th className="px-3 py-2 font-semibold text-xs whitespace-nowrap">Closing</th>
+              <th className="px-3 py-2 font-semibold text-xs whitespace-nowrap">Bid Opening</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-primary/10">
-            {rows.map((r, i) => {
-              const to = `/public/tenders/${encodeURIComponent(r.ref)}`;
-              return (
-                <tr key={i} className="hover:bg-primary/5 cursor-pointer align-top" onClick={() => navigate(to)}>
-                  <td className="px-3 py-2.5 text-foreground">
-                    <span className="text-primary font-medium mr-1">{i + 1}.</span>
-                    <button onClick={e => { e.stopPropagation(); navigate(to); }}
-                      className="text-primary hover:underline text-left">{r.t}</button>
-                  </td>
-                  <td className="px-3 py-2.5 text-foreground/80 truncate">{r.ref}</td>
-                  <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.close}</td>
-                  <td className="px-3 py-2.5 text-foreground/80 whitespace-nowrap">{r.open}</td>
-                </tr>
-              );
-            })}
-          </tbody>
         </table>
       </div>
-      <div className="px-3 py-2 text-xs text-muted-foreground border-t border-primary/10 flex items-center justify-between">
+      {/* Scrolling rows container */}
+      <div className="overflow-hidden" style={{ height: "120px" }}>
+        <div className="tender-scroll-track">
+          <table className="w-full text-sm table-fixed">
+            <colgroup><col className="w-[55%]" /><col className="w-[20%]" /><col className="w-[12.5%]" /><col className="w-[12.5%]" /></colgroup>
+            <tbody className="divide-y divide-[#1e3a5f]/10">
+              {doubled.map((r, i) => {
+                const to = `/public/tenders/${encodeURIComponent(r.ref)}`;
+                return (
+                  <tr key={i} className="hover:bg-blue-50 cursor-pointer align-top tender-card-hover" onClick={() => navigate(to)}>
+                    <td className="px-3 py-2 text-[#0f172a]">
+                      <span className="text-blue-700 font-medium mr-1">{(i % rows.length) + 1}.</span>
+                      <button onClick={e => { e.stopPropagation(); navigate(to); }} className="text-[#0f172a] hover:text-blue-700 hover:underline text-left text-xs">{r.t}</button>
+                    </td>
+                    <td className="px-3 py-2 text-[#0f172a]/70 truncate text-xs">{r.ref}</td>
+                    <td className="px-3 py-2 text-[#0f172a]/70 whitespace-nowrap text-xs">{r.close}</td>
+                    <td className="px-3 py-2 text-[#0f172a]/70 whitespace-nowrap text-xs">{r.open}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="px-3 py-2 text-xs text-[#0f172a]/50 border-t border-[#1e3a5f]/10 flex items-center justify-between">
         <span>Updates every 15 mins.</span>
-        <Link to="/portal" className="text-primary hover:underline flex items-center gap-0.5">
-          More <ChevronRight className="w-3 h-3" />
-        </Link>
+        <Link to="/portal" className="text-blue-700 hover:underline flex items-center gap-0.5 font-medium">More <ChevronRight className="w-3 h-3" /></Link>
       </div>
     </div>
   );
 }
 
-/* ─────────────────────── Welcome block ─────────────────────── */
 function Welcome() {
   return (
-    <div className="bg-white border border-primary/20 rounded p-5" id="main-content">
-      <h1 className="text-xl md:text-2xl font-bold text-primary mb-2">
-        Welcome to {SYSTEM_SHORT}
-      </h1>
-      <p className="text-sm text-foreground/80 leading-relaxed mb-3">
-        The <strong>{SYSTEM_FULL}</strong> enables Tenderers to download tender schedules free of cost
-        and submit bids online through this portal.
-      </p>
-      <div className="text-lg md:text-xl font-bold text-primary/90">
-        {SYSTEM_FULL}
-        <span className="block text-primary text-base font-semibold mt-0.5">AI Powered · {SYSTEM_SHORT}</span>
+    <div className="bg-white border border-[#1e3a5f]/20" id="main-content" style={{ borderRadius: 0 }}>
+      <div className="bg-[#0f172a] px-5 py-3 flex items-center gap-3">
+        <div className="h-8 w-8 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center flex-shrink-0">
+          <Sparkles className="h-4 w-4 text-white" />
+        </div>
+        <div>
+          <div className="text-white font-bold text-base leading-tight">{SYSTEM_SHORT}</div>
+          <div className="text-blue-300 text-xs">{SYSTEM_FULL}</div>
+        </div>
       </div>
-      <p className="text-xs text-foreground/50 mt-2">{SYSTEM_SUB}</p>
+      <div className="p-5">
+        <p className="text-sm text-[#0f172a]/80 leading-relaxed mb-3">
+          The <strong>{SYSTEM_FULL}</strong> enables Tenderers to download tender schedules free of cost and submit bids online through this portal.
+        </p>
+        <p className="text-xs text-[#0f172a]/50">{SYSTEM_SUB}</p>
+      </div>
     </div>
   );
 }
 
-/* ───────────────────────── Page ───────────────────────── */
 export default function LandingPage() {
   const railLeft = [
     { icon: FileText,    label: "MIS Reports",               to: "/portal" },
@@ -304,12 +332,26 @@ export default function LandingPage() {
     { t: "Supply of Medical Imaging Equipment — Parirenyatwa Group of Hospitals", ref: "MOH/PARI/2026-27/MED-IMG-04", close: "03-Jul-2026 10:00 AM", open: "04-Jul-2026 10:30 AM" },
     { t: "Construction of Rural Feeder Roads — Mashonaland East Phase II", ref: "MOTID/RDC/2026-MASH-E/PH2", close: "05-Jul-2026 11:00 AM", open: "06-Jul-2026 11:30 AM" },
     { t: "Solar Mini-Grid Installation — Binga District (24 Schools, 8 Clinics)", ref: "MOE-NRG/RURAL-SOL/2026-BG/05", close: "07-Jul-2026 09:00 AM", open: "08-Jul-2026 10:00 AM" },
+    { t: "Supply of ARV Medicines — 2-Year Framework Agreement", ref: "MOH/ARV/2026-27/FW-001", close: "15-Jul-2026 10:00 AM", open: "16-Jul-2026 10:00 AM" },
+    { t: "National Tax Administration System — Phase II", ref: "ZIMRA/NTAS/2026-PH2", close: "21-Jul-2026 11:00 AM", open: "22-Jul-2026 10:00 AM" },
+    { t: "School Textbooks — Primary Grades 1-7 (2026/27)", ref: "MOPSE/TXB/2026-27/01", close: "02-Jul-2026 09:00 AM", open: "03-Jul-2026 10:00 AM" },
   ];
 
   const corrigenda = [
     { t: "Corrigendum: Replies to Pre-Bid Queries — Highway Rehabilitation Lot 3", ref: "PKG-III/SC/01", close: "30-Jun-2026 12:00 PM", open: "01-Jul-2026 02:00 PM" },
     { t: "Corrigendum: Extension of Closing Date — Hospital Linen Supply", ref: "JD/8962-101-PM-T-7200/1028", close: "10-Jul-2026 12:00 PM", open: "12-Jul-2026 02:00 PM" },
     { t: "Corrigendum: Revised BOQ — Bulawayo Water Treatment Upgrade", ref: "ZINWA/BYO-WTP/2026-COR-02", close: "11-Jul-2026 11:00 AM", open: "12-Jul-2026 11:30 AM" },
+    { t: "Corrigendum: Pre-Qualification Extension — Harare Airport Expansion", ref: "CAAZ/HARE/2026-PQ-03", close: "18-Jul-2026 09:00 AM", open: "19-Jul-2026 10:00 AM" },
+  ];
+
+  const newsItems = [
+    "🔔 All bidders must register a valid Digital Signature Certificate before submitting bids",
+    "📡 Tender opening sessions are live-streamed for transparency",
+    "🤖 New AI-powered fraud detection module activated for all tenders above USD 100,000",
+    "📋 Public procurement plans for FY 2026/27 now published",
+    "✅ 1,287 active tenders currently open on APPOIS portal",
+    "⚠️ Alert: Debarment list updated — 3 new entities added",
+    `🏛️ ${SYSTEM_SHORT} — ${SYSTEM_FULL}`,
   ];
 
   return (
@@ -317,103 +359,73 @@ export default function LandingPage() {
       <TopBar />
       <Header />
 
+      {/* Scrolling news ticker — right to left */}
+      <div className="bg-[#1e293b] text-white text-xs border-b border-blue-900/50 overflow-hidden" style={{ height: "30px", display: "flex", alignItems: "center" }}>
+        <div className="flex-shrink-0 px-3 font-bold text-blue-300 border-r border-blue-700 mr-3">📢 NEWS</div>
+        <div className="flex-1 overflow-hidden relative">
+          <div className="news-ticker-track inline-block">
+            {newsItems.join("  ·  ")}  ·  {newsItems.join("  ·  ")}
+          </div>
+        </div>
+      </div>
+
       <main className="flex-1">
         <div className="max-w-[1280px] mx-auto px-4 py-6 grid grid-cols-12 gap-4">
-          {/* LEFT RAIL */}
-          <aside className="col-span-12 md:col-span-3 lg:col-span-2 space-y-2">
-            {railLeft.map((b) => (
-              <RailButton key={b.label} icon={b.icon} label={b.label} to={b.to} />
-            ))}
+          <aside className="col-span-12 md:col-span-3 lg:col-span-2 space-y-1">
+            {railLeft.map((b) => <RailButton key={b.label} icon={b.icon} label={b.label} to={b.to} />)}
           </aside>
-
-          {/* CENTER */}
           <section className="col-span-12 md:col-span-9 lg:col-span-7 space-y-4">
             <Welcome />
-            <TenderTable title="Latest Tenders" rows={latest} />
-            <TenderTable title="Latest Corrigendums" rows={corrigenda} />
+            <ScrollingTenderTable title="Latest Tenders" rows={latest} />
+            <ScrollingTenderTable title="Latest Corrigendums" rows={corrigenda} />
           </section>
-
-          {/* RIGHT RAIL */}
           <aside className="col-span-12 lg:col-span-3 space-y-4">
             <LoginCard />
             <SearchCard />
             <HelpCard />
           </aside>
         </div>
-
-        {/* Marquee strip */}
-        <div className="bg-primary text-white text-sm">
-          <div className="max-w-[1280px] mx-auto px-4 py-2 flex items-center gap-3 overflow-hidden">
-            <Bell className="w-4 h-4 flex-shrink-0" />
-            <div className="whitespace-nowrap overflow-hidden">
-              <span className="inline-block animate-[marquee_40s_linear_infinite]">
-                Important: All bidders must register a valid Digital Signature Certificate before submitting bids · Tender opening sessions are live-streamed for transparency · New AI-powered fraud detection module activated for all tenders above USD 100,000 · Public procurement plans for FY 2026/27 now published · Visit Help Desk for assistance · {SYSTEM_SHORT} — {SYSTEM_FULL} ·&nbsp;
-              </span>
-            </div>
-          </div>
-        </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-primary text-white text-sm mt-2">
+      <footer className="bg-[#0f172a] text-white text-sm mt-2">
         <div className="max-w-[1280px] mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-3">
               <CoatOfArms className="w-10 h-10" />
               <div className="font-bold text-base leading-tight">
                 {SYSTEM_SHORT}<br />
-                <span className="text-white/80 text-xs font-normal">{SYSTEM_FULL}</span>
+                <span className="text-white/70 text-xs font-normal">{SYSTEM_FULL}</span>
               </div>
             </div>
-            <p className="text-white/80 text-xs leading-relaxed">
-              {SYSTEM_SUB}.<br />
-              Powered by the Procurement Regulatory Authority (PRAZ).
-            </p>
+            <p className="text-white/70 text-xs leading-relaxed">{SYSTEM_SUB}.<br />Powered by the Procurement Regulatory Authority (PRAZ).</p>
           </div>
           <div>
-            <div className="font-semibold mb-2">Quick Links</div>
-            <ul className="space-y-1 text-white/80 text-xs">
+            <div className="font-semibold mb-2 text-blue-300">Quick Links</div>
+            <ul className="space-y-1 text-white/70 text-xs">
               <li><Link to="/signin" className="hover:underline">Bidder Login</Link></li>
               <li><Link to="/portal" className="hover:underline">Public Portal</Link></li>
               <li><Link to="/signin" className="hover:underline">Officer Login</Link></li>
-              <li><Link to="/portal" className="hover:underline">Help &amp; Support</Link></li>
               <li><Link to="/portal" className="hover:underline">Active Tenders</Link></li>
               <li><Link to="/portal" className="hover:underline">Bid Awards</Link></li>
               <li><Link to="/portal" className="hover:underline">Debarment List</Link></li>
             </ul>
           </div>
           <div>
-            <div className="font-semibold mb-2">Contact</div>
-            <ul className="space-y-1 text-white/80 text-xs">
+            <div className="font-semibold mb-2 text-blue-300">Contact</div>
+            <ul className="space-y-1 text-white/70 text-xs">
               <li className="flex items-center gap-2"><Phone className="w-3 h-3" /> +263 242 700 000</li>
-              <li>
-                <a href="mailto:support@appois.gov.zw" className="flex items-center gap-2 hover:underline">
-                  <Mail className="w-3 h-3" /> support@appois.gov.zw
-                </a>
-              </li>
-              <li>
-                <a href="https://www.appois.gov.zw" target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:underline">
-                  <Globe2 className="w-3 h-3" /> www.appois.gov.zw
-                </a>
-              </li>
+              <li><a href="mailto:support@appois.gov.zw" className="flex items-center gap-2 hover:underline"><Mail className="w-3 h-3" /> support@appois.gov.zw</a></li>
+              <li><a href="https://www.appois.gov.zw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline"><Globe2 className="w-3 h-3" /> www.appois.gov.zw</a></li>
             </ul>
           </div>
         </div>
-        <div className="border-t border-white/15">
-          <div className="max-w-[1280px] mx-auto px-4 py-3 text-xs text-white/70 flex items-center justify-between flex-wrap gap-2">
+        <div className="border-t border-white/10">
+          <div className="max-w-[1280px] mx-auto px-4 py-3 text-xs text-white/50 flex items-center justify-between flex-wrap gap-2">
             <span>© {new Date().getFullYear()} {SYSTEM_SHORT} — {SYSTEM_FULL}. All rights reserved.</span>
             <span>Best viewed in Chrome / Edge / Firefox at 1280×768</span>
           </div>
         </div>
       </footer>
-
-      <style>{`
-        @keyframes marquee {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-100%); }
-        }
-      `}</style>
     </div>
   );
 }

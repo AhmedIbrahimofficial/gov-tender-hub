@@ -752,14 +752,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         </button>
 
         <Link to="/dashboard" className="flex items-center gap-2 flex-shrink-0">
+          {/* AI Logo — Gemini-style glow */}
+          <div className="h-8 w-8 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center flex-shrink-0">
+            <Sparkles className="h-4 w-4 text-white" />
+          </div>
           <div className="leading-none hidden sm:block">
             <div className="text-[13px] font-extrabold text-black tracking-wide leading-tight uppercase">APPOIS</div>
-            <div className="text-[10px] font-semibold text-black/80 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
-            <div className="text-[10px] font-semibold text-black/60 tracking-tight leading-snug">Oversight Intelligence System</div>
+            <div className="text-[10px] font-semibold text-black/70 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
+            <div className="text-[10px] font-semibold text-black/50 tracking-tight leading-snug">Oversight Intelligence System</div>
           </div>
           <div className="leading-tight sm:hidden">
             <div className="text-[11px] font-extrabold text-black tracking-wide uppercase">APPOIS</div>
-            <div className="text-[9px] font-semibold text-black/60 tracking-tight">AI-Powered Procurement &amp; Oversight</div>
+            <div className="text-[9px] font-semibold text-black/60 tracking-tight">AI Procurement &amp; Oversight</div>
           </div>
         </Link>
 

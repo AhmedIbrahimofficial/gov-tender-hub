@@ -86,6 +86,10 @@ import SystemAdminPage from "./pages/SystemAdminPage";
 import NotificationsCenterPage from "./pages/NotificationsCenterPage";
 import FinancialReconciliationPage from "./pages/FinancialReconciliationPage";
 import FinalAcceptancePage from "./pages/FinalAcceptancePage";
+import VendorSelfRegistrationPage from "./pages/VendorSelfRegistrationPage";
+import BriefingPage from "./pages/BriefingPage";
+import HumanResourcesPage from "./pages/HumanResourcesPage";
+import FinancialStatementsPage from "./pages/FinancialStatementsPage";
 import GisMapPage from "./pages/GisMapPage";
 
 // ─── Enterprise Workbench stage pages ────────────────────────────────────────
@@ -139,6 +143,18 @@ function AppRoutes() {
 
       {/* Protected */}
       <Route path="/dashboard" element={<ProtectedRoute><DashboardRouter /></ProtectedRoute>} />
+
+      {/* Financial Statements */}
+      <Route path="/financial-statements" element={<ProtectedRoute><FinancialStatementsPage /></ProtectedRoute>} />
+
+      {/* Human Resources */}
+      <Route path="/human-resources" element={<ProtectedRoute><HumanResourcesPage /></ProtectedRoute>} />
+
+      {/* Briefing module */}
+      <Route path="/briefing" element={<ProtectedRoute><BriefingPage /></ProtectedRoute>} />
+
+      {/* Supplier self-registration (public — no login required) */}
+      <Route path="/vendor-register" element={<VendorSelfRegistrationPage />} />
 
       {/* GIS Map — public access (no login required) */}
       <Route path="/gis" element={<GisMapPage />} />
