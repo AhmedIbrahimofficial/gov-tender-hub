@@ -18,6 +18,7 @@ import { TrendingUp, TrendingDown, DollarSign, AlertTriangle, ShieldAlert,
 } from "lucide-react";
 import { pushNotification } from "@/lib/local-store";
 import KpiScrollTicker from "@/components/KpiScrollTicker";
+import ZimbabweMapTab from "@/components/ZimbabweMapTab";
 
 // ── Colour palette ──────────────────────────────────────────────────────────
 const C = {
@@ -40,6 +41,7 @@ const TABS = [
   "Quality of Life Impact",
   "Price Indices",
   "Risk Dashboard",
+  "Geography Map",
 ] as const;
 type Tab = typeof TABS[number];
 
@@ -1039,6 +1041,7 @@ export default function BIDashboardPage() {
     "Quality of Life Impact": Stethoscope,
     "Price Indices":         TrendingUp,
     "Risk Dashboard":        AlertOctagon,
+    "Geography Map":         Globe2,
   };
 
   return (
@@ -1091,6 +1094,7 @@ export default function BIDashboardPage() {
             {activeTab === "Quality of Life Impact"  && <QualityOfLifeTab />}
             {activeTab === "Price Indices"           && <PriceIndicesTab />}
             {activeTab === "Risk Dashboard"          && <RiskDashboardTab />}
+            {activeTab === "Geography Map"            && <ZimbabweMapTab theme="dark" />}
           </div>
 
           {/* Sticky live KPI ticker — right rail */}

@@ -9,8 +9,9 @@ import { spendTrend, categorySpend, provinceSpend, riskLoanData, hrTurnoverData 
 import { TrendingUp, BarChart3, PieChart as PieIcon, Activity, Download, Filter } from "lucide-react";
 import { pushNotification } from "@/lib/local-store";
 import KpiScrollTicker from "@/components/KpiScrollTicker";
+import ZimbabweMapTab from "@/components/ZimbabweMapTab";
 
-const TABS = ["Overview", "Spend Intelligence", "Supplier Analytics", "Risk Analysis", "HR Analytics"] as const;
+const TABS = ["Overview", "Spend Intelligence", "Supplier Analytics", "Risk Analysis", "HR Analytics", "Geography Map"] as const;
 type Tab = typeof TABS[number];
 
 const COLORS = ["#3b82f6", "#6366f1", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981"];
@@ -74,6 +75,7 @@ export default function AnalyticsPage() {
             {activeTab === "Supplier Analytics" && <SupplierTab />}
             {activeTab === "Risk Analysis" && <RiskTab />}
             {activeTab === "HR Analytics" && <HRTab />}
+            {activeTab === "Geography Map" && <ZimbabweMapTab theme="light" />}
           </div>
 
           {/* Sticky live KPI ticker — right rail */}
