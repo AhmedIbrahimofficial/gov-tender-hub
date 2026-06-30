@@ -421,27 +421,44 @@ function PublicLogin({ onBack, initialMode = "login" }: { onBack: () => void; in
 }
 
 // ─── Government Staff Registration Form ──────────────────────────────────────
-// ─── Simple Role Selector (screenshot style) ─────────────────────────────────
+// ─── Simple Role Selector with Sign In + Register ────────────────────────────
 function RoleSelectForm({ onBack }: { onBack: () => void }) {
   const { loginWithDetails } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState<typeof ALL_ROLES[0] | null>(null);
-  const [email, setEmail] = useState("");
+  const [mode, setMode] = useState<"signin" | "register">("signin");
+
+  // ── Shared state ──────────────────────────────────────────────────────
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [showPwd, setShowPwd] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [confirm, setConfirm]   = useState("");
+  const [showPwd, setShowPwd]   = useState(false);
+  const [showCfm, setShowCfm]   = useState(false);
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
+
+  // ── Register-only fields ──────────────────────────────────────────────
+  const [fullName, setFullName]         = useState("");
+  const [phone, setPhone]               = useState("");
+  const [employeeId, setEmployeeId]     = useState("");
+  const [ministry, setMinistry]         = useState("");
+  const [department, setDepartment]     = useState("");
 
   const filtered = ALL_ROLES.filter(r =>
     r.label.toLowerCase().includes(search.toLowerCase()) ||
     r.desc.toLowerCase().includes(search.toLowerCase())
   );
 
+  const resetForm = () => {
+    setEmail(""); setPassword(""); setConfirm(""); setError("");
+    setFullName(""); setPhone(""); setEmployeeId(""); setMinistry(""); setDepartment("");
+  };
+
+  // ── Sign In submit ────────────────────────────────────────────────────
   const handleSignIn = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (!email.trim()) { setError("Email is required."); return; }
+    e.preventDefault(); setError("");
+    if (!email.trim())    { setError("Work email is required."); return; }
     if (!password.trim()) { setError("Password is required."); return; }
     setLoading(true);
     setTimeout(() => {
@@ -449,94 +466,245 @@ function RoleSelectForm({ onBack }: { onBack: () => void }) {
         role: selectedRole!.role,
         name: email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
         email,
-        department: selectedRole!.label,
-        entity: "Government of Zimbabwe",
+        department: department || selectedRole!.label,
+        entity: ministry || "Government of Zimbabwe",
       });
       navigate("/dashboard");
     }, 500);
   };
 
-  // ── Credential step after role selected ──────────────────────────────
+  // ── Register submit ───────────────────────────────────────────────────
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault(); setError("");
+    if (!fullName.trim())    { setError("Full name is required."); return; }
+    if (!email.trim())       { setError("Work email is required."); return; }
+    if (!phone.trim())       { setError("Phone number is required."); return; }
+    if (!ministry.trim())    { setError("Ministry / Entity is required."); return; }
+    if (!password.trim())    { setError("Password is required."); return; }
+    if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
+    if (password !== confirm) { setError("Passwords do not match."); return; }
+    setLoading(true);
+    setTimeout(() => {
+      loginWithDetails({
+        role: selectedRole!.role,
+        name: fullName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        department: department || selectedRole!.label,
+        entity: ministry || "Government of Zimbabwe",
+      });
+      navigate("/dashboard");
+    }, 600);
+  };
+
+  // ── Credential / Register step (after role chosen) ────────────────────
   if (selectedRole) {
     return (
       <div className="w-full max-w-md">
-        <button onClick={() => { setSelectedRole(null); setError(""); }}
-          className="flex items-center gap-1.5 text-sm text-black/50 hover:text-black mb-6 transition-colors">
+        {/* Back */}
+        <button onClick={() => { setSelectedRole(null); resetForm(); }}
+          className="flex items-center gap-1.5 text-sm text-black/50 hover:text-black mb-5 transition-colors">
           <ChevronLeft className="h-4 w-4" /> Back to roles
         </button>
 
-        {/* Selected role card */}
-        <div className="flex items-center gap-3 p-4 rounded-2xl border-2 border-primary/20 bg-primary/5 mb-6">
-          <div className={`h-12 w-12 rounded-xl ${selectedRole.color} grid place-items-center flex-shrink-0`}>
-            <Shield className="h-6 w-6 text-white" />
+        {/* Selected role badge */}
+        <div className="flex items-center gap-3 p-3.5 rounded-2xl border-2 border-primary/20 bg-primary/5 mb-5">
+          <div className={`h-11 w-11 rounded-xl ${selectedRole.color} grid place-items-center flex-shrink-0`}>
+            <Shield className="h-5 w-5 text-white" />
           </div>
-          <div>
-            <div className="text-base font-bold text-black">{selectedRole.label}</div>
-            <div className="text-xs text-black/50">{selectedRole.desc}</div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold text-black truncate">{selectedRole.label}</div>
+            <div className="text-xs text-black/50 truncate">{selectedRole.desc}</div>
           </div>
+          <button onClick={() => { setSelectedRole(null); resetForm(); }}
+            className="text-black/25 hover:text-black transition-colors flex-shrink-0">
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        <h2 className="text-xl font-bold text-black mb-1" style={{ letterSpacing: "-0.02em" }}>
-          Sign In to Continue
-        </h2>
-        <p className="text-sm text-black/50 mb-5">
-          Enter your government credentials to access this dashboard.
-        </p>
+        {/* Sign In / Register tabs */}
+        <div className="flex rounded-xl bg-black/5 p-1 mb-5">
+          {(["signin", "register"] as const).map(m => (
+            <button key={m} onClick={() => { setMode(m); setError(""); }}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
+                mode === m ? "bg-white text-black shadow-sm" : "text-black/45 hover:text-black"
+              }`}>
+              {m === "signin" ? "Sign In" : "New Registration"}
+            </button>
+          ))}
+        </div>
 
-        <form onSubmit={handleSignIn} className="space-y-3">
-          {/* Email */}
-          <div>
-            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">
-              Work Email *
-            </label>
-            <div className="relative mt-1">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="name@gov.zw"
-                autoFocus
-                className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15"
-              />
+        {/* ── SIGN IN FORM ── */}
+        {mode === "signin" && (
+          <form onSubmit={handleSignIn} className="space-y-3">
+            <div>
+              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Work Email *</label>
+              <div className="relative mt-1">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  placeholder="name@gov.zw" autoFocus
+                  className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+              </div>
             </div>
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">
-              Password *
-            </label>
-            <div className="relative mt-1">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
-              <input
-                type={showPwd ? "text" : "password"}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full h-10 pl-9 pr-10 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15"
-              />
-              <button type="button" onClick={() => setShowPwd(v => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
-                {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            <div>
+              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Password *</label>
+              <div className="relative mt-1">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                <input type={showPwd ? "text" : "password"} value={password}
+                  onChange={e => setPassword(e.target.value)} placeholder="••••••••"
+                  className="w-full h-10 pl-9 pr-10 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+                <button type="button" onClick={() => setShowPwd(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            {error && (
+              <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
+                <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />{error}
+              </div>
+            )}
+            <button type="submit" disabled={loading}
+              className="w-full h-10 rounded-xl bg-gray-950 text-white text-sm font-semibold hover:bg-gray-900 disabled:opacity-50 flex items-center justify-center gap-2">
+              {loading ? "Signing in…" : <><Shield className="h-4 w-4" /> Sign In as {selectedRole.label}</>}
+            </button>
+            <p className="text-center text-xs text-black/40 pt-1">
+              New to APPOIS?{" "}
+              <button type="button" onClick={() => { setMode("register"); setError(""); }}
+                className="text-primary font-medium hover:underline">
+                Register here
               </button>
-            </div>
-          </div>
+            </p>
+          </form>
+        )}
 
-          {error && (
-            <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
-              <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
-              {error}
+        {/* ── REGISTER FORM ── */}
+        {mode === "register" && (
+          <form onSubmit={handleRegister} className="space-y-3">
+            {/* Full Name */}
+            <div>
+              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Full Name *</label>
+              <div className="relative mt-1">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                <input value={fullName} onChange={e => setFullName(e.target.value)}
+                  placeholder="e.g. Tendai Moyo" autoFocus
+                  className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+              </div>
             </div>
-          )}
 
-          <button type="submit" disabled={loading}
-            className="w-full h-10 rounded-xl bg-gray-950 text-white text-sm font-semibold hover:bg-gray-900 disabled:opacity-50 flex items-center justify-center gap-2 mt-1">
-            {loading
-              ? "Signing in…"
-              : <><Shield className="h-4 w-4" /> Sign In as {selectedRole.label}</>}
-          </button>
-        </form>
+            {/* Email + Phone row */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Work Email *</label>
+                <div className="relative mt-1">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                    placeholder="name@gov.zw"
+                    className="w-full h-10 pl-9 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Phone *</label>
+                <div className="relative mt-1">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                  <input value={phone} onChange={e => setPhone(e.target.value)}
+                    placeholder="+263 77 000 0000"
+                    className="w-full h-10 pl-9 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+                </div>
+              </div>
+            </div>
+
+            {/* Employee ID */}
+            <div>
+              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Employee / Staff ID</label>
+              <div className="relative mt-1">
+                <Star className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                <input value={employeeId} onChange={e => setEmployeeId(e.target.value)}
+                  placeholder="e.g. GOV-2024-00123"
+                  className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+              </div>
+            </div>
+
+            {/* Ministry + Department row */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Ministry / Entity *</label>
+                <div className="relative mt-1">
+                  <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                  <input value={ministry} onChange={e => setMinistry(e.target.value)}
+                    placeholder="e.g. Ministry of Health"
+                    className="w-full h-10 pl-9 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Department</label>
+                <div className="relative mt-1">
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                  <input value={department} onChange={e => setDepartment(e.target.value)}
+                    placeholder="e.g. Procurement"
+                    className="w-full h-10 pl-9 pr-2 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+                </div>
+              </div>
+            </div>
+
+            {/* Role display (read-only) */}
+            <div>
+              <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Assigned Role</label>
+              <div className="mt-1 h-10 px-3 rounded-xl border border-black/10 bg-black/3 flex items-center gap-2 text-sm text-black/60">
+                <Shield className="h-4 w-4 text-black/30" />
+                {selectedRole.label}
+              </div>
+            </div>
+
+            {/* Password + Confirm row */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Password *</label>
+                <div className="relative mt-1">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                  <input type={showPwd ? "text" : "password"} value={password}
+                    onChange={e => setPassword(e.target.value)} placeholder="Min 6 chars"
+                    className="w-full h-10 pl-9 pr-8 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+                  <button type="button" onClick={() => setShowPwd(v => !v)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+                    {showPwd ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Confirm *</label>
+                <div className="relative mt-1">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+                  <input type={showCfm ? "text" : "password"} value={confirm}
+                    onChange={e => setConfirm(e.target.value)} placeholder="Repeat password"
+                    className="w-full h-10 pl-9 pr-8 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15" />
+                  <button type="button" onClick={() => setShowCfm(v => !v)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+                    {showCfm ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
+                <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />{error}
+              </div>
+            )}
+
+            <button type="submit" disabled={loading}
+              className="w-full h-10 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2">
+              {loading ? "Creating account…" : <><Shield className="h-4 w-4" /> Register as {selectedRole.label}</>}
+            </button>
+            <p className="text-center text-xs text-black/40 pt-1">
+              Already registered?{" "}
+              <button type="button" onClick={() => { setMode("signin"); setError(""); }}
+                className="text-primary font-medium hover:underline">
+                Sign in
+              </button>
+            </p>
+          </form>
+        )}
       </div>
     );
   }
@@ -571,7 +739,7 @@ function RoleSelectForm({ onBack }: { onBack: () => void }) {
         {filtered.map(role => (
           <button
             key={role.role}
-            onClick={() => { setSelectedRole(role); setError(""); setEmail(""); setPassword(""); }}
+            onClick={() => { setSelectedRole(role); resetForm(); setMode("signin"); }}
             className="flex items-center gap-3 p-4 rounded-xl border border-black/8 bg-white hover:border-primary/40 hover:shadow-md transition-all text-left group"
           >
             <div className={`h-10 w-10 rounded-xl ${role.color} grid place-items-center flex-shrink-0`}>
