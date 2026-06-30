@@ -1,281 +1,409 @@
+/**
+ * BI Dashboard — Zimbabwe Government Procurement Intelligence
+ * Tells the real story: spending, budgets, costs, shortages, corruption,
+ * risk triggers, quality of life, economic indicators, wastage, and more.
+ */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
-import AIAssistantPanel from "@/components/AIAssistantPanel";
+import { AppShell, PageHeader, Card, CardHeader, KpiCard, Badge } from "@/components/AppShell";
 import {
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  PieChart, Pie, Cell, Legend, LineChart, Line, AreaChart, Area,
-  ComposedChart,
+  ResponsiveContainer, AreaChart, Area, BarChart, Bar, LineChart, Line,
+  PieChart, Pie, Cell, ComposedChart, ScatterChart, Scatter,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ZAxis, ReferenceLine,
 } from "recharts";
 import {
-  BarChart3, TrendingUp, Users, DollarSign, Activity, Globe, ShoppingCart,
-  Download, Filter, Layers, Building2,
+  TrendingUp, TrendingDown, DollarSign, AlertTriangle, ShieldAlert,
+  Activity, BarChart3, Users, Building2, Truck, Package, Fuel,
+  Zap, Droplets, Stethoscope, BookOpen, Wrench, AlertOctagon,
+  Target, Clock, CheckCircle2, XCircle, Flame, Globe2, ChevronRight,
 } from "lucide-react";
+import { pushNotification } from "@/lib/local-store";
 
-// ── Colour palette matching Senstar orange + blue theme ──────────────────────
+// ── Colour palette ──────────────────────────────────────────────────────────
 const C = {
-  orange:  "#f97316",
-  amber:   "#f59e0b",
-  blue:    "#3b82f6",
-  teal:    "#14b8a6",
-  green:   "#10b981",
-  violet:  "#8b5cf6",
-  red:     "#ef4444",
-  slate:   "#64748b",
-  gold:    "#eab308",
+  teal:   "#29b8c5", blue:   "#3b82f6", green:  "#10b981",
+  amber:  "#f59e0b", red:    "#ef4444", violet: "#8b5cf6",
+  orange: "#f97316", pink:   "#ec4899", slate:  "#64748b",
+  dark:   "#1c1f26",
 };
-const PIE_COLORS = [C.orange, C.blue, C.teal, C.green, C.violet, C.amber, C.red, C.slate, C.gold];
+const PIE = [C.teal, C.blue, C.green, C.amber, C.red, C.violet, C.orange, C.pink, C.slate];
 
-// ── Tab definitions ───────────────────────────────────────────────────────────
+// ── Tabs ────────────────────────────────────────────────────────────────────
 const TABS = [
-  "Business Analysis",
-  "Performance Report",
-  "Finance Analysis",
-  "Sales Analysis",
-  "Stakeholders",
-  "Incubatees",
-  "Cohort Analysis",
-  "Mentorship",
-  "Investment",
-  "Budget",
-  "Services",
-  "Executive Summary",
+  "National Spend Story",
+  "Budget Performance",
+  "Revenue & Economy",
+  "Shortages & Wastage",
+  "Corruption & Risk",
+  "Supplier & Contractor",
+  "Projects & Development",
+  "Quality of Life Impact",
+  "Price Indices",
+  "Risk Dashboard",
 ] as const;
 type Tab = typeof TABS[number];
 
-// ── Shared helpers ────────────────────────────────────────────────────────────
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-sm font-semibold text-black mb-3 mt-5 first:mt-0">{children}</h2>;
-}
-
-function StatBox({ label, value, sub, color = "bg-orange-500" }: {
-  label: string; value: string; sub?: string; color?: string;
-}) {
+// ── Helper ──────────────────────────────────────────────────────────────────
+function SectionTitle({ children, flag }: { children: React.ReactNode; flag?: string }) {
   return (
-    <div className={`${color} text-white rounded-xl p-4 flex flex-col items-center justify-center text-center`}>
-      <div className="text-2xl font-bold tracking-tight">{value}</div>
-      <div className="text-xs font-semibold opacity-90 mt-0.5 uppercase tracking-wider">{label}</div>
-      {sub && <div className="text-[10px] opacity-70 mt-0.5">{sub}</div>}
+    <div className="flex items-center gap-2 mb-3 mt-6">
+      {flag && <span className="text-base">{flag}</span>}
+      <h2 className="text-sm font-bold text-black uppercase tracking-wide">{children}</h2>
     </div>
   );
 }
 
-const fmtM = (v: number, dec = 2) => `${(v / 1e6).toFixed(dec)}M`;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 1 — BUSINESS ANALYSIS
-// ─────────────────────────────────────────────────────────────────────────────
-const languageData = [
-  { lang: "Spanish",      orders: 431709, profit: 8896930 },
-  { lang: "Sign Language",orders: 138854, profit: 5349023 },
-  { lang: "English",      orders: 16256,  profit: 4119516 },
-  { lang: "Other",        orders: 11769,  profit: 3349761 },
-  { lang: "Arabic",       orders: 56624,  profit: 1790062 },
-  { lang: "Vietnamese",   orders: 62925,  profit: 1707077 },
-  { lang: "Farsi",        orders: 23496,  profit: 1046906 },
-  { lang: "Korean",       orders: 16624,  profit:  596095 },
-  { lang: "Mandarin",     orders: 18668,  profit:  544239 },
-  { lang: "Burmese",      orders: 6038,   profit:  422412 },
-  { lang: "Cantonese",    orders: 17876,  profit:  347662 },
-  { lang: "Russian",      orders: 15269,  profit:  327379 },
-  { lang: "Nepali",       orders: 3741,   profit:  278016 },
-  { lang: "Amharic",      orders: 3206,   profit:  180676 },
-  { lang: "Tagalog",      orders: 6232,   profit:  175841 },
-  { lang: "Dari",         orders: 2855,   profit:  140796 },
-  { lang: "Portuguese",   orders: 3168,   profit:  140432 },
-  { lang: "French",       orders: 2720,   profit:  133159 },
-  { lang: "Somali",       orders: 4522,   profit:  115172 },
-  { lang: "Laotian",      orders: 7393,   profit:   95855 },
-];
-
-const grossProfitByCompany = [
-  { name: "IUG-SD",    value: 25550000 },
-  { name: "ACD",       value:  3420000 },
-  { name: "ASIT",      value:  2080000 },
-  { name: "Globelink", value:  1290000 },
-];
-
-const salesVolumeYoY = [
-  { year: "2006", vol: 25097 }, { year: "2007", vol: 26120 }, { year: "2008", vol: 37527 },
-  { year: "2009", vol: 42358 }, { year: "2010", vol: 49531 }, { year: "2011", vol: 60575 },
-  { year: "2012", vol: 58320 }, { year: "2013", vol: 61513 }, { year: "2014", vol: 70601 },
-  { year: "2015", vol: 57251 }, { year: "2016", vol: 62950 }, { year: "2017", vol: 70848 },
-  { year: "2018", vol: 76354 }, { year: "2019", vol: 76015 }, { year: "2020", vol: 56787 },
-  { year: "2021", vol: 59392 }, { year: "2022", vol: 18160 }, { year: "2023", vol: 9 },
-];
-
-const grossProfitYoY = [
-  { year: "2015", gp: 3100000 }, { year: "2016", gp: 4130000 }, { year: "2017", gp: 4490000 },
-  { year: "2018", gp: 5300000 }, { year: "2019", gp: 4850000 }, { year: "2020", gp: 3720000 },
-  { year: "2021", gp: 4420000 }, { year: "2022", gp: 940000  },
-];
-
-const salesCount2022 = [
-  { month: "Jan", cnt: 4537 }, { month: "Feb", cnt: 15 }, { month: "Mar", cnt: 6151 },
-  { month: "Apr", cnt: 2201 }, { month: "May", cnt: 341 }, { month: "Jun", cnt: 107 },
-  { month: "Jul", cnt: 35   }, { month: "Aug", cnt: 24 }, { month: "Sep", cnt: 23 },
-  { month: "Oct", cnt: 19   }, { month: "Nov", cnt: 15 }, { month: "Dec", cnt: 12 },
-];
-
-const profit2022 = [
-  { month: "Jan", gp: 310000 }, { month: "Feb", gp: 360000 },
-  { month: "Mar", gp: 270000 }, { month: "Dec", gp: 0 },
-];
-
-function BusinessAnalysisTab({ onChartClick }: { onChartClick?: (data: Record<string, unknown>, cat: string) => void }) {
+function StoryCard({ title, value, sub, color = "bg-[#1c1f26]", textColor = "text-white", icon: Icon }:
+  { title: string; value: string; sub?: string; color?: string; textColor?: string; icon?: React.ElementType }) {
   return (
-    <div className="space-y-4">
-      {/* KPIs */}
+    <div className={`${color} rounded-2xl p-4 flex flex-col gap-1`}>
+      {Icon && <Icon className={`h-5 w-5 ${textColor} opacity-70 mb-1`} />}
+      <div className={`text-2xl font-black tracking-tight ${textColor}`}>{value}</div>
+      <div className={`text-xs font-semibold ${textColor} opacity-90`}>{title}</div>
+      {sub && <div className={`text-[10px] ${textColor} opacity-60`}>{sub}</div>}
+    </div>
+  );
+}
+
+function RiskPill({ label, level }: { label: string; level: "critical" | "high" | "medium" | "low" }) {
+  const cls = {
+    critical: "bg-red-100 text-red-800 border-red-300",
+    high:     "bg-orange-100 text-orange-800 border-orange-300",
+    medium:   "bg-amber-100 text-amber-700 border-amber-300",
+    low:      "bg-emerald-100 text-emerald-700 border-emerald-300",
+  }[level];
+  return <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border ${cls}`}>
+    <span className="w-1.5 h-1.5 rounded-full bg-current" />{label}
+  </span>;
+}
+
+const tt = { contentStyle: { background: "#1c1f26", border: "1px solid #ffffff15", borderRadius: 8, fontSize: 11, color: "#fff" } };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA — All Zimbabwe-contextual procurement intelligence data
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── National Spend 2020–2026 ────────────────────────────────────────────────
+const SPEND_HISTORY = [
+  { year: "2020", budget: 1840, actual: 1620, savings: 220, overrun: 0 },
+  { year: "2021", budget: 2100, actual: 2340, savings: 0, overrun: 240 },
+  { year: "2022", budget: 2400, actual: 2180, savings: 220, overrun: 0 },
+  { year: "2023", budget: 2650, actual: 2590, savings: 60, overrun: 0 },
+  { year: "2024", budget: 2890, actual: 3140, savings: 0, overrun: 250 },
+  { year: "2025", budget: 3100, actual: 2940, savings: 160, overrun: 0 },
+  { year: "2026", budget: 3400, actual: 2840, savings: 0, overrun: 0 },
+];
+
+const MONTHLY_SPEND_2026 = [
+  { month: "Jan", actual: 180, budget: 283, variance: -103 },
+  { month: "Feb", actual: 210, budget: 283, variance: -73 },
+  { month: "Mar", actual: 245, budget: 283, variance: -38 },
+  { month: "Apr", actual: 230, budget: 283, variance: -53 },
+  { month: "May", actual: 268, budget: 283, variance: -15 },
+  { month: "Jun", actual: 290, budget: 283, variance: 7 },
+  { month: "Jul", actual: 0, budget: 283, variance: 0 },
+];
+
+const SPEND_BY_SECTOR = [
+  { sector: "Infrastructure & Roads", usd: 1082, pct: 38, change: "+12%" },
+  { sector: "Health & Pharmaceuticals", usd: 625, pct: 22, change: "+8%" },
+  { sector: "ICT & Digital Systems", usd: 398, pct: 14, change: "+31%" },
+  { sector: "Agriculture & Food", usd: 312, pct: 11, change: "-4%" },
+  { sector: "Education & Training", usd: 256, pct: 9, change: "+2%" },
+  { sector: "Other & Services", usd: 167, pct: 6, change: "-9%" },
+];
+
+// ── Budget Performance ──────────────────────────────────────────────────────
+const MINISTRY_BUDGET = [
+  { ministry: "Transport", budget: 620, spent: 578, pct: 93, status: "On Track" },
+  { ministry: "Health", budget: 480, spent: 392, pct: 82, status: "On Track" },
+  { ministry: "Education", budget: 380, spent: 291, pct: 77, status: "Slow" },
+  { ministry: "Energy", budget: 320, spent: 184, pct: 57, status: "Underspent" },
+  { ministry: "Agriculture", budget: 290, spent: 312, pct: 108, status: "Overrun" },
+  { ministry: "Water", budget: 240, spent: 318, pct: 132, status: "Critical Overrun" },
+  { ministry: "Defence", budget: 210, spent: 208, pct: 99, status: "On Track" },
+  { ministry: "ICT", budget: 180, spent: 98, pct: 54, status: "Underspent" },
+  { ministry: "Finance", budget: 160, spent: 142, pct: 89, status: "On Track" },
+  { ministry: "Home Affairs", budget: 140, spent: 164, pct: 117, status: "Overrun" },
+];
+
+const BUDGET_ABSORPTION_TREND = [
+  { q: "Q1 2024", absorbed: 18, target: 25 },
+  { q: "Q2 2024", absorbed: 31, target: 50 },
+  { q: "Q3 2024", absorbed: 52, target: 75 },
+  { q: "Q4 2024", absorbed: 84, target: 100 },
+  { q: "Q1 2025", absorbed: 21, target: 25 },
+  { q: "Q2 2025", absorbed: 44, target: 50 },
+  { q: "Q3 2025", absorbed: 68, target: 75 },
+  { q: "Q4 2025", absorbed: 91, target: 100 },
+  { q: "Q1 2026", absorbed: 19, target: 25 },
+  { q: "Q2 2026", absorbed: 38, target: 50 },
+];
+
+// ── Revenue & Economy ───────────────────────────────────────────────────────
+const REVENUE_TREND = [
+  { month: "Jan", target: 890, actual: 812, shortfall: 78 },
+  { month: "Feb", target: 890, actual: 847, shortfall: 43 },
+  { month: "Mar", target: 890, actual: 923, shortfall: 0 },
+  { month: "Apr", target: 920, actual: 874, shortfall: 46 },
+  { month: "May", target: 920, actual: 901, shortfall: 19 },
+  { month: "Jun", target: 950, actual: 988, shortfall: 0 },
+];
+
+const REVENUE_BREAKDOWN = [
+  { source: "ZIMRA — Corporate Tax", value: 1840, pct: 31 },
+  { source: "ZIMRA — VAT", value: 1420, pct: 24 },
+  { source: "ZIMRA — PAYE/Income Tax", value: 1180, pct: 20 },
+  { source: "Customs & Excise", value: 710, pct: 12 },
+  { source: "Mining Royalties", value: 420, pct: 7 },
+  { source: "State Enterprise Dividends", value: 178, pct: 3 },
+  { source: "Other", value: 178, pct: 3 },
+];
+
+const ECONOMIC_INDICATORS = [
+  { indicator: "Inflation Rate", value: "34.8%", trend: "up", status: "critical", prev: "29.2%", note: "Rising fast — food basket up 41%" },
+  { indicator: "USD Exchange Rate (ZiG)", value: "13.42", trend: "up", status: "high", prev: "12.18", note: "Parallel market: 18.4" },
+  { indicator: "GDP Growth (est.)", value: "3.2%", trend: "stable", status: "medium", prev: "2.8%", note: "Below 5% target for dev" },
+  { indicator: "Unemployment Rate", value: "19.4%", trend: "down", status: "high", prev: "21.1%", note: "Youth unemployment 38%" },
+  { indicator: "Public Debt / GDP", value: "82.6%", trend: "up", status: "critical", prev: "79.1%", note: "Threshold: 70% — breached" },
+  { indicator: "Budget Deficit / GDP", value: "4.8%", trend: "up", status: "high", prev: "3.9%", note: "Target was 3%" },
+  { indicator: "Foreign Reserves (months)", value: "1.8", trend: "down", status: "critical", prev: "2.1", note: "Critical — min 3 months" },
+  { indicator: "Trade Balance (USD M)", value: "-$284M", trend: "down", status: "high", prev: "-$198M", note: "Imports outpacing exports" },
+];
+
+// ── Shortages & Wastage ─────────────────────────────────────────────────────
+const SHORTAGE_DATA = [
+  { category: "Hospital Beds (public)", current: 9842, required: 18000, gap: 8158, gapPct: 45, severity: "critical" },
+  { category: "School Classrooms", current: 31200, required: 52000, gap: 20800, gapPct: 40, severity: "critical" },
+  { category: "Govt Vehicles (operational)", current: 2840, required: 8400, gap: 5560, gapPct: 66, severity: "critical" },
+  { category: "Medical Equipment (functional)", current: 1420, required: 4800, gap: 3380, gapPct: 70, severity: "critical" },
+  { category: "ICT Workstations (govt offices)", current: 8200, required: 24000, gap: 15800, gapPct: 66, severity: "high" },
+  { category: "Office Printers/Photocopiers", current: 1840, required: 5200, gap: 3360, gapPct: 65, severity: "high" },
+  { category: "Water Treatment Plants (working)", current: 41, required: 68, gap: 27, gapPct: 40, severity: "high" },
+  { category: "Ambulances (operational)", current: 124, required: 480, gap: 356, gapPct: 74, severity: "critical" },
+];
+
+const WASTAGE_DATA = [
+  { category: "Expired Medicines (USD M)", value: 14.2, cause: "Poor cold chain, over-procurement" },
+  { category: "Unfinished Buildings (USD M)", value: 84.6, cause: "Payment delays, abandoned contracts" },
+  { category: "Idle Machinery & Equip (USD M)", value: 38.4, cause: "No maintenance budget, parts unavailable" },
+  { category: "Over-priced Contracts (USD M)", value: 124.8, cause: "Weak competition, spec tailoring" },
+  { category: "Fuel Theft / Misuse (USD M)", value: 22.1, cause: "No tracking system, ghost trips" },
+  { category: "Stationery Overpurchase (USD M)", value: 8.4, cause: "Decentralised buying, no central control" },
+  { category: "Duplicate Payments (USD M)", value: 18.9, cause: "Manual processing, no three-way match" },
+  { category: "Abandoned IT Projects (USD M)", value: 46.2, cause: "Poor planning, vendor lock-in" },
+];
+
+const FUEL_USAGE = [
+  { month: "Jan", allocated: 180000, used: 142000, stolen: 38000 },
+  { month: "Feb", allocated: 185000, used: 148000, stolen: 37000 },
+  { month: "Mar", allocated: 192000, used: 161000, stolen: 31000 },
+  { month: "Apr", allocated: 188000, used: 152000, stolen: 36000 },
+  { month: "May", allocated: 195000, used: 158000, stolen: 37000 },
+  { month: "Jun", allocated: 200000, used: 163000, stolen: 37000 },
+];
+
+// ── Corruption & Risk ───────────────────────────────────────────────────────
+const CORRUPTION_CASES = [
+  { type: "Bid Rigging / Rotation", count: 48, valueUSD: 84.2, trend: "+18% YoY", severity: "critical" },
+  { type: "Inflated Contract Prices", count: 124, valueUSD: 312.8, trend: "+24% YoY", severity: "critical" },
+  { type: "Ghost Vendors / Suppliers", count: 31, valueUSD: 28.4, trend: "+6% YoY", severity: "high" },
+  { type: "Spec Tailoring for Specific Bidder", count: 67, valueUSD: 142.1, trend: "+41% YoY", severity: "critical" },
+  { type: "Conflict of Interest (undisclosed)", count: 29, valueUSD: 64.8, trend: "+12% YoY", severity: "high" },
+  { type: "Duplicate / Fraudulent Payments", count: 84, valueUSD: 18.9, trend: "-8% YoY", severity: "high" },
+  { type: "Procurement Method Abuse", count: 93, valueUSD: 98.4, trend: "+29% YoY", severity: "high" },
+  { type: "PEP / Politically Exposed Entity", count: 18, valueUSD: 48.6, trend: "New", severity: "critical" },
+];
+
+const RISK_TRIGGERS = [
+  { trigger: "Single-source procurement >40% of ministry budget", freq: 14, impact: "High", status: "Active" },
+  { trigger: "Contract variations exceeding 25% of original value", freq: 28, impact: "Critical", status: "Active" },
+  { trigger: "Payments to non-registered vendors", freq: 9, impact: "Critical", status: "Escalated" },
+  { trigger: "Bid submission < 24 hrs before deadline (last-minute)", freq: 42, impact: "Medium", status: "Monitoring" },
+  { trigger: "Same IP/device multiple bid submissions", freq: 7, impact: "High", status: "Investigating" },
+  { trigger: "Evaluation scores identical across evaluators", freq: 18, impact: "High", status: "Active" },
+  { trigger: "Director overlap between evaluating officer & vendor", freq: 12, impact: "Critical", status: "Escalated" },
+  { trigger: "Award to non-lowest compliant bid (unexplained)", freq: 23, impact: "High", status: "Active" },
+];
+
+const RISK_BREAKERS = [
+  { action: "Mandatory public bid opening (livestreamed)", status: "Implemented", impact: "Fraud ↓ 34%" },
+  { action: "Beneficial ownership disclosure", status: "Partially done", impact: "PEP cases detected: 18" },
+  { action: "AI fraud detection engine", status: "Active", impact: "124 alerts/month avg" },
+  { action: "Three-way invoice matching", status: "Piloting (3 ministries)", impact: "Duplicates ↓ 61%" },
+  { action: "e-Procurement platform adoption", status: "62% ministries onboarded", impact: "Savings: USD 184M" },
+  { action: "Whistleblower portal (encrypted)", status: "Live", impact: "12 active cases" },
+  { action: "Independent bid evaluation (AI-assisted)", status: "Piloting", impact: "Under assessment" },
+  { action: "Asset tracking (GPS + RFID)", status: "Planning", impact: "Not yet measured" },
+];
+
+// ── Price Indices ───────────────────────────────────────────────────────────
+const PRICE_INDEX = [
+  { item: "Bitumen (per tonne)", unit: "USD/t", jan: 480, jun: 612, change: 27.5, trend: "up", note: "Global supply squeeze" },
+  { item: "Reinforced Steel", unit: "USD/t", jan: 840, jun: 920, change: 9.5, trend: "up", note: "Import duty impact" },
+  { item: "Diesel Fuel", unit: "USD/L", jan: 1.18, jun: 1.31, change: 11.0, trend: "up", note: "Forex allocation delays" },
+  { item: "Medical Gloves (100 pack)", unit: "USD", jan: 4.20, jun: 4.80, change: 14.3, trend: "up", note: "Post-COVID supply reset" },
+  { item: "A4 Paper (ream)", unit: "USD", jan: 3.80, jun: 4.10, change: 7.9, trend: "up", note: "Local paper mill output low" },
+  { item: "Laptop (govt spec)", unit: "USD", jan: 680, jun: 720, change: 5.9, trend: "stable", note: "Within benchmark range" },
+  { item: "School Desk & Chair (set)", unit: "USD", jan: 42, jun: 58, change: 38.1, trend: "up", note: "Timber shortage, craft levy" },
+  { item: "Chlorine (per 50kg drum)", unit: "USD", jan: 84, jun: 112, change: 33.3, trend: "up", note: "Critical for water treatment" },
+  { item: "Ambulance (basic)", unit: "USD K", jan: 48, jun: 54, change: 12.5, trend: "up", note: "Only 1 local assembler" },
+  { item: "Cement (50kg bag)", unit: "USD", jan: 8.40, jun: 11.20, change: 33.3, trend: "up", note: "PPC export pressure" },
+];
+
+const PRICE_TREND_6M = [
+  { month: "Jan", infrastructure: 100, health: 100, education: 100, ict: 100, fuel: 100 },
+  { month: "Feb", infrastructure: 102, health: 101, education: 102, ict: 99, fuel: 104 },
+  { month: "Mar", infrastructure: 105, health: 103, education: 104, ict: 100, fuel: 107 },
+  { month: "Apr", infrastructure: 109, health: 104, education: 107, ict: 102, fuel: 109 },
+  { month: "May", infrastructure: 115, health: 106, education: 110, ict: 103, fuel: 111 },
+  { month: "Jun", infrastructure: 122, health: 108, education: 114, ict: 104, fuel: 113 },
+];
+
+// ── Quality of Life ─────────────────────────────────────────────────────────
+const QOL_METRICS = [
+  { metric: "Avg wait time — public hospital", value: "6.4 hrs", benchmark: "< 2 hrs", gap: "4.4 hrs excess", severity: "critical", trend: "worsening" },
+  { metric: "School pupil-to-teacher ratio", value: "48:1", benchmark: "30:1", gap: "60% over recommended", severity: "high", trend: "stable" },
+  { metric: "Access to clean water (rural)", value: "38%", benchmark: "90%+", gap: "52% unserved", severity: "critical", trend: "improving" },
+  { metric: "Road in good condition (%)", value: "41%", benchmark: "75%+", gap: "34% below standard", severity: "high", trend: "worsening" },
+  { metric: "Electricity uptime (ZESA)", value: "54%", benchmark: "95%+", gap: "41% load-shedding", severity: "critical", trend: "stable" },
+  { metric: "Govt drug stockout rate", value: "62%", benchmark: "< 5%", gap: "57% above threshold", severity: "critical", trend: "worsening" },
+  { metric: "Mean travel time to nearest hospital", value: "94 min", benchmark: "30 min", gap: "64 min excess", severity: "high", trend: "stable" },
+  { metric: "Primary school net enrolment", value: "84%", benchmark: "100%", gap: "16% out-of-school", severity: "medium", trend: "improving" },
+];
+
+// ── Supplier / Contractor Performance ──────────────────────────────────────
+const CONTRACTOR_DELIVERY = [
+  { name: "Highveld Engineering", onTime: 94, quality: 89, safety: 96, cost: 85, disputes: 1, projects: 18 },
+  { name: "Zimbabwe Pharma Holdings", onTime: 91, quality: 92, safety: 99, cost: 80, disputes: 0, projects: 24 },
+  { name: "Sable ICT Solutions", onTime: 78, quality: 80, safety: 99, cost: 76, disputes: 2, projects: 11 },
+  { name: "Bulawayo Civil Works", onTime: 52, quality: 61, safety: 74, cost: 68, disputes: 5, projects: 9 },
+  { name: "Mashonaland Agri", onTime: 88, quality: 84, safety: 94, cost: 82, disputes: 0, projects: 16 },
+  { name: "Eastern Highlands Logistics", onTime: 86, quality: 78, safety: 97, cost: 84, disputes: 1, projects: 7 },
+  { name: "Granite Construction (BLACKLISTED)", onTime: 18, quality: 28, safety: 42, cost: 44, disputes: 8, projects: 4 },
+];
+
+const SME_PARTICIPATION = [
+  { year: "2021", sme: 18, enterprise: 64, micro: 18 },
+  { year: "2022", sme: 21, enterprise: 61, micro: 18 },
+  { year: "2023", sme: 26, enterprise: 58, micro: 16 },
+  { year: "2024", sme: 30, enterprise: 54, micro: 16 },
+  { year: "2025", sme: 34, enterprise: 51, micro: 15 },
+  { year: "2026", sme: 37, enterprise: 48, micro: 15 },
+];
+
+// ── Project Delivery ────────────────────────────────────────────────────────
+const PROJECT_DELIVERY_STATS = [
+  { status: "On Time, On Budget", count: 284, pct: 19 },
+  { status: "Delayed (< 6 months)", count: 412, pct: 28 },
+  { status: "Delayed (6–24 months)", count: 318, pct: 21 },
+  { status: "Delayed (> 24 months)", count: 184, pct: 12 },
+  { status: "Cost Overrun > 25%", count: 142, pct: 10 },
+  { status: "Abandoned / Stalled", count: 147, pct: 10 },
+];
+
+const OVERRUN_BY_SECTOR = [
+  { sector: "Roads & Transport", planned: 840, actual: 1248, overrun: 408, pct: 49 },
+  { sector: "Water & Sanitation", planned: 380, actual: 614, overrun: 234, pct: 62 },
+  { sector: "Health Facilities", planned: 290, actual: 408, overrun: 118, pct: 41 },
+  { sector: "Schools & Education", planned: 210, actual: 284, overrun: 74, pct: 35 },
+  { sector: "Energy & Power", planned: 180, actual: 228, overrun: 48, pct: 27 },
+  { sector: "ICT & Systems", planned: 140, actual: 196, overrun: 56, pct: 40 },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TAB COMPONENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function NationalSpendTab() {
+  return (
+    <div className="space-y-5">
+      {/* Headline KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatBox label="Total Orders"  value="909,408"        color="bg-orange-500" />
-        <StatBox label="Total Profit"  value="USD 32.35M"     color="bg-blue-600"   />
-        <StatBox label="Languages"     value="40+"            color="bg-teal-600"   />
-        <StatBox label="Companies"     value="4"              color="bg-amber-500"  />
+        <StoryCard title="Total National Procurement Spend YTD" value="USD 2.84B" sub="+6.2% vs prior year" color="bg-[#1c1f26]" icon={DollarSign} />
+        <StoryCard title="Budget Utilisation" value="67.8%" sub="USD 3.4B total approved budget" color="bg-blue-700" icon={Target} />
+        <StoryCard title="Procurement Savings" value="USD 184M" sub="6.5% of total spend — below 8% target" color="bg-emerald-700" icon={TrendingDown} />
+        <StoryCard title="Budget Overruns (active)" value="USD 498M" sub="Across 3 ministries" color="bg-red-700" icon={AlertTriangle} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Top 20 products by gross profit — horizontal bar */}
-        <Card className="lg:col-span-2">
-          <CardHeader title="Top 20 Products — Gross Profit" subtitle="Language services ranked by gross profit" />
-          <div className="p-4 h-[380px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={[...languageData].sort((a,b) => b.profit - a.profit).slice(0,20)}
-                layout="vertical" margin={{ left: 0, right: 20 }}>
-                <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false}
-                  tickFormatter={v => `${(v/1e6).toFixed(1)}M`} />
-                <YAxis type="category" dataKey="lang" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={72} />
-                <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:12 }}
-                  formatter={(v:number) => [`USD ${(v/1e6).toFixed(2)}M`, "Gross Profit"]} />
-                <Bar dataKey="profit" fill={C.orange} radius={[0,3,3,0]} name="Gross Profit"
-                  onClick={(d: Record<string, unknown>) => onChartClick?.(d, "gross-profit")} style={{ cursor: "pointer" }} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Gross profit by company — donut */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader title="Gross Profit by Company" />
-            <div className="p-4 h-[180px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={grossProfitByCompany} cx="50%" cy="50%" innerRadius={45} outerRadius={72}
-                    dataKey="value" paddingAngle={2}
-                    onClick={(d: Record<string, unknown>) => onChartClick?.(d, "company-profit")} style={{ cursor: "pointer" }}>
-                    {grossProfitByCompany.map((_,i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
-                  </Pie>
-                  <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:11 }}
-                    formatter={(v:number) => [`USD ${(v/1e6).toFixed(2)}M`, ""]} />
-                  <Legend iconSize={8} wrapperStyle={{ fontSize:10 }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-          <Card>
-            <CardHeader title="2022 Gross Profit" subtitle="Monthly (Jan–Mar)" />
-            <div className="p-4 h-[140px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={profit2022}>
-                  <defs>
-                    <linearGradient id="gpGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={C.orange} stopOpacity={0.3} />
-                      <stop offset="100%" stopColor={C.orange} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                  <XAxis dataKey="month" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false}
-                    tickFormatter={v => `${(v/1e6).toFixed(1)}M`} />
-                  <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:11 }}
-                    formatter={(v:number) => [`USD ${(v/1e6).toFixed(2)}M`, "GP"]} />
-                  <Area type="monotone" dataKey="gp" stroke={C.orange} strokeWidth={2} fill="url(#gpGrad)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Sales unit volume YoY */}
-        <Card>
-          <CardHeader title="Sales Unit Volume — Year on Year" subtitle="2006–2023 all companies" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={salesVolumeYoY}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="year" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}K` : v} />
-                <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:12 }} />
-                <Bar dataKey="vol" fill={C.orange} radius={[3,3,0,0]} name="Volume" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Gross profit YoY */}
-        <Card>
-          <CardHeader title="Year on Year Gross Profit" subtitle="2015–2022" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={grossProfitYoY}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v => `${(v/1e6).toFixed(1)}M`} />
-                <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:12 }}
-                  formatter={(v:number) => [`USD ${(v/1e6).toFixed(2)}M`, "GP"]} />
-                <Bar dataKey="gp" fill={C.blue} radius={[3,3,0,0]} name="Gross Profit" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* 2022 monthly orders */}
+      {/* Story: Budget vs Actual 6-year trend */}
       <Card>
-        <CardHeader title="2022 Sales Units Count — Month Wise" subtitle="All products, all companies" />
-        <div className="p-4 h-[220px]">
+        <CardHeader title="📊 The Overspending Cycle — 2020 to 2026" subtitle="Budget approved vs actual spend in USD millions — THE PATTERN IS CLEAR" />
+        <div className="p-4 h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={salesCount2022}>
+            <ComposedChart data={SPEND_HISTORY}>
               <CartesianGrid stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="month" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{ background:"white", border:"1px solid #e2e8f0", borderRadius:8, fontSize:12 }} />
-              <Bar dataKey="cnt" fill={C.orange} radius={[3,3,0,0]} name="Orders" />
-            </BarChart>
+              <XAxis dataKey="year" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+              <Tooltip {...tt} formatter={(v: number, n) => [`USD ${v}M`, n]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="budget" name="Budget Approved" fill={C.slate} radius={[3,3,0,0]} />
+              <Bar dataKey="actual" name="Actual Spend" fill={C.teal} radius={[3,3,0,0]} />
+              <Bar dataKey="overrun" name="Overrun ⚠️" fill={C.red} radius={[3,3,0,0]} />
+              <Bar dataKey="savings" name="Savings ✓" fill={C.green} radius={[3,3,0,0]} />
+            </ComposedChart>
           </ResponsiveContainer>
+        </div>
+        <div className="px-5 pb-4 text-xs text-red-700 bg-red-50 mx-4 mb-4 rounded-xl p-3 font-medium">
+          🔴 2021 & 2024 recorded overruns of USD 240M and USD 250M respectively. Agriculture & Water consistently breach their envelopes.
+          These overruns divert funds from other critical programmes.
         </div>
       </Card>
 
-      {/* Language table */}
+      {/* Monthly 2026 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader title="Monthly Spend vs Budget — 2026" subtitle="USD millions per month" />
+          <div className="p-4 h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={MONTHLY_SPEND_2026}>
+                <CartesianGrid stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+                <Tooltip {...tt} formatter={(v: number, n) => [`USD ${v}M`, n]} />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <ReferenceLine y={283} stroke={C.amber} strokeDasharray="4 2" label={{ value: "Monthly Target", position: "right", fontSize: 9 }} />
+                <Bar dataKey="actual" name="Actual" fill={C.teal} radius={[3,3,0,0]} />
+                <Bar dataKey="budget" name="Budget" fill="#e2e8f0" radius={[3,3,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+        <Card>
+          <CardHeader title="Where the Money Goes — Sector Distribution" subtitle="% of USD 2.84B YTD" />
+          <div className="p-4 h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={SPEND_BY_SECTOR} dataKey="usd" nameKey="sector" cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={2}>
+                  {SPEND_BY_SECTOR.map((_, i) => <Cell key={i} fill={PIE[i % PIE.length]} />)}
+                </Pie>
+                <Tooltip {...tt} formatter={(v: number) => [`USD ${v}M`, ""]} />
+                <Legend wrapperStyle={{ fontSize: 10 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </div>
+
+      {/* Sector spend table */}
       <Card>
-        <CardHeader title="Top Products — Orders & Profit" subtitle="Ranked by gross profit" />
+        <CardHeader title="Sector Spend Detail — YTD FY2026" subtitle="With year-on-year change" />
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-black/10">
-                {["Language","No. of Orders","Gross Profit (USD)"].map(h => (
-                  <th key={h} className="px-4 py-2.5 text-left text-black/50 font-medium">{h}</th>
-                ))}
-              </tr>
+          <table className="w-full text-sm">
+            <thead className="bg-[#f8f9fa] text-xs text-black/50">
+              <tr>{["Sector","USD Millions","% of Total","YoY Change"].map(h => <th key={h} className="px-4 py-2.5 text-left font-medium">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
-              {languageData.map(r => (
-                <tr key={r.lang} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 font-medium">{r.lang}</td>
-                  <td className="px-4 py-2">{r.orders.toLocaleString()}</td>
-                  <td className="px-4 py-2 font-semibold">{r.profit.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0})}</td>
+              {SPEND_BY_SECTOR.map(r => (
+                <tr key={r.sector} className="hover:bg-gray-50">
+                  <td className="px-4 py-2.5 font-medium text-black">{r.sector}</td>
+                  <td className="px-4 py-2.5 font-bold text-[#29b8c5]">USD {r.usd}M</td>
+                  <td className="px-4 py-2.5 text-black/70">{r.pct}%</td>
+                  <td className="px-4 py-2.5">
+                    <span className={`font-semibold text-xs ${r.change.startsWith("+") ? "text-emerald-600" : "text-red-500"}`}>{r.change}</span>
+                  </td>
                 </tr>
               ))}
-              <tr className="bg-gray-50 font-bold">
-                <td className="px-4 py-2">Total</td>
-                <td className="px-4 py-2">909,408</td>
-                <td className="px-4 py-2 text-orange-600">$32,348,273</td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -284,225 +412,139 @@ function BusinessAnalysisTab({ onChartClick }: { onChartClick?: (data: Record<st
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 2 — PERFORMANCE REPORT
-// ─────────────────────────────────────────────────────────────────────────────
-const salesByCompany = [
-  { name: "IUG-SD",    value: 746115, pct: 82.04 },
-  { name: "ASIT",      value: 73330,  pct: 8.06  },
-  { name: "ACD",       value: 49220,  pct: 5.41  },
-  { name: "Globelink", value: 40743,  pct: 4.48  },
-];
-
-const salesByStage = [
-  { stage: "INVOICED",      cnt: 782005 },
-  { stage: "CANCELLED",     cnt: 122315 },
-  { stage: "SCHEDULED",     cnt: 215721 },
-  { stage: "UNSCHEDULED",   cnt: 327623 },
-  { stage: "UNBILLED",      cnt: 151 },
-  { stage: "REJECTED",      cnt: 29800 },
-];
-
-const cancelledByReason = [
-  { reason: "Requestor Cancelled", cnt: 67471 },
-  { reason: "No Interpreter",      cnt: 32469 },
-  { reason: "Duplicate Appt",      cnt: 16519 },
-  { reason: "Generic",             cnt: 2744  },
-  { reason: "No Authorization",    cnt: 1262  },
-  { reason: "Requester Cancelled", cnt: 1135  },
-  { reason: "Import Error",        cnt: 287   },
-  { reason: "Late Cancel",         cnt: 57    },
-  { reason: "No Show",             cnt: 22    },
-];
-
-const cancelledYoY = [
-  { year:"2006",cnt:4070},{year:"2007",cnt:4275},{year:"2008",cnt:5026},
-  {year:"2009",cnt:5999},{year:"2010",cnt:6708},{year:"2011",cnt:8228},
-  {year:"2012",cnt:7300},{year:"2013",cnt:6900},{year:"2014",cnt:7733},
-  {year:"2015",cnt:8621},{year:"2016",cnt:8532},{year:"2017",cnt:7709},
-  {year:"2018",cnt:8951},{year:"2019",cnt:9845},{year:"2020",cnt:8944},
-  {year:"2021",cnt:9977},{year:"2022",cnt:3494},{year:"2023",cnt:3},
-];
-
-const dateWiseOrders2022 = Array.from({length:60},(_,i)=>({
-  day: i+1,
-  cnt: i < 10 ? 268+Math.floor(Math.sin(i)*30) :
-       i < 20 ? 286+Math.floor(Math.cos(i)*20) :
-       i < 30 ? 260+Math.floor(Math.sin(i)*40) : 100-i,
-}));
-
-function PerformanceReportTab() {
+function BudgetPerformanceTab() {
   return (
-    <div className="space-y-4">
-      {/* Summary KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <StatBox label="Orders Served"      value="909,411" color="bg-orange-500" />
-        <StatBox label="Customer Served"    value="25,193"  color="bg-orange-500" />
-        <StatBox label="Interpreter Onboard"value="29,800"  color="bg-orange-500" />
-        <StatBox label="Translator Onboard" value="1,637"   color="bg-orange-500" />
-        <StatBox label="Products Offered"   value="1,436"   color="bg-orange-500" />
-        <StatBox label="Location Covered"   value="77,286"  color="bg-orange-500" />
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StoryCard title="Ministries On Track" value="6/10" sub="60% within approved envelope" color="bg-emerald-700" icon={CheckCircle2} />
+        <StoryCard title="Ministries with Overrun" value="3" sub="Water 132% | Agri 108% | Home 117%" color="bg-red-700" icon={AlertTriangle} />
+        <StoryCard title="Underspent Ministries" value="2" sub="Energy 57% | ICT 54% absorbed" color="bg-amber-600" icon={TrendingDown} />
+        <StoryCard title="Budget Absorption Rate (Q2)" value="38%" sub="Target was 50% by Q2" color="bg-[#1c1f26]" icon={Activity} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* Sales orders by company */}
-        <Card>
-          <CardHeader title="Sales Orders by Company" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={salesByCompany} cx="50%" cy="50%" innerRadius={50} outerRadius={80}
-                  dataKey="value" paddingAngle={2}>
-                  {salesByCompany.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]} />)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[v.toLocaleString(),"Orders"]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Assignment count by type */}
-        <Card>
-          <CardHeader title="Assignment Count by Type" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={[{name:"Language",value:891718},{name:"Translation",value:17690}]}
-                  cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={2}>
-                  <Cell fill={C.orange} /><Cell fill={C.blue} />
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[v.toLocaleString(),""]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Count by purpose */}
-        <Card>
-          <CardHeader title="Count by Purpose" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={[{name:"Normal",value:441600},{name:"Medical",value:406391},{name:"Other",value:38235}]}
-                  cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={2}>
-                  <Cell fill={C.orange} /><Cell fill={C.teal} /><Cell fill={C.blue} />
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[v.toLocaleString(),""]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Count by schedule type */}
-        <Card>
-          <CardHeader title="Count by Schedule Type" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={[{type:"Onsite",cnt:898891},{type:"Online",cnt:6070},{type:"Phone",cnt:2497},{type:"Other",cnt:1950}]}
-                layout="vertical">
-                <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false}
-                  tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-                <YAxis type="category" dataKey="type" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={45} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.orange} radius={[0,3,3,0]} name="Count" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* Year on year orders */}
       <Card>
-        <CardHeader title="Year on Year Sales Orders Count" subtitle="2006–2023 all companies" />
+        <CardHeader title="🔴 Ministry Budget vs Actual Spend — Critical Overruns & Underspends Exposed"
+          subtitle="Orange = overrun, Blue = underspent, Green = on track — USD millions" />
+        <div className="p-4 h-[320px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={MINISTRY_BUDGET} layout="vertical" margin={{ left: 20 }}>
+              <CartesianGrid stroke="#f1f5f9" horizontal={false} />
+              <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+              <YAxis type="category" dataKey="ministry" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} width={80} />
+              <Tooltip {...tt} formatter={(v: number, n) => [`USD ${v}M`, n]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="budget" name="Budget" fill="#e2e8f0" radius={[0,3,3,0]} />
+              <Bar dataKey="spent" name="Actual Spent" radius={[0,3,3,0]}
+                fill={C.teal}>
+                {MINISTRY_BUDGET.map((m, i) => (
+                  <Cell key={i} fill={m.pct > 100 ? C.red : m.pct < 70 ? C.amber : C.teal} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="px-5 pb-4 space-y-1.5">
+          {MINISTRY_BUDGET.filter(m => m.pct > 100 || m.pct < 65).map(m => (
+            <div key={m.ministry} className={`text-xs px-3 py-2 rounded-lg font-medium ${m.pct > 100 ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"}`}>
+              {m.pct > 100 ? "🔴" : "🟡"} {m.ministry}: {m.pct}% absorption — {m.status}. Budget: USD {m.budget}M | Spent: USD {m.spent}M
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <CardHeader title="Budget Absorption Rate — Quarterly Trend vs Target" subtitle="% of annual budget absorbed — slow start every year" />
         <div className="p-4 h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={salesVolumeYoY}>
+            <ComposedChart data={BUDGET_ABSORPTION_TREND}>
               <CartesianGrid stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="year" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-              <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:12}} />
-              <Bar dataKey="vol" fill={C.orange} radius={[3,3,0,0]} name="Orders" />
-            </BarChart>
+              <XAxis dataKey="q" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} />
+              <Tooltip {...tt} formatter={(v: number, n) => [`${v}%`, n]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="target" name="Target %" fill="#e2e8f0" radius={[3,3,0,0]} />
+              <Bar dataKey="absorbed" name="Actual %" radius={[3,3,0,0]}>
+                {BUDGET_ABSORPTION_TREND.map((d, i) => (
+                  <Cell key={i} fill={d.absorbed >= d.target ? C.green : d.absorbed >= d.target * 0.8 ? C.amber : C.red} />
+                ))}
+              </Bar>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
+        <div className="px-5 pb-4 text-xs text-amber-700 bg-amber-50 mx-4 mb-4 rounded-xl p-3 font-medium">
+          🟡 Zimbabwe's chronic slow budget absorption pattern means Q4 panic spending — rushed, poorly planned procurements at year-end,
+          leading to inferior quality, overpricing and zero value for money.
+        </div>
       </Card>
+    </div>
+  );
+}
 
-      {/* Sales count by stage */}
+function RevenueEconomyTab() {
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StoryCard title="Total Revenue YTD" value="USD 5.34B" sub="On target by 2.1%" color="bg-emerald-700" icon={DollarSign} />
+        <StoryCard title="Public Debt / GDP" value="82.6%" sub="🔴 CRITICAL — breached 70% threshold" color="bg-red-800" icon={AlertOctagon} />
+        <StoryCard title="Foreign Reserves" value="1.8 months" sub="🔴 Minimum is 3 months — crisis level" color="bg-red-700" icon={AlertTriangle} />
+        <StoryCard title="Inflation Rate" value="34.8%" sub="Food basket up 41% YoY" color="bg-orange-700" icon={TrendingUp} />
+      </div>
+
       <Card>
-        <CardHeader title="Sales Count by Stage" subtitle="All companies, all years" />
-        <div className="p-4 h-[220px]">
+        <CardHeader title="Revenue Collection vs Monthly Target — 2026" subtitle="USD millions — where collection is falling short" />
+        <div className="p-4 h-[260px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={salesByStage}>
+            <ComposedChart data={REVENUE_TREND}>
               <CartesianGrid stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="stage" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-              <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:12}} />
-              <Bar dataKey="cnt" fill={C.blue} radius={[3,3,0,0]} name="Count" />
-            </BarChart>
+              <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+              <Tooltip {...tt} formatter={(v: number, n) => [`USD ${v}M`, n]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="actual" name="Collected" fill={C.teal} radius={[3,3,0,0]} />
+              <Bar dataKey="shortfall" name="Shortfall ⚠️" fill={C.red} radius={[3,3,0,0]} />
+              <Line type="monotone" dataKey="target" name="Target" stroke={C.amber} strokeWidth={2} strokeDasharray="4 2" dot={false} />
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Cancelled orders count by company */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
-          <CardHeader title="Cancelled Orders — by Company" />
-          <div className="p-4 h-[200px]">
+          <CardHeader title="Revenue Sources — Where Government Money Comes From" subtitle="FY2026 projected" />
+          <div className="p-4 h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={[{name:"IUG-SD",value:99715},{name:"ACD",value:9364},{name:"ASIT",value:8032}]}
-                  cx="50%" cy="50%" innerRadius={45} outerRadius={72}
-                  dataKey="value" paddingAngle={2}>
-                  <Cell fill={C.orange} /><Cell fill={C.blue} /><Cell fill={C.gold} />
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[v.toLocaleString(),""]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Cancelled YoY */}
-        <Card>
-          <CardHeader title="Cancelled Orders — Year on Year" />
-          <div className="p-4 h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={cancelledYoY}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="year" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false}
-                  tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.amber} radius={[3,3,0,0]} name="Cancelled" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Cancelled by reason */}
-        <Card>
-          <CardHeader title="Cancelled Orders — by Reason" />
-          <div className="p-4 h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={cancelledByReason} layout="vertical">
+              <BarChart data={REVENUE_BREAKDOWN} layout="vertical">
                 <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false}
-                  tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-                <YAxis type="category" dataKey="reason" stroke="#94a3b8" fontSize={7} tickLine={false} axisLine={false} width={88} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.red} radius={[0,3,3,0]} name="Count" />
+                <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+                <YAxis type="category" dataKey="source" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={160} />
+                <Tooltip {...tt} formatter={(v: number) => [`USD ${v}M`, "Revenue"]} />
+                <Bar dataKey="value" name="Revenue" radius={[0,4,4,0]}>
+                  {REVENUE_BREAKDOWN.map((_, i) => <Cell key={i} fill={PIE[i % PIE.length]} />)}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card>
+          <CardHeader title="🚨 Key Economic Indicators — The Real Story" subtitle="What the numbers mean for citizens and procurement" />
+          <div className="divide-y divide-black/5">
+            {ECONOMIC_INDICATORS.map(ind => (
+              <div key={ind.indicator} className={`px-4 py-3 flex items-start gap-3 ${ind.status === "critical" ? "bg-red-50/50" : ind.status === "high" ? "bg-amber-50/30" : ""}`}>
+                <div className={`h-2.5 w-2.5 rounded-full mt-1.5 flex-shrink-0 ${ind.status === "critical" ? "bg-red-500" : ind.status === "high" ? "bg-amber-500" : "bg-emerald-500"}`} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-semibold text-black">{ind.indicator}</span>
+                    <span className={`text-sm font-black ${ind.status === "critical" ? "text-red-600" : ind.status === "high" ? "text-amber-600" : "text-emerald-600"}`}>{ind.value}</span>
+                    <span className="text-[10px] text-black/40">prev: {ind.prev}</span>
+                  </div>
+                  <div className="text-[10px] text-black/50 mt-0.5 italic">{ind.note}</div>
+                </div>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${ind.trend === "up" ? "bg-red-100 text-red-700" : ind.trend === "down" ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-500"}`}>
+                  {ind.trend === "up" ? "↑" : ind.trend === "down" ? "↓" : "→"}
+                </span>
+              </div>
+            ))}
           </div>
         </Card>
       </div>
@@ -510,1231 +552,544 @@ function PerformanceReportTab() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 3 — FINANCE ANALYSIS
-// ─────────────────────────────────────────────────────────────────────────────
-const invoicedBilledYoY = [
-  {year:"2015",inv:3950000,billed:1650000},{year:"2016",inv:8700000,billed:7760000},
-  {year:"2017",inv:6750000,billed:6600000},{year:"2018",inv:13700000,billed:12170000},
-  {year:"2019",inv:10470000,billed:11100000},{year:"2020",inv:13560000,billed:10000000},
-  {year:"2021",inv:5870000,billed:8400000},{year:"2022",inv:7060000,billed:2580000},
-];
-
-const profitByCustomer = [
-  {cust:"Serco 15193",       profit:2020000},
-  {cust:"Eastern LA Reg",    profit:1440000},
-  {cust:"Cobb DFCS",         profit:1370000},
-  {cust:"Kaiser Permanente", profit:1220000},
-  {cust:"Gwinnett DFCS",     profit: 850000},
-  {cust:"Monarch Healthcare",profit: 690000},
-  {cust:"Dekalb DFCS",       profit: 630000},
-  {cust:"Sharp Memorial",    profit: 590000},
-  {cust:"UCSD Interpreting", profit: 450000},
-  {cust:"DHS US CBP",        profit: 560000},
-  {cust:"FAU Florida",       profit: 400000},
-  {cust:"Riverside UHCS",    profit: 360000},
-];
-
-const profitableProducts = [
-  {lang:"Spanish",     profit:8890000},{lang:"Sign Language",profit:5350000},
-  {lang:"Farsi",       profit:4120000},{lang:"English",      profit:3370000},
-  {lang:"Arabic",      profit:1790000},{lang:"Vietnamese",   profit:1710000},
-  {lang:"Russian",     profit:1050000},{lang:"Korean",       profit: 600000},
-  {lang:"Mandarin",    profit: 540000},{lang:"Laotian",      profit: 340000},
-  {lang:"Cantonese",   profit: 420000},{lang:"Nepali",       profit: 280000},
-  {lang:"Tagalog",     profit: 180000},{lang:"French",       profit: 130000},
-  {lang:"Burmese",     profit: 120000},
-];
-
-const receivablePayable = [
-  {month:"Jan",recv:5100000,pay:4200000},{month:"Feb",recv:4800000,pay:3900000},
-  {month:"Mar",recv:3200000,pay:2800000},{month:"Apr",recv:2100000,pay:1800000},
-  {month:"May",recv:1400000,pay:1200000},{month:"Jun",recv: 900000,pay: 800000},
-  {month:"Jul",recv: 600000,pay: 550000},{month:"Aug",recv: 400000,pay: 380000},
-];
-
-function FinanceAnalysisTab({ onChartClick }: { onChartClick?: (data: Record<string, unknown>, cat: string) => void }) {
+function ShortagesWastageTab() {
+  const totalWastage = WASTAGE_DATA.reduce((s, w) => s + w.value, 0);
   return (
-    <div className="space-y-4">
-      {/* KPI row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <StatBox label="Customers Served" value="25,193"         color="bg-orange-500" />
-        <StatBox label="Languages Served" value="1,436"          color="bg-orange-500" />
-        <StatBox label="Amount Invoiced"  value="USD 82.95M"     color="bg-orange-500" />
-        <StatBox label="Amount Paid"      value="USD 50.61M"     color="bg-orange-500" />
-        <StatBox label="Gross Profit"     value="USD 32.34M"     color="bg-orange-500" />
-        <StatBox label="Locations Covered"value="77,286"         color="bg-orange-500" />
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StoryCard title="Total Estimated Annual Wastage" value={`USD ${totalWastage.toFixed(1)}M`} sub="Conservative estimate — actual likely 3× higher" color="bg-red-800" icon={Flame} />
+        <StoryCard title="Govt Buildings with Defects/Incomplete" value="1,284" sub="Worth USD 84.6M stuck at various stages" color="bg-orange-700" icon={Building2} />
+        <StoryCard title="Non-operational Govt Vehicles" value="5,560" sub="66% of required fleet non-functional" color="bg-amber-600" icon={Truck} />
+        <StoryCard title="Drug Stockout Rate" value="62%" sub="62% of public health facilities short on medicines" color="bg-red-700" icon={Stethoscope} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Invoiced by company */}
-        <Card>
-          <CardHeader title="Invoiced by Company" />
-          <div className="p-4 h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={[{name:"IUG-SD",value:65770000},{name:"ACD",value:11180000},{name:"Globelink",value:3690000}]}
-                  cx="50%" cy="50%" innerRadius={45} outerRadius={72} dataKey="value" paddingAngle={2}>
-                  {[C.orange,C.blue,C.teal].map((c,i)=><Cell key={i} fill={c}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,""]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Bills by company */}
-        <Card>
-          <CardHeader title="Bills by Company" />
-          <div className="p-4 h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={[{name:"IUG-SD",value:40160000},{name:"ACD",value:7760000},{name:"Globelink",value:1610000}]}
-                  cx="50%" cy="50%" innerRadius={45} outerRadius={72} dataKey="value" paddingAngle={2}>
-                  {[C.orange,C.blue,C.teal].map((c,i)=><Cell key={i} fill={c}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,""]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* GP by company */}
-        <Card>
-          <CardHeader title="Gross Profit by Company" />
-          <div className="p-4 h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={grossProfitByCompany} cx="50%" cy="50%" innerRadius={45} outerRadius={72} dataKey="value" paddingAngle={2}>
-                  {grossProfitByCompany.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,""]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Invoiced & Billed YoY */}
-        <Card>
-          <CardHeader title="Year on Year Invoiced & Billed Amount" subtitle="2015–2022" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={invoicedBilledYoY}>
-                <defs>
-                  <linearGradient id="invGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={C.orange} stopOpacity={0.3}/>
-                    <stop offset="100%" stopColor={C.orange} stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="billGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={C.blue} stopOpacity={0.2}/>
-                    <stop offset="100%" stopColor={C.blue} stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v=>`${(v/1e6).toFixed(0)}M`} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,""]} />
-                <Legend wrapperStyle={{fontSize:10}} />
-                <Area type="monotone" dataKey="inv" stroke={C.orange} strokeWidth={2} fill="url(#invGrad)" name="Invoiced" />
-                <Area type="monotone" dataKey="billed" stroke={C.blue} strokeWidth={2} fill="url(#billGrad)" name="Billed" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* GP YoY */}
-        <Card>
-          <CardHeader title="Year on Year Gross Profit" subtitle="2015–2022" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={grossProfitYoY}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v=>`${(v/1e6).toFixed(1)}M`} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,"GP"]} />
-                <Bar dataKey="gp" fill={C.orange} radius={[3,3,0,0]} name="Gross Profit" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* Receivable vs Payable */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="Receivable vs Payable — Order Based" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={receivablePayable}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="month" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v=>`${(v/1e6).toFixed(1)}M`} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,""]} />
-                <Legend wrapperStyle={{fontSize:10}} />
-                <Line type="monotone" dataKey="recv" stroke={C.orange} strokeWidth={2} dot={false} name="Receivable (in_invoice)" />
-                <Line type="monotone" dataKey="pay"  stroke={C.blue}   strokeWidth={2} dot={false} name="Payable (out_invoice)" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Profit by ordering customer */}
-        <Card>
-          <CardHeader title="Profit Based on Ordering Customer" subtitle="Top 12 customers" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={profitByCustomer}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="cust" stroke="#94a3b8" fontSize={7} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v=>`${(v/1e6).toFixed(1)}M`} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,"Profit"]} />
-                <Bar dataKey="profit" fill={C.orange} radius={[3,3,0,0]} name="Profit" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* Products making profit > $2000 */}
       <Card>
-        <CardHeader title="Products Making Profit More Than $2,000" subtitle="All language products ranked by gross profit" />
+        <CardHeader title="🏥🏫🚗 Critical Government Asset Shortages — The Gap Between What Exists and What Is Needed"
+          subtitle="Shortage = unreported crisis affecting citizens daily" />
+        <div className="p-4 h-[320px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={SHORTAGE_DATA} layout="vertical">
+              <CartesianGrid stroke="#f1f5f9" horizontal={false} />
+              <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="category" stroke="#94a3b8" fontSize={8.5} tickLine={false} axisLine={false} width={190} />
+              <Tooltip {...tt} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="current" name="Available Now" fill={C.teal} radius={[0,3,3,0]} />
+              <Bar dataKey="required" name="Required" fill="#e2e8f0" radius={[0,3,3,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader title="💸 Where Government Money Is Being Wasted" subtitle={`Total estimated wastage: USD ${totalWastage.toFixed(1)}M annually`} />
+          <div className="divide-y divide-black/5">
+            {WASTAGE_DATA.sort((a,b) => b.value - a.value).map(w => (
+              <div key={w.category} className="px-4 py-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-black">{w.category}</span>
+                  <span className="text-sm font-black text-red-600">USD {w.value}M</span>
+                </div>
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1">
+                  <div className="h-full bg-red-400 rounded-full" style={{ width: `${(w.value / totalWastage * 100).toFixed(0)}%` }} />
+                </div>
+                <div className="text-[10px] text-black/45 italic">{w.cause}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card>
+          <CardHeader title="⛽ Fuel Allocation vs Actual Use vs Stolen" subtitle="Monthly litres — the hidden drain on transport budget" />
+          <div className="p-4 h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={FUEL_USAGE}>
+                <CartesianGrid stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+                <Tooltip {...tt} formatter={(v: number) => [v.toLocaleString() + " L", ""]} />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Bar dataKey="used" name="Legitimately Used" fill={C.teal} stackId="a" radius={[0,0,0,0]} />
+                <Bar dataKey="stolen" name="Unaccounted / Stolen ⚠️" fill={C.red} stackId="a" radius={[3,3,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="px-5 pb-4 text-xs text-red-600 bg-red-50 mx-4 mb-4 rounded-xl p-3 font-medium">
+            🔴 An estimated 19–20% of fuel allocated is unaccounted for every month. At current prices (USD 1.31/L) this equals ~USD 590,000/month lost to ghost trips and theft.
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function CorruptionRiskTab() {
+  const totalCorruptionUSD = CORRUPTION_CASES.reduce((s, c) => s + c.valueUSD, 0);
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StoryCard title="Estimated Corruption Losses (Confirmed)" value={`USD ${totalCorruptionUSD.toFixed(0)}M`} sub="Per year — likely 5–10× if all cases tracked" color="bg-red-900" icon={ShieldAlert} />
+        <StoryCard title="Active Fraud Investigations" value="141" sub="48 referred to ZACC" color="bg-red-700" icon={AlertOctagon} />
+        <StoryCard title="Spec Tailoring Cases" value="67" sub="+41% YoY — most dangerous trend" color="bg-orange-700" icon={AlertTriangle} />
+        <StoryCard title="Ghost Vendor Payments" value="31 cases" sub="USD 28.4M paid to non-existent entities" color="bg-red-800" icon={Users} />
+      </div>
+
+      <Card>
+        <CardHeader title="🚨 Corruption Typology — What's Happening, How Much It Costs"
+          subtitle="Estimated USD value lost per type of corruption in procurement" />
+        <div className="p-4 h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={[...CORRUPTION_CASES].sort((a,b) => b.valueUSD - a.valueUSD)} layout="vertical">
+              <CartesianGrid stroke="#f1f5f9" horizontal={false} />
+              <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+              <YAxis type="category" dataKey="type" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={210} />
+              <Tooltip {...tt} formatter={(v: number, n) => [n === "valueUSD" ? `USD ${v}M` : String(v), n === "valueUSD" ? "Est. Loss" : "Cases"]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="valueUSD" name="Estimated Loss (USD M)" fill={C.red} radius={[0,4,4,0]} />
+              <Bar dataKey="count" name="Number of Cases" fill={C.orange} radius={[0,4,4,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader title="⚡ Risk Triggers — Active Procurement Anomalies" subtitle="Patterns being monitored by AI detection engine" />
+          <div className="divide-y divide-black/5">
+            {RISK_TRIGGERS.map(r => (
+              <div key={r.trigger} className={`px-4 py-3 flex items-start gap-3 ${r.status === "Escalated" ? "bg-red-50/40" : r.status === "Investigating" ? "bg-orange-50/40" : ""}`}>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5
+                  ${r.impact === "Critical" ? "bg-red-100 text-red-700" : r.impact === "High" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>
+                  {r.impact}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-black/80">{r.trigger}</div>
+                  <div className="text-[10px] text-black/40 mt-0.5">Detected: {r.freq} times · Status: {r.status}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card>
+          <CardHeader title="🛡️ Risk Breakers — What's Being Done (and What's Not)"
+            subtitle="Countermeasures and their effectiveness" />
+          <div className="divide-y divide-black/5">
+            {RISK_BREAKERS.map(rb => (
+              <div key={rb.action} className="px-4 py-3 flex items-start gap-3">
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5 whitespace-nowrap
+                  ${rb.status === "Implemented" || rb.status === "Active" || rb.status === "Live" ? "bg-emerald-100 text-emerald-700"
+                  : rb.status === "Planning" ? "bg-gray-100 text-gray-500"
+                  : "bg-amber-100 text-amber-700"}`}>
+                  {rb.status.includes("Implement") || rb.status === "Active" || rb.status === "Live" ? "✓" : rb.status === "Planning" ? "○" : "△"}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium text-black">{rb.action}</div>
+                  <div className="text-[10px] text-black/50 mt-0.5">Impact: {rb.impact}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function SupplierContractorTab() {
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StoryCard title="Registered Suppliers" value="12,847" sub="+284 new this month" color="bg-[#1c1f26]" icon={Users} />
+        <StoryCard title="SME Participation Rate" value="37%" sub="Up from 18% in 2021 — target 40%" color="bg-emerald-700" icon={TrendingUp} />
+        <StoryCard title="Blacklisted Vendors" value="228" sub="+8 this month — debarment active" color="bg-red-700" icon={XCircle} />
+        <StoryCard title="Open Vendor Disputes" value="23" sub="USD 724K in contested value" color="bg-amber-600" icon={AlertTriangle} />
+      </div>
+
+      <Card>
+        <CardHeader title="Contractor Delivery Scorecard — The Performing and The Failing"
+          subtitle="On-time, quality, safety, cost scores — 0 to 100" />
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-[#f8f9fa] text-xs text-black/50">
+              <tr>{["Contractor","On-Time","Quality","Safety","Cost Eff.","Disputes","Projects"].map(h => <th key={h} className="px-3 py-2.5 text-left font-medium whitespace-nowrap">{h}</th>)}</tr>
+            </thead>
+            <tbody className="divide-y divide-black/5">
+              {CONTRACTOR_DELIVERY.map(c => {
+                const overall = Math.round((c.onTime + c.quality + c.safety + c.cost) / 4);
+                return (
+                  <tr key={c.name} className={`hover:bg-gray-50 ${overall < 50 ? "bg-red-50/30" : ""}`}>
+                    <td className="px-3 py-2.5 font-semibold text-xs text-black">{c.name}</td>
+                    {[c.onTime, c.quality, c.safety, c.cost].map((v, i) => (
+                      <td key={i} className="px-3 py-2.5">
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full" style={{ width: `${v}%`, background: v >= 85 ? C.green : v >= 65 ? C.amber : C.red }} />
+                          </div>
+                          <span className="text-[11px] font-bold" style={{ color: v >= 85 ? "#059669" : v >= 65 ? "#d97706" : "#dc2626" }}>{v}%</span>
+                        </div>
+                      </td>
+                    ))}
+                    <td className="px-3 py-2.5 text-xs font-bold text-center">
+                      <span className={c.disputes > 3 ? "text-red-600" : c.disputes > 0 ? "text-amber-600" : "text-emerald-600"}>{c.disputes}</span>
+                    </td>
+                    <td className="px-3 py-2.5 text-xs text-black/60">{c.projects}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Card>
+        <CardHeader title="SME Participation in Government Tenders — 5-Year Trend" subtitle="Local business growth in procurement" />
+        <div className="p-4 h-[240px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={SME_PARTICIPATION}>
+              <defs>
+                <linearGradient id="smeGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={C.teal} stopOpacity={0.3} /><stop offset="100%" stopColor={C.teal} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid stroke="#f1f5f9" vertical={false} />
+              <XAxis dataKey="year" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} />
+              <Tooltip {...tt} formatter={(v: number, n) => [`${v}%`, n]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Area type="monotone" dataKey="sme" name="SME %" stroke={C.teal} fill="url(#smeGrad)" strokeWidth={2} />
+              <Area type="monotone" dataKey="enterprise" name="Enterprise %" stroke={C.blue} fill="none" strokeWidth={2} />
+              <Area type="monotone" dataKey="micro" name="Micro %" stroke={C.amber} fill="none" strokeWidth={1.5} strokeDasharray="4 2" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function ProjectsDevelopmentTab() {
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StoryCard title="Total Infrastructure Projects" value="1,487" sub="Valued at USD 14.2B" color="bg-[#1c1f26]" icon={Building2} />
+        <StoryCard title="On Time & On Budget" value="19%" sub="Only 284 of 1,487 projects — shocking" color="bg-red-700" icon={XCircle} />
+        <StoryCard title="Abandoned / Stalled" value="147" sub="Worth USD 418M — sitting idle" color="bg-red-800" icon={AlertTriangle} />
+        <StoryCard title="Average Cost Overrun" value="43%" sub="Across overrunning projects" color="bg-orange-700" icon={TrendingUp} />
+      </div>
+
+      <Card>
+        <CardHeader title="📉 Project Delivery Status — Only 19% Delivered On Time and Budget. Why?"
+          subtitle="Distribution of 1,487 active infrastructure projects" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
+          <div className="h-[260px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={PROJECT_DELIVERY_STATS} dataKey="count" nameKey="status" cx="50%" cy="50%" innerRadius={50} outerRadius={90} paddingAngle={2}>
+                  {PROJECT_DELIVERY_STATS.map((_, i) => (
+                    <Cell key={i} fill={i === 0 ? C.green : i < 3 ? C.amber : i < 4 ? C.orange : C.red} />
+                  ))}
+                </Pie>
+                <Tooltip {...tt} />
+                <Legend wrapperStyle={{ fontSize: 10 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="space-y-2">
+            {PROJECT_DELIVERY_STATS.map((s, i) => (
+              <div key={s.status} className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: i === 0 ? C.green : i < 3 ? C.amber : i < 4 ? C.orange : C.red }} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-semibold text-black truncate">{s.status}</div>
+                  <div className="h-1.5 bg-gray-100 rounded-full mt-1">
+                    <div className="h-full rounded-full" style={{ width: `${s.pct}%`, background: i === 0 ? C.green : i < 3 ? C.amber : C.red }} />
+                  </div>
+                </div>
+                <span className="text-sm font-black text-black">{s.count}</span>
+                <span className="text-xs text-black/40">{s.pct}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="px-5 pb-4 text-xs text-red-700 bg-red-50 mx-4 mb-4 rounded-xl p-3 font-medium">
+          🔴 81% of government projects face delays or cost overruns. Key causes: inadequate planning, under-budgeting, weak contract management,
+          and contractor cash-flow problems linked to slow payment cycles.
+        </div>
+      </Card>
+
+      <Card>
+        <CardHeader title="Cost Overruns by Sector — Planned vs Actual Spend (USD Millions)" subtitle="Grey = planned, coloured = actual" />
         <div className="p-4 h-[260px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={profitableProducts}>
+            <BarChart data={OVERRUN_BY_SECTOR}>
               <CartesianGrid stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="lang" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                tickFormatter={v=>`${(v/1e6).toFixed(1)}M`} />
-              <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,"Profit"]} />
-              <Line type="monotone" dataKey="profit" stroke={C.orange} strokeWidth={2.5}
-                dot={{ r:4, fill:C.orange }} name="Gross Profit" />
+              <XAxis dataKey="sector" stroke="#94a3b8" fontSize={9.5} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `$${v}M`} />
+              <Tooltip {...tt} formatter={(v: number, n) => [`USD ${v}M`, n]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="planned" name="Planned Budget" fill="#e2e8f0" radius={[3,3,0,0]} />
+              <Bar dataKey="actual" name="Actual / Projected" fill={C.red} radius={[3,3,0,0]} fillOpacity={0.8} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function QualityOfLifeTab() {
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <StoryCard title="Hospital Wait Time" value="6.4 hrs" sub="🔴 Target < 2 hrs. Medicines stockout 62% rate" color="bg-red-800" icon={Stethoscope} />
+        <StoryCard title="Electricity Uptime (ZESA)" value="54%" sub="🔴 46% of time = load shedding. Dev impact critical" color="bg-red-700" icon={Zap} />
+        <StoryCard title="Clean Water Access (rural)" value="38%" sub="🔴 62% of rural pop unserved — source of disease" color="bg-blue-800" icon={Droplets} />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <StoryCard title="Pupil-to-Teacher Ratio" value="48:1" sub="🟡 Recommended: 30:1. 46M learners affected" color="bg-amber-700" icon={BookOpen} />
+        <StoryCard title="Roads in Good Condition" value="41%" sub="🟡 59% below standard — 3× vehicle maintenance cost" color="bg-amber-600" icon={Truck} />
+        <StoryCard title="Govt Machinery Operational" value="34%" sub="🔴 66% idle — needs parts, maintenance budget" color="bg-red-700" icon={Wrench} />
+      </div>
+
+      <Card>
+        <CardHeader title="🌍 Quality of Life Metrics vs Benchmarks — THE REAL HUMAN IMPACT OF PROCUREMENT FAILURES"
+          subtitle="Where procurement money should go — and what happens when it doesn't" />
+        <div className="divide-y divide-black/5">
+          {QOL_METRICS.map(m => (
+            <div key={m.metric} className={`px-4 py-4 ${m.severity === "critical" ? "bg-red-50/30" : m.severity === "high" ? "bg-amber-50/20" : ""}`}>
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="flex-1">
+                  <div className="text-xs font-bold text-black">{m.metric}</div>
+                  <div className="text-[10px] text-black/50 mt-0.5">Benchmark: {m.benchmark}</div>
+                </div>
+                <div className="text-right">
+                  <div className={`text-base font-black ${m.severity === "critical" ? "text-red-600" : m.severity === "high" ? "text-amber-600" : "text-emerald-600"}`}>
+                    {m.value}
+                  </div>
+                  <div className="text-[10px] text-black/40">{m.trend === "worsening" ? "📉 Worsening" : m.trend === "improving" ? "📈 Improving" : "→ Stable"}</div>
+                </div>
+              </div>
+              <div className={`text-[11px] font-semibold px-2 py-1 rounded-lg inline-block
+                ${m.severity === "critical" ? "bg-red-100 text-red-700" : m.severity === "high" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>
+                Gap: {m.gap}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function PriceIndicesTab() {
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StoryCard title="Infrastructure Price Index" value="+22%" sub="Since Jan 2026 — 6 months only" color="bg-red-700" icon={TrendingUp} />
+        <StoryCard title="Cement Price Increase" value="+33%" sub="From USD 8.40 → 11.20 per bag" color="bg-orange-700" icon={TrendingUp} />
+        <StoryCard title="Drug/Pharma Price Change" value="+8%" sub="Still within procurement threshold" color="bg-amber-500" icon={Activity} />
+        <StoryCard title="Fuel Price Change (Jan→Jun)" value="+11%" sub="USD 1.18 → 1.31 per litre" color="bg-amber-600" icon={Fuel} />
+      </div>
+
+      <Card>
+        <CardHeader title="📈 Price Inflation Index by Sector — Jan 2026 = 100" subtitle="Procurement cost pressure — rising prices = less for same budget" />
+        <div className="p-4 h-[260px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={PRICE_TREND_6M}>
+              <CartesianGrid stroke="#f1f5f9" vertical={false} />
+              <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} domain={[95, 130]} tickFormatter={v => `${v}`} />
+              <Tooltip {...tt} formatter={(v: number, n) => [`Index: ${v}`, n]} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <ReferenceLine y={100} stroke="#94a3b8" strokeDasharray="2 2" label={{ value: "Base (Jan)", fontSize: 9 }} />
+              <Line type="monotone" dataKey="infrastructure" name="Infrastructure" stroke={C.red} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="health" name="Health/Pharma" stroke={C.blue} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="education" name="Education" stroke={C.green} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="fuel" name="Fuel" stroke={C.amber} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="ict" name="ICT" stroke={C.violet} strokeWidth={1.5} strokeDasharray="4 2" dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </Card>
-    </div>
-  );
-}
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 4 — SALES ANALYSIS
-// ─────────────────────────────────────────────────────────────────────────────
-const top10Revenue = [
-  {lang:"Spanish",      rev:32050000},{lang:"Sign Language",rev:31230000},
-  {lang:"Other",        rev:20070000},{lang:"English",      rev:11070000},
-  {lang:"Vietnamese",   rev: 5410000},{lang:"Arabic",       rev: 4450000},
-  {lang:"Farsi",        rev: 3060000},{lang:"Mandarin",     rev: 2270000},
-  {lang:"Korean",       rev: 2030000},{lang:"Russian",      rev: 1810000},
-];
-
-const top10Sales = [
-  {lang:"Spanish",      cnt:431709},{lang:"Sign Language",cnt:138854},
-  {lang:"Vietnamese",   cnt:62925 },{lang:"Arabic",       cnt:56624 },
-  {lang:"Farsi",        cnt:23496 },{lang:"Mandarin",     cnt:18668 },
-  {lang:"Korean",       cnt:16624 },{lang:"English",      cnt:16256 },
-];
-
-function SalesAnalysisTab({ onChartClick }: { onChartClick?: (data: Record<string, unknown>, cat: string) => void }) {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Top 10 by gross profit — line */}
-        <Card className="lg:col-span-2">
-          <CardHeader title="Top 10 Products — Gross Profit" subtitle="Ranked by cumulative gross profit" />
-          <div className="p-4 h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={profitableProducts.slice(0,10)}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="lang" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v=>`${(v/1e6).toFixed(1)}M`} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,"Profit"]} />
-                <Line type="monotone" dataKey="profit" stroke={C.orange} strokeWidth={2.5}
-                  dot={{r:5,fill:C.orange}} name="Gross Profit" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Top 10 sales by product — donut */}
-        <Card>
-          <CardHeader title="Top 10 Sales by Product" subtitle="Order count share" />
-          <div className="p-4 h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={top10Sales} cx="50%" cy="50%" innerRadius={60} outerRadius={95}
-                  dataKey="cnt" nameKey="lang" paddingAngle={2}>
-                  {top10Sales.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]} />)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[v.toLocaleString(),"Orders"]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* Top 10 revenue generators */}
       <Card>
-        <CardHeader title="Top 10 Revenue Generators" subtitle="Total revenue by language product" />
-        <div className="p-4 h-[260px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={top10Revenue}>
-              <CartesianGrid stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="lang" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                tickFormatter={v=>`${(v/1e6).toFixed(0)}M`} />
-              <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                formatter={(v:number)=>[`USD ${(v/1e6).toFixed(2)}M`,"Revenue"]} />
-              <Bar dataKey="rev" fill={C.orange} radius={[3,3,0,0]} name="Revenue" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
-
-      {/* Detailed language table */}
-      <Card>
-        <CardHeader title="Sales Report — Language, Assignments, Revenue & Profit" />
+        <CardHeader title="Key Goods & Services — Price Availability Tracking" subtitle="Government procurement benchmark items — Jan vs Jun 2026" />
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-black/10">
-                {["Language","Assignments","Revenue (USD)","Gross Profit (USD)"].map(h=>(
-                  <th key={h} className="px-4 py-2.5 text-left text-black/50 font-medium">{h}</th>
-                ))}
-              </tr>
+          <table className="w-full text-sm">
+            <thead className="bg-[#f8f9fa] text-xs text-black/50">
+              <tr>{["Item","Unit","Jan 2026","Jun 2026","Change","Availability Note"].map(h => <th key={h} className="px-3 py-2.5 text-left font-medium whitespace-nowrap">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
-              {[
-                {lang:"Spanish",     asgn:431709,rev:32047225,profit:8896930},
-                {lang:"Sign Language",asgn:138854,rev:31234230,profit:5349023},
-                {lang:"Other",       asgn:11769, rev:20065929,profit:3349761},
-                {lang:"English",     asgn:16256, rev:11070096,profit:4119516},
-                {lang:"Vietnamese",  asgn:177,   rev: 7326374,profit: 962793},
-                {lang:"Arabic",      asgn:56624, rev: 5405062,profit:1790062},
-                {lang:"Farsi",       asgn:23496, rev: 4446536,profit:1046906},
-                {lang:"Mandarin",    asgn:18668, rev: 3058973,profit: 544239},
-                {lang:"Korean",      asgn:16624, rev: 2269476,profit: 596095},
-                {lang:"Russian",     asgn:15269, rev: 2032756,profit: 327379},
-                {lang:"Burmese",     asgn:6038,  rev: 1590188,profit: 422412},
-                {lang:"Cantonese",   asgn:17876, rev: 1533360,profit: 347662},
-                {lang:"Nepali",      asgn:3741,  rev: 1066426,profit: 278016},
-                {lang:"Amharic",     asgn:3206,  rev:  657764,profit: 180676},
-                {lang:"Japanese",    asgn:4332,  rev:  600663,profit: 109929},
-              ].map(r=>(
-                <tr key={r.lang} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 font-medium">{r.lang}</td>
-                  <td className="px-4 py-2">{r.asgn.toLocaleString()}</td>
-                  <td className="px-4 py-2">{r.rev.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0})}</td>
-                  <td className="px-4 py-2 font-semibold text-orange-600">{r.profit.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0})}</td>
+              {PRICE_INDEX.map(p => (
+                <tr key={p.item} className={`hover:bg-gray-50 ${p.change > 25 ? "bg-red-50/20" : p.change > 10 ? "bg-amber-50/20" : ""}`}>
+                  <td className="px-3 py-2.5 font-semibold text-xs text-black">{p.item}</td>
+                  <td className="px-3 py-2.5 text-[11px] text-black/50">{p.unit}</td>
+                  <td className="px-3 py-2.5 text-xs text-black/60">{p.jan}</td>
+                  <td className="px-3 py-2.5 text-xs font-bold text-black">{p.jun}</td>
+                  <td className="px-3 py-2.5">
+                    <span className={`text-xs font-black ${p.change > 25 ? "text-red-600" : p.change > 10 ? "text-amber-600" : "text-emerald-600"}`}>
+                      +{p.change}%
+                    </span>
+                  </td>
+                  <td className="px-3 py-2.5 text-[10px] text-black/50 italic">{p.note}</td>
                 </tr>
               ))}
-              <tr className="bg-gray-50 font-bold border-t-2 border-black/10">
-                <td className="px-4 py-2">Total</td>
-                <td className="px-4 py-2">909,408</td>
-                <td className="px-4 py-2">$133,571,305</td>
-                <td className="px-4 py-2 text-orange-600">$32,348,273</td>
-              </tr>
             </tbody>
           </table>
         </div>
+        <div className="px-5 pb-4 text-xs text-red-700 bg-red-50 mx-4 mb-4 rounded-xl p-3 font-medium mt-2">
+          🔴 Infrastructure input prices rising 22–34% in 6 months will erode 2026 project budgets significantly.
+          Ministries must re-evaluate budget sufficiency or scope will be cut. Chlorine shortage directly threatens water treatment at 27 plants.
+        </div>
       </Card>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 5 — STAKEHOLDERS
-// ─────────────────────────────────────────────────────────────────────────────
-function StakeholdersTab() {
-  const stakeholderDist = [
-    {name:"Partner",   value:154},{name:"Incubatee",value:131},
-    {name:"Mentor",    value:107},{name:"COE",      value:49},
-    {name:"Member",    value:34 },{name:"Investor", value:17},
-  ];
-  const mentorByCategory = [
-    {cat:"Mentor",cnt:54},{cat:"Chief Mentor",cnt:18},{cat:"Functional Domain",cnt:14},
-    {cat:"Strategic Mentor",cnt:10},{cat:"Mentoring",cnt:4},{cat:"Resident Mentor",cnt:3},
-  ];
-  const partnerByType = [
-    {type:"Industry",cnt:62},{type:"Academic",cnt:43},{type:"Funding",cnt:21},
-    {type:"Implementation",cnt:15},{type:"Technical",cnt:5},{type:"Knowledge",cnt:2},
-  ];
-  const investorByType = [
-    {type:"Angel Investor",cnt:5},{type:"VC",cnt:4},{type:"PE",cnt:3},
-    {type:"Business Angels",cnt:2},{type:"Asset-Based",cnt:1},{type:"Invoice Discounters",cnt:1},
-  ];
-  const empByCOE = [
-    {coe:"Electropreneur Park",emp:17},{coe:"Electroprenuer Pk BBS",emp:6},
-    {coe:"FinBlue",emp:6},{coe:"APIARY",emp:4},{coe:"IoT OpenLab",emp:4},
-    {coe:"MedTech",emp:3},{coe:"MOTION",emp:3},{coe:"OctaNE",emp:3},
-    {coe:"IMAGE",emp:2},{coe:"Neuron",emp:2},
-  ];
-
+function RiskDashboardTab() {
+  const criticalRisks = RISK_TRIGGERS.filter(r => r.impact === "Critical");
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-        {[
-          {label:"Consultant",value:"1"},   {label:"Member",value:"34"},
-          {label:"Mentor",value:"107"},     {label:"Investor",value:"17"},
-          {label:"Incubatee",value:"131"},  {label:"Partner",value:"154"},
-          {label:"Employee",value:"614"},
-        ].map(s=><StatBox key={s.label} label={s.label} value={s.value} color="bg-orange-500" />)}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader title="Stakeholder Count" subtitle="By category distribution" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={stakeholderDist} cx="50%" cy="50%" innerRadius={55} outerRadius={85}
-                  dataKey="value" paddingAngle={2}>
-                  {stakeholderDist.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Mentor Count by Category" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={mentorByCategory}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="cat" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.blue} radius={[3,3,0,0]} name="Mentors" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Partner Count by Type" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={partnerByType}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="type" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.orange} radius={[3,3,0,0]} name="Partners" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="Investor Count by Type" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={investorByType}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="type" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.blue} radius={[3,3,0,0]} name="Investors" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Employee Count by COE" subtitle="Top 10 COEs" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={empByCOE} layout="vertical">
-                <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="coe" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} width={110} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="emp" fill={C.blue} radius={[0,3,3,0]} name="Employees" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 6 — INCUBATEES
-// ─────────────────────────────────────────────────────────────────────────────
-function IncubateesTab() {
-  const byCOE = [
-    {coe:"Electropreneur Park",cnt:30},{coe:"(Blank)",cnt:28},{coe:"FinBlue",cnt:13},
-    {coe:"EP Bhubaneswar",cnt:10},{coe:"MOTION",cnt:10},{coe:"APIARY",cnt:9},
-    {coe:"MedTech",cnt:9},{coe:"EP Park 2",cnt:5},{coe:"Neuron",cnt:5},{coe:"IMAGE",cnt:4},
-  ];
-  const byDomain = [
-    {dom:"ESDM",cnt:30},{dom:"FinTech",cnt:13},{dom:"IOT",cnt:10},{dom:"Auto Mobility",cnt:9},
-    {dom:"MEDI ELECT",cnt:3},{dom:"IT Health",cnt:1},{dom:"(Blank)",cnt:65},
-  ];
-  const byProgram = [
-    {prog:"Pre Incubation",cnt:37},{prog:"Test Program",cnt:12},{prog:"Pre Incubation 2",cnt:12},
-    {prog:"Test-Inc",cnt:4},{prog:"New",cnt:3},{prog:"IoT Lab",cnt:2},{prog:"Pre-inco",cnt:1},
-  ];
-  const onboardingYoY = [
-    {qtr:"2019 Q1",cnt:12},{qtr:"2019 Q2",cnt:7},{qtr:"2019 Q3",cnt:38},{qtr:"2019 Q4",cnt:12},
-    {qtr:"2020 Q1",cnt:5},{qtr:"2020 Q2",cnt:15},{qtr:"2020 Q3",cnt:9},{qtr:"2020 Q4",cnt:10},
-    {qtr:"2021 Q1",cnt:11},{qtr:"2021 Q2",cnt:7},{qtr:"2021 Q3",cnt:0},{qtr:"2021 Q4",cnt:7},
-  ];
-  const byTech = [
-    {tech:"Animation",cnt:9},{tech:"Gaming",cnt:9},{tech:"Emerging Tech",cnt:6},
-    {tech:"IoT Agri",cnt:5},{tech:"Electric Vehicle",cnt:5},{tech:"IOT",cnt:5},
-    {tech:"AR",cnt:3},{tech:"FinTech",cnt:2},{tech:"Agritech",cnt:2},
-  ];
-
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <StatBox label="Total Incubatees"  value="131"  color="bg-orange-500" />
-        <StatBox label="2019 Onboarded"    value="69"   color="bg-blue-600"   />
-        <StatBox label="2020 Onboarded"    value="39"   color="bg-blue-600"   />
-        <StatBox label="2021 Onboarded"    value="18"   color="bg-blue-600"   />
-        <StatBox label="Exit Incubatees"   value="24"   color="bg-red-500"    />
-        <StatBox label="Onboarding Stage"  value="82%"  color="bg-teal-600"   />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* By COE donut */}
-        <Card>
-          <CardHeader title="Incubatee Count by COE" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={byCOE} cx="50%" cy="50%" innerRadius={55} outerRadius={90}
-                  dataKey="cnt" nameKey="coe" paddingAngle={2}>
-                  {byCOE.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:8}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Onboarding YoY */}
-        <Card>
-          <CardHeader title="Incubatee Onboarding — by Quarter" subtitle="2019–2021" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={onboardingYoY}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="qtr" stroke="#94a3b8" fontSize={7} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.blue} radius={[3,3,0,0]} name="Incubatees" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader title="Count by Domain" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={byDomain}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="dom" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.orange} radius={[3,3,0,0]} name="Incubatees" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Count by Program" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={byProgram} layout="vertical">
-                <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="prog" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} width={85} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.blue} radius={[0,3,3,0]} name="Incubatees" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Count by Technology" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={byTech} layout="vertical">
-                <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="tech" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} width={80} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.teal} radius={[0,3,3,0]} name="Incubatees" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 7 — COHORT ANALYSIS
-// ─────────────────────────────────────────────────────────────────────────────
-function CohortAnalysisTab() {
-  const cohortStatus = [
-    {cohort:"(Blank)",    app:2108,short:777, sel:215},
-    {cohort:"Session-A",  app:550, short:200, sel:50},
-    {cohort:"Session-B",  app:200, short:20,  sel:50},
-    {cohort:"Session-C",  app:150, short:50,  sel:20},
-    {cohort:"Motion-D",   app:96,  short:10,  sel:30},
-    {cohort:"Session-E",  app:89,  short:20,  sel:40},
-    {cohort:"Session-F",  app:80,  short:30,  sel:25},
-    {cohort:"1st Cohort", app:72,  short:40,  sel:35},
-    {cohort:"Session-G",  app:62,  short:25,  sel:35},
-    {cohort:"Session-H",  app:50,  short:35,  sel:10},
-  ];
-  const completedByMonth = [
-    {month:"Mar", app:141,short:32,sel:15},  {month:"Jun", app:223,short:103,sel:53},
-    {month:"Sep", app:150,short:60, sel:35}, {month:"Nov", app:50, short:35, sel:30},
-    {month:"Dec", app:233,short:100,sel:49},
-  ];
-  const runningCohort = [
-    {month:"Jan",inc:911,dec:0,total:911},{month:"Feb",inc:500,dec:0,total:1411},
-    {month:"Mar",inc:10, dec:0,total:1421},{month:"Apr",inc:1022,dec:0,total:2443},
-    {month:"Total",inc:0,dec:0,total:2443},
-  ];
-
-  return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatBox label="Total Cohorts"   value="11"    color="bg-orange-500" />
-        <StatBox label="Applicants"      value="3,557" color="bg-orange-500" />
-        <StatBox label="Short Listed"    value="1,367" color="bg-orange-500" />
-        <StatBox label="Selected"        value="579"   color="bg-orange-500" />
+        <StoryCard title="Critical Risk Triggers Active" value={String(criticalRisks.length)} sub="Require immediate intervention" color="bg-red-900" icon={AlertOctagon} />
+        <StoryCard title="Escalated Investigations" value="2" sub="Referred to ZACC / AG" color="bg-red-700" icon={ShieldAlert} />
+        <StoryCard title="Risk Breakers Fully Implemented" value="3/8" sub="37.5% — most still in pilot or planning" color="bg-amber-700" icon={Target} />
+        <StoryCard title="Projects on Critical Risk Register" value="4" sub="Total exposure: USD 186M" color="bg-orange-700" icon={AlertTriangle} />
       </div>
 
+      {/* Risk matrix scatter */}
+      <Card>
+        <CardHeader title="🎯 Risk Heat Map — Likelihood vs Impact" subtitle="Each bubble = active procurement risk (size = estimated financial exposure)" />
+        <div className="p-4 h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+              <CartesianGrid stroke="#f1f5f9" />
+              <XAxis type="number" dataKey="x" name="Likelihood" domain={[0, 5]} stroke="#94a3b8" fontSize={10} tickLine={false}
+                label={{ value: "Likelihood →", position: "bottom", fontSize: 10, fill: "#94a3b8" }} />
+              <YAxis type="number" dataKey="y" name="Impact" domain={[0, 5]} stroke="#94a3b8" fontSize={10} tickLine={false}
+                label={{ value: "Impact ↑", angle: -90, position: "left", fontSize: 10, fill: "#94a3b8" }} />
+              <ZAxis type="number" dataKey="z" range={[40, 400]} />
+              <Tooltip {...tt} cursor={{ strokeDasharray: "3 3" }}
+                content={({ active, payload }) => active && payload?.[0] ? (
+                  <div className="bg-[#1c1f26] text-white text-[11px] p-2 rounded-lg border border-white/10">
+                    <div className="font-bold">{(payload[0].payload as { name: string }).name}</div>
+                    <div>Likelihood: {payload[0].payload.x}/5 · Impact: {payload[0].payload.y}/5</div>
+                  </div>
+                ) : null} />
+              <Scatter data={[
+                { x: 4, y: 5, z: 312, name: "Inflated Contracts", fill: C.red },
+                { x: 3, y: 5, z: 142, name: "Spec Tailoring", fill: C.red },
+                { x: 4, y: 4, z: 84, name: "Bid Rigging", fill: C.red },
+                { x: 3, y: 4, z: 98, name: "Procurement Method Abuse", fill: C.orange },
+                { x: 2, y: 5, z: 186, name: "Project Cost Overruns", fill: C.orange },
+                { x: 3, y: 3, z: 28, name: "Ghost Vendors", fill: C.amber },
+                { x: 4, y: 3, z: 22, name: "Fuel Theft", fill: C.amber },
+                { x: 2, y: 4, z: 64, name: "PEP Conflicts", fill: C.red },
+                { x: 1, y: 5, z: 498, name: "Ministry Budget Overrun", fill: C.violet },
+                { x: 4, y: 2, z: 19, name: "Duplicate Payments", fill: C.blue },
+              ].map(d => ({ ...d }))} fill="#ef4444" fillOpacity={0.7} name="Risks">
+                {[C.red, C.red, C.red, C.orange, C.orange, C.amber, C.amber, C.red, C.violet, C.blue].map((fill, i) => (
+                  <Cell key={i} fill={fill} fillOpacity={0.75} />
+                ))}
+              </Scatter>
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Summary insight */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
-          <CardHeader title="Cohort Status — Applicants vs Shortlisted vs Selected" />
-          <div className="p-4 h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={cohortStatus}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="cohort" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend wrapperStyle={{fontSize:10}} />
-                <Bar dataKey="app"   fill={C.blue}   radius={[2,2,0,0]} name="Applicant"    />
-                <Bar dataKey="short" fill={C.orange} radius={[2,2,0,0]} name="Short Listed" />
-                <Bar dataKey="sel"   fill={C.teal}   radius={[2,2,0,0]} name="Selected"     />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Cohort Status Summary" />
-          <div className="p-4 h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={[
-                {stage:"Applicant",value:4000},{stage:"Short Listed",value:38.43},{stage:"Selected",value:16.28}
-              ]} layout="vertical">
-                <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="stage" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={75} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="value" fill={C.blue} radius={[0,3,3,0]} name="Count / %" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="Running Cohort" subtitle="Monthly applicant volume" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={runningCohort}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="month" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend wrapperStyle={{fontSize:10}} />
-                <Bar dataKey="inc"   fill={C.green}  radius={[3,3,0,0]} name="Increase" />
-                <Bar dataKey="total" fill={C.blue}   radius={[3,3,0,0]} name="Total"    />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Cohort Completed — by Month" subtitle="Applicant/Shortlisted/Selected pipeline" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={completedByMonth}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="month" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend wrapperStyle={{fontSize:10}} />
-                <Bar dataKey="app"   fill={C.blue}   radius={[2,2,0,0]} name="Applicant"    />
-                <Bar dataKey="short" fill={C.orange} radius={[2,2,0,0]} name="Short Listed" />
-                <Bar dataKey="sel"   fill={C.teal}   radius={[2,2,0,0]} name="Selected"     />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 8 — MENTORSHIP ANALYSIS
-// ─────────────────────────────────────────────────────────────────────────────
-function MentorshipTab() {
-  const eventByMentorMode = [
-    {mentor:"Mentor2",      free:8,paid:0},{mentor:"Mentor3",      free:1,paid:6},
-    {mentor:"Prof C.M. Pandey",free:0,paid:6},{mentor:"Mrinal Das",free:2,paid:1},
-    {mentor:"Mr Sridhar",   free:1,paid:0},{mentor:"Avneesh B",    free:1,paid:0},
-    {mentor:"Dr RK Dhiman", free:0,paid:0},{mentor:"Mr I.S. Paul", free:6,paid:0},
-    {mentor:"S. Chakra",    free:1,paid:0},{mentor:"Anil K M",     free:3,paid:0},
-  ];
-  const mentorCountByCOE = [
-    {coe:"Electropreneur Park",cnt:3},{coe:"Electroprenuer Pk",cnt:3},
-    {coe:"IMAGE",cnt:3},{coe:"Test1",cnt:3},{coe:"EP Bhubaneswar",cnt:2},
-    {coe:"IoT OpenLab",cnt:2},{coe:"MedTech",cnt:2},{coe:"MOTION",cnt:1},
-  ];
-  const eventByCOE = [
-    {coe:"Electropreneur Park",accept:9,draft:4,reject:0},
-    {coe:"IMAGE old",accept:4,draft:0,reject:0},
-    {coe:"(Blank)",accept:4,draft:3,reject:0},
-    {coe:"VARCoE",accept:4,draft:0,reject:0},
-    {coe:"MedTech",accept:3,draft:0,reject:0},
-    {coe:"APIARY",accept:1,draft:1,reject:0},
-  ];
-  const eventByCategory = [
-    {mentor:"Mentor2",chief:0,func:0,mentor_cat:8},{mentor:"Mentor3",chief:6,func:0,mentor_cat:0},
-    {mentor:"Prof C.M. Pandey",chief:0,func:7,mentor_cat:0},{mentor:"Mrinal Das",chief:0,func:0,mentor_cat:3},
-    {mentor:"Mr Sridhar",chief:0,func:2,mentor_cat:0},{mentor:"Avneesh B",chief:0,func:0,mentor_cat:1},
-  ];
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <StatBox label="Total Mentors"       value="19"   color="bg-orange-500" />
-        <StatBox label="Onboarding Stage"    value="78%"  color="bg-blue-600"   />
-        <StatBox label="Events Conducted"    value="61"   color="bg-teal-600"   />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="Events by Mentor and Mode (Free vs Paid)" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={eventByMentorMode}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="mentor" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend wrapperStyle={{fontSize:10}} />
-                <Bar dataKey="free" fill={C.blue}   radius={[2,2,0,0]} name="Free" />
-                <Bar dataKey="paid" fill={C.orange} radius={[2,2,0,0]} name="Paid" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Mentor Count by COE" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={mentorCountByCOE} cx="50%" cy="50%" innerRadius={55} outerRadius={90}
-                  dataKey="cnt" nameKey="coe" paddingAngle={2}>
-                  {mentorCountByCOE.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="Events by Mentor & Category" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={eventByCategory}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="mentor" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend wrapperStyle={{fontSize:9}} />
-                <Bar dataKey="chief"      fill={C.orange} name="Chief-Mentor"       />
-                <Bar dataKey="func"       fill={C.blue}   name="Functional Domain"  />
-                <Bar dataKey="mentor_cat" fill={C.teal}   name="Mentor"             />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Events by COE — State (Accept / Draft / Reject)" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={eventByCOE}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="coe" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend wrapperStyle={{fontSize:9}} />
-                <Bar dataKey="accept" fill={C.blue}   radius={[2,2,0,0]} name="Accept" />
-                <Bar dataKey="draft"  fill={C.orange} radius={[2,2,0,0]} name="Draft"  />
-                <Bar dataKey="reject" fill={C.red}    radius={[2,2,0,0]} name="Reject" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 9 — INVESTMENT  |  TAB 10 — BUDGET  |  TAB 11 — SERVICES
-// ─────────────────────────────────────────────────────────────────────────────
-function InvestmentTab() {
-  const invByCOE = [
-    {coe:"Electropreneur Park",inv:555000},{coe:"IMAGE old",inv:265000},
-    {coe:"(Blank)",inv:0},{coe:"EP Bhubaneswar",inv:0},
-  ];
-  const topInvestors = [
-    {name:"Investor1",inv:820000},{name:"Ashish",inv:0},{name:"Investor2",inv:0},
-  ];
-  const invType = [
-    {type:"Angel Investor",cnt:5},{type:"VC",cnt:4},{type:"PE",cnt:3},
-    {type:"Business Angels",cnt:2},{type:"Asset-Based",cnt:1},{type:"Invoice Disc",cnt:1},
-  ];
-  const coeInvestors = [
-    {coe:"Electropreneur Park",cnt:10},{coe:"(Blank)",cnt:3},
-    {coe:"EP Bhubaneswar",cnt:1},{coe:"IMAGE old",cnt:1},
-  ];
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
-        <StatBox label="Total Investors"   value="17"        color="bg-orange-500" />
-        <StatBox label="Total Investment"  value="820,000"   color="bg-orange-500" />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="Investor Count by Type" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={invType} cx="50%" cy="50%" innerRadius={55} outerRadius={90}
-                  dataKey="cnt" nameKey="type" paddingAngle={2}>
-                  {invType.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Investment with Highest Funding" />
-          <div className="p-4 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={topInvestors}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="inv" fill={C.blue} radius={[3,3,0,0]} name="Investment" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="Investment Received by COE" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={invByCOE}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="coe" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false}
-                  tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="inv" fill={C.orange} radius={[3,3,0,0]} name="Investment" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="COE with Most Investors Onboarded" />
-          <div className="p-4 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={coeInvestors}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="coe" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.blue} radius={[3,3,0,0]} name="Investors" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-function BudgetTab() {
-  const coeBudget = [
-    {coe:"Electropreneur Park",demand:112000,received:284800000},
-    {coe:"OctaNE",demand:23500,received:1320000},
-    {coe:"FinBlue",demand:0,received:40000000},
-    {coe:"IMAGE old",demand:0,received:0},
-    {coe:"IoT OpenLab",demand:0,received:0},
-    {coe:"MedTech",demand:152600,received:1263000},
-    {coe:"(Blank)",demand:2563000,received:43000050},
-    {coe:"EP Bhubaneswar",demand:0,received:0},
-    {coe:"Test1",demand:0,received:0},
-    {coe:"VARCoE",demand:2120,received:132000000},
-  ];
-  const receivedByCOE = [
-    {name:"Electropreneur Park",value:284800000},{name:"VARCoE",value:132000000},
-    {name:"OctaNE IoT Agri",value:43000050},{name:"FinBlue",value:40000000},
-  ];
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
-        <StatBox label="Demand"   value="USD 6.88M"  color="bg-orange-500" />
-        <StatBox label="Proposed" value="USD 871.5K" color="bg-blue-600"   />
-        <StatBox label="Received" value="USD 820K"   color="bg-teal-600"   />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="COE Wise Budget Demand vs Received" />
-          <div className="p-4 h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={coeBudget}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="coe" stroke="#94a3b8" fontSize={7} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false}
-                  tickFormatter={v=>v>=1e6?`${(v/1e6).toFixed(0)}M`:v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend wrapperStyle={{fontSize:9}} />
-                <Bar dataKey="demand"   fill={C.blue}   radius={[2,2,0,0]} name="Declaration Amount" />
-                <Bar dataKey="received" fill={C.orange} radius={[2,2,0,0]} name="Received Amount"     />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="COE Wise Received Budget — Distribution" />
-          <div className="p-4 h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={receivedByCOE} cx="50%" cy="50%" innerRadius={60} outerRadius={95}
-                  dataKey="value" nameKey="name" paddingAngle={2}>
-                  {receivedByCOE.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}}
-                  formatter={(v:number)=>[`${(v/1e6).toFixed(1)}M`,""]} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-function ServicesTab() {
-  const byCOE = [
-    {coe:"Electropreneur Park",cnt:10},{coe:"EP Bhubaneswar",cnt:5},
-    {coe:"MOTION",cnt:4},{coe:"Test CoE2",cnt:3},
-    {coe:"FinBlue",cnt:2},{coe:"IMAGE",cnt:2},
-  ];
-  const byCategory = [
-    {cat:"Internet/Lease",cnt:12},{cat:"All",cnt:11},{cat:"Data Center",cnt:10},
-    {cat:"Space",cnt:8},{cat:"Office Space",cnt:2},{cat:"Back Office",cnt:1},
-    {cat:"Events",cnt:1},{cat:"Storage",cnt:1},
-  ];
-  const locationWise = [
-    {loc:"(Blank)",cnt:27},{loc:"BBSR",cnt:22},{loc:"GTK",cnt:14},{loc:"AGR",cnt:10},
-    {loc:"BERH",cnt:9},{loc:"AZL",cnt:8},{loc:"CHN",cnt:7},{loc:"HYD",cnt:7},
-    {loc:"PUNE",cnt:7},{loc:"BBSRC",cnt:6},{loc:"IMPH",cnt:6},{loc:"CHENNAI",cnt:5},
-  ];
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        <StatBox label="Total Services"     value="48"  color="bg-orange-500" />
-        <StatBox label="Service Categories" value="10"  color="bg-blue-600"   />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="COE Wise Service Count" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={byCOE} cx="50%" cy="50%" innerRadius={55} outerRadius={85}
-                  dataKey="cnt" nameKey="coe" paddingAngle={2}>
-                  {byCOE.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:9}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Category Wise Service Count" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={byCategory}>
-                <CartesianGrid stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="cat" stroke="#94a3b8" fontSize={8} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Bar dataKey="cnt" fill={C.blue} radius={[3,3,0,0]} name="Services" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-      <Card>
-        <CardHeader title="Location Wise Service Distribution" subtitle="Top 12 locations" />
-        <div className="p-4 h-[220px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={locationWise}>
-              <CartesianGrid stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="loc" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-              <Bar dataKey="cnt" fill={C.orange} radius={[3,3,0,0]} name="Services" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 12 — EXECUTIVE SUMMARY (Business Performance Report)
-// ─────────────────────────────────────────────────────────────────────────────
-function ExecutiveSummaryTab() {
-  const programTypes = [
-    {type:"Outreach",cnt:90},{type:"Training",cnt:49},
-    {type:"Other",cnt:46},{type:"Contest",cnt:19},
-  ];
-  const attendeeByCOE = [
-    {coe:"NEURON",stpi:9828,outside:3256},{coe:"EP Bhubaneswar",stpi:9717,outside:2717},
-    {coe:"MOTION",stpi:5563,outside:1568},{coe:"APIARY",stpi:2539,outside:395},
-    {coe:"FinBlue",stpi:2447,outside:1474},{coe:"MedTech",stpi:2086,outside:1110},
-    {coe:"OctaNE",stpi:1696,outside:1887},{coe:"IoT OpenLab",stpi:1319,outside:1499},
-    {coe:"VARCoE",stpi:745,outside:789},  {coe:"IMAGE",stpi:452,outside:1499},
-  ];
-  const attendeeYoY = [
-    {year:"2019",APIARY:2,EP_Bhu:1},{year:"2020",FinBlue:5,IMAGE:4,IoT:1,MedTech:7,MOTION:8,NEURON:13,OctaNE:18,VARCoE:3},
-    {year:"2021",FinBlue:12,IMAGE:7,IoT:5,MedTech:12,MOTION:18,NEURON:20,OctaNE:27,VARCoE:7},
-  ];
-  const delegByCOE = [
-    {coe:"EP Bhubaneswar",cnt:15},{coe:"FinBlue",cnt:30},{coe:"FinBlue (Blank)",cnt:15},
-  ];
-  return (
-    <div className="space-y-4">
-      {/* Summary KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
         {[
-          {l:"COEs",v:"49"},{l:"Consultant",v:"1"},{l:"Member",v:"34"},{l:"Mentor",v:"107"},
-          {l:"Investor",v:"17"},{l:"Incubatee",v:"131"},{l:"Partner",v:"154"},{l:"Employee",v:"614"},
-        ].map(s=><StatBox key={s.l} label={s.l} value={s.v} color="bg-orange-500" />)}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Type wise program count */}
-        <Card>
-          <CardHeader title="Type Wise Program Count" subtitle="Outreach, Training, Other, Contest" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={programTypes} cx="50%" cy="50%" innerRadius={55} outerRadius={85}
-                  dataKey="cnt" nameKey="type" paddingAngle={2}>
-                  {programTypes.map((_,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:10}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Delegation count COE wise */}
-        <Card>
-          <CardHeader title="Delegation Count — COE Wise" />
-          <div className="p-4 h-[240px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={delegByCOE} cx="50%" cy="50%" innerRadius={55} outerRadius={85}
-                  dataKey="cnt" nameKey="coe" paddingAngle={2}>
-                  {[C.blue,C.orange,C.teal].map((c,i)=><Cell key={i} fill={c}/>)}
-                </Pie>
-                <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-                <Legend iconSize={8} wrapperStyle={{fontSize:10}} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* CEO wise attendee count — horizontal stacked */}
-      <Card>
-        <CardHeader title="CEO Wise Attendee Count — STPI vs Outside" subtitle="All COEs" />
-        <div className="p-4 h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={attendeeByCOE} layout="vertical">
-              <CartesianGrid stroke="#f1f5f9" horizontal={false} />
-              <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false}
-                tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}K`:v} />
-              <YAxis type="category" dataKey="coe" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={80} />
-              <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-              <Legend wrapperStyle={{fontSize:10}} />
-              <Bar dataKey="stpi"    fill={C.blue}   name="STPI Attendee"    />
-              <Bar dataKey="outside" fill={C.orange} name="Outside Attendee" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
-
-      {/* Attendee count year on year by COE */}
-      <Card>
-        <CardHeader title="CEO Wise Attendee Count — Year on Year" subtitle="2019–2021 by COE" />
-        <div className="p-4 h-[260px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[
-              {year:"2019",APIARY:2,EP:1,FinBlue:0,MedTech:0,MOTION:0,NEURON:0,OctaNE:0,VARCoE:0},
-              {year:"2020",APIARY:0,EP:0,FinBlue:5,MedTech:7,MOTION:8,NEURON:13,OctaNE:18,VARCoE:3},
-              {year:"2021",APIARY:0,EP:0,FinBlue:12,MedTech:12,MOTION:18,NEURON:20,OctaNE:27,VARCoE:7},
-            ]}>
-              <CartesianGrid stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{background:"white",border:"1px solid #e2e8f0",borderRadius:8,fontSize:11}} />
-              <Legend wrapperStyle={{fontSize:9}} />
-              {["APIARY","EP","FinBlue","MedTech","MOTION","NEURON","OctaNE","VARCoE"].map((k,i)=>(
-                <Bar key={k} dataKey={k} fill={PIE_COLORS[i%PIE_COLORS.length]} stackId="a" />
+          { title: "🔴 Top 3 Unresolved Critical Risks", items: ["Inflated contract pricing — USD 312M annual exposure", "Spec tailoring for preferred bidders — 67 active cases, +41% YoY", "Ministry budget overruns — Water & Agriculture, USD 498M combined"], color: "border-red-200 bg-red-50" },
+          { title: "🟡 Risk Triggers to Monitor", items: ["Contract variations >25% — 28 active instances", "Single-source >40% of budget — 14 ministries", "Last-minute bids (<24hrs) — 42 suspicious patterns"], color: "border-amber-200 bg-amber-50" },
+          { title: "🟢 What Must Be Done Now", items: ["Complete 3-way invoice matching across ALL ministries", "GPS/RFID asset tracking — stop the USD 38M idle machinery loss", "Beneficial ownership disclosure — 8 PEP cases need full investigation"], color: "border-emerald-200 bg-emerald-50" },
+        ].map(panel => (
+          <div key={panel.title} className={`border rounded-2xl p-4 ${panel.color}`}>
+            <div className="text-xs font-bold text-black mb-3">{panel.title}</div>
+            <ul className="space-y-2">
+              {panel.items.map(item => (
+                <li key={item} className="text-xs text-black/70 flex items-start gap-1.5">
+                  <ChevronRight className="h-3 w-3 mt-0.5 flex-shrink-0 text-black/40" />{item}
+                </li>
               ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MAIN PAGE COMPONENT
-// ─────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// MAIN PAGE
+// ═══════════════════════════════════════════════════════════════════════════
 export default function BIDashboardPage() {
-  const [tab, setTab] = useState<Tab>("Business Analysis");
+  const [activeTab, setActiveTab] = useState<Tab>("National Spend Story");
   const navigate = useNavigate();
 
-  const handleChartClick = (data: Record<string, unknown>, category: string) => {
-    if (!data) return;
-    const value = (data.lang ?? data.name ?? data.year ?? data.coe ?? data.dept ?? data.cust ?? "segment") as string;
-    navigate(`/bi-dashboards/drill/${encodeURIComponent(category)}/${encodeURIComponent(String(value))}`);
+  const TAB_ICONS: Record<Tab, React.ElementType> = {
+    "National Spend Story":  DollarSign,
+    "Budget Performance":    BarChart3,
+    "Revenue & Economy":     Globe2,
+    "Shortages & Wastage":   Package,
+    "Corruption & Risk":     ShieldAlert,
+    "Supplier & Contractor": Users,
+    "Projects & Development": Building2,
+    "Quality of Life Impact": Stethoscope,
+    "Price Indices":         TrendingUp,
+    "Risk Dashboard":        AlertOctagon,
   };
 
   return (
     <AppShell>
-      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
-        <div className="mb-3 flex items-center gap-2 flex-wrap">
-          <Badge tone="blue">Business Intelligence</Badge>
-          <Badge tone="muted">Senstar Botswana · FY 31.12.22</Badge>
-          <Badge tone="muted">Click any chart segment for drill-down ↓</Badge>
-        </div>
-        <PageHeader
-          title="Business Intelligence Dashboards"
-          description="Comprehensive BI suite. Click any chart bar or pie slice to drill into detailed data."
-          actions={
-            <>
-              <button className="h-9 px-3 rounded-xl border border-black/10 text-sm flex items-center gap-1.5 hover:bg-gray-50 transition-colors">
-                <Filter className="h-4 w-4" /> <span className="hidden sm:inline">Filter</span>
+      <div className="p-4 sm:p-6 max-w-[1800px] mx-auto">
+        {/* Header */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <Badge tone="red">🚨 Sensitive Intelligence</Badge>
+            <Badge tone="amber">FY 2026 Data</Badge>
+            <Badge tone="muted">Government of Zimbabwe — APPOIS</Badge>
+          </div>
+          <PageHeader
+            title="National Procurement Intelligence Dashboard"
+            description="The real story behind Zimbabwe's public spending — budgets, overruns, shortages, corruption, risks, prices, quality of life, and what must change. Data that must not stay buried."
+            actions={
+              <button onClick={() => { pushNotification("BI Report exported — PDF/Excel ready in downloads.", "success"); }}
+                className="h-9 px-4 rounded-xl bg-[#1c1f26] text-white text-sm font-semibold hover:bg-black flex items-center gap-1.5">
+                Export Full Report
               </button>
-              <button className="h-9 px-3 rounded-xl border border-black/10 text-sm flex items-center gap-1.5 hover:bg-gray-50 transition-colors">
-                <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export</span>
-              </button>
-            </>
-          }
-        />
-
-        {/* Scrollable tabs */}
-        <div className="flex gap-0.5 mb-6 border-b border-black/10 overflow-x-auto">
-          {TABS.map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className={`px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px flex-shrink-0 ${
-                tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
-              }`}>{t}</button>
-          ))}
+            }
+          />
         </div>
 
-        {tab === "Business Analysis"   && <BusinessAnalysisTab onChartClick={handleChartClick} />}
-        {tab === "Performance Report"  && <PerformanceReportTab />}
-        {tab === "Finance Analysis"    && <FinanceAnalysisTab onChartClick={handleChartClick} />}
-        {tab === "Sales Analysis"      && <SalesAnalysisTab onChartClick={handleChartClick} />}
-        {tab === "Stakeholders"        && <StakeholdersTab />}
-        {tab === "Incubatees"          && <IncubateesTab />}
-        {tab === "Cohort Analysis"     && <CohortAnalysisTab />}
-        {tab === "Mentorship"          && <MentorshipTab />}
-        {tab === "Investment"          && <InvestmentTab />}
-        {tab === "Budget"              && <BudgetTab />}
-        {tab === "Services"            && <ServicesTab />}
-        {tab === "Executive Summary"   && <ExecutiveSummaryTab />}
+        {/* Tab bar */}
+        <div className="flex gap-0.5 mb-6 border-b border-border overflow-x-auto pb-0 scrollbar-none">
+          {TABS.map(tab => {
+            const Icon = TAB_ICONS[tab];
+            return (
+              <button key={tab} onClick={() => setActiveTab(tab)}
+                className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 -mb-px whitespace-nowrap flex-shrink-0 transition-colors
+                  ${activeTab === tab ? "border-[#29b8c5] text-[#29b8c5]" : "border-transparent text-black/50 hover:text-black hover:border-black/20"}`}>
+                <Icon className="h-3.5 w-3.5" />
+                {tab}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tab content */}
+        {activeTab === "National Spend Story"    && <NationalSpendTab />}
+        {activeTab === "Budget Performance"      && <BudgetPerformanceTab />}
+        {activeTab === "Revenue & Economy"       && <RevenueEconomyTab />}
+        {activeTab === "Shortages & Wastage"     && <ShortagesWastageTab />}
+        {activeTab === "Corruption & Risk"       && <CorruptionRiskTab />}
+        {activeTab === "Supplier & Contractor"   && <SupplierContractorTab />}
+        {activeTab === "Projects & Development"  && <ProjectsDevelopmentTab />}
+        {activeTab === "Quality of Life Impact"  && <QualityOfLifeTab />}
+        {activeTab === "Price Indices"           && <PriceIndicesTab />}
+        {activeTab === "Risk Dashboard"          && <RiskDashboardTab />}
       </div>
-
-      <AIAssistantPanel
-        agentName="Business Intelligence Agent"
-        agentRole="BI analytics — sales, finance, cohort, investment and stakeholder intelligence"
-        context="business intelligence and performance analytics"
-        color="blue"
-        suggestedPrompts={[
-          "Which language product has the highest gross profit margin?",
-          "Show year-on-year revenue trend analysis",
-          "Identify top performing COEs by incubatee count",
-          "Compare invoiced vs billed amounts by year",
-          "Which customers drive the most profit?",
-        ]}
-      />
     </AppShell>
   );
 }
