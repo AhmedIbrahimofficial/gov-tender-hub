@@ -423,20 +423,125 @@ function PublicLogin({ onBack, initialMode = "login" }: { onBack: () => void; in
 // ─── Government Staff Registration Form ──────────────────────────────────────
 // ─── Simple Role Selector (screenshot style) ─────────────────────────────────
 function RoleSelectForm({ onBack }: { onBack: () => void }) {
-  const { loginAs } = useAuth();
+  const { loginWithDetails } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [selectedRole, setSelectedRole] = useState<typeof ALL_ROLES[0] | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const filtered = ALL_ROLES.filter(r =>
     r.label.toLowerCase().includes(search.toLowerCase()) ||
     r.desc.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleSelect = (role: typeof ALL_ROLES[0]) => {
-    loginAs(role.role);
-    navigate("/dashboard");
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!email.trim()) { setError("Email is required."); return; }
+    if (!password.trim()) { setError("Password is required."); return; }
+    setLoading(true);
+    setTimeout(() => {
+      loginWithDetails({
+        role: selectedRole!.role,
+        name: email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
+        email,
+        department: selectedRole!.label,
+        entity: "Government of Zimbabwe",
+      });
+      navigate("/dashboard");
+    }, 500);
   };
 
+  // ── Credential step after role selected ──────────────────────────────
+  if (selectedRole) {
+    return (
+      <div className="w-full max-w-md">
+        <button onClick={() => { setSelectedRole(null); setError(""); }}
+          className="flex items-center gap-1.5 text-sm text-black/50 hover:text-black mb-6 transition-colors">
+          <ChevronLeft className="h-4 w-4" /> Back to roles
+        </button>
+
+        {/* Selected role card */}
+        <div className="flex items-center gap-3 p-4 rounded-2xl border-2 border-primary/20 bg-primary/5 mb-6">
+          <div className={`h-12 w-12 rounded-xl ${selectedRole.color} grid place-items-center flex-shrink-0`}>
+            <Shield className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <div className="text-base font-bold text-black">{selectedRole.label}</div>
+            <div className="text-xs text-black/50">{selectedRole.desc}</div>
+          </div>
+        </div>
+
+        <h2 className="text-xl font-bold text-black mb-1" style={{ letterSpacing: "-0.02em" }}>
+          Sign In to Continue
+        </h2>
+        <p className="text-sm text-black/50 mb-5">
+          Enter your government credentials to access this dashboard.
+        </p>
+
+        <form onSubmit={handleSignIn} className="space-y-3">
+          {/* Email */}
+          <div>
+            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">
+              Work Email *
+            </label>
+            <div className="relative mt-1">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="name@gov.zw"
+                autoFocus
+                className="w-full h-10 pl-9 pr-3 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15"
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="text-xs font-medium text-black/50 uppercase tracking-wider">
+              Password *
+            </label>
+            <div className="relative mt-1">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+              <input
+                type={showPwd ? "text" : "password"}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full h-10 pl-9 pr-10 rounded-xl border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-black/15"
+              />
+              <button type="button" onClick={() => setShowPwd(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black">
+                {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div className="flex items-center gap-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
+              <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
+              {error}
+            </div>
+          )}
+
+          <button type="submit" disabled={loading}
+            className="w-full h-10 rounded-xl bg-gray-950 text-white text-sm font-semibold hover:bg-gray-900 disabled:opacity-50 flex items-center justify-center gap-2 mt-1">
+            {loading
+              ? "Signing in…"
+              : <><Shield className="h-4 w-4" /> Sign In as {selectedRole.label}</>}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  // ── Role picker step ──────────────────────────────────────────────────
   return (
     <div className="w-full max-w-2xl">
       <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-black/50 hover:text-black mb-6 transition-colors">
@@ -466,7 +571,7 @@ function RoleSelectForm({ onBack }: { onBack: () => void }) {
         {filtered.map(role => (
           <button
             key={role.role}
-            onClick={() => handleSelect(role)}
+            onClick={() => { setSelectedRole(role); setError(""); setEmail(""); setPassword(""); }}
             className="flex items-center gap-3 p-4 rounded-xl border border-black/8 bg-white hover:border-primary/40 hover:shadow-md transition-all text-left group"
           >
             <div className={`h-10 w-10 rounded-xl ${role.color} grid place-items-center flex-shrink-0`}>
