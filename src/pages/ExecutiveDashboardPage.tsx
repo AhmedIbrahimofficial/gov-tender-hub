@@ -6,6 +6,7 @@ import {
   Users, Building2, FileSignature, Activity, Layers, ChevronRight,
 } from "lucide-react";
 import { pushNotification } from "@/lib/local-store";
+import KpiScrollTicker from "@/components/KpiScrollTicker";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
   BarChart, Bar, PieChart, Pie, Cell, Legend, LineChart, Line, ComposedChart,
@@ -125,6 +126,10 @@ export default function ExecutiveDashboardPage() {
             <button key={t} onClick={() => setTab(t)} className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap ${tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{t}</button>
           ))}
         </div>
+
+        {/* Tab content + right KPI ticker rail */}
+        <div className="flex gap-4 items-start">
+          <div className="flex-1 min-w-0">
 
         {tab === "Overview" && (
           <div className="space-y-6">
@@ -357,6 +362,20 @@ export default function ExecutiveDashboardPage() {
             </Card>
           </div>
         )}
+          </div>{/* end flex-1 content */}
+
+          {/* Sticky live KPI ticker — right rail */}
+          <div className="hidden xl:flex flex-col w-56 flex-shrink-0 sticky top-4 bg-[#1c1f26] rounded-2xl overflow-hidden border border-white/8 shadow-xl" style={{ height: "calc(100vh - 200px)" }}>
+            <div className="px-3 py-2.5 border-b border-white/10 flex-shrink-0">
+              <div className="text-[10px] font-bold text-[#29b8c5] uppercase tracking-widest flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#29b8c5] animate-pulse" />
+                Live KPIs
+              </div>
+              <div className="text-[9px] text-white/30 mt-0.5">Hover to pause</div>
+            </div>
+            <KpiScrollTicker theme="dark" height="100%" speed={0.7} showCategory />
+          </div>
+        </div>
       </div>
     </AppShell>
   );

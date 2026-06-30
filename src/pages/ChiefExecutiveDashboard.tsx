@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth-context";
 import { pushNotification } from "@/lib/local-store";
+import KpiScrollTicker from "@/components/KpiScrollTicker";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   AreaChart, Area, PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis,
@@ -132,6 +133,10 @@ export default function ChiefExecutiveDashboard() {
         </div>
 
         {/* ── EXECUTIVE OVERVIEW ─────────────────────────────────────────── */}
+        {/* Tab content + right KPI ticker rail */}
+        <div className="flex gap-4 items-start">
+          <div className="flex-1 min-w-0">
+
         {tab === "Executive Overview" && (
           <div className="space-y-5">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -458,6 +463,21 @@ export default function ChiefExecutiveDashboard() {
             </div>
           </div>
         )}
+
+          </div>{/* end flex-1 content */}
+
+          {/* Sticky live KPI ticker — right rail */}
+          <div className="hidden xl:flex flex-col w-56 flex-shrink-0 sticky top-4 bg-[#1c1f26] rounded-2xl overflow-hidden border border-white/8 shadow-xl" style={{ height: "calc(100vh - 200px)" }}>
+            <div className="px-3 py-2.5 border-b border-white/10 flex-shrink-0">
+              <div className="text-[10px] font-bold text-[#29b8c5] uppercase tracking-widest flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#29b8c5] animate-pulse" />
+                Live KPIs
+              </div>
+              <div className="text-[9px] text-white/30 mt-0.5">Hover to pause</div>
+            </div>
+            <KpiScrollTicker theme="dark" height="100%" speed={0.7} showCategory />
+          </div>
+        </div>{/* end flex container */}
 
       </div>
     </AppShell>

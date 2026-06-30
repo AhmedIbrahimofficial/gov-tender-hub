@@ -6,6 +6,7 @@
 import { useState, useEffect, useRef } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth-context";
+import KpiScrollTicker from "@/components/KpiScrollTicker";
 import {
   Sparkles, Play, Pause, SkipBack, SkipForward, Square, X,
   ChevronLeft, ChevronRight, Filter, TrendingUp, TrendingDown,
@@ -300,42 +301,9 @@ export default function BriefingPage() {
               ))}
             </div>
 
-            {/* Scrolling KPI indicators */}
-            <div className="flex-1 overflow-hidden relative">
-              <div className="briefing-indicator-track px-3 py-2 space-y-2">
-                {/* Urgent first */}
-                {urgent.map((kpi, i) => (
-                  <div key={`u-${i}`} className="bg-red-900/30 border border-red-500/30 px-2 py-1.5" style={{ borderRadius: 0 }}>
-                    <div className="text-[9px] text-red-300/70 uppercase tracking-wider">{kpi.label}</div>
-                    <div className={`text-sm font-bold ${kpi.color}`}>{kpi.value}</div>
-                    <div className={`text-[9px] flex items-center gap-1 ${kpi.up ? "text-emerald-400" : "text-red-400"}`}>
-                      {kpi.up ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-                      {kpi.delta}
-                    </div>
-                  </div>
-                ))}
-                {/* Normal */}
-                {normal.map((kpi, i) => (
-                  <div key={`n-${i}`} className="bg-white/5 border border-white/10 px-2 py-1.5" style={{ borderRadius: 0 }}>
-                    <div className="text-[9px] text-white/40 uppercase tracking-wider">{kpi.label}</div>
-                    <div className={`text-sm font-bold ${kpi.color}`}>{kpi.value}</div>
-                    <div className={`text-[9px] flex items-center gap-1 ${kpi.up ? "text-emerald-400" : "text-amber-400"}`}>
-                      {kpi.up ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-                      {kpi.delta}
-                    </div>
-                  </div>
-                ))}
-                {/* Duplicate for seamless loop */}
-                {urgent.map((kpi, i) => (
-                  <div key={`u2-${i}`} className="bg-red-900/30 border border-red-500/30 px-2 py-1.5" style={{ borderRadius: 0 }}>
-                    <div className="text-[9px] text-red-300/70 uppercase tracking-wider">{kpi.label}</div>
-                    <div className={`text-sm font-bold ${kpi.color}`}>{kpi.value}</div>
-                    <div className={`text-[9px] flex items-center gap-1 ${kpi.up ? "text-emerald-400" : "text-red-400"}`}>
-                      {kpi.up ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}{kpi.delta}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            {/* Auto-scrolling KPI indicators — slides up, pauses on hover */}
+            <div className="flex-1 overflow-hidden">
+              <KpiScrollTicker theme="dark" height="100%" speed={0.8} showCategory />
             </div>
 
             {/* Topic list */}

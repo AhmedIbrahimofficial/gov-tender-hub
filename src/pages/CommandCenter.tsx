@@ -8,6 +8,7 @@ import {
   kpis, spendTrend, categorySpend, provinceSpend, tenders, aiAgents,
   monthlyTransactions, dailyReport,
 } from "@/lib/mock-data";
+import KpiScrollTicker from "@/components/KpiScrollTicker";
 import {
   Sparkles, ArrowUpRight, AlertTriangle, TrendingUp, DollarSign,
   FileText, Users, Zap, Activity, Shield, Clock,
@@ -38,7 +39,8 @@ export default function CommandCenter() {
 
   return (
     <AppShell>
-      <div className="p-4 sm:p-6 max-w-[1600px] mx-auto">
+      <div className="p-4 sm:p-6 max-w-[1800px] mx-auto flex gap-4 items-start">
+        <div className="flex-1 min-w-0">
         <PageHeader
           title="National Procurement Command Center"
           description="Real-time oversight of all national procurement activity, spend, compliance, and AI agent operations across all Government of Zimbabwe entities."
@@ -289,6 +291,19 @@ export default function CommandCenter() {
               ))}
             </div>
           </Card>
+        </div>
+        </div>{/* end flex-1 */}
+
+        {/* Sticky live KPI ticker — right rail */}
+        <div className="hidden xl:flex flex-col w-56 flex-shrink-0 sticky top-4 bg-[#1c1f26] rounded-2xl overflow-hidden border border-white/8 shadow-xl" style={{ height: "calc(100vh - 120px)" }}>
+          <div className="px-3 py-2.5 border-b border-white/10 flex-shrink-0">
+            <div className="text-[10px] font-bold text-[#29b8c5] uppercase tracking-widest flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#29b8c5] animate-pulse" />
+              Live National KPIs
+            </div>
+            <div className="text-[9px] text-white/30 mt-0.5">Hover to pause · 50+ indicators</div>
+          </div>
+          <KpiScrollTicker theme="dark" height="100%" speed={0.7} showCategory />
         </div>
       </div>
     </AppShell>

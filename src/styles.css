@@ -348,13 +348,56 @@ input:focus, select:focus, textarea:focus {
   animation: ai-logo-rotate 4s ease infinite;
 }
 
-/* ── Briefing module scrolling indicators ────────────────────────────── */
-@keyframes indicator-slide-up {
-  0%   { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-100%); opacity: 0; }
+/* ── Briefing module + BI Dashboard scrolling KPI indicators ─────────── */
+@keyframes kpi-scroll-up {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
 }
+
+/* Wrapper must have overflow:hidden; inner track has 2× content for seamless loop */
+.kpi-ticker-wrap {
+  overflow: hidden;
+  position: relative;
+}
+.kpi-ticker-wrap::before,
+.kpi-ticker-wrap::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+.kpi-ticker-wrap::before {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(10,22,40,1) 0%, transparent 100%);
+}
+.kpi-ticker-wrap::after {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(10,22,40,1) 0%, transparent 100%);
+}
+
+.kpi-ticker-track {
+  animation: kpi-scroll-up 28s linear infinite;
+  will-change: transform;
+}
+.kpi-ticker-wrap:hover .kpi-ticker-track,
+.kpi-ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Light theme variant (for Analytics / BI pages) */
+.kpi-ticker-wrap.light::before {
+  background: linear-gradient(to bottom, rgba(248,249,250,1) 0%, transparent 100%);
+}
+.kpi-ticker-wrap.light::after {
+  background: linear-gradient(to top, rgba(248,249,250,1) 0%, transparent 100%);
+}
+
+/* Briefing legacy */
 .briefing-indicator-track {
-  animation: tender-scroll-up 15s linear infinite;
+  animation: kpi-scroll-up 24s linear infinite;
+  will-change: transform;
 }
 .briefing-indicator-track:hover {
   animation-play-state: paused;
