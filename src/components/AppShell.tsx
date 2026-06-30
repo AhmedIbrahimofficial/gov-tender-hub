@@ -533,6 +533,28 @@ function LogoIcon({ className = "" }: { className?: string }) {
   );
 }
 
+/** Database-folder icon matching the sidebar design in the reference image */
+function DbFolderIcon({ active = false, size = 22 }: { active?: boolean; size?: number }) {
+  const teal = active ? "#fff" : "#29b8c5";
+  const dark = active ? "rgba(255,255,255,0.7)" : "#1c3a5e";
+  return (
+    <svg width={size} height={size} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+      {/* Folder body */}
+      <rect x="2" y="14" width="28" height="19" rx="2.5" fill={dark} />
+      {/* Folder tab */}
+      <path d="M2 14 L2 11 Q2 9 4 9 L13 9 L15.5 12 L30 12 Q32 12 32 14 Z" fill={dark} opacity="0.75" />
+      {/* Database cylinders (stacked) */}
+      <ellipse cx="21" cy="10" rx="9" ry="3" fill={teal} />
+      <rect x="12" y="10" width="18" height="5" fill={teal} />
+      <ellipse cx="21" cy="15" rx="9" ry="3" fill={teal} />
+      <rect x="12" y="15" width="18" height="5" fill={teal} opacity="0.85" />
+      <ellipse cx="21" cy="20" rx="9" ry="3" fill={teal} opacity="0.7" />
+      {/* Shine on top cylinder */}
+      <path d="M15 9.5 Q21 7 27 9.5" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="none" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, BarChart3, Sparkles, ClipboardList, FileText, Trophy,
   FileSignature, TrendingUp, Wallet, ShieldCheck, AlertOctagon,
@@ -662,12 +684,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                       ? "bg-[#29b8c5] text-white shadow-[0_0_10px_#29b8c540]"
                       : "text-white/40 hover:bg-white/10 hover:text-white"}`}
                 >
-                  <SectionIcon className="h-4 w-4 flex-shrink-0" />
+                  <DbFolderIcon active={hasActiveItem} size={20} />
                 </button>
                 {/* Flyout */}
                 <div className="absolute left-full top-0 ml-2 w-56 bg-[#2a2d35] rounded-xl border border-white/10 shadow-2xl z-50 opacity-0 pointer-events-none group-hover/section:opacity-100 group-hover/section:pointer-events-auto transition-opacity overflow-hidden">
                   <div className="px-3 py-2.5 border-b border-white/8 flex items-center gap-2">
-                    <SectionIcon className="h-3.5 w-3.5 text-[#29b8c5]" />
+                    <DbFolderIcon active={false} size={18} />
                     <span className="text-[11px] font-semibold text-white/70 uppercase tracking-wider">{section.label}</span>
                   </div>
                   <div className="py-1.5">
@@ -705,7 +727,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     ? "bg-[#29b8c5]/20 text-[#29b8c5]"
                     : "text-white/60 hover:bg-white/8 hover:text-white"}`}
               >
-                <SectionIcon className="h-4 w-4 flex-shrink-0" />
+                <DbFolderIcon active={hasActiveItem && isExpanded} size={22} />
                 <span className="flex-1 text-left text-[13px] font-medium tracking-wide truncate">
                   {section.label}
                 </span>
