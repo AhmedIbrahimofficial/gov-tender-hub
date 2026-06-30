@@ -287,10 +287,10 @@ function GovHierarchySelector({
 }
 
 // ─── Supplier / Company Portal ────────────────────────────────────────────────
-function PublicLogin({ onBack }: { onBack: () => void }) {
+function PublicLogin({ onBack, initialMode = "login" }: { onBack: () => void; initialMode?: "login" | "register" }) {
   const { loginPublic } = useAuth();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
