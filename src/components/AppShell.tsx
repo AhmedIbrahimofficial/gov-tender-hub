@@ -637,42 +637,52 @@ export function AppShell({ children }: { children: ReactNode }) {
   };
 
   // ── Shared nav content renderer ──────────────────────────────────────────
+  // Design: dark charcoal sidebar, teal active row, pill badges, numbered sub-items
   const NavContent = ({ onLinkClick }: { onLinkClick?: () => void }) => {
     return (
-      <nav className="px-2 py-3 space-y-0.5">
-        {filteredNavSections.map((section) => {
+      <nav className="py-2 space-y-px">
+        {filteredNavSections.map((section, sectionIdx) => {
           const SectionIcon = iconMap[(section as any).icon ?? "LayoutDashboard"] ?? LayoutDashboard;
           const isExpanded = expandedSections.has(section.label);
           const hasActiveItem = section.items.some(item =>
             pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"))
           );
+          // Section-level badge = number of items
+          const sectionBadge = section.items.length;
 
+          // ── Collapsed: icon-only with teal dot for active ──────────────
           if (collapsed) {
             return (
-              <div key={section.label} className="relative group/section">
+              <div key={section.label} className="relative group/section px-1.5">
                 <button
                   onClick={() => toggleSection(section.label)}
                   title={section.label}
-                  className={`w-9 h-9 mx-auto flex items-center justify-center rounded-lg transition-colors
-                    ${hasActiveItem ? "bg-black text-white" : "text-black/50 hover:bg-[#F5F5F5] hover:text-black"}`}
+                  className={`w-9 h-9 mx-auto flex items-center justify-center rounded-lg transition-all
+                    ${hasActiveItem
+                      ? "bg-[#29b8c5] text-white shadow-[0_0_10px_#29b8c540]"
+                      : "text-white/40 hover:bg-white/10 hover:text-white"}`}
                 >
-                  <SectionIcon className="h-4 w-4 flex-shrink-0" strokeWidth={hasActiveItem ? 2.5 : 1.75} />
+                  <SectionIcon className="h-4 w-4 flex-shrink-0" />
                 </button>
-                {/* Flyout menu when collapsed */}
-                <div className="absolute left-full top-0 ml-2 w-52 bg-white rounded-xl border border-black/10 shadow-xl z-50 opacity-0 pointer-events-none group-hover/section:opacity-100 group-hover/section:pointer-events-auto transition-opacity overflow-hidden">
-                  <div className="px-3 py-2 border-b border-black/8 bg-[#fafafa]">
-                    <span className="text-[10px] font-semibold text-black/50 uppercase tracking-wider">{section.label}</span>
+                {/* Flyout */}
+                <div className="absolute left-full top-0 ml-2 w-56 bg-[#2a2d35] rounded-xl border border-white/10 shadow-2xl z-50 opacity-0 pointer-events-none group-hover/section:opacity-100 group-hover/section:pointer-events-auto transition-opacity overflow-hidden">
+                  <div className="px-3 py-2.5 border-b border-white/8 flex items-center gap-2">
+                    <SectionIcon className="h-3.5 w-3.5 text-[#29b8c5]" />
+                    <span className="text-[11px] font-semibold text-white/70 uppercase tracking-wider">{section.label}</span>
                   </div>
-                  <div className="py-1">
-                    {section.items.map(item => {
+                  <div className="py-1.5">
+                    {section.items.map((item, idx) => {
                       const Icon = iconMap[item.icon] ?? LayoutDashboard;
                       const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
                       return (
                         <Link key={item.to} to={item.to} onClick={onLinkClick}
                           className={`flex items-center gap-2.5 px-3 py-2 text-xs transition-colors
-                            ${active ? "bg-black text-white" : "text-black/70 hover:bg-[#F5F5F5] hover:text-black"}`}>
+                            ${active ? "bg-[#29b8c5] text-white" : "text-white/55 hover:bg-white/8 hover:text-white"}`}>
+                          <span className="text-[10px] text-white/30 w-4 flex-shrink-0 font-mono">
+                            {String(idx + 1).padStart(2, "0")}
+                          </span>
                           <Icon className="h-3.5 w-3.5 flex-shrink-0" />
-                          <span>{item.label}</span>
+                          <span className="flex-1 truncate">{item.label}</span>
                         </Link>
                       );
                     })}
@@ -682,23 +692,36 @@ export function AppShell({ children }: { children: ReactNode }) {
             );
           }
 
+          // ── Expanded sidebar ───────────────────────────────────────────
           return (
             <div key={section.label}>
+              {/* Section header row */}
               <button
                 onClick={() => toggleSection(section.label)}
-                className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors group
-                  ${hasActiveItem && !isExpanded ? "bg-black/5 text-black" : "text-black/60 hover:bg-[#F5F5F5] hover:text-black"}`}
+                className={`w-full flex items-center gap-2.5 px-4 py-2.5 transition-all group
+                  ${hasActiveItem && isExpanded
+                    ? "bg-[#29b8c5] text-white"
+                    : hasActiveItem
+                    ? "bg-[#29b8c5]/20 text-[#29b8c5]"
+                    : "text-white/60 hover:bg-white/8 hover:text-white"}`}
               >
-                <SectionIcon className={`h-4 w-4 flex-shrink-0 ${hasActiveItem ? "text-black" : "text-black/40 group-hover:text-black"}`}
-                  strokeWidth={hasActiveItem ? 2.5 : 1.75} />
-                <span className="flex-1 text-left text-xs font-semibold truncate">{section.label}</span>
-                <ChevronRight className={`h-3.5 w-3.5 flex-shrink-0 text-black/30 transition-transform duration-200
-                  ${isExpanded ? "rotate-90" : ""}`} />
+                <SectionIcon className="h-4 w-4 flex-shrink-0" />
+                <span className="flex-1 text-left text-[13px] font-medium tracking-wide truncate">
+                  {section.label}
+                </span>
+                {/* Pill badge */}
+                <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 transition-colors
+                  ${hasActiveItem && isExpanded
+                    ? "bg-[#1a8a94] text-white"
+                    : "bg-white/10 text-white/50"}`}>
+                  {sectionBadge}
+                </span>
               </button>
 
+              {/* Sub-items */}
               {isExpanded && (
-                <div className="ml-4 pl-2.5 border-l border-black/8 mt-0.5 mb-1 space-y-0.5">
-                  {section.items.map((item) => {
+                <div className="bg-[#1e2128]">
+                  {section.items.map((item, idx) => {
                     const Icon = iconMap[item.icon] ?? LayoutDashboard;
                     const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to + "/"));
                     return (
@@ -706,12 +729,23 @@ export function AppShell({ children }: { children: ReactNode }) {
                         key={item.to}
                         to={item.to}
                         onClick={onLinkClick}
-                        className={`flex items-center gap-2 rounded-lg transition-colors px-2 py-1.5
-                          ${active ? "bg-black text-white" : "text-black/55 hover:bg-[#F5F5F5] hover:text-black"}`}
+                        className={`flex items-center gap-2.5 px-4 py-2 transition-colors group/item
+                          ${active
+                            ? "bg-[#29b8c5]/15 text-[#29b8c5] border-l-2 border-[#29b8c5]"
+                            : "text-white/45 hover:bg-white/6 hover:text-white border-l-2 border-transparent"}`}
                       >
-                        <Icon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={active ? 2.5 : 1.75} />
-                        <span className="truncate text-xs">{item.label}</span>
-                        {active && <div className="ml-auto h-1.5 w-1.5 rounded-full bg-white opacity-60 flex-shrink-0" />}
+                        {/* Number */}
+                        <span className="text-[10px] font-mono text-white/25 w-5 flex-shrink-0 select-none">
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${active ? "text-[#29b8c5]" : "text-white/30 group-hover/item:text-white/60"}`} />
+                        <span className="flex-1 truncate text-[12px]">{item.label}</span>
+                        {/* Pill badge on active */}
+                        {active && (
+                          <span className="text-[10px] bg-[#29b8c5]/20 text-[#29b8c5] border border-[#29b8c5]/30 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                            ●
+                          </span>
+                        )}
                       </Link>
                     );
                   })}
@@ -728,12 +762,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="h-screen flex flex-col bg-[#F5F5F5] text-foreground overflow-hidden">
 
       {/* ── Top nav ─────────────────────────────────────────────────────── */}
-      <header className="h-14 border-b border-black/10 bg-white flex items-center px-3 md:px-4 gap-2 md:gap-3 flex-shrink-0 z-30 shadow-sm">
+      <header className="h-14 border-b border-white/8 bg-[#1c1f26] flex items-center px-3 md:px-4 gap-2 md:gap-3 flex-shrink-0 z-30 shadow-md">
 
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(true)}
-          className="md:hidden h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors flex-shrink-0"
+          className="md:hidden h-9 w-9 grid place-items-center rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors flex-shrink-0"
           aria-label="Open navigation"
         >
           <Menu className="h-5 w-5" />
@@ -742,7 +776,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Desktop sidebar toggle */}
         <button
           onClick={toggleCollapsed}
-          className="hidden md:grid h-9 w-9 place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors flex-shrink-0"
+          className="hidden md:grid h-9 w-9 place-items-center rounded-lg hover:bg-white/10 text-white/40 hover:text-white transition-colors flex-shrink-0"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed
@@ -752,37 +786,36 @@ export function AppShell({ children }: { children: ReactNode }) {
         </button>
 
         <Link to="/dashboard" className="flex items-center gap-2 flex-shrink-0">
-          {/* AI Logo — Gemini-style glow */}
           <div className="h-8 w-8 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center flex-shrink-0">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           <div className="leading-none hidden sm:block">
-            <div className="text-[13px] font-extrabold text-black tracking-wide leading-tight uppercase">APPOIS</div>
-            <div className="text-[10px] font-semibold text-black/70 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
-            <div className="text-[10px] font-semibold text-black/50 tracking-tight leading-snug">Oversight Intelligence System</div>
+            <div className="text-[13px] font-extrabold text-white tracking-wide leading-tight uppercase">APPOIS</div>
+            <div className="text-[10px] font-semibold text-white/50 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
+            <div className="text-[10px] font-semibold text-white/35 tracking-tight leading-snug">Oversight Intelligence System</div>
           </div>
           <div className="leading-tight sm:hidden">
-            <div className="text-[11px] font-extrabold text-black tracking-wide uppercase">APPOIS</div>
-            <div className="text-[9px] font-semibold text-black/60 tracking-tight">AI Procurement &amp; Oversight</div>
+            <div className="text-[11px] font-extrabold text-white tracking-wide uppercase">APPOIS</div>
+            <div className="text-[9px] font-semibold text-white/50 tracking-tight">AI Procurement &amp; Oversight</div>
           </div>
         </Link>
 
         {/* Desktop Search */}
         <div className="flex-1 max-w-2xl relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search tenders, vendors, contracts…"
-            className="w-full h-9 pl-9 pr-3 rounded-lg border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10 transition-shadow"
+            className="w-full h-9 pl-9 pr-3 rounded-lg border border-white/10 bg-white/8 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#29b8c5]/40 transition-shadow"
           />
           {searchResults.length > 0 && (
-            <div className="absolute top-full mt-1 left-0 right-0 bg-white rounded-xl border border-black/10 shadow-lg z-50">
+            <div className="absolute top-full mt-1 left-0 right-0 bg-[#2a2d35] rounded-xl border border-white/10 shadow-2xl z-50">
               {searchResults.map(t => (
-                <button key={t.id} onClick={() => { navigate("/tenders"); setSearch(""); }}
-                  className="w-full text-left px-4 py-2.5 hover:bg-[#F5F5F5] transition-colors border-b border-black/5 last:border-0">
-                  <div className="text-sm font-medium text-black truncate">{t.title}</div>
-                  <div className="text-xs text-black/40">{t.id} · {t.status}</div>
+                <button key={t.id} onClick={() => { navigate(`/tenders/${t.id}`); setSearch(""); }}
+                  className="w-full text-left px-4 py-2.5 hover:bg-white/8 transition-colors border-b border-white/5 last:border-0">
+                  <div className="text-sm font-medium text-white truncate">{t.title}</div>
+                  <div className="text-xs text-white/40">{t.id} · {t.status}</div>
                 </button>
               ))}
             </div>
@@ -794,7 +827,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Mobile search toggle */}
         <button
           onClick={() => setShowSearch(!showSearch)}
-          className="md:hidden h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/50 hover:text-black transition-colors flex-shrink-0"
+          className="md:hidden h-9 w-9 grid place-items-center rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors flex-shrink-0"
           aria-label="Toggle search"
         >
           <Search className="h-4 w-4" />
@@ -803,7 +836,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Action Inbox */}
         <div className="relative flex-shrink-0">
           <button onClick={toggleInbox}
-            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showInbox ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showInbox ? "bg-[#29b8c5] text-white" : "hover:bg-white/10 text-white/50 hover:text-white"}`}
             aria-label="Action inbox">
             <Inbox className="h-4 w-4" />
             <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold grid place-items-center">4</span>
@@ -814,10 +847,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Messages */}
         <div className="relative flex-shrink-0">
           <button onClick={toggleMessages}
-            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showMessages ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showMessages ? "bg-[#29b8c5] text-white" : "hover:bg-white/10 text-white/50 hover:text-white"}`}
             aria-label="Messages">
             <MessageSquare className="h-4 w-4" />
-            <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-black text-white text-[9px] font-bold grid place-items-center">2</span>
+            <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-[#29b8c5] text-white text-[9px] font-bold grid place-items-center">2</span>
           </button>
           {showMessages && <MessagesPanel user={user} onClose={() => setShowMessages(false)} />}
         </div>
@@ -825,11 +858,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Notifications */}
         <div className="relative flex-shrink-0">
           <button onClick={toggleNotifs}
-            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showNotifs ? "bg-black text-white" : "hover:bg-[#F5F5F5] text-black/50 hover:text-black"}`}
+            className={`relative h-9 w-9 grid place-items-center rounded-lg transition-colors ${showNotifs ? "bg-[#29b8c5] text-white" : "hover:bg-white/10 text-white/50 hover:text-white"}`}
             aria-label="Notifications">
             <Bell className="h-4 w-4" />
             {unread > 0 && (
-              <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-black text-white text-[9px] font-bold grid place-items-center">{unread > 9 ? "9+" : unread}</span>
+              <span className="absolute top-1.5 right-1.5 h-3.5 min-w-3.5 px-0.5 rounded-full bg-[#29b8c5] text-white text-[9px] font-bold grid place-items-center">{unread > 9 ? "9+" : unread}</span>
             )}
           </button>
           {showNotifs && (
@@ -843,23 +876,23 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {/* User menu */}
         <div className="relative group flex-shrink-0">
-          <button className="flex items-center gap-1.5 pl-2 pr-1 h-9 rounded-lg hover:bg-[#F5F5F5] transition-colors">
-            <div className="h-7 w-7 rounded-full bg-black text-white text-xs font-semibold grid place-items-center">{user?.avatar ?? "U"}</div>
+          <button className="flex items-center gap-1.5 pl-2 pr-1 h-9 rounded-lg hover:bg-white/10 transition-colors">
+            <div className="h-7 w-7 rounded-full bg-[#29b8c5] text-white text-xs font-semibold grid place-items-center">{user?.avatar ?? "U"}</div>
             <div className="text-left leading-tight hidden md:block">
-              <div className="text-xs font-medium text-black">{user?.name ?? "Guest"}</div>
-              <div className="text-[10px] text-black/40">{user?.department ?? ""}</div>
+              <div className="text-xs font-medium text-white">{user?.name ?? "Guest"}</div>
+              <div className="text-[10px] text-white/40">{user?.department ?? ""}</div>
             </div>
-            <ChevronDown className="h-3.5 w-3.5 text-black/30 hidden md:block" />
+            <ChevronDown className="h-3.5 w-3.5 text-white/30 hidden md:block" />
           </button>
-          <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-black/10 bg-white shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-50 overflow-hidden">
-            <div className="px-3 py-2.5 border-b border-black/10">
-              <div className="text-xs font-semibold text-black">{user?.name}</div>
-              <div className="text-[10px] text-black/40">{user?.entity}</div>
+          <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-white/10 bg-[#2a2d35] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-50 overflow-hidden">
+            <div className="px-3 py-2.5 border-b border-white/10">
+              <div className="text-xs font-semibold text-white">{user?.name}</div>
+              <div className="text-[10px] text-white/40">{user?.entity}</div>
             </div>
-            <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2 text-xs text-black hover:bg-[#F5F5F5] transition-colors">
+            <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2 text-xs text-white/70 hover:bg-white/8 hover:text-white transition-colors">
               <User className="h-3.5 w-3.5" /> My Dashboard
             </Link>
-            <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 transition-colors">
+            <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors">
               <LogOut className="h-3.5 w-3.5" /> Sign Out
             </button>
           </div>
@@ -868,27 +901,27 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* ── Mobile search bar ────────────────────────────────────────────── */}
       {showSearch && (
-        <div className="md:hidden px-3 py-2 bg-white border-b border-black/10 flex-shrink-0 z-20">
+        <div className="md:hidden px-3 py-2 bg-[#1c1f26] border-b border-white/8 flex-shrink-0 z-20">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
             <input
               autoFocus
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search tenders, vendors, contracts…"
-              className="w-full h-9 pl-9 pr-8 rounded-lg border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+              className="w-full h-9 pl-9 pr-8 rounded-lg border border-white/10 bg-white/8 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#29b8c5]/40"
             />
-            <button onClick={() => { setShowSearch(false); setSearch(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-black/30">
+            <button onClick={() => { setShowSearch(false); setSearch(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/30 hover:text-white">
               <X className="h-4 w-4" />
             </button>
           </div>
           {searchResults.length > 0 && (
-            <div className="mt-1 bg-white rounded-xl border border-black/10 shadow-lg overflow-hidden">
+            <div className="mt-1 bg-[#2a2d35] rounded-xl border border-white/10 shadow-2xl overflow-hidden">
               {searchResults.map(t => (
-                <button key={t.id} onClick={() => { navigate("/tenders"); setSearch(""); setShowSearch(false); }}
-                  className="w-full text-left px-4 py-2.5 hover:bg-[#F5F5F5] transition-colors border-b border-black/5 last:border-0">
-                  <div className="text-sm font-medium text-black truncate">{t.title}</div>
-                  <div className="text-xs text-black/40">{t.id} · {t.status}</div>
+                <button key={t.id} onClick={() => { navigate(`/tenders/${t.id}`); setSearch(""); setShowSearch(false); }}
+                  className="w-full text-left px-4 py-2.5 hover:bg-white/8 transition-colors border-b border-white/5 last:border-0">
+                  <div className="text-sm font-medium text-white truncate">{t.title}</div>
+                  <div className="text-xs text-white/40">{t.id} · {t.status}</div>
                 </button>
               ))}
             </div>
@@ -903,27 +936,48 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* ── Desktop sidebar ───────────────────────────────────────────── */}
         <aside className={`
           hidden md:flex flex-col flex-shrink-0
-          border-r border-black/10 bg-white
+          border-r border-white/5 bg-[#23262e]
           transition-[width] duration-200 ease-in-out
           overflow-hidden
           ${sidebarW}
         `}>
-          {/* Scrollable nav — only this column scrolls when hovering sidebar */}
+          {/* Scrollable nav */}
           <div className="sidebar-scroll flex-1 overflow-y-auto overflow-x-hidden py-2 min-h-0">
             <NavContent />
           </div>
 
-          {/* Collapse toggle pinned at bottom of sidebar */}
-          <div className="flex-shrink-0 border-t border-black/8 p-2">
+          {/* Sign Out / Collapse pinned at bottom */}
+          <div className="flex-shrink-0 border-t border-white/8 p-2 space-y-1">
+            {/* Sign out button — matches design image */}
+            {!collapsed && (
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-white/50 hover:text-white hover:bg-white/8 transition-colors rounded-lg"
+              >
+                <LogOut className="h-4 w-4 flex-shrink-0" />
+                <span className="text-[13px] font-medium">Sign Out</span>
+              </button>
+            )}
+            {collapsed && (
+              <button
+                onClick={handleLogout}
+                title="Sign Out"
+                className="w-9 h-9 mx-auto flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            )}
+            {/* Collapse toggle */}
             <button
               onClick={toggleCollapsed}
-              className="w-full h-8 flex items-center justify-center gap-2 rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black transition-colors text-xs"
+              className={`w-full h-7 flex items-center gap-2 text-white/25 hover:text-white/60 transition-colors text-xs
+                ${collapsed ? "justify-center" : "px-4"}`}
               title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {collapsed
-                ? <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                ? <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
                 : <>
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
                     <span>Collapse</span>
                   </>
               }
@@ -942,24 +996,32 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {/* ── Mobile sidebar drawer ────────────────────────────────────── */}
         <aside className={`
-          fixed top-0 left-0 h-full w-72 bg-white border-r border-black/10 z-50 flex flex-col
+          fixed top-0 left-0 h-full w-72 bg-[#23262e] border-r border-white/5 z-50 flex flex-col
           transform transition-transform duration-300 ease-in-out md:hidden
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
         `}>
-          <div className="flex items-center justify-between px-4 h-14 border-b border-black/10 flex-shrink-0">
+          <div className="flex items-center justify-between px-4 h-14 border-b border-white/8 flex-shrink-0">
             <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
               <div className="leading-none">
-                <div className="text-[13px] font-extrabold text-black tracking-wide leading-tight uppercase">APPOIS</div>
-                <div className="text-[10px] font-semibold text-black/80 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
-                <div className="text-[10px] font-semibold text-black/60 tracking-tight leading-snug">Oversight Intelligence System</div>
+                <div className="text-[13px] font-extrabold text-white tracking-wide leading-tight uppercase">APPOIS</div>
+                <div className="text-[10px] font-semibold text-white/50 tracking-tight leading-snug">AI-Powered Public Procurement</div>
               </div>
             </Link>
-            <button onClick={() => setMobileOpen(false)} className="h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40">
+            <button onClick={() => setMobileOpen(false)} className="h-9 w-9 grid place-items-center rounded-lg hover:bg-white/10 text-white/40 hover:text-white">
               <X className="h-5 w-5" />
             </button>
           </div>
           <div className="sidebar-scroll flex-1 overflow-y-auto min-h-0">
             <NavContent onLinkClick={() => setMobileOpen(false)} />
+          </div>
+          <div className="flex-shrink-0 border-t border-white/8 p-3">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-white/50 hover:text-white hover:bg-white/8 transition-colors rounded-lg"
+            >
+              <LogOut className="h-4 w-4 flex-shrink-0" />
+              <span className="text-[13px] font-medium">Sign Out</span>
+            </button>
           </div>
         </aside>
 

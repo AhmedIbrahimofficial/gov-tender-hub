@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth, ALL_ROLES } from "@/lib/auth-context";
 import { ZW_MINISTRIES, type ZWRole } from "@/lib/zw-ministries";
 import {
@@ -421,6 +421,77 @@ function PublicLogin({ onBack }: { onBack: () => void }) {
 }
 
 // ─── Government Staff Registration Form ──────────────────────────────────────
+// ─── Simple Role Selector (screenshot style) ─────────────────────────────────
+function RoleSelectForm({ onBack }: { onBack: () => void }) {
+  const { loginAs } = useAuth();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
+  const filtered = ALL_ROLES.filter(r =>
+    r.label.toLowerCase().includes(search.toLowerCase()) ||
+    r.desc.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleSelect = (role: typeof ALL_ROLES[0]) => {
+    loginAs(role.role);
+    navigate("/dashboard");
+  };
+
+  return (
+    <div className="w-full max-w-2xl">
+      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-black/50 hover:text-black mb-6 transition-colors">
+        <ChevronLeft className="h-4 w-4" /> Back
+      </button>
+
+      <h1 className="text-2xl font-bold text-black mb-1" style={{ letterSpacing: "-0.02em" }}>
+        Select Your Role
+      </h1>
+      <p className="text-sm text-black/50 mb-6">
+        Choose your government role to access the appropriate dashboard
+      </p>
+
+      {/* Search */}
+      <div className="relative mb-5">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search roles..."
+          className="w-full h-11 pl-10 pr-4 rounded-xl border border-black/10 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black/10 shadow-sm"
+        />
+      </div>
+
+      {/* Role grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[55vh] overflow-y-auto pr-1">
+        {filtered.map(role => (
+          <button
+            key={role.role}
+            onClick={() => handleSelect(role)}
+            className="flex items-center gap-3 p-4 rounded-xl border border-black/8 bg-white hover:border-primary/40 hover:shadow-md transition-all text-left group"
+          >
+            <div className={`h-10 w-10 rounded-xl ${role.color} grid place-items-center flex-shrink-0`}>
+              <Shield className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-black group-hover:text-primary transition-colors truncate">
+                {role.label}
+              </div>
+              <div className="text-xs text-black/45 truncate">{role.desc}</div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-black/20 group-hover:text-primary flex-shrink-0 transition-colors" />
+          </button>
+        ))}
+        {filtered.length === 0 && (
+          <div className="col-span-2 py-10 text-center text-black/35 text-sm">
+            No roles match "{search}"
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Government Staff Form (full login with credentials) ──────────────────────
 function GovStaffForm({ onBack }: { onBack: () => void }) {
   const { loginWithDetails, login } = useAuth();
   const navigate = useNavigate();
@@ -739,7 +810,7 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
 }
 
 // ─── Entry Choice ─────────────────────────────────────────────────────────────
-function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () => void }) {
+function EntryChoice({ onPublic, onStaff, onRoleSelect }: { onPublic: () => void; onStaff: () => void; onRoleSelect: () => void }) {
   return (
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
@@ -763,7 +834,7 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
           <ArrowRight className="h-5 w-5 text-white/60 group-hover:text-white flex-shrink-0" />
         </button>
 
-        <button onClick={onStaff}
+        <button onClick={onRoleSelect}
           className="w-full flex items-center gap-4 p-5 rounded-2xl bg-gray-950 hover:bg-gray-900 transition-colors text-left group border border-white/5">
           <div className="h-12 w-12 rounded-xl bg-white/10 grid place-items-center flex-shrink-0">
             <Shield className="h-6 w-6 text-white" />
@@ -777,6 +848,19 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
           </div>
           <ArrowRight className="h-5 w-5 text-white/30 group-hover:text-white flex-shrink-0" />
         </button>
+
+        {/* Full credentials login */}
+        <button onClick={onStaff}
+          className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-white hover:bg-gray-50 transition-colors text-left group border border-black/10">
+          <div className="h-9 w-9 rounded-lg bg-gray-100 grid place-items-center flex-shrink-0">
+            <Users className="h-4 w-4 text-gray-500" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-medium text-black">Sign in with credentials</div>
+            <div className="text-xs text-black/40">Use email &amp; password</div>
+          </div>
+          <ArrowRight className="h-4 w-4 text-black/20 group-hover:text-primary flex-shrink-0" />
+        </button>
       </div>
 
       <div className="mt-8 text-center">
@@ -787,10 +871,12 @@ function EntryChoice({ onPublic, onStaff }: { onPublic: () => void; onStaff: () 
 }
 
 // ─── Main SignInPage ───────────────────────────────────────────────────────────
-type Screen = "choice" | "public" | "staff";
+type Screen = "choice" | "public" | "staff" | "role-select";
 
 export default function SignInPage() {
-  const [screen, setScreen] = useState<Screen>("choice");
+  const location = useLocation();
+  const locationState = location.state as { screen?: Screen; mode?: "login" | "register" } | null;
+  const [screen, setScreen] = useState<Screen>(locationState?.screen ?? "choice");
 
   return (
     <div className="min-h-screen flex bg-[#F5F5F5]">
@@ -858,13 +944,20 @@ export default function SignInPage() {
       {/* ── Right content panel ───────────────────────────────────────────── */}
       <div className="flex-1 flex items-start justify-center p-6 lg:p-12 overflow-y-auto">
         {screen === "choice" && (
-          <EntryChoice onPublic={() => setScreen("public")} onStaff={() => setScreen("staff")} />
+          <EntryChoice
+            onPublic={() => setScreen("public")}
+            onStaff={() => setScreen("staff")}
+            onRoleSelect={() => setScreen("role-select")}
+          />
         )}
         {screen === "public" && (
-          <PublicLogin onBack={() => setScreen("choice")} />
+          <PublicLogin onBack={() => setScreen("choice")} initialMode={locationState?.mode ?? "login"} />
         )}
         {screen === "staff" && (
           <GovStaffForm onBack={() => setScreen("choice")} />
+        )}
+        {screen === "role-select" && (
+          <RoleSelectForm onBack={() => setScreen("choice")} />
         )}
       </div>
     </div>

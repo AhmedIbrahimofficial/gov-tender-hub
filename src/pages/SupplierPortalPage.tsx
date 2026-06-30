@@ -617,15 +617,20 @@ export default function SupplierPortalPage() {
 
       {/* Welcome banner */}
       <div className="bg-blue-600 text-white px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4 flex-wrap">
           <div>
             <div className="text-sm font-semibold">Welcome, {user?.name} 👋</div>
             <div className="text-xs text-blue-200 mt-0.5">{user?.entity} · Supplier Portal · Browse & apply for government tenders</div>
           </div>
-          <div className="flex gap-4 flex-shrink-0">
+          <div className="flex items-center gap-4 flex-shrink-0 flex-wrap">
             <div className="text-center"><div className="text-xl font-bold">{published.length}</div><div className="text-xs text-blue-200">Open</div></div>
             <div className="text-center"><div className="text-xl font-bold">{applications.length}</div><div className="text-xs text-blue-200">Applied</div></div>
             <div className="text-center"><div className="text-xl font-bold">{notifications.filter(n => !n.read).length}</div><div className="text-xs text-blue-200">Unread</div></div>
+            {/* Official Registration Form link */}
+            <a href="/supplier-registration"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-semibold border border-white/30 transition-colors">
+              <FileText className="h-3.5 w-3.5" /> Registration Form
+            </a>
           </div>
         </div>
       </div>

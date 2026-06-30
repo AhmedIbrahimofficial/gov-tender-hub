@@ -91,6 +91,7 @@ import BriefingPage from "./pages/BriefingPage";
 import HumanResourcesPage from "./pages/HumanResourcesPage";
 import FinancialStatementsPage from "./pages/FinancialStatementsPage";
 import GisMapPage from "./pages/GisMapPage";
+import SupplierRegistrationPage from "./pages/SupplierRegistrationPage";
 
 // ─── Enterprise Workbench stage pages ────────────────────────────────────────
 import ProcurementPlanningWorkbench   from "./pages/workbench/ProcurementPlanningWorkbench";
@@ -155,6 +156,9 @@ function AppRoutes() {
 
       {/* Supplier self-registration (public — no login required) */}
       <Route path="/vendor-register" element={<VendorSelfRegistrationPage />} />
+
+      {/* Official Government Supplier Registration Form (public — no login required) */}
+      <Route path="/supplier-registration" element={<SupplierRegistrationPage />} />
 
       {/* GIS Map — public access (no login required) */}
       <Route path="/gis" element={<GisMapPage />} />
@@ -347,6 +351,9 @@ function AppRoutes() {
       <Route path="/corporate" element={<ProtectedRoute><CorporatePage /></ProtectedRoute>} />
       <Route path="/corporate/:deptId" element={<ProtectedRoute><CorporateDepartmentPage /></ProtectedRoute>} />
       <Route path="/corporate/:deptId/workstation/:wsId" element={<ProtectedRoute><WorkstationDetailPage /></ProtectedRoute>} />
+
+      {/* Supplier Registration */}
+      <Route path="/supplier-registration" element={<SupplierRegistrationPage />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

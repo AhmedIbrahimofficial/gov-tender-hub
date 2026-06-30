@@ -196,7 +196,13 @@ export default function VendorSelfRegistrationPage() {
           <div className="font-bold text-base">APPOIS — Supplier Registration</div>
           <div className="text-blue-300 text-xs">AI-Powered Electronic Public Procurement & Oversight Intelligence System</div>
         </div>
-        <Link to="/" className="ml-auto text-white/60 hover:text-white text-sm">← Back to Portal</Link>
+        <div className="ml-auto flex items-center gap-3">
+          <Link to="/supplier-registration"
+            className="hidden sm:flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium border border-white/20 transition-colors">
+            <FileText className="h-3.5 w-3.5" /> Official Paper Form
+          </Link>
+          <Link to="/" className="text-white/60 hover:text-white text-sm">← Back to Portal</Link>
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto w-full px-4 py-6 flex-1">

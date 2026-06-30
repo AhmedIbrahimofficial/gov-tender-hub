@@ -172,7 +172,7 @@ function LoginCard() {
           style={{ borderRadius: 0 }}>
           <span className="inline-flex items-center gap-2"><LogIn className="w-4 h-4" /> Click here to Login</span>
         </Link>
-        <Link to="/vendor-register" className="flex items-center gap-2 text-sm text-[#0f172a] hover:underline py-1.5">
+        <Link to="/supplier-registration" className="flex items-center gap-2 text-sm text-[#0f172a] hover:underline py-1.5">
           <UserPlus className="w-4 h-4" /> Online Bidder Enrolment
         </Link>
         <Link to="/signin" className="flex items-center gap-2 text-sm text-[#0f172a] hover:underline py-1.5">
