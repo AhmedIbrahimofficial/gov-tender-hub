@@ -1094,45 +1094,47 @@ function EntryChoice({ onPublic, onStaff, onRoleSelect }: { onPublic: () => void
       </div>
 
       <div className="space-y-3">
+        {/* Supplier Portal — soft sky blue */}
         <button onClick={onPublic}
-          className="w-full flex items-center gap-4 p-5 rounded-2xl bg-blue-600 hover:bg-blue-700 transition-colors text-left group">
-          <div className="h-12 w-12 rounded-xl bg-white/20 grid place-items-center flex-shrink-0">
-            <Building2 className="h-6 w-6 text-white" />
+          className="w-full flex items-center gap-4 p-5 rounded-2xl bg-sky-100 hover:bg-sky-200 transition-colors text-left group border border-sky-300">
+          <div className="h-12 w-12 rounded-xl bg-sky-500/20 grid place-items-center flex-shrink-0">
+            <Building2 className="h-6 w-6 text-sky-700" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-base font-semibold text-white">Supplier Portal</div>
-            <div className="text-sm text-blue-200">Browse tenders · Bid · Submit applications</div>
-            <div className="text-xs text-blue-300 mt-0.5">Sign in or register with company details</div>
+            <div className="text-base font-semibold text-sky-900">Supplier Portal</div>
+            <div className="text-sm text-sky-700">Browse tenders · Bid · Submit applications</div>
+            <div className="text-xs text-sky-600 mt-0.5">Sign in or register with company details</div>
           </div>
-          <ArrowRight className="h-5 w-5 text-white/60 group-hover:text-white flex-shrink-0" />
+          <ArrowRight className="h-5 w-5 text-sky-400 group-hover:text-sky-700 flex-shrink-0" />
         </button>
 
+        {/* Government Staff Portal — soft slate/indigo */}
         <button onClick={onRoleSelect}
-          className="w-full flex items-center gap-4 p-5 rounded-2xl bg-gray-950 hover:bg-gray-900 transition-colors text-left group border border-white/5">
+          className="w-full flex items-center gap-4 p-5 rounded-2xl bg-slate-700 hover:bg-slate-600 transition-colors text-left group border border-slate-500">
           <div className="h-12 w-12 rounded-xl bg-white/10 grid place-items-center flex-shrink-0">
-            <Shield className="h-6 w-6 text-white" />
+            <Shield className="h-6 w-6 text-slate-100" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-base font-semibold text-white">Government Staff Portal</div>
-            <div className="text-sm text-white/55">Ministry · Department · Role access</div>
-            <div className="text-xs text-white/35 mt-0.5">
+            <div className="text-sm text-slate-300">Ministry · Department · Role access</div>
+            <div className="text-xs text-slate-400 mt-0.5">
               {ALL_ROLES.length} roles · {ZW_MINISTRIES.length} ministries
             </div>
           </div>
-          <ArrowRight className="h-5 w-5 text-white/30 group-hover:text-white flex-shrink-0" />
+          <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-white flex-shrink-0" />
         </button>
 
-        {/* Full credentials login */}
+        {/* Sign in with credentials — clear border so it stands out */}
         <button onClick={onStaff}
-          className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-white hover:bg-gray-50 transition-colors text-left group border border-black/10">
-          <div className="h-9 w-9 rounded-lg bg-gray-100 grid place-items-center flex-shrink-0">
-            <Users className="h-4 w-4 text-gray-500" />
+          className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-white hover:bg-slate-50 transition-colors text-left group border-2 border-slate-300 hover:border-slate-400 shadow-sm">
+          <div className="h-9 w-9 rounded-lg bg-slate-100 border border-slate-200 grid place-items-center flex-shrink-0">
+            <Users className="h-4 w-4 text-slate-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-black">Sign in with credentials</div>
-            <div className="text-xs text-black/40">Use email &amp; password</div>
+            <div className="text-sm font-medium text-slate-800">Sign in with credentials</div>
+            <div className="text-xs text-slate-500">Use email &amp; password</div>
           </div>
-          <ArrowRight className="h-4 w-4 text-black/20 group-hover:text-primary flex-shrink-0" />
+          <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-slate-600 flex-shrink-0" />
         </button>
       </div>
 
