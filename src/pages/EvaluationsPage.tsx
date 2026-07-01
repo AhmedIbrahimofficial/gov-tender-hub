@@ -3,7 +3,8 @@ import { AppShell, PageHeader, Card, CardHeader, Badge, KpiCard } from "@/compon
 import { useAuth } from "@/lib/auth-context";
 import { pushSeniorAlert, pushNotification } from "@/lib/local-store";
 import { toast } from "@/lib/toast";
-import { Sparkles, Brain, FileSearch, ScanLine, CheckCircle2, AlertTriangle, Download, Send, ExternalLink, Trophy } from "lucide-react";
+import { Sparkles, Brain, FileSearch, ScanLine, CheckCircle2, AlertTriangle, Download, Send, ExternalLink, Trophy, ClipboardList } from "lucide-react";
+import TechnicalEvaluationModule from "@/components/TechnicalEvaluationModule";
 
 const EVAL_SAMPLES = [
   { tender: "ZW-PRA-2026-00183 — ARV Medicines Framework", phase: "Technical Evaluation", method: "QCBS", bidders: 8, status: "Scoring" },
@@ -25,6 +26,7 @@ export default function EvaluationsPage() {
   const [activePhase, setActivePhase] = useState(0);
   const [scores, setScores] = useState(BIDS.map(b => [...b.s]));
   const [submitted, setSubmitted] = useState(false);
+  const [mainTab, setMainTab] = useState<"overview" | "technical">("overview");
   const { user } = useAuth();
 
   const handleOpen = (tender: string, phase: string) => {
@@ -76,7 +78,32 @@ export default function EvaluationsPage() {
           <KpiCard label="Completed This Month" value="127" delta="+18%" />
         </div>
 
-        {/* Phase tabs */}
+        {/* ── Main module tabs ─────────────────────────────────────────── */}
+        <div className="flex gap-1 mb-5 border-b border-border">
+          {([
+            { key: "overview"  as const, label: "Overview & Scoring",           icon: ScanLine    },
+            { key: "technical" as const, label: "Technical Evaluation Module",   icon: ClipboardList, badge: "Full Spec" },
+          ]).map(t => (
+            <button key={t.key} onClick={() => setMainTab(t.key)}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap transition-colors
+                ${mainTab === t.key ? "border-primary text-primary" : "border-transparent text-foreground/65 hover:text-foreground"}`}>
+              <t.icon className="h-4 w-4" />
+              {t.label}
+              {t.badge && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-semibold">{t.badge}</span>}
+            </button>
+          ))}
+        </div>
+
+        {mainTab === "technical" && (
+          <div className="h-[calc(100vh-280px)] min-h-[600px] border border-border overflow-hidden rounded-xl">
+            <TechnicalEvaluationModule
+              tender="ZW-PRA-2026-00183 — ARV Medicines Framework"
+              evaluator={user?.name ?? "D. Moyo"}
+            />
+          </div>
+        )}
+
+        {mainTab === "overview" && (<>
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-6">
           {phases.map((p, i) => (
             <div
@@ -235,6 +262,7 @@ export default function EvaluationsPage() {
             </div>
           )}
         </Card>
+        </>)}
       </div>
     </AppShell>
   );
