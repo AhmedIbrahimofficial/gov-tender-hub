@@ -1168,17 +1168,17 @@ export default function SignInPage() {
           </Link>
         </div>
 
-        {/* Tag line — smaller */}
-        <div className="px-8 py-5 flex-shrink-0 border-b border-white/8">
-          <h2 className="text-lg font-semibold text-white leading-snug mb-2" style={{ letterSpacing: "-0.02em" }}>
-            Integrity.<br />Public Trust.<br />Transparency.<br />Good Governance.<br />Clean Procurement.
+        {/* Tag line — compact */}
+        <div className="px-8 py-3 flex-shrink-0 border-b border-white/8">
+          <h2 className="text-sm font-semibold text-white leading-snug mb-1" style={{ letterSpacing: "-0.01em" }}>
+            Integrity · Public Trust · Transparency · Good Governance · Clean Procurement
           </h2>
-          <p className="text-xs text-white/45 leading-relaxed">
+          <p className="text-xs text-white/40">
             AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System (APPOIS).
           </p>
         </div>
 
-        {/* Government hierarchy panel — larger window */}
+        {/* Government hierarchy panel — tall scrollable window */}
         <div className="flex-1 px-4 py-4 overflow-hidden flex flex-col min-h-0">
           <div className="flex items-center justify-between mb-3 px-2 flex-shrink-0">
             <div>
@@ -1192,7 +1192,14 @@ export default function SignInPage() {
               <span className="text-[10px] text-white/30">Live</span>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto min-h-0 scrollbar-none">
+          {/* Scrollable list — visible thin scrollbar on the right */}
+          <div
+            className="flex-1 overflow-y-auto min-h-0 pr-1"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(148,163,184,0.4) rgba(255,255,255,0.05)",
+            }}
+          >
             <GovHierarchyPanel />
           </div>
         </div>
