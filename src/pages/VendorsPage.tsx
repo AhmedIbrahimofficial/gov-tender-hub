@@ -66,14 +66,14 @@ function RegisterModal({ onClose, onSave }: { onClose: () => void; onSave: (v: V
               <div className="relative mt-1.5">
                 <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/30" />
                 <input value={(form as Record<string, string>)[k]} onChange={e => set(k, e.target.value)} placeholder={ph}
-                  className="w-full h-9 pl-9 pr-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
+                  className="w-full h-9 pl-9 pr-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
               </div>
             </div>
           ))}
           <div>
             <label className="text-xs font-medium text-black/50 uppercase tracking-wider">Business Category</label>
             <select value={form.category} onChange={e => set("category", e.target.value)}
-              className="mt-1.5 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10">
+              className="mt-1.5 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none focus:ring-2 focus:ring-black/10">
               <option value="">Select category…</option>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
@@ -87,7 +87,7 @@ function RegisterModal({ onClose, onSave }: { onClose: () => void; onSave: (v: V
             className="flex-1 h-10 rounded-xl bg-black text-white text-sm font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
             <CheckCircle2 className="h-4 w-4" /> Register Vendor
           </button>
-          <button onClick={onClose} className="h-10 px-4 rounded-xl border border-black/10 text-sm hover:bg-[#F5F5F5] transition-colors">Cancel</button>
+          <button onClick={onClose} className="h-10 px-4 rounded-xl border border-black/10 text-sm hover:bg-[#EAF1F8] transition-colors">Cancel</button>
         </div>
       </div>
     </div>
@@ -135,7 +135,7 @@ function VendorModal({ vendor, onClose, onApprove, onBlacklist }: {
               { label: "Address",       value: vendor.address || "N/A" },
               { label: "Contracts",     value: `${vendor.contracts} awarded` },
             ].map(f => (
-              <div key={f.label} className="bg-[#F5F5F5] rounded-xl p-3">
+              <div key={f.label} className="bg-[#EAF1F8] rounded-xl p-3">
                 <div className="text-[10px] text-black/40 uppercase tracking-wider mb-0.5">{f.label}</div>
                 <div className="text-xs font-medium text-black break-all">{f.value}</div>
               </div>
@@ -179,10 +179,10 @@ function VendorModal({ vendor, onClose, onApprove, onBlacklist }: {
             </button>
           )}
           <button onClick={downloadProfile}
-            className="h-9 px-4 rounded-xl border border-black/10 text-sm hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
+            className="h-9 px-4 rounded-xl border border-black/10 text-sm hover:bg-[#EAF1F8] transition-colors flex items-center gap-1.5">
             <Download className="h-4 w-4" /> Download Profile
           </button>
-          <button onClick={onClose} className="h-9 px-4 rounded-xl border border-black/10 text-sm text-black/50 hover:bg-[#F5F5F5] transition-colors">Close</button>
+          <button onClick={onClose} className="h-9 px-4 rounded-xl border border-black/10 text-sm text-black/50 hover:bg-[#EAF1F8] transition-colors">Close</button>
         </div>
       </div>
     </div>
@@ -244,7 +244,7 @@ export default function VendorsPage() {
           actions={
             <div className="flex gap-2">
               <button onClick={downloadAll}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
                 <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export CSV</span>
               </button>
               <button onClick={() => setShowRegister(true)}
@@ -290,14 +290,14 @@ export default function VendorsPage() {
           />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-[#F5F5F5] text-xs text-black/40">
+              <thead className="bg-[#EAF1F8] text-xs text-black/40">
                 <tr>{["Vendor ID","Name","Category","Rating","Contracts","Risk","Status","Actions"].map(h => (
                   <th key={h} className="text-left font-medium px-5 py-2.5 whitespace-nowrap">{h}</th>
                 ))}</tr>
               </thead>
               <tbody className="divide-y divide-black/5">
                 {filtered.map(v => (
-                  <tr key={v.id} className="hover:bg-[#F5F5F5]/50">
+                  <tr key={v.id} className="hover:bg-[#EAF1F8]/50">
                     <td className="px-5 py-3 font-mono text-[11px] text-black/40">{v.id}</td>
                     <td className="px-5 py-3 font-medium text-black max-w-[180px] truncate">{v.name}</td>
                     <td className="px-5 py-3 text-black/60 whitespace-nowrap">{v.category}</td>

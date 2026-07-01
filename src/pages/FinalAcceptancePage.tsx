@@ -130,7 +130,7 @@ function AcceptanceDetailModal({ acc, onClose, onAccept }: { acc: FinalAcceptanc
                   <span className="text-xs font-medium text-black">{sig}</span>
                 </div>
               ))}
-              <button onClick={() => pushNotification("Digital signature request sent.", "info")} className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1.5">
+              <button onClick={() => pushNotification("Digital signature request sent.", "info")} className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1.5">
                 <Pen className="h-3.5 w-3.5" />Request Signature
               </button>
             </div>
@@ -142,7 +142,7 @@ function AcceptanceDetailModal({ acc, onClose, onAccept }: { acc: FinalAcceptanc
               Accept & Sign
             </button>
           )}
-          <button onClick={() => pushNotification("Acceptance certificate downloaded.", "success")} className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1.5 ml-auto">
+          <button onClick={() => pushNotification("Acceptance certificate downloaded.", "success")} className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1.5 ml-auto">
             <Download className="h-3.5 w-3.5" />Acceptance Certificate
           </button>
         </div>

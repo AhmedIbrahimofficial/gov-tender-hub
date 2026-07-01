@@ -59,7 +59,7 @@ export default function AuditPage() {
           description="Continuous-audit engine, real-time policy adherence monitoring, exception management, and audit-ready trails."
           actions={
             <button onClick={downloadReport}
-              className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+              className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
               <Download className="h-4 w-4" /> Audit Report
             </button>
           }

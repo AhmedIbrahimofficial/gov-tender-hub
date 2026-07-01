@@ -1154,7 +1154,7 @@ export default function SignInPage() {
   const [screen, setScreen] = useState<Screen>(locationState?.screen ?? "choice");
 
   return (
-    <div className="min-h-screen flex bg-[#F5F5F5]">
+    <div className="min-h-screen flex bg-[#EAF1F8]">
 
       {/* ── Left dark panel (desktop only) ───────────────────────────────── */}
       <div className="hidden lg:flex lg:w-[50%] flex-col bg-gray-950 border-r border-white/5">

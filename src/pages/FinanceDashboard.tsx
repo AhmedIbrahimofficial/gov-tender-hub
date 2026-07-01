@@ -88,7 +88,7 @@ function MatchModal({ inv, onClose, onApprove, onReject, onFlag, onSchedule }: {
               { label: "Amount",       value: inv.amount },
               { label: "Due Date",     value: inv.due },
             ].map(f => (
-              <div key={f.label} className="bg-[#F5F5F5] rounded-xl p-3">
+              <div key={f.label} className="bg-[#EAF1F8] rounded-xl p-3">
                 <div className="text-[10px] text-black/40 uppercase tracking-wider mb-0.5">{f.label}</div>
                 <div className="text-xs font-semibold text-black leading-tight">{f.value}</div>
               </div>
@@ -128,7 +128,7 @@ function MatchModal({ inv, onClose, onApprove, onReject, onFlag, onSchedule }: {
 
           {/* WHT calculation */}
           {(inv.status === "Matching" || inv.status === "Approved" || inv.status === "Scheduled") && (
-            <div className="bg-[#F5F5F5] rounded-xl p-3">
+            <div className="bg-[#EAF1F8] rounded-xl p-3">
               <div className="text-xs font-semibold text-black mb-2">Tax & Statutory Deductions</div>
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between"><span className="text-black/50">Invoice Amount</span><span className="font-medium text-black">{inv.amount}</span></div>
@@ -261,7 +261,7 @@ export default function FinanceDashboard() {
           actions={
             <div className="flex gap-2">
               <button onClick={() => user && generateDailyReportPDF(user)}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
                 <Download className="h-4 w-4" /> <span className="hidden sm:inline">Report</span>
               </button>
               <button onClick={() => setShowNewInv(!showNewInv)}
@@ -291,22 +291,22 @@ export default function FinanceDashboard() {
               <div>
                 <label className="text-xs font-medium text-black/40 uppercase tracking-wider">Vendor Name *</label>
                 <input value={newInv.vendor} onChange={e => setNewInv(n => ({ ...n, vendor: e.target.value }))}
-                  placeholder="e.g. Highveld Engineering" className="mt-1 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
+                  placeholder="e.g. Highveld Engineering" className="mt-1 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
               </div>
               <div>
                 <label className="text-xs font-medium text-black/40 uppercase tracking-wider">PO Reference</label>
                 <input value={newInv.poRef} onChange={e => setNewInv(n => ({ ...n, poRef: e.target.value }))}
-                  placeholder="PO-2026-XXXX" className="mt-1 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
+                  placeholder="PO-2026-XXXX" className="mt-1 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
               </div>
               <div>
                 <label className="text-xs font-medium text-black/40 uppercase tracking-wider">Amount (USD) *</label>
                 <input type="number" value={newInv.amount} onChange={e => setNewInv(n => ({ ...n, amount: e.target.value }))}
-                  placeholder="0.00" className="mt-1 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
+                  placeholder="0.00" className="mt-1 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
               </div>
             </div>
             <div className="flex gap-2">
               <button onClick={handleNewInvoice} className="h-9 px-5 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors">Submit</button>
-              <button onClick={() => setShowNewInv(false)} className="h-9 px-4 rounded-xl border border-black/10 text-sm hover:bg-[#F5F5F5] transition-colors">Cancel</button>
+              <button onClick={() => setShowNewInv(false)} className="h-9 px-4 rounded-xl border border-black/10 text-sm hover:bg-[#EAF1F8] transition-colors">Cancel</button>
             </div>
           </Card>
         )}

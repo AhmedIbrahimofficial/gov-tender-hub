@@ -133,7 +133,7 @@ export default function GlobalSearchPage() {
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`h-8 px-3 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors ${category === cat ? "bg-black text-white" : "border border-black/10 bg-white text-black/60 hover:bg-[#F5F5F5]"}`}
+                className={`h-8 px-3 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors ${category === cat ? "bg-black text-white" : "border border-black/10 bg-white text-black/60 hover:bg-[#EAF1F8]"}`}
               >
                 <Icon className="h-3.5 w-3.5" />
                 {cat}
@@ -158,7 +158,7 @@ export default function GlobalSearchPage() {
               <CardHeader title="Recent Searches" />
               <div className="p-4 space-y-2">
                 {RECENT_SEARCHES.map(s => (
-                  <button key={s} onClick={() => setQuery(s)} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-[#F5F5F5] text-left transition-colors">
+                  <button key={s} onClick={() => setQuery(s)} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-[#EAF1F8] text-left transition-colors">
                     <Clock className="h-3.5 w-3.5 text-black/30 flex-shrink-0" />
                     <span className="text-sm text-black/70">{s}</span>
                     <ChevronRight className="h-3.5 w-3.5 text-black/30 ml-auto" />
@@ -172,7 +172,7 @@ export default function GlobalSearchPage() {
                 {STATIC_DATA.slice(0, 5).map(item => {
                   const Icon = CATEGORY_ICON[item.type];
                   return (
-                    <button key={item.id} onClick={() => navigate(item.route)} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-[#F5F5F5] text-left transition-colors">
+                    <button key={item.id} onClick={() => navigate(item.route)} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-[#EAF1F8] text-left transition-colors">
                       <Icon className="h-3.5 w-3.5 text-black/30 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-medium text-black truncate">{item.title}</div>

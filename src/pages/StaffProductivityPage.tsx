@@ -122,13 +122,13 @@ export default function StaffProductivityPage() {
           description="Monitor productivity, performance, accountability, training, and workforce optimisation across the organisation."
           actions={
             <>
-              <button onClick={() => handleAction("Staff filter opened — filter by department, role or score range to narrow results.")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleAction("Staff filter opened — filter by department, role or score range to narrow results.")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors">
                 <Filter className="h-4 w-4" /><span className="hidden sm:inline">Filter</span>
               </button>
-              <button onClick={() => handleAction("Staff productivity report exported — check your downloads folder for the PDF/Excel file.")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleAction("Staff productivity report exported — check your downloads folder for the PDF/Excel file.")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors">
                 <Download className="h-4 w-4" /><span className="hidden sm:inline">Export</span>
               </button>
-              <button onClick={() => handleAction("Productivity data refreshed")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleAction("Productivity data refreshed")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors">
                 <RefreshCw className="h-4 w-4" /><span className="hidden sm:inline">Refresh</span>
               </button>
             </>
@@ -214,7 +214,7 @@ function ProductivityDashboard({ onAction }: { onAction: (m: string) => void }) 
                   <span className="font-medium text-black">{d.dept}</span>
                   <span className="text-black/50">{d.productivity}%</span>
                 </div>
-                <div className="h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-[#EAF1F8] rounded-full overflow-hidden">
                   <div style={{ width: `${d.productivity}%`, background: d.productivity >= 90 ? "#10b981" : d.productivity >= 80 ? "#3b82f6" : "#f59e0b" }} className="h-full rounded-full transition-all" />
                 </div>
               </div>
@@ -261,7 +261,7 @@ function IndividualMetrics({ onAction }: { onAction: (m: string) => void }) {
             placeholder="Search staff…"
             className="w-full h-9 pl-9 pr-3 rounded-xl border border-black/10 bg-white text-sm focus:outline-none" />
         </div>
-        <button onClick={() => onAction("Staff report exported")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+        <button onClick={() => onAction("Staff report exported")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors">
           <Download className="h-4 w-4" /> Export
         </button>
       </div>
@@ -270,7 +270,7 @@ function IndividualMetrics({ onAction }: { onAction: (m: string) => void }) {
         <CardHeader title="Individual Productivity Metrics" subtitle={`${filtered.length} staff records`} />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>
                 {["Staff Member","Department","Role","Productivity","Efficiency","Quality","Attendance","SLA","Tasks","Overdue","Status",""].map(h => (
                   <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
@@ -279,7 +279,7 @@ function IndividualMetrics({ onAction }: { onAction: (m: string) => void }) {
             </thead>
             <tbody className="divide-y divide-black/5">
               {filtered.map(s => (
-                <tr key={s.id} className="hover:bg-[#F5F5F5]/50">
+                <tr key={s.id} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3">
                     <div className="font-semibold text-black text-xs">{s.name}</div>
                     <div className="text-[10px] text-black/40">{s.id}</div>
@@ -288,7 +288,7 @@ function IndividualMetrics({ onAction }: { onAction: (m: string) => void }) {
                   <td className="px-4 py-3 text-xs text-black/60 whitespace-nowrap">{s.role}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-16 bg-[#F5F5F5] rounded-full overflow-hidden">
+                      <div className="h-1.5 w-16 bg-[#EAF1F8] rounded-full overflow-hidden">
                         <div style={{ width: `${s.score}%`, background: s.score >= 90 ? "#10b981" : s.score >= 80 ? "#3b82f6" : s.score >= 70 ? "#f59e0b" : "#ef4444" }} className="h-full rounded-full" />
                       </div>
                       <span className="text-xs font-semibold text-black">{s.score}%</span>
@@ -304,7 +304,7 @@ function IndividualMetrics({ onAction }: { onAction: (m: string) => void }) {
                   </td>
                   <td className="px-4 py-3"><Badge tone={STATUS_TONE[s.status] ?? "default"}>{s.status}</Badge></td>
                   <td className="px-4 py-3">
-                    <button onClick={() => onAction(`Viewing profile: ${s.name}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                    <button onClick={() => onAction(`Viewing profile: ${s.name}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                       <Eye className="h-3 w-3" /> View
                     </button>
                   </td>
@@ -340,10 +340,10 @@ function PerformanceManagement({ onAction }: { onAction: (m: string) => void }) 
       {/* KPI Scorecard Table */}
       <Card>
         <CardHeader title="KPI Scorecards" subtitle="Current quarter performance against targets"
-          action={<button onClick={() => onAction("Scorecard exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>} />
+          action={<button onClick={() => onAction("Scorecard exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>} />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>
                 {["Department","KPI","Target","Actual","Variance","Trend","Status"].map(h => (
                   <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
@@ -360,7 +360,7 @@ function PerformanceManagement({ onAction }: { onAction: (m: string) => void }) 
                 { dept: "ICT", kpi: "System Uptime", target: "99%", actual: "99.7%", variance: "+0.7%", trend: "up", status: "Exceeding" },
                 { dept: "Asset Mgmt", kpi: "Asset Utilisation", target: "80%", actual: "74%", variance: "-6%", trend: "down", status: "Below Target" },
               ].map((row, i) => (
-                <tr key={i} className="hover:bg-[#F5F5F5]/50">
+                <tr key={i} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{row.dept}</td>
                   <td className="px-4 py-3 text-xs text-black/70">{row.kpi}</td>
                   <td className="px-4 py-3 text-xs text-black/50">{row.target}</td>
@@ -371,7 +371,7 @@ function PerformanceManagement({ onAction }: { onAction: (m: string) => void }) 
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="h-1 w-16 bg-[#F5F5F5] rounded-full overflow-hidden">
+                    <div className="h-1 w-16 bg-[#EAF1F8] rounded-full overflow-hidden">
                       <div className={`h-full rounded-full ${row.trend === "up" ? "bg-emerald-500 w-4/5" : "bg-red-400 w-2/5"}`} />
                     </div>
                   </td>
@@ -396,7 +396,7 @@ function PerformanceManagement({ onAction }: { onAction: (m: string) => void }) 
             { id: "ACT-004", event: "Audit finding not closed in 30 days", owner: "J. Banda", days: 12, action: "Escalated to Audit Committee", severity: "high" },
             { id: "ACT-005", event: "Goal attainment review completed", owner: "A. Mpofu", days: 0, action: "Performance bonus approved", severity: "positive" },
           ].map(e => (
-            <div key={e.id} className="px-4 py-3 flex items-start gap-3 hover:bg-[#F5F5F5]/50">
+            <div key={e.id} className="px-4 py-3 flex items-start gap-3 hover:bg-[#EAF1F8]/50">
               <div className={`h-2 w-2 rounded-full mt-1.5 flex-shrink-0 ${e.severity === "high" ? "bg-red-500" : e.severity === "medium" ? "bg-amber-400" : "bg-emerald-500"}`} />
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-semibold text-black">{e.event}</div>
@@ -461,18 +461,18 @@ function TeamPerformance() {
         <CardHeader title="Team Summary" subtitle="Task load, overdue count, and SLA by team" />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Team","Productivity Score","Tasks (MTD)","Overdue","SLA Compliance","Utilisation","Status"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {TEAM_PERF.map(t => (
-                <tr key={t.team} className="hover:bg-[#F5F5F5]/50">
+                <tr key={t.team} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{t.team}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-16 bg-[#F5F5F5] rounded-full overflow-hidden">
+                      <div className="h-1.5 w-16 bg-[#EAF1F8] rounded-full overflow-hidden">
                         <div style={{ width: `${t.score}%`, background: t.score >= 90 ? "#10b981" : t.score >= 80 ? "#3b82f6" : "#f59e0b" }} className="h-full rounded-full" />
                       </div>
                       <span className="text-xs font-semibold">{t.score}%</span>
@@ -595,23 +595,23 @@ function TrainingDevelopment({ onAction }: { onAction: (m: string) => void }) {
 
       <Card>
         <CardHeader title="Training Completion Register" subtitle="All mandatory and optional programmes"
-          action={<button onClick={() => onAction("Training report exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>} />
+          action={<button onClick={() => onAction("Training report exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>} />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Course","Enrolled","Completed","Completion %","Due Date","Status"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {TRAINING_RECORDS.map((t, i) => (
-                <tr key={i} className="hover:bg-[#F5F5F5]/50">
+                <tr key={i} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{t.course}</td>
                   <td className="px-4 py-3 text-xs text-center text-black/70">{t.staff}</td>
                   <td className="px-4 py-3 text-xs text-center text-black/70">{t.completed}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-20 bg-[#F5F5F5] rounded-full overflow-hidden">
+                      <div className="h-1.5 w-20 bg-[#EAF1F8] rounded-full overflow-hidden">
                         <div style={{ width: `${t.score}%`, background: t.score >= 90 ? "#10b981" : t.score >= 70 ? "#3b82f6" : "#ef4444" }} className="h-full rounded-full" />
                       </div>
                       <span className="text-xs font-semibold">{t.score}%</span>
@@ -633,7 +633,7 @@ function TrainingDevelopment({ onAction }: { onAction: (m: string) => void }) {
           {SKILL_MATRIX.map(s => (
             <div key={s.skill} className="flex items-center gap-4">
               <div className="w-40 text-xs font-medium text-black truncate">{s.skill}</div>
-              <div className="flex-1 h-2 bg-[#F5F5F5] rounded-full overflow-hidden">
+              <div className="flex-1 h-2 bg-[#EAF1F8] rounded-full overflow-hidden">
                 <div style={{ width: `${s.score}%`, background: s.score >= 80 ? "#10b981" : s.score >= 65 ? "#3b82f6" : "#ef4444" }} className="h-full rounded-full transition-all" />
               </div>
               <div className="w-10 text-xs font-semibold text-right text-black">{s.score}%</div>
@@ -673,7 +673,7 @@ function AIWorkforceEngine({ onAction }: { onAction: (m: string) => void }) {
         <CardHeader title="AI Workforce Insights & Alerts" subtitle="Real-time recommendations from the Workforce AI Engine" />
         <div className="divide-y divide-black/5">
           {AI_INSIGHTS.map((ins, i) => (
-            <div key={i} className="px-4 py-4 flex items-start gap-3 hover:bg-[#F5F5F5]/50">
+            <div key={i} className="px-4 py-4 flex items-start gap-3 hover:bg-[#EAF1F8]/50">
               <div className={`h-8 w-8 rounded-xl grid place-items-center flex-shrink-0 ${
                 ins.severity === "high" ? "bg-red-100 text-red-600" :
                 ins.severity === "positive" ? "bg-emerald-100 text-emerald-600" :

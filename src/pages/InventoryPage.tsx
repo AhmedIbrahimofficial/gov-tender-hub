@@ -455,7 +455,7 @@ function StockLevelsTab({ items }: { items: StoredInventoryItem[] }) {
         <CardHeader title="Real-Time Stock Balance" subtitle="Live availability, reservations, and stock positions" />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Item","SKU","Available","Reserved","Damaged","Quarantine","Min","Reorder","Max","Value","Status"].map(h =>
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>)}
               </tr>
@@ -465,7 +465,7 @@ function StockLevelsTab({ items }: { items: StoredInventoryItem[] }) {
                 const pct = i.maxStockLevel > 0 ? Math.min(100, Math.round(i.currentStock / i.maxStockLevel * 100)) : 0;
                 const barColor = i.currentStock <= i.minStockLevel ? "bg-red-500" : i.currentStock <= i.reorderPoint ? "bg-amber-500" : "bg-emerald-500";
                 return (
-                  <tr key={i.id} className="hover:bg-[#F5F5F5]/50">
+                  <tr key={i.id} className="hover:bg-[#EAF1F8]/50">
                     <td className="px-4 py-3 font-medium text-black max-w-[160px]">
                       <div className="truncate">{i.name}</div>
                       <div className="h-1.5 mt-1 rounded-full bg-gray-100 w-24 overflow-hidden">

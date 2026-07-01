@@ -14,7 +14,7 @@ import { ZW_PROVINCES, spendIntensity, choroColor, type ZWProvince } from "@/lib
 import { ALL_GIS_PINS } from "@/lib/gis-data";
 import { MapPin, BarChart3, PieChart as PieIcon, Activity, Layers, Target } from "lucide-react";
 
-const COLORS = ["#29b8c5","#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6","#f97316","#ec4899","#64748b","#06b6d4"];
+const COLORS = ["#2563eb","#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6","#f97316","#ec4899","#64748b","#06b6d4"];
 const tt = { contentStyle: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 11 } };
 
 type MapMode = "spend" | "heat" | "pins" | "compliance";
@@ -32,7 +32,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
   const [selected, setSelected] = useState<ZWProvince | null>(null);
   const [chartView, setChartView] = useState<"bar" | "pie" | "radar">("bar");
   const isDark = theme === "dark";
-  const cardBg = isDark ? "bg-[#1c1f26] border-white/8 text-white" : "bg-white border-black/8 text-black";
+  const cardBg = isDark ? "bg-[#0f172a] border-white/8 text-white" : "bg-white border-black/8 text-black";
   const subText = isDark ? "text-white/50" : "text-black/50";
 
   // ── Init Leaflet ─────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
         });
         L.marker([p.lat, p.lng], {
           icon: L.divIcon({
-            html: `<div style="background:#1c1f26cc;color:white;font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;white-space:nowrap;">${p.name}<br/>USD ${p.tenderSpendM}M</div>`,
+            html: `<div style="background:#0f172acc;color:white;font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;white-space:nowrap;">${p.name}<br/>USD ${p.tenderSpendM}M</div>`,
             className: "", iconAnchor: [30, 8],
           }),
         }).addTo(layersRef.current.heat!);
@@ -140,7 +140,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
       {/* ── Toolbar ───────────────────────────────────────────────── */}
       <div className={`flex items-center gap-2 px-4 py-2.5 border-b flex-wrap ${isDark ? "border-white/8 bg-white/3" : "border-black/6 bg-gray-50"}`}>
         <div className="flex items-center gap-1.5">
-          <MapPin className={`h-4 w-4 ${isDark ? "text-[#29b8c5]" : "text-blue-600"}`} />
+          <MapPin className={`h-4 w-4 ${isDark ? "text-[#2563eb]" : "text-blue-600"}`} />
           <span className={`text-sm font-bold ${isDark ? "text-white" : "text-black"}`}>Zimbabwe Procurement Map</span>
         </div>
         <div className="flex gap-1 ml-auto flex-wrap">
@@ -153,7 +153,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
             <button key={key} onClick={() => setMode(key)}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 mode === key
-                  ? isDark ? "bg-[#29b8c5] text-black" : "bg-blue-600 text-white"
+                  ? isDark ? "bg-[#2563eb] text-black" : "bg-blue-600 text-white"
                   : isDark ? "bg-white/8 text-white/70 hover:bg-white/15" : "bg-white border border-black/10 text-black/60 hover:bg-gray-100"
               }`}>
               <Icon className="h-3 w-3" /> {label}
@@ -188,7 +188,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
               ].map(kpi => (
                 <div key={kpi.label} className={`rounded-xl p-2.5 ${isDark ? "bg-white/5" : "bg-gray-50 border border-black/5"}`}>
                   <div className={`text-[9px] uppercase tracking-wide ${subText}`}>{kpi.label}</div>
-                  <div className={`text-sm font-bold mt-0.5 ${isDark ? "text-[#29b8c5]" : "text-blue-700"}`}>{kpi.value}</div>
+                  <div className={`text-sm font-bold mt-0.5 ${isDark ? "text-[#2563eb]" : "text-blue-700"}`}>{kpi.value}</div>
                 </div>
               ))}
             </div>
@@ -198,7 +198,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
                 <button key={v} onClick={() => setChartView(v)}
                   className={`flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-[10px] font-medium transition-colors ${
                     chartView === v
-                      ? isDark ? "bg-[#29b8c5] text-black" : "bg-blue-600 text-white"
+                      ? isDark ? "bg-[#2563eb] text-black" : "bg-blue-600 text-white"
                       : isDark ? "bg-white/8 text-white/60" : "bg-gray-100 text-black/50"
                   }`}>
                   <Icon className="h-3 w-3" />{lbl}
@@ -220,7 +220,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
                       <YAxis fontSize={9} tickLine={false} axisLine={false} stroke={isDark?"#ffffff60":"#00000060"} />
                       <Tooltip {...tt} />
                       <Bar dataKey="value" radius={[3,3,0,0]}>
-                        {["#29b8c5","#10b981","#3b82f6","#f59e0b"].map((c,i)=>
+                        {["#2563eb","#10b981","#3b82f6","#f59e0b"].map((c,i)=>
                           <Cell key={i} fill={c} />
                         )}
                       </Bar>
@@ -236,7 +236,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
                         { name: "Awarded", value: selected.awardedM },
                         { name: "Pending", value: selected.tenderSpendM - selected.awardedM },
                       ]} dataKey="value" innerRadius={45} outerRadius={70} paddingAngle={3}>
-                        <Cell fill="#29b8c5" /><Cell fill={isDark?"#ffffff20":"#e2e8f0"} />
+                        <Cell fill="#2563eb" /><Cell fill={isDark?"#ffffff20":"#e2e8f0"} />
                       </Pie>
                       <Tooltip {...tt} formatter={(v: number) => [`USD ${v}M`]} />
                     </PieChart>
@@ -256,7 +256,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
                     ]}>
                       <PolarGrid stroke={isDark?"#ffffff15":"#00000010"} />
                       <PolarAngleAxis dataKey="axis" tick={{ fontSize: 9, fill: isDark?"#ffffff80":"#00000080" }} />
-                      <Radar name={selected.name} dataKey="value" stroke="#29b8c5" fill="#29b8c5" fillOpacity={0.35} />
+                      <Radar name={selected.name} dataKey="value" stroke="#2563eb" fill="#2563eb" fillOpacity={0.35} />
                     </RadarChart>
                   </ResponsiveContainer>
                 </div>
@@ -295,12 +295,12 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
                     onClick={() => setSelected(p)}
                     className={`cursor-pointer border-b transition-colors ${
                       isDark
-                        ? isSelected ? "bg-[#29b8c5]/15 border-white/8" : "border-white/5 hover:bg-white/5"
+                        ? isSelected ? "bg-[#2563eb]/15 border-white/8" : "border-white/5 hover:bg-white/5"
                         : isSelected ? "bg-blue-50 border-black/6" : "border-black/4 hover:bg-gray-50"
                     }`}>
-                    <td className={`px-4 py-2.5 font-bold ${i < 3 ? "text-[#29b8c5]" : isDark ? "text-white/30" : "text-black/30"}`}>{i+1}</td>
+                    <td className={`px-4 py-2.5 font-bold ${i < 3 ? "text-[#2563eb]" : isDark ? "text-white/30" : "text-black/30"}`}>{i+1}</td>
                     <td className={`px-4 py-2.5 font-medium ${isDark ? "text-white" : "text-black"}`}>{p.name}</td>
-                    <td className={`px-4 py-2.5 text-right font-bold ${isDark ? "text-[#29b8c5]" : "text-blue-700"}`}>USD {p.tenderSpendM}M</td>
+                    <td className={`px-4 py-2.5 text-right font-bold ${isDark ? "text-[#2563eb]" : "text-blue-700"}`}>USD {p.tenderSpendM}M</td>
                     <td className={`px-4 py-2.5 text-right ${isDark ? "text-white/70" : "text-black/70"}`}>{p.activeTenders}</td>
                     <td className={`px-4 py-2.5 text-right ${isDark ? "text-white/70" : "text-black/70"}`}>{p.activeProjects}</td>
                     <td className={`px-4 py-2.5 text-right font-semibold ${
@@ -308,7 +308,7 @@ export default function ZimbabweMapTab({ theme = "light" }: Props) {
                     }`}>{p.compliance}%</td>
                     <td className="px-4 py-2.5 w-28">
                       <div className={`h-2 rounded-full overflow-hidden ${isDark ? "bg-white/10" : "bg-gray-100"}`}>
-                        <div className="h-full rounded-full bg-[#29b8c5] transition-all" style={{ width: `${barW}%` }} />
+                        <div className="h-full rounded-full bg-[#2563eb] transition-all" style={{ width: `${barW}%` }} />
                       </div>
                     </td>
                   </tr>

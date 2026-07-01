@@ -400,7 +400,7 @@ function SummaryReport({
           <div className="text-xs text-white/65 mt-0.5">{tender}</div>
           <div className="text-[10px] text-white/45 mt-1">Evaluator: {evaluator} · Generated: {new Date().toLocaleString("en-GB")}</div>
         </div>
-        <button onClick={onDownload} className="h-8 px-3 bg-[#29b8c5] text-[#050d1a] text-xs font-bold flex items-center gap-1.5 flex-shrink-0 hover:bg-[#3dd5e4]" style={{ borderRadius: 0 }}>
+        <button onClick={onDownload} className="h-8 px-3 bg-[#2563eb] text-[#050d1a] text-xs font-bold flex items-center gap-1.5 flex-shrink-0 hover:bg-[#3dd5e4]" style={{ borderRadius: 0 }}>
           <Download className="h-3.5 w-3.5" /> Export PDF
         </button>
       </div>
@@ -613,7 +613,7 @@ export default function TechnicalEvaluationModule({
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#F5F5F5] overflow-hidden">
+    <div className="flex flex-col h-full bg-[#EAF1F8] overflow-hidden">
       {/* Module header */}
       <div className="flex-shrink-0 bg-[#0f172a] text-white px-4 py-2.5 flex items-center gap-3 flex-wrap">
         <FileSearch className="h-4 w-4 text-blue-300 flex-shrink-0" />
@@ -628,7 +628,7 @@ export default function TechnicalEvaluationModule({
             return (
               <button key={b.id} onClick={() => { setActiveBidder(b.id); setActiveTab("evaluate"); }}
                 className={`h-7 px-2.5 text-[10px] font-semibold transition-all flex items-center gap-1.5
-                  ${activeBidder === b.id && activeTab === "evaluate" ? "bg-[#29b8c5] text-[#050d1a]" : sub ? "bg-emerald-700 text-white" : "bg-white/10 text-white/75 hover:bg-white/20"}`}
+                  ${activeBidder === b.id && activeTab === "evaluate" ? "bg-[#2563eb] text-[#050d1a]" : sub ? "bg-emerald-700 text-white" : "bg-white/10 text-white/75 hover:bg-white/20"}`}
                 style={{ borderRadius: 0 }}>
                 {sub && <CheckCircle2 className="h-3 w-3" />}
                 <span className="max-w-[90px] truncate">{b.name.split(" ")[0]}</span>
@@ -642,7 +642,7 @@ export default function TechnicalEvaluationModule({
           {TABS.map(t => (
             <button key={t.key} onClick={() => setActiveTab(t.key)}
               className={`h-7 px-3 text-[10px] font-semibold flex items-center gap-1.5 transition-all
-                ${activeTab === t.key ? "bg-[#29b8c5] text-[#050d1a]" : "bg-white/10 text-white/75 hover:bg-white/20"}`}
+                ${activeTab === t.key ? "bg-[#2563eb] text-[#050d1a]" : "bg-white/10 text-white/75 hover:bg-white/20"}`}
               style={{ borderRadius: 0 }}>
               <t.icon className="h-3 w-3" />
               {t.label}

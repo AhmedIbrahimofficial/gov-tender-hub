@@ -128,7 +128,7 @@ function LessonDetailModal({ lesson, onClose }: { lesson: LessonLearned; onClose
           )}
         </div>
         <div className="border-t border-black/8 px-6 py-3 flex justify-end bg-[#fafafa]">
-          <button onClick={() => pushNotification("Lessons learned report downloaded.", "success")} className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1.5"><Download className="h-3.5 w-3.5" />Download</button>
+          <button onClick={() => pushNotification("Lessons learned report downloaded.", "success")} className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1.5"><Download className="h-3.5 w-3.5" />Download</button>
         </div>
       </div>
     </div>

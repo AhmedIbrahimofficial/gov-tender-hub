@@ -22,8 +22,8 @@ function Checkbox({ checked, onChange, label, bold = false }: {
         onClick={onChange}
         className={`h-5 w-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all
           ${checked
-            ? "bg-[#29b8c5] border-[#29b8c5] shadow-sm"
-            : "border-black/30 bg-white group-hover:border-[#29b8c5]"}`}
+            ? "bg-[#2563eb] border-[#2563eb] shadow-sm"
+            : "border-black/30 bg-white group-hover:border-[#2563eb]"}`}
       >
         {checked && <CheckSquare className="h-3 w-3 text-white fill-white stroke-white" />}
       </button>
@@ -34,7 +34,7 @@ function Checkbox({ checked, onChange, label, bold = false }: {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-[#1c1f26] text-white text-sm font-bold px-4 py-2 rounded-t-lg tracking-wide uppercase">
+    <div className="bg-[#0f172a] text-white text-sm font-bold px-4 py-2 rounded-t-lg tracking-wide uppercase">
       {children}
     </div>
   );
@@ -51,8 +51,8 @@ function FieldRow({ label, children, required }: { label: string; children: Reac
   );
 }
 
-const inp = "w-full h-9 px-3 rounded border border-black/15 bg-[#f0f8f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#29b8c5]/40 focus:border-[#29b8c5] transition-colors";
-const sel = "w-full h-9 px-3 rounded border border-black/15 bg-[#f0f8f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#29b8c5]/40 focus:border-[#29b8c5] transition-colors appearance-none";
+const inp = "w-full h-9 px-3 rounded border border-black/15 bg-[#f0f8f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/40 focus:border-[#2563eb] transition-colors";
+const sel = "w-full h-9 px-3 rounded border border-black/15 bg-[#f0f8f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/40 focus:border-[#2563eb] transition-colors appearance-none";
 
 // ── Supplier Codes table row ───────────────────────────────────────────────────
 function CodeRow({ idx, code, desc, onRemove, onChange }: {
@@ -65,12 +65,12 @@ function CodeRow({ idx, code, desc, onRemove, onChange }: {
       <td className="py-1.5 pr-2">
         <input value={code} onChange={e => onChange("code", e.target.value)}
           placeholder="e.g. 72100000"
-          className="w-full h-8 px-2 rounded border border-black/15 bg-[#f0f8f0] text-xs focus:outline-none focus:ring-1 focus:ring-[#29b8c5]/40" />
+          className="w-full h-8 px-2 rounded border border-black/15 bg-[#f0f8f0] text-xs focus:outline-none focus:ring-1 focus:ring-[#2563eb]/40" />
       </td>
       <td className="py-1.5 pr-2">
         <input value={desc} onChange={e => onChange("desc", e.target.value)}
           placeholder="e.g. Computer and related services"
-          className="w-full h-8 px-2 rounded border border-black/15 bg-[#f0f8f0] text-xs focus:outline-none focus:ring-1 focus:ring-[#29b8c5]/40" />
+          className="w-full h-8 px-2 rounded border border-black/15 bg-[#f0f8f0] text-xs focus:outline-none focus:ring-1 focus:ring-[#2563eb]/40" />
       </td>
       <td className="py-1.5 w-8">
         <button type="button" onClick={onRemove} className="h-7 w-7 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
@@ -95,7 +95,7 @@ function DirectorRow({ idx, data, onRemove, onChange }: {
         <td key={k} className="py-1.5 pr-2">
           <input value={data[k]} onChange={e => onChange(k, e.target.value)}
             placeholder={k === "name" ? "Full name" : k === "id" ? "ID / Passport No." : k === "shares" ? "%" : "Nationality"}
-            className="w-full h-8 px-2 rounded border border-black/15 bg-[#f0f8f0] text-xs focus:outline-none focus:ring-1 focus:ring-[#29b8c5]/40" />
+            className="w-full h-8 px-2 rounded border border-black/15 bg-[#f0f8f0] text-xs focus:outline-none focus:ring-1 focus:ring-[#2563eb]/40" />
         </td>
       ))}
       <td className="py-1.5 w-8">
@@ -224,7 +224,7 @@ export default function SupplierRegistrationPage() {
             <button onClick={() => window.print()} className="flex items-center gap-2 h-10 px-5 rounded-lg border border-black/15 text-sm font-medium hover:bg-black/5 transition-colors">
               <Printer className="h-4 w-4" /> Print Receipt
             </button>
-            <button onClick={() => navigate("/supplier-portal")} className="flex items-center gap-2 h-10 px-5 rounded-lg bg-[#29b8c5] text-white text-sm font-medium hover:bg-[#22a0ac] transition-colors">
+            <button onClick={() => navigate("/supplier-portal")} className="flex items-center gap-2 h-10 px-5 rounded-lg bg-[#2563eb] text-white text-sm font-medium hover:bg-[#1d4ed8] transition-colors">
               Go to Supplier Portal
             </button>
           </div>
@@ -238,11 +238,11 @@ export default function SupplierRegistrationPage() {
       <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-16">
 
         {/* ── Header ──────────────────────────────────────────────────── */}
-        <div className="text-center mb-6 border-b-2 border-[#1c1f26] pb-4">
+        <div className="text-center mb-6 border-b-2 border-[#0f172a] pb-4">
           <div className="text-xs text-black/40 mb-1 tracking-widest uppercase">Government of Zimbabwe · APPOIS</div>
           <h1 className="text-2xl font-black text-black tracking-wide uppercase">Supplier Registration Form</h1>
           <div className="text-xs text-black/50 mt-1">Procurement Regulatory Authority of Zimbabwe (PRAZ)</div>
-          <div className="mt-2 inline-block bg-[#1c1f26] text-white text-xs px-3 py-1 rounded-full font-mono">
+          <div className="mt-2 inline-block bg-[#0f172a] text-white text-xs px-3 py-1 rounded-full font-mono">
             Ref: {refNo}
           </div>
         </div>
@@ -376,7 +376,7 @@ export default function SupplierRegistrationPage() {
                 </table>
               </div>
               <button type="button" onClick={addCode}
-                className="mt-3 flex items-center gap-1.5 text-xs text-[#29b8c5] hover:text-[#22a0ac] font-medium transition-colors">
+                className="mt-3 flex items-center gap-1.5 text-xs text-[#2563eb] hover:text-[#1d4ed8] font-medium transition-colors">
                 <Plus className="h-3.5 w-3.5" /> Add Code
               </button>
             </div>
@@ -464,7 +464,7 @@ export default function SupplierRegistrationPage() {
                 </table>
               </div>
               <button type="button" onClick={addDir}
-                className="mt-3 flex items-center gap-1.5 text-xs text-[#29b8c5] hover:text-[#22a0ac] font-medium transition-colors">
+                className="mt-3 flex items-center gap-1.5 text-xs text-[#2563eb] hover:text-[#1d4ed8] font-medium transition-colors">
                 <Plus className="h-3.5 w-3.5" /> Add Director / Partner
               </button>
             </div>
@@ -563,7 +563,7 @@ export default function SupplierRegistrationPage() {
                     <span className="text-sm text-black/70">{label}</span>
                     <div className="flex items-center gap-3">
                       <Checkbox checked={docs[k]} onChange={() => toggleDoc(k)} label="" />
-                      <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#29b8c5] hover:text-[#22a0ac] font-medium">
+                      <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#2563eb] hover:text-[#1d4ed8] font-medium">
                         <Upload className="h-3.5 w-3.5" /> Upload
                         <input type="file" className="hidden" accept=".pdf,.jpg,.png" />
                       </label>
@@ -575,7 +575,7 @@ export default function SupplierRegistrationPage() {
           </div>
 
           {/* ── SECTION L: Declaration ──────────────────────────────────── */}
-          <div className="border-2 border-[#1c1f26] rounded-lg overflow-hidden">
+          <div className="border-2 border-[#0f172a] rounded-lg overflow-hidden">
             <SectionTitle>L. Declaration</SectionTitle>
             <div className="p-4 bg-white space-y-4">
               <div className="bg-[#f8f9fa] border border-black/8 rounded-lg p-4 text-sm text-black/70 leading-relaxed">
@@ -612,7 +612,7 @@ export default function SupplierRegistrationPage() {
           </div>
 
           {/* ── Submit bar ──────────────────────────────────────────────── */}
-          <div className="sticky bottom-0 bg-white border-t-2 border-[#1c1f26] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-t-xl shadow-2xl">
+          <div className="sticky bottom-0 bg-white border-t-2 border-[#0f172a] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 rounded-t-xl shadow-2xl">
             <p className="text-xs text-black/50">
               Fields marked <span className="text-red-500 font-bold">*</span> are required.
               Ensure all documents are attached before submitting.
@@ -623,7 +623,7 @@ export default function SupplierRegistrationPage() {
                 <Printer className="h-4 w-4" /> Print
               </button>
               <button type="submit"
-                className="flex items-center gap-2 h-10 px-6 rounded-lg bg-[#29b8c5] hover:bg-[#22a0ac] text-white text-sm font-bold transition-colors shadow-md">
+                className="flex items-center gap-2 h-10 px-6 rounded-lg bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-sm font-bold transition-colors shadow-md">
                 <Save className="h-4 w-4" /> Submit Registration
               </button>
             </div>

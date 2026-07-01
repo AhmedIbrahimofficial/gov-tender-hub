@@ -35,7 +35,7 @@ export default function EvaluatorDashboard() {
         <PageHeader title={`Evaluator: ${user?.name}`} description="Bid Evaluation Workbench — Ministry of Health"
           actions={
             <button onClick={() => user && generateDailyReportPDF(user)}
-              className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+              className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
               <Download className="h-4 w-4" /> Daily Report
             </button>
           }
@@ -83,7 +83,7 @@ export default function EvaluatorDashboard() {
                 action={<Badge tone="blue"><Sparkles className="h-3 w-3 mr-1" />AI Active</Badge>} />
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-[#F5F5F5] text-xs text-black/40">
+                  <thead className="bg-[#EAF1F8] text-xs text-black/40">
                     <tr>
                       <th className="text-left px-5 py-2.5">Bidder</th>
                       {EVAL_CRITERIA.map(c => (
@@ -100,7 +100,7 @@ export default function EvaluatorDashboard() {
                       const ws = getWeighted(bi);
                       const rank = ranked.findIndex(r => r.name === bidder) + 1;
                       return (
-                        <tr key={bidder} className={`hover:bg-[#F5F5F5]/50 ${rank === 1 ? "bg-emerald-50/30" : ""}`}>
+                        <tr key={bidder} className={`hover:bg-[#EAF1F8]/50 ${rank === 1 ? "bg-emerald-50/30" : ""}`}>
                           <td className="px-5 py-3 font-medium text-black whitespace-nowrap">{bidder}</td>
                           {EVAL_CRITERIA.map((c, ci) => (
                             <td key={ci} className="px-3 py-3 text-center">
@@ -162,7 +162,7 @@ export default function EvaluatorDashboard() {
                 </div>
                 <div className="text-sm font-semibold text-black mb-1">{tool.name}</div>
                 <div className="text-xs text-black/40 mb-3">{tool.desc}</div>
-                <div className="h-1 rounded-full bg-[#F5F5F5] mb-3"><div className="h-full rounded-full bg-black" style={{ width: `${tool.conf}%` }} /></div>
+                <div className="h-1 rounded-full bg-[#EAF1F8] mb-3"><div className="h-full rounded-full bg-black" style={{ width: `${tool.conf}%` }} /></div>
                 <button
                   onClick={() => pushNotification(`${tool.name} activated — running analysis on ZW-PRA-2026-00183 ARV Medicines Framework. ${tool.conf}% confidence. Results will appear in Scoring Workbench.`, "success")}
                   className="h-8 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Activate</button>

@@ -85,7 +85,7 @@ function CodePicker({ codes, selected, onToggle, label }: {
       </div>
       <div className="max-h-48 overflow-y-auto p-2 grid grid-cols-1 sm:grid-cols-2 gap-1">
         {filtered.map(c => (
-          <label key={c.code} className={`flex items-center gap-2 px-2 py-1.5 cursor-pointer text-xs transition-colors ${selected.includes(c.code) ? "bg-blue-50 border border-blue-200 font-semibold text-blue-800" : "hover:bg-[#F5F5F5] border border-transparent"}`} style={{ borderRadius: 0 }}>
+          <label key={c.code} className={`flex items-center gap-2 px-2 py-1.5 cursor-pointer text-xs transition-colors ${selected.includes(c.code) ? "bg-blue-50 border border-blue-200 font-semibold text-blue-800" : "hover:bg-[#EAF1F8] border border-transparent"}`} style={{ borderRadius: 0 }}>
             <input type="checkbox" checked={selected.includes(c.code)} onChange={() => onToggle(c.code)} className="h-3 w-3" />
             <span className="font-mono text-[10px] text-black/40 flex-shrink-0">{c.code}</span>
             <span className="truncate">{c.label}</span>
@@ -169,7 +169,7 @@ export default function VendorSelfRegistrationPage() {
           </div>
           <h2 className="text-xl font-bold text-[#0f172a] mb-2">Application Submitted!</h2>
           <p className="text-sm text-black/60 mb-4">Your vendor registration application has been submitted for review. Admin will review and approve your application.</p>
-          <div className="bg-[#F5F5F5] p-3 text-left text-xs mb-4 space-y-1">
+          <div className="bg-[#EAF1F8] p-3 text-left text-xs mb-4 space-y-1">
             <div><span className="text-black/50">Reference: </span><strong className="font-mono">{appRef}</strong></div>
             <div><span className="text-black/50">Company: </span><strong>{companyInfo.companyName || "Your Company"}</strong></div>
             <div><span className="text-black/50">Status: </span><span className="text-amber-700 font-semibold">Pending Admin Review</span></div>
@@ -306,7 +306,7 @@ export default function VendorSelfRegistrationPage() {
                 <div className="text-xs font-semibold text-black/60 mb-2">Company Ownership Structure: <span className="text-red-500">*</span></div>
                 <div className="flex flex-wrap gap-3">
                   {["Citizen Owned", "Foreign Owned", "Joint Venture", "NGO"].map(v => (
-                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm transition-colors ${ownership.includes(v) ? "bg-[#0f172a] text-white border-[#0f172a]" : "bg-white border-black/20 hover:bg-[#F5F5F5]"}`} style={{ borderRadius: 0 }}>
+                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm transition-colors ${ownership.includes(v) ? "bg-[#0f172a] text-white border-[#0f172a]" : "bg-white border-black/20 hover:bg-[#EAF1F8]"}`} style={{ borderRadius: 0 }}>
                       <input type="checkbox" checked={ownership.includes(v)} onChange={() => toggleOwnership(v)} className="hidden" />{v}
                     </label>
                   ))}
@@ -326,7 +326,7 @@ export default function VendorSelfRegistrationPage() {
                 <div className="text-xs font-semibold text-black/60 mb-2">Sector: <span className="text-red-500">*</span></div>
                 <div className="flex flex-wrap gap-2">
                   {["SUPPLIES", "SERVICES", "CONTRACTOR"].map(v => (
-                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm font-semibold transition-colors ${sector.includes(v) ? "bg-[#0f172a] text-white border-[#0f172a]" : "bg-white border-black/20 hover:bg-[#F5F5F5]"}`} style={{ borderRadius: 0 }}>
+                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm font-semibold transition-colors ${sector.includes(v) ? "bg-[#0f172a] text-white border-[#0f172a]" : "bg-white border-black/20 hover:bg-[#EAF1F8]"}`} style={{ borderRadius: 0 }}>
                       <input type="checkbox" checked={sector.includes(v)} onChange={() => toggleSector(v)} className="hidden" />{v}
                     </label>
                   ))}
@@ -336,7 +336,7 @@ export default function VendorSelfRegistrationPage() {
                 <div className="text-xs font-semibold text-black/60 mb-2">Industry:</div>
                 <div className="flex flex-wrap gap-2">
                   {["Manufacturing", "Mining", "Agriculture", "Other"].map(v => (
-                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm transition-colors ${industry.includes(v) ? "bg-emerald-600 text-white border-emerald-600" : "bg-white border-black/20 hover:bg-[#F5F5F5]"}`} style={{ borderRadius: 0 }}>
+                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm transition-colors ${industry.includes(v) ? "bg-emerald-600 text-white border-emerald-600" : "bg-white border-black/20 hover:bg-[#EAF1F8]"}`} style={{ borderRadius: 0 }}>
                       <input type="checkbox" checked={industry.includes(v)} onChange={() => toggleIndustry(v)} className="hidden" />{v}
                     </label>
                   ))}
@@ -346,7 +346,7 @@ export default function VendorSelfRegistrationPage() {
                 <div className="text-xs font-semibold text-black/60 mb-2">Works Contractor Size (if applicable):</div>
                 <div className="flex flex-wrap gap-2">
                   {["E-Class", "D-Class", "C-Class", "B-Class", "O-C Class"].map(v => (
-                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm transition-colors ${worksSize.includes(v) ? "bg-amber-600 text-white border-amber-600" : "bg-white border-black/20 hover:bg-[#F5F5F5]"}`} style={{ borderRadius: 0 }}>
+                    <label key={v} className={`flex items-center gap-2 px-3 py-2 border cursor-pointer text-sm transition-colors ${worksSize.includes(v) ? "bg-amber-600 text-white border-amber-600" : "bg-white border-black/20 hover:bg-[#EAF1F8]"}`} style={{ borderRadius: 0 }}>
                       <input type="checkbox" checked={worksSize.includes(v)} onChange={() => toggleWorksSize(v)} className="hidden" />{v}
                     </label>
                   ))}
@@ -425,7 +425,7 @@ export default function VendorSelfRegistrationPage() {
                   </div>
                 </div>
               ))}
-              <button onClick={addDirector} className="flex items-center gap-2 px-3 py-2 border border-dashed border-black/25 text-sm text-black/60 hover:bg-[#F5F5F5] transition-colors" style={{ borderRadius: 0 }}>
+              <button onClick={addDirector} className="flex items-center gap-2 px-3 py-2 border border-dashed border-black/25 text-sm text-black/60 hover:bg-[#EAF1F8] transition-colors" style={{ borderRadius: 0 }}>
                 <Plus className="h-4 w-4" /> Add Director / Partner
               </button>
             </div>
@@ -468,7 +468,7 @@ export default function VendorSelfRegistrationPage() {
                   </div>
                 </div>
               ))}
-              <button onClick={addBankAccount} className="flex items-center gap-2 px-3 py-2 border border-dashed border-black/25 text-sm text-black/60 hover:bg-[#F5F5F5]" style={{ borderRadius: 0 }}>
+              <button onClick={addBankAccount} className="flex items-center gap-2 px-3 py-2 border border-dashed border-black/25 text-sm text-black/60 hover:bg-[#EAF1F8]" style={{ borderRadius: 0 }}>
                 <Plus className="h-4 w-4" /> Add Bank Account
               </button>
             </div>
@@ -537,7 +537,7 @@ export default function VendorSelfRegistrationPage() {
         {/* Navigation */}
         <div className="flex items-center justify-between mt-4 bg-white border border-black/10 p-4" style={{ borderRadius: 0 }}>
           <button onClick={() => setStep(s => Math.max(1, s - 1))} disabled={step === 1}
-            className="h-9 px-5 border border-black/20 text-sm font-medium text-[#0f172a] hover:bg-[#F5F5F5] disabled:opacity-40 appois-glow-on-hover transition-all" style={{ borderRadius: 0 }}>
+            className="h-9 px-5 border border-black/20 text-sm font-medium text-[#0f172a] hover:bg-[#EAF1F8] disabled:opacity-40 appois-glow-on-hover transition-all" style={{ borderRadius: 0 }}>
             ← Back
           </button>
           <span className="text-xs text-black/40">Step {step} of {STEPS.length}</span>

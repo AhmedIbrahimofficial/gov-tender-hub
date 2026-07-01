@@ -426,7 +426,7 @@ function CataloguTab({ onAction }: { onAction: (m: string) => void }) {
         const isExpanded = expandedStage === stage || filterStage !== "All" || search.length > 0;
         return (
           <Card key={stage}>
-            <div className="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-[#F5F5F5]/50 transition-colors rounded-t-2xl border-b border-black/5"
+            <div className="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-[#EAF1F8]/50 transition-colors rounded-t-2xl border-b border-black/5"
               onClick={() => setExpandedStage(isExpanded && expandedStage === stage ? null : stage)}>
               <div className="flex items-center gap-3">
                 <div className={`h-8 w-8 rounded-lg grid place-items-center flex-shrink-0 ${STAGE_COLORS[stage]}`}>
@@ -442,8 +442,8 @@ function CataloguTab({ onAction }: { onAction: (m: string) => void }) {
             {isExpanded && (
               <div className="divide-y divide-black/5">
                 {items.map(cert => (
-                  <div key={cert.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-[#F5F5F5]/40 transition-colors">
-                    <div className="h-7 w-7 rounded-lg bg-[#F5F5F5] border border-black/8 grid place-items-center flex-shrink-0 mt-0.5">
+                  <div key={cert.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-[#EAF1F8]/40 transition-colors">
+                    <div className="h-7 w-7 rounded-lg bg-[#EAF1F8] border border-black/8 grid place-items-center flex-shrink-0 mt-0.5">
                       <span className="text-[9px] font-bold text-black/40">#{cert.number}</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -465,7 +465,7 @@ function CataloguTab({ onAction }: { onAction: (m: string) => void }) {
                         <Stamp className="h-3 w-3" /> Issue
                       </button>
                       <button onClick={() => onAction(`Viewing template: ${cert.name}`)}
-                        className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1">
+                        className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1">
                         <Eye className="h-3 w-3" />
                       </button>
                     </div>
@@ -520,11 +520,11 @@ function IssuedTab({ onAction }: { onAction: (m: string) => void }) {
 
       <Card>
         <CardHeader title={`Issued Records — ${filtered.length} items`} action={
-          <button onClick={() => onAction("Records exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
+          <button onClick={() => onAction("Records exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["#","Certificate / Notice","Stage","Issued To","Ref / ID","Date","Issued By","Status","Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
@@ -533,7 +533,7 @@ function IssuedTab({ onAction }: { onAction: (m: string) => void }) {
               {filtered.map(r => {
                 const StageIcon = stageIcon(r.stage);
                 return (
-                  <tr key={r.id} className="hover:bg-[#F5F5F5]/50">
+                  <tr key={r.id} className="hover:bg-[#EAF1F8]/50">
                     <td className="px-4 py-3 font-mono text-[10px] text-black/30">{r.id}</td>
                     <td className="px-4 py-3 text-xs font-semibold text-black max-w-[220px]">
                       <div className="truncate">{r.certName}</div>
@@ -552,7 +552,7 @@ function IssuedTab({ onAction }: { onAction: (m: string) => void }) {
                     <td className="px-4 py-3">
                       <div className="flex gap-1.5">
                         <button onClick={() => onAction(`Viewing: ${r.id}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-[10px] hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3" /> View</button>
-                        <button onClick={() => onAction(`Downloading: ${r.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /></button>
+                        <button onClick={() => onAction(`Downloading: ${r.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /></button>
                         {r.status === "Pending" && (
                           <button onClick={() => onAction(`Issued: ${r.id}`)} className="h-7 px-2 rounded-lg bg-emerald-600 text-white text-[10px] hover:bg-emerald-700 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /></button>
                         )}
@@ -640,7 +640,7 @@ function AnalyticsTab({ onAction }: { onAction: (m: string) => void }) {
             ))}
           </div>
           <div className="px-5 pb-4">
-            <div className="bg-[#F5F5F5] rounded-xl p-3">
+            <div className="bg-[#EAF1F8] rounded-xl p-3">
               <div className="text-[10px] text-black/40 mb-2">Procurement Methods Covered</div>
               <div className="flex flex-wrap gap-1">
                 {["Open Tender","Restricted","RFQ","RFP","EOI","Auction","Framework","Direct","Emergency","Call-Off","Purchase Order","Prequalification"].map(m => (
@@ -695,7 +695,7 @@ function IssueWizardTab({ onAction }: { onAction: (m: string) => void }) {
             <div>
               <label className="text-xs font-semibold text-black mb-2 block">Procurement Stage</label>
               <select value={selectedStage} onChange={e => { setSelectedStage(e.target.value as CertStage); setSelectedCert(null); }}
-                className="w-full h-10 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm">
+                className="w-full h-10 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm">
                 <option value="">Select stage…</option>
                 {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -737,22 +737,22 @@ function IssueWizardTab({ onAction }: { onAction: (m: string) => void }) {
               <label className="text-xs font-semibold text-black mb-1.5 block">Issue To (Vendor / Entity / Public)</label>
               <input value={form.issuedTo} onChange={e => setForm(v => ({ ...v, issuedTo: e.target.value }))}
                 placeholder="e.g. Highveld Engineering (Pvt) Ltd"
-                className="w-full h-10 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none" />
             </div>
             <div>
               <label className="text-xs font-semibold text-black mb-1.5 block">Reference ID (Tender / Contract / Vendor)</label>
               <input value={form.refId} onChange={e => setForm(v => ({ ...v, refId: e.target.value }))}
                 placeholder="e.g. ZW-PRA-2026-00184 or CN-2026-0411"
-                className="w-full h-10 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none" />
             </div>
             <div>
               <label className="text-xs font-semibold text-black mb-1.5 block">Notes / Remarks (optional)</label>
               <textarea value={form.notes} onChange={e => setForm(v => ({ ...v, notes: e.target.value }))}
                 rows={3} placeholder="Additional remarks or conditions…"
-                className="w-full px-3 py-2 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm resize-none focus:outline-none" />
+                className="w-full px-3 py-2 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm resize-none focus:outline-none" />
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setStep(1)} className="h-10 px-5 rounded-xl border border-black/10 text-sm hover:bg-[#F5F5F5]">Back</button>
+              <button onClick={() => setStep(1)} className="h-10 px-5 rounded-xl border border-black/10 text-sm hover:bg-[#EAF1F8]">Back</button>
               <button disabled={!form.issuedTo || !form.refId} onClick={handleIssue}
                 className="h-10 px-6 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
                 <Stamp className="h-4 w-4" /> Issue Certificate
@@ -774,11 +774,11 @@ function IssueWizardTab({ onAction }: { onAction: (m: string) => void }) {
               <button onClick={() => onAction("Certificate PDF downloaded")} className="h-10 px-5 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 flex items-center gap-2">
                 <Download className="h-4 w-4" /> Download PDF
               </button>
-              <button onClick={() => onAction("Certificate emailed")} className="h-10 px-5 rounded-xl border border-black/10 text-sm hover:bg-[#F5F5F5] flex items-center gap-2">
+              <button onClick={() => onAction("Certificate emailed")} className="h-10 px-5 rounded-xl border border-black/10 text-sm hover:bg-[#EAF1F8] flex items-center gap-2">
                 <Send className="h-4 w-4" /> Send to Vendor
               </button>
               <button onClick={() => { setStep(1); setSelectedStage(""); setSelectedCert(null); setForm({ issuedTo:"",refId:"",notes:"" }); }}
-                className="h-10 px-5 rounded-xl border border-black/10 text-sm hover:bg-[#F5F5F5] flex items-center gap-2">
+                className="h-10 px-5 rounded-xl border border-black/10 text-sm hover:bg-[#EAF1F8] flex items-center gap-2">
                 <RefreshCw className="h-4 w-4" /> Issue Another
               </button>
             </div>
@@ -818,7 +818,7 @@ export default function CertificatesPage() {
           actions={
             <div className="flex gap-2">
               <button onClick={() => handleAction("Bulk export initiated")}
-                className="h-8 px-3 rounded-xl border border-black/10 text-xs font-medium flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors text-black/60 hover:text-black">
+                className="h-8 px-3 rounded-xl border border-black/10 text-xs font-medium flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors text-black/60 hover:text-black">
                 <Download className="h-3.5 w-3.5" /> Export All
               </button>
               <button onClick={() => { setTab("issue"); }}

@@ -81,7 +81,7 @@ export default function NotificationsCenterPage() {
             <option value="All">All Categories</option>
             {["Contract Closure", "Warranty", "Supplier Evaluation", "Risk Alerts", "Compliance", "Budget", "Reports", "AI Recommendations", "Audit", "System"].map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-          <button onClick={() => setShowUnreadOnly(v => !v)} className={`h-9 px-3 rounded-lg border text-sm transition-colors ${showUnreadOnly ? "bg-black text-white border-black" : "border-black/10 hover:bg-[#F5F5F5]"}`}>
+          <button onClick={() => setShowUnreadOnly(v => !v)} className={`h-9 px-3 rounded-lg border text-sm transition-colors ${showUnreadOnly ? "bg-black text-white border-black" : "border-black/10 hover:bg-[#EAF1F8]"}`}>
             Unread only
           </button>
         </div>

@@ -131,7 +131,7 @@ export default function ReportsPage() {
                           {report.formats.map(fmt => {
                             const Icon = FORMAT_ICON[fmt] ?? FileText;
                             return (
-                              <button key={fmt} onClick={() => pushNotification(`${report.title} downloading as ${fmt}…`, "success")} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] flex items-center gap-1">
+                              <button key={fmt} onClick={() => pushNotification(`${report.title} downloading as ${fmt}…`, "success")} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] text-black/60 hover:bg-[#EAF1F8] flex items-center gap-1">
                                 <Icon className="h-3 w-3" />{fmt}
                               </button>
                             );

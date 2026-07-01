@@ -33,7 +33,7 @@ export default function ProcurementOfficerDashboard() {
           actions={
             <div className="flex gap-2">
               <button onClick={() => user && generateDailyReportPDF(user)}
-                className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+                className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
                 <Download className="h-4 w-4" /> Daily Report
               </button>
               <button onClick={() => setShowNewTender(true)}
@@ -70,7 +70,7 @@ export default function ProcurementOfficerDashboard() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge tone={t.status === "Awarded" ? "green" : t.status === "Evaluation" ? "amber" : t.status === "Bidding" ? "blue" : "muted"}>{t.status}</Badge>
-                    <Link to="/tenders-lifecycle" className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Open</Link>
+                    <Link to="/tenders-lifecycle" className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">Open</Link>
                   </div>
                 </div>
               ))}
@@ -89,7 +89,7 @@ export default function ProcurementOfficerDashboard() {
                     <div className="text-[11px] text-black/40">{r.id} · {r.dept} · Due {r.deadline}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-24 h-1.5 rounded-full bg-[#F5F5F5] overflow-hidden"><div className="h-full rounded-full bg-black" style={{ width: `${(r.stage / 18) * 100}%` }} /></div>
+                    <div className="w-24 h-1.5 rounded-full bg-[#EAF1F8] overflow-hidden"><div className="h-full rounded-full bg-black" style={{ width: `${(r.stage / 18) * 100}%` }} /></div>
                     <span className="text-[11px] text-black/40">S{r.stage}/18</span>
                     <Badge tone="blue">{r.status}</Badge>
                   </div>

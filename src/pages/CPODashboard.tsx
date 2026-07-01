@@ -56,10 +56,10 @@ export default function CPODashboard() {
           actions={
             <div className="flex gap-2">
               <button onClick={handleRequestAIReport}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] transition-colors flex items-center gap-1.5">
                 <Sparkles className="h-4 w-4" /> <span className="hidden sm:inline">AI Summary</span>
               </button>
-              <Link to="/analytics" className="h-9 px-3 sm:px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
+              <Link to="/analytics" className="h-9 px-3 sm:px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] transition-colors flex items-center gap-1.5">
                 <Activity className="h-4 w-4" /> <span className="hidden sm:inline">Analytics</span>
               </Link>
               <button onClick={() => setShowNewTender(true)}
@@ -146,7 +146,7 @@ export default function CPODashboard() {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <Badge tone={t.status === "Awarded" ? "green" : t.status === "Evaluation" ? "amber" : t.status === "Bidding" ? "blue" : "muted"}>{t.status}</Badge>
                         <button onClick={() => { pushSeniorAlert(`CPO reviewed tender ${t.id}`, "info", { from: user?.name, fromRole: "CPO", category: "action", ref: t.id }); toast(`${t.id} — ${t.title} | ${t.entity} | ${t.value} | ${t.status} | Closing: ${t.closing} | Bids: ${t.bids}`, "info"); }}
-                          className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Open</button>
+                          className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">Open</button>
                       </div>
                     </div>
                   ))}
@@ -176,7 +176,7 @@ export default function CPODashboard() {
                       <div className="flex items-center gap-2">
                         <div className="text-sm font-bold text-black">{a.conf}%</div>
                         <button onClick={() => toast(`${a.name} — Last action: ${a.action} | Confidence: ${a.conf}% | Status: Active`, "info")}
-                          className="h-6 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] transition-colors">View</button>
+                          className="h-6 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] transition-colors">View</button>
                       </div>
                     </div>
                   ))}
@@ -203,12 +203,12 @@ export default function CPODashboard() {
             <Card>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-[#F5F5F5] text-xs text-black/40">
+                  <thead className="bg-[#EAF1F8] text-xs text-black/40">
                     <tr>{["Reference","Title","Entity","Value","Status","Bids","Closing",""].map(h => <th key={h} className="text-left font-medium px-5 py-2.5 whitespace-nowrap">{h}</th>)}</tr>
                   </thead>
                   <tbody className="divide-y divide-black/5">
                     {tenders.map(t => (
-                      <tr key={t.id} className="hover:bg-[#F5F5F5]/50">
+                      <tr key={t.id} className="hover:bg-[#EAF1F8]/50">
                         <td className="px-5 py-3 font-mono text-[11px] text-black/40">{t.id}</td>
                         <td className="px-5 py-3 font-medium text-black max-w-[220px] truncate">{t.title}</td>
                         <td className="px-5 py-3 text-black/60 whitespace-nowrap">{t.entity}</td>
@@ -218,7 +218,7 @@ export default function CPODashboard() {
                         <td className="px-5 py-3 text-black/60 whitespace-nowrap">{t.closing}</td>
                         <td className="px-5 py-3">
                           <button onClick={() => toast(`${t.title} | ${t.id} | ${t.entity} | ${t.value} | ${t.method} | Bids: ${t.bids} | Closing: ${t.closing} | ${t.status}`, "info")}
-                            className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Open</button>
+                            className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">Open</button>
                         </td>
                       </tr>
                     ))}
@@ -240,10 +240,10 @@ export default function CPODashboard() {
                     <div className="text-[11px] text-black/40">{r.id} · {r.dept} · {r.value}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-20 h-1.5 rounded-full bg-[#F5F5F5] overflow-hidden"><div className="h-full rounded-full bg-black" style={{ width: `${(r.stage / 18) * 100}%` }} /></div>
+                    <div className="w-20 h-1.5 rounded-full bg-[#EAF1F8] overflow-hidden"><div className="h-full rounded-full bg-black" style={{ width: `${(r.stage / 18) * 100}%` }} /></div>
                     <Badge tone={r.status === "Active" ? "blue" : r.status === "Awarded" ? "green" : "amber"}>{r.status}</Badge>
                     <button onClick={() => toast(`RFQ: ${r.title} | ${r.id} | ${r.dept} | ${r.value} | Stage: ${r.stage}/18 | Deadline: ${r.deadline} | ${r.status}`, "info")}
-                      className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Open</button>
+                      className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">Open</button>
                   </div>
                 </div>
               ))}
@@ -256,12 +256,12 @@ export default function CPODashboard() {
             <CardHeader title="Vendor Registry" subtitle={`${vendors.length} registered vendors`} />
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-[#F5F5F5] text-xs text-black/40">
+                <thead className="bg-[#EAF1F8] text-xs text-black/40">
                   <tr>{["ID","Name","Category","Rating","Risk","Status",""].map(h => <th key={h} className="text-left font-medium px-5 py-2.5">{h}</th>)}</tr>
                 </thead>
                 <tbody className="divide-y divide-black/5">
                   {vendors.map(v => (
-                    <tr key={v.id} className="hover:bg-[#F5F5F5]/50">
+                    <tr key={v.id} className="hover:bg-[#EAF1F8]/50">
                       <td className="px-5 py-3 font-mono text-[11px] text-black/40">{v.id}</td>
                       <td className="px-5 py-3 font-medium text-black">{v.name}</td>
                       <td className="px-5 py-3 text-black/60">{v.category}</td>
@@ -270,7 +270,7 @@ export default function CPODashboard() {
                       <td className="px-5 py-3"><Badge tone={v.status === "Approved" ? "green" : "amber"}>{v.status}</Badge></td>
                       <td className="px-5 py-3">
                         <button onClick={() => toast(`Vendor: ${v.name} | ${v.id} | ${v.category} | Rating: ${v.rating}/5 | Risk: ${v.risk} | ${v.status}`, "info")}
-                          className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">View</button>
+                          className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">View</button>
                       </td>
                     </tr>
                   ))}

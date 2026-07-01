@@ -135,10 +135,10 @@ export default function DepartmentActivitiesPage() {
               <button onClick={() => handleAction("New task created")} className="h-9 px-4 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-1.5">
                 <Plus className="h-4 w-4" /> New Task
               </button>
-              <button onClick={() => handleFilter()} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleFilter()} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors">
                 <Filter className="h-4 w-4" /><span className="hidden sm:inline">Filter</span>
               </button>
-              <button onClick={() => handleExport()} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors">
+              <button onClick={() => handleExport()} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors">
                 <Download className="h-4 w-4" /><span className="hidden sm:inline">Export</span>
               </button>
             </>
@@ -228,7 +228,7 @@ function DeptDashboard({ onAction }: { onAction: (m: string) => void }) {
           <CardHeader title="Department Risks" subtitle="Open risk register" />
           <div className="divide-y divide-black/5">
             {DEPT_RISKS.map(r => (
-              <div key={r.id} className="px-4 py-3 hover:bg-[#F5F5F5]/50">
+              <div key={r.id} className="px-4 py-3 hover:bg-[#EAF1F8]/50">
                 <div className="flex items-start gap-2 mb-1">
                   <div className={`h-2 w-2 rounded-full mt-1 flex-shrink-0 ${r.level === "Critical" ? "bg-red-500" : r.level === "High" ? "bg-amber-400" : "bg-blue-400"}`} />
                   <div className="text-xs font-medium text-black leading-snug">{r.risk}</div>
@@ -290,14 +290,14 @@ function DeptProjects({ onAction }: { onAction: (m: string) => void }) {
           action={<button onClick={() => onAction("New project created")} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Plus className="h-3 w-3" /> New Project</button>} />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Project","Lead","Priority","Progress","Budget","Spent","Due","Status",""].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {DEPT_PROJECTS.map(p => (
-                <tr key={p.id} className="hover:bg-[#F5F5F5]/50">
+                <tr key={p.id} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3">
                     <div className="text-xs font-semibold text-black">{p.name}</div>
                     <div className="text-[10px] text-black/40">{p.id}</div>
@@ -308,7 +308,7 @@ function DeptProjects({ onAction }: { onAction: (m: string) => void }) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-20 bg-[#F5F5F5] rounded-full overflow-hidden">
+                      <div className="h-1.5 w-20 bg-[#EAF1F8] rounded-full overflow-hidden">
                         <div style={{ width: `${p.progress}%`, background: p.progress >= 70 ? "#10b981" : p.progress >= 40 ? "#3b82f6" : "#f59e0b" }} className="h-full rounded-full" />
                       </div>
                       <span className="text-xs font-semibold">{p.progress}%</span>
@@ -321,7 +321,7 @@ function DeptProjects({ onAction }: { onAction: (m: string) => void }) {
                     <Badge tone={p.status === "In Progress" ? "blue" : p.status === "Planning" ? "violet" : p.status === "At Risk" ? "red" : "muted"}>{p.status}</Badge>
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => onAction(`Viewing project: ${p.name}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                    <button onClick={() => onAction(`Viewing project: ${p.name}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                       <Eye className="h-3 w-3" /> View
                     </button>
                   </td>
@@ -343,7 +343,7 @@ function DeptProjects({ onAction }: { onAction: (m: string) => void }) {
             { project: "Vendor Prequalification DB", milestone: "User requirements sign-off", due: "2026-07-15", status: "Pending", owner: "P. Dube" },
             { project: "Annual Audit Preparation", milestone: "Documentation package submitted", due: "2026-07-20", status: "At Risk", owner: "R. Chikwanda" },
           ].map((m, i) => (
-            <div key={i} className="px-4 py-3 flex items-center justify-between gap-4 hover:bg-[#F5F5F5]/50">
+            <div key={i} className="px-4 py-3 flex items-center justify-between gap-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-center gap-3 min-w-0">
                 <div className={`h-2 w-2 rounded-full flex-shrink-0 ${m.status === "On Track" ? "bg-emerald-500" : m.status === "At Risk" ? "bg-red-500" : "bg-gray-300"}`} />
                 <div className="min-w-0">
@@ -394,21 +394,21 @@ function DeptActivities({ onAction }: { onAction: (m: string) => void }) {
           </div>
           {["All", "In Progress", "Overdue", "Not Started"].map(s => (
             <button key={s} onClick={() => setFilter(s)}
-              className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors ${filter === s ? "bg-black text-white" : "border border-black/10 text-black/60 hover:bg-[#F5F5F5]"}`}>
+              className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors ${filter === s ? "bg-black text-white" : "border border-black/10 text-black/60 hover:bg-[#EAF1F8]"}`}>
               {s}
             </button>
           ))}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Task","Category","Assignee","Priority","Due Date","Status","Action"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {filtered.map(t => (
-                <tr key={t.id} className="hover:bg-[#F5F5F5]/50">
+                <tr key={t.id} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3">
                     <div className="text-xs font-semibold text-black">{t.title}</div>
                     <div className="text-[10px] text-black/40">{t.id}</div>
@@ -471,7 +471,7 @@ function DeptPerformance() {
             {kpiData.map(k => (
               <div key={k.kpi} className="flex items-center gap-3">
                 <div className="w-44 text-xs font-medium text-black truncate">{k.kpi}</div>
-                <div className="flex-1 h-2 bg-[#F5F5F5] rounded-full overflow-hidden">
+                <div className="flex-1 h-2 bg-[#EAF1F8] rounded-full overflow-hidden">
                   <div style={{ width: `${k.score}%`, background: k.score >= 90 ? "#10b981" : k.score >= 80 ? "#3b82f6" : k.score >= 70 ? "#f59e0b" : "#ef4444" }} className="h-full rounded-full transition-all" />
                 </div>
                 <span className="text-xs font-bold text-black w-8 text-right">{k.score}</span>
@@ -504,14 +504,14 @@ function DeptPerformance() {
         <CardHeader title="Detailed KPI Table" subtitle="Target vs actual with full context" />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["KPI","Target","Actual","Score","Trend","Rating"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {kpiData.map(k => (
-                <tr key={k.kpi} className="hover:bg-[#F5F5F5]/50">
+                <tr key={k.kpi} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{k.kpi}</td>
                   <td className="px-4 py-3 text-xs text-black/50">{k.target}</td>
                   <td className="px-4 py-3 text-xs font-semibold text-black">{k.actual}</td>
@@ -545,7 +545,7 @@ function DeptCommunications({ onAction }: { onAction: (m: string) => void }) {
           action={<button onClick={() => onAction("New announcement created")} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Plus className="h-3 w-3" /> Post Notice</button>} />
         <div className="divide-y divide-black/5">
           {ANNOUNCEMENTS.map((a, i) => (
-            <div key={i} className="px-4 py-4 hover:bg-[#F5F5F5]/50 flex items-start justify-between gap-4">
+            <div key={i} className="px-4 py-4 hover:bg-[#EAF1F8]/50 flex items-start justify-between gap-4">
               <div className="flex items-start gap-3 min-w-0">
                 <div className={`h-8 w-8 rounded-xl grid place-items-center flex-shrink-0 ${
                   a.type === "Compliance" ? "bg-red-100 text-red-600" :
@@ -574,7 +574,7 @@ function DeptCommunications({ onAction }: { onAction: (m: string) => void }) {
         <CardHeader title="Department Challenges & Escalations" subtitle="Active bottlenecks and compliance issues" />
         <div className="divide-y divide-black/5">
           {DEPT_RISKS.map(r => (
-            <div key={r.id} className="px-4 py-3 flex items-start justify-between gap-4 hover:bg-[#F5F5F5]/50">
+            <div key={r.id} className="px-4 py-3 flex items-start justify-between gap-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-start gap-3 min-w-0">
                 <AlertTriangle className={`h-4 w-4 mt-0.5 flex-shrink-0 ${r.level === "Critical" ? "text-red-500" : r.level === "High" ? "text-amber-500" : "text-blue-400"}`} />
                 <div className="min-w-0">
@@ -584,7 +584,7 @@ function DeptCommunications({ onAction }: { onAction: (m: string) => void }) {
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Badge tone={RISK_TONE[r.level]}>{r.level}</Badge>
-                <button onClick={() => onAction(`Escalation resolved: ${r.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">Resolve</button>
+                <button onClick={() => onAction(`Escalation resolved: ${r.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]">Resolve</button>
               </div>
             </div>
           ))}
@@ -609,20 +609,20 @@ function DeptResources({ onAction }: { onAction: (m: string) => void }) {
         <CardHeader title="Resource Allocation & Utilisation" subtitle="Staff, budget, and asset utilisation" />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Resource","Allocated","In Use","Utilisation","Status"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {RESOURCE_ALLOC.map(r => (
-                <tr key={r.resource} className="hover:bg-[#F5F5F5]/50">
+                <tr key={r.resource} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{r.resource}</td>
                   <td className="px-4 py-3 text-xs text-black/60">{r.allocated}</td>
                   <td className="px-4 py-3 text-xs text-black/60">{r.used}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-24 bg-[#F5F5F5] rounded-full overflow-hidden">
+                      <div className="h-2 w-24 bg-[#EAF1F8] rounded-full overflow-hidden">
                         <div style={{ width: `${r.utilisation}%`, background: r.utilisation >= 85 ? "#10b981" : r.utilisation >= 65 ? "#3b82f6" : "#f59e0b" }} className="h-full rounded-full" />
                       </div>
                       <span className="text-xs font-semibold text-black">{r.utilisation}%</span>
@@ -643,7 +643,7 @@ function DeptResources({ onAction }: { onAction: (m: string) => void }) {
       {/* Capacity Planning */}
       <Card>
         <CardHeader title="Capacity Planning" subtitle="Workforce capacity vs demand — H2 2026"
-          action={<button onClick={() => onAction("Capacity plan exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>} />
+          action={<button onClick={() => onAction("Capacity plan exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>} />
         <div className="p-4 h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={[
@@ -685,20 +685,20 @@ function DeptKnowledge({ onAction }: { onAction: (m: string) => void }) {
           action={<button onClick={() => onAction("New SOP created")} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Plus className="h-3 w-3" /> Add SOP</button>} />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["SOP Title","Version","Last Updated","Status","Action"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {SOPS.map((s, i) => (
-                <tr key={i} className="hover:bg-[#F5F5F5]/50">
+                <tr key={i} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{s.title}</td>
                   <td className="px-4 py-3 text-xs text-black/60">{s.version}</td>
                   <td className="px-4 py-3 text-xs text-black/50">{s.updated}</td>
                   <td className="px-4 py-3"><Badge tone={s.status === "Current" ? "green" : s.status === "Under Review" ? "amber" : "red"}>{s.status}</Badge></td>
                   <td className="px-4 py-3">
-                    <button onClick={() => onAction(`Viewing SOP: ${s.title}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                    <button onClick={() => onAction(`Viewing SOP: ${s.title}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                       <Eye className="h-3 w-3" /> View
                     </button>
                   </td>
@@ -762,7 +762,7 @@ function DeptAutomation({ onAction }: { onAction: (m: string) => void }) {
           action={<button onClick={() => onAction("New workflow created")} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Plus className="h-3 w-3" /> New Workflow</button>} />
         <div className="divide-y divide-black/5">
           {workflows.map((w, i) => (
-            <div key={i} className="px-4 py-4 flex items-center justify-between gap-4 hover:bg-[#F5F5F5]/50">
+            <div key={i} className="px-4 py-4 flex items-center justify-between gap-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-center gap-3 min-w-0">
                 <div className={`h-8 w-8 rounded-xl grid place-items-center flex-shrink-0 ${w.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-400"}`}>
                   <Zap className="h-4 w-4" />
@@ -786,7 +786,7 @@ function DeptAutomation({ onAction }: { onAction: (m: string) => void }) {
                   <div className="text-[10px] text-black/30">Last run</div>
                 </div>
                 <Badge tone={w.status === "Active" ? "green" : "muted"}>{w.status}</Badge>
-                <button onClick={() => onAction(`Workflow toggled: ${w.name}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">
+                <button onClick={() => onAction(`Workflow toggled: ${w.name}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]">
                   {w.status === "Active" ? "Pause" : "Resume"}
                 </button>
               </div>

@@ -78,7 +78,7 @@ function AIClosureAssistant({ closure, onClose }: { closure: ContractClosure | n
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {chat.map((m, i) => (
           <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${m.from === "user" ? "bg-black text-white" : "bg-[#F5F5F5] text-black"}`}>{m.text}</div>
+            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${m.from === "user" ? "bg-black text-white" : "bg-[#EAF1F8] text-black"}`}>{m.text}</div>
           </div>
         ))}
       </div>
@@ -109,7 +109,7 @@ function ClosureDetailPanel({ cl, onClose, onUpdate }: {
           </div>
           <div className="flex items-center gap-2">
             <span className={`text-[10px] font-semibold px-2 py-1 rounded-full ${STATUS_COLOR[cl.contractStatus]}`}>{cl.contractStatus}</span>
-            <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#F5F5F5]"><X className="h-4 w-4" /></button>
+            <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#EAF1F8]"><X className="h-4 w-4" /></button>
           </div>
         </div>
         <div className="flex gap-1 px-6 border-b border-black/8 overflow-x-auto">
@@ -242,12 +242,12 @@ function ClosureDetailPanel({ cl, onClose, onUpdate }: {
               </button>
             )}
             <button onClick={() => { onUpdate({ contractStatus: "Archived" }); pushNotification(`Contract ${cl.contractNumber} archived.`, "info"); onClose(); }}
-              className="h-8 px-4 rounded-lg border border-black/10 text-xs text-black/60 hover:bg-[#F5F5F5]">
+              className="h-8 px-4 rounded-lg border border-black/10 text-xs text-black/60 hover:bg-[#EAF1F8]">
               Archive
             </button>
           </div>
           <button onClick={() => pushNotification("Closure certificate generated successfully.", "success")}
-            className="h-8 px-4 rounded-lg border border-black/10 text-xs text-black/60 hover:bg-[#F5F5F5] flex items-center gap-1.5">
+            className="h-8 px-4 rounded-lg border border-black/10 text-xs text-black/60 hover:bg-[#EAF1F8] flex items-center gap-1.5">
             <Download className="h-3.5 w-3.5" />Generate Certificate
           </button>
         </div>

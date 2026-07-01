@@ -37,7 +37,7 @@ function WorkflowBar({ stage }: { stage: string }) {
       {WORKFLOW_STEPS.map((s, i) => (
         <div key={s} className="flex items-center flex-shrink-0">
           <div className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium whitespace-nowrap
-            ${i < idx ? "bg-emerald-50 text-emerald-700" : i === idx ? "bg-black text-white" : "bg-[#F5F5F5] text-black/40"}`}>
+            ${i < idx ? "bg-emerald-50 text-emerald-700" : i === idx ? "bg-black text-white" : "bg-[#EAF1F8] text-black/40"}`}>
             {i < idx && <Check className="h-3 w-3" />}
             {s}
           </div>
@@ -91,7 +91,7 @@ function AIAwardAssistant({ award, onClose }: { award: ContractAward | null; onC
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {chat.map((m, i) => (
           <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${m.from === "user" ? "bg-black text-white" : "bg-[#F5F5F5] text-black"}`}>{m.text}</div>
+            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${m.from === "user" ? "bg-black text-white" : "bg-[#EAF1F8] text-black"}`}>{m.text}</div>
           </div>
         ))}
       </div>
@@ -170,7 +170,7 @@ function NewAwardModal({ onSave, onClose }: { onSave: (a: ContractAward) => void
             <div className="text-sm font-bold">New Contract Award</div>
             <div className="text-xs text-black/40 mt-0.5">Step {step} of 3</div>
           </div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5]"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8]"><X className="h-4 w-4" /></button>
         </div>
         <div className="overflow-y-auto flex-1 px-6 py-4 space-y-4">
           {error && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">{error}</div>}
@@ -217,7 +217,7 @@ function NewAwardModal({ onSave, onClose }: { onSave: (a: ContractAward) => void
           )}
         </div>
         <div className="flex items-center justify-between px-6 py-4 border-t border-black/8">
-          <button onClick={() => step > 1 ? setStep(s => s - 1) : onClose()} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5]">{step === 1 ? "Cancel" : "Back"}</button>
+          <button onClick={() => step > 1 ? setStep(s => s - 1) : onClose()} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8]">{step === 1 ? "Cancel" : "Back"}</button>
           {step < 3 ? <button onClick={() => { setError(""); setStep(s => s + 1); }} className="h-8 px-4 rounded-xl bg-black text-white text-xs hover:bg-gray-800">Next →</button>
            : <button onClick={handleSave} className="h-8 px-4 rounded-xl bg-black text-white text-xs hover:bg-gray-800">Create Award</button>}
         </div>
@@ -295,7 +295,7 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
             </div>
             <div className="text-xs text-black/40 mt-0.5">{award.awardReferenceNumber} · {award.contractNumber} · {award.winningSupplier}</div>
           </div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5]"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8]"><X className="h-4 w-4" /></button>
         </div>
         <div className="px-5 pt-3 border-b border-black/8 flex-shrink-0 overflow-x-auto scrollbar-none">
           <div className="flex gap-1 mb-3"><WorkflowBar stage={award.workflowStage} /></div>
@@ -325,7 +325,7 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
                   { label: "End Date", value: award.endDate },
                   { label: "Procurement Method", value: award.procurementMethod },
                 ].map(f => (
-                  <div key={f.label} className="bg-[#F5F5F5] rounded-xl p-3">
+                  <div key={f.label} className="bg-[#EAF1F8] rounded-xl p-3">
                     <div className="text-[10px] text-black/40 uppercase tracking-wide mb-0.5">{f.label}</div>
                     <div className="text-xs font-semibold text-black">{f.value}</div>
                   </div>
@@ -333,7 +333,7 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
               </div>
               <div>
                 <div className="text-xs font-semibold text-black/60 uppercase tracking-wide mb-2">Award Justification</div>
-                <div className="bg-[#F5F5F5] rounded-xl p-4 text-xs text-black/80 leading-relaxed">{award.awardJustification || "Not yet provided."}</div>
+                <div className="bg-[#EAF1F8] rounded-xl p-4 text-xs text-black/80 leading-relaxed">{award.awardJustification || "Not yet provided."}</div>
               </div>
               {award.aiRecommendations.length > 0 && (
                 <div>
@@ -354,10 +354,10 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
                     <ChevronRight className="h-3.5 w-3.5" /> Advance Workflow
                   </button>
                 )}
-                <button onClick={() => generateDocument("Award Letter")} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1.5">
+                <button onClick={() => generateDocument("Award Letter")} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1.5">
                   <FileText className="h-3.5 w-3.5" /> Generate Award Letter
                 </button>
-                <button onClick={() => generateDocument("Notice of Award")} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1.5">
+                <button onClick={() => generateDocument("Notice of Award")} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1.5">
                   <Send className="h-3.5 w-3.5" /> Notice of Award
                 </button>
                 <button onClick={() => generateDocument("Regret Letter")} className="h-8 px-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-700 text-xs hover:bg-amber-100 flex items-center gap-1.5">
@@ -381,7 +381,7 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
               ) : (
                 <div className="space-y-2">
                   {award.documents.map(doc => (
-                    <div key={doc.id} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors">
+                    <div key={doc.id} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors">
                       <div className="h-9 w-9 bg-blue-50 rounded-lg grid place-items-center flex-shrink-0"><FileText className="h-4 w-4 text-blue-600" /></div>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-semibold text-black truncate">{doc.name}</div>
@@ -395,7 +395,7 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
                       </div>
                       <div className="flex items-center gap-1.5">
                         {doc.isSigned && <span className="text-[10px] font-medium text-emerald-600 flex items-center gap-1"><Shield className="h-3 w-3" /> Signed</span>}
-                        <button onClick={() => downloadDoc(doc)} className="h-7 px-2.5 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Download</button>
+                        <button onClick={() => downloadDoc(doc)} className="h-7 px-2.5 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Download</button>
                       </div>
                     </div>
                   ))}
@@ -444,7 +444,7 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
                 <div className="space-y-2">
                   {award.contractClauses.map(clause => (
                     <div key={clause.id} className="border border-black/8 rounded-xl overflow-hidden">
-                      <div className="flex items-center gap-3 px-4 py-2.5 bg-[#F5F5F5]">
+                      <div className="flex items-center gap-3 px-4 py-2.5 bg-[#EAF1F8]">
                         <span className="text-[10px] font-mono text-black/50">{clause.clauseNumber}</span>
                         <span className="text-xs font-semibold text-black flex-1">{clause.title}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${clause.category === "General" ? "bg-gray-100 text-gray-600" : clause.category === "Financial" ? "bg-emerald-100 text-emerald-700" : clause.category === "Performance" ? "bg-blue-100 text-blue-700" : clause.category === "Dispute" ? "bg-red-100 text-red-700" : "bg-violet-100 text-violet-700"}`}>{clause.category}</span>
@@ -580,7 +580,7 @@ export default function ContractAwardWorkbenchPage() {
         {tab === "Reports" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {["Award Summary", "Contract Register", "Compliance Report", "Award Notification Log", "Standstill Register", "Digital Signature Audit"].map(rpt => (
-              <div key={rpt} className="border border-black/8 rounded-2xl p-4 hover:bg-[#F5F5F5] transition-colors">
+              <div key={rpt} className="border border-black/8 rounded-2xl p-4 hover:bg-[#EAF1F8] transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="h-10 w-10 bg-black rounded-xl grid place-items-center"><FileText className="h-5 w-5 text-white" /></div>
                   <div>
@@ -604,7 +604,7 @@ export default function ContractAwardWorkbenchPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search awards…" className="w-full h-9 pl-9 pr-4 rounded-xl border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10" />
               </div>
-              <button onClick={() => setShowAI(true)} className="h-9 px-3 rounded-xl border border-black/10 text-xs flex items-center gap-1.5 hover:bg-[#F5F5F5]"><Sparkles className="h-3.5 w-3.5" /> AI Assistant</button>
+              <button onClick={() => setShowAI(true)} className="h-9 px-3 rounded-xl border border-black/10 text-xs flex items-center gap-1.5 hover:bg-[#EAF1F8]"><Sparkles className="h-3.5 w-3.5" /> AI Assistant</button>
               <button onClick={() => setShowNew(true)} className="h-9 px-4 rounded-xl bg-black text-white text-xs font-medium flex items-center gap-1.5 hover:bg-gray-800"><Plus className="h-3.5 w-3.5" /> New Award</button>
             </div>
 
@@ -639,7 +639,7 @@ export default function ContractAwardWorkbenchPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex gap-2 flex-wrap">
                         <button onClick={() => setSelected(award)} className="h-7 px-3 rounded-lg bg-black text-white text-[10px] font-medium hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3" /> View Details</button>
-                        <button onClick={() => setSelected(award)} className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><FileText className="h-3 w-3" /> Documents ({award.documents.length})</button>
+                        <button onClick={() => setSelected(award)} className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><FileText className="h-3 w-3" /> Documents ({award.documents.length})</button>
                         {award.awardStatus !== "Contract Signed" && (
                           <button onClick={() => { const stages = AWARD_WORKFLOW_STAGES; const idx = stages.indexOf(award.workflowStage); if (idx < stages.length - 1) { handleUpdate(award.id, { workflowStage: stages[idx + 1], workflowProgress: Math.round(((idx + 2) / stages.length) * 100) }); toast(`Workflow advanced`, "success"); } }}
                             className="h-7 px-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-[10px] hover:bg-emerald-100 flex items-center gap-1">

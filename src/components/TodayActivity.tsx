@@ -75,13 +75,13 @@ export default function TodayActivity() {
   };
 
   const bgColor: Record<ActivityItem["type"], string> = {
-    tender:       "bg-[#F5F5F5]",
+    tender:       "bg-[#EAF1F8]",
     invoice:      "bg-emerald-50",
     audit:        "bg-amber-50",
-    notification: "bg-[#F5F5F5]",
+    notification: "bg-[#EAF1F8]",
     ai:           "bg-black",
-    rfq:          "bg-[#F5F5F5]",
-    contract:     "bg-[#F5F5F5]",
+    rfq:          "bg-[#EAF1F8]",
+    contract:     "bg-[#EAF1F8]",
   };
   const aiWhite = (t: ActivityItem["type"]) => t === "ai" ? "text-white" : iconColor[t];
 
@@ -155,7 +155,7 @@ export default function TodayActivity() {
       </div>
 
       {/* Download CTA */}
-      <div className="px-5 py-3 bg-[#F5F5F5] border-t border-black/10 flex items-center justify-between rounded-b-2xl">
+      <div className="px-5 py-3 bg-[#EAF1F8] border-t border-black/10 flex items-center justify-between rounded-b-2xl">
         <div className="text-xs text-black/40">
           Report auto-submitted to your supervisor on download
         </div>

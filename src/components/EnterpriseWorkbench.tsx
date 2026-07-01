@@ -390,7 +390,7 @@ function ParticipantsTab({ onAct }: { onAct: (msg: string) => void }) {
             {/* Card row */}
             <button
               onClick={() => toggle(p.name)}
-              className="w-full flex items-center justify-between p-3 hover:bg-[#F5F5F5] transition-colors text-left"
+              className="w-full flex items-center justify-between p-3 hover:bg-[#EAF1F8] transition-colors text-left"
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="h-7 w-7 rounded-full bg-black text-white text-[10px] font-bold grid place-items-center flex-shrink-0">
@@ -718,7 +718,7 @@ function NavigationPanel({ activeTab, onTabChange, queueFilter, onQueueFilterCha
           {NAV_TABS.map(t => (
             <button key={t.key} onClick={() => onTabChange(t.key)}
               className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-xs transition-colors
-                ${activeTab === t.key ? "bg-black text-white" : "text-black/70 hover:bg-[#F5F5F5] hover:text-black"}`}>
+                ${activeTab === t.key ? "bg-black text-white" : "text-black/70 hover:bg-[#EAF1F8] hover:text-black"}`}>
               <t.icon className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="truncate">{t.label}</span>
             </button>
@@ -731,7 +731,7 @@ function NavigationPanel({ activeTab, onTabChange, queueFilter, onQueueFilterCha
             return (
               <button key={f} onClick={() => onQueueFilterChange(f)}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors
-                  ${queueFilter === f ? "bg-black text-white" : "text-black/70 hover:bg-[#F5F5F5] hover:text-black"}`}>
+                  ${queueFilter === f ? "bg-black text-white" : "text-black/70 hover:bg-[#EAF1F8] hover:text-black"}`}>
                 <span className="truncate">{f}</span>
                 {count > 0 && <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${queueFilter === f ? "bg-white/20 text-white" : "bg-black/10 text-black/65"}`}>{count}</span>}
               </button>
@@ -751,7 +751,7 @@ function NavigationPanel({ activeTab, onTabChange, queueFilter, onQueueFilterCha
             <div className="mx-1 mt-1 p-2 text-[10px] text-black/30 text-center">No tasks match</div>
           )}
           {filteredQueue.map(q => (
-            <div key={q.id} className={`mx-1 mt-1 p-2 rounded-lg border text-[10px] cursor-pointer hover:bg-[#F5F5F5]
+            <div key={q.id} className={`mx-1 mt-1 p-2 rounded-lg border text-[10px] cursor-pointer hover:bg-[#EAF1F8]
               ${q.status === "overdue" ? "border-red-100 bg-red-50" : q.status === "active" ? "border-blue-100 bg-blue-50" : "border-black/8"}`}>
               <div className="font-semibold text-black truncate">{q.title}</div>
               <div className={`mt-0.5 ${q.status === "overdue" ? "text-red-500" : "text-black/40"}`}>Due: {q.due}</div>
@@ -970,7 +970,7 @@ function DocProcessorTab({ record, moduleLabel }: { record: WorkbenchRecord; mod
           </div>
           {MOCK_DOCUMENTS.map((doc, i) => (
             <button key={i} onClick={() => setSelectedDoc(doc.name)}
-              className={`w-full text-left px-2 py-2.5 border-b border-black/5 transition-colors group ${selectedDoc === doc.name ? "bg-[#0f172a] text-white" : "hover:bg-[#F5F5F5]"}`}>
+              className={`w-full text-left px-2 py-2.5 border-b border-black/5 transition-colors group ${selectedDoc === doc.name ? "bg-[#0f172a] text-white" : "hover:bg-[#EAF1F8]"}`}>
               <div className="flex items-start gap-1.5">
                 <FileText className={`h-3 w-3 flex-shrink-0 mt-0.5 ${selectedDoc === doc.name ? "text-blue-300" : "text-black/30"}`} />
                 <div className="min-w-0 flex-1">
@@ -991,7 +991,7 @@ function DocProcessorTab({ record, moduleLabel }: { record: WorkbenchRecord; mod
               <div className="flex-shrink-0 bg-white border-b border-black/10 px-3 py-2 flex items-center gap-1.5 flex-wrap">
                 {DOC_ACTIONS.map(a => (
                   <button key={a} onClick={() => { setAction(a); act(`${a}: ${selectedDoc}`); }}
-                    className={`h-6 px-2 text-[10px] font-semibold transition-all appois-glow-on-hover ${action === a ? "bg-[#0f172a] text-white" : "bg-[#F5F5F5] text-black/70 hover:bg-[#0f172a] hover:text-white"}`}
+                    className={`h-6 px-2 text-[10px] font-semibold transition-all appois-glow-on-hover ${action === a ? "bg-[#0f172a] text-white" : "bg-[#EAF1F8] text-black/70 hover:bg-[#0f172a] hover:text-white"}`}
                     style={{ borderRadius: 0 }}>
                     {a}
                   </button>
@@ -1060,9 +1060,9 @@ function DocProcessorTab({ record, moduleLabel }: { record: WorkbenchRecord; mod
                   <button onClick={() => act("Comment saved")}
                     className="h-7 px-3 bg-[#0f172a] text-white text-[10px] font-semibold appois-glow-on-hover" style={{ borderRadius: 0 }}>Save Comment</button>
                   <button onClick={() => act("Document shared")}
-                    className="h-7 px-3 border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] appois-glow-on-hover" style={{ borderRadius: 0 }}>Share</button>
+                    className="h-7 px-3 border border-black/10 text-[10px] text-black/60 hover:bg-[#EAF1F8] appois-glow-on-hover" style={{ borderRadius: 0 }}>Share</button>
                   <button onClick={() => act("PDF exported")}
-                    className="h-7 px-3 border border-black/10 text-[10px] text-black/60 hover:bg-[#F5F5F5] appois-glow-on-hover" style={{ borderRadius: 0 }}>Export PDF</button>
+                    className="h-7 px-3 border border-black/10 text-[10px] text-black/60 hover:bg-[#EAF1F8] appois-glow-on-hover" style={{ borderRadius: 0 }}>Export PDF</button>
                 </div>
               </div>
             </>
@@ -1125,7 +1125,7 @@ function DocProcessorTab({ record, moduleLabel }: { record: WorkbenchRecord; mod
               <div className="p-3 space-y-2 border-t border-black/8">
                 <div className="text-xs font-bold text-[#0f172a]">Document Checklist</div>
                 {checklist.map((item, i) => (
-                  <label key={i} className={`flex items-center gap-2 p-2 border cursor-pointer text-xs transition-colors ${item.checked ? "bg-emerald-50 border-emerald-200" : "border-black/8 hover:bg-[#F5F5F5]"}`}
+                  <label key={i} className={`flex items-center gap-2 p-2 border cursor-pointer text-xs transition-colors ${item.checked ? "bg-emerald-50 border-emerald-200" : "border-black/8 hover:bg-[#EAF1F8]"}`}
                     style={{ borderRadius: 0 }}>
                     <input type="checkbox" checked={item.checked}
                       onChange={() => setChecklist(p => p.map((c, idx) => idx === i ? { ...c, checked: !c.checked } : c))}
@@ -1238,7 +1238,7 @@ function MainWorkArea({ activeTab, record, moduleLabel, children }: {
                         { item: `${moduleLabel} — Item B`, qty:"50", unit:"2,400.00",total:"120,000" },
                         { item: "Delivery & Installation (5%)", qty:"—", unit:"—", total:"12,250" },
                       ].map((row,i) => (
-                        <tr key={i} className="border-b border-black/5 hover:bg-[#F5F5F5]">
+                        <tr key={i} className="border-b border-black/5 hover:bg-[#EAF1F8]">
                           <td className="py-1.5 pr-2 text-black/80">{row.item}</td>
                           <td className="py-1.5 pr-2 text-black/60">{row.qty}</td>
                           <td className="py-1.5 pr-2 text-black/60">{row.unit}</td>
@@ -1272,7 +1272,7 @@ function MainWorkArea({ activeTab, record, moduleLabel, children }: {
               { key: "declarationsSigned"  as const, label: "All declarations signed",             required: true  },
               { key: "conflictsChecked"    as const, label: "Conflict of interest checks done",    required: true  },
             ].map(item => (
-              <label key={item.key} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl cursor-pointer hover:bg-[#F5F5F5] transition-colors">
+              <label key={item.key} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl cursor-pointer hover:bg-[#EAF1F8] transition-colors">
                 <div onClick={() => toggle(item.key)}
                   className={`h-5 w-5 rounded-md border-2 grid place-items-center flex-shrink-0 transition-colors cursor-pointer
                     ${checks[item.key] ? "bg-black border-black" : "border-black/20"}`}>
@@ -1358,7 +1358,7 @@ function MainWorkArea({ activeTab, record, moduleLabel, children }: {
         <span className="text-[10px] bg-black/5 text-black/50 px-2 py-0.5 rounded-full">Bids received</span>
       </div>
       {MOCK_SUPPLIERS.map((s) => (
-        <div key={s.id} className="p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors">
+        <div key={s.id} className="p-3 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="min-w-0">
               <div className="text-xs font-semibold text-black truncate">{s.name}</div>
@@ -1523,7 +1523,7 @@ function MainWorkArea({ activeTab, record, moduleLabel, children }: {
         { key: "declarationsSigned"  as const, label: "All declarations signed"            },
         { key: "conflictsChecked"    as const, label: "Conflict of interest checks done"   },
       ].map(item => (
-        <label key={item.key} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl cursor-pointer hover:bg-[#F5F5F5] transition-colors">
+        <label key={item.key} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl cursor-pointer hover:bg-[#EAF1F8] transition-colors">
           <div onClick={() => toggle(item.key)}
             className={`h-5 w-5 rounded-md border-2 grid place-items-center flex-shrink-0 transition-colors cursor-pointer ${checks[item.key] ? "bg-black border-black" : "border-black/20"}`}>
             {checks[item.key] && <Check className="h-3 w-3 text-white" />}
@@ -1682,7 +1682,7 @@ function ActionPanel({ record }: { record: WorkbenchRecord }) {
   const isOvernight = effectiveRole === "Oversight";
 
   const ALL_ACTIONS = [
-    { label: "Save Draft",            icon: Save,        cls: "border border-black/10 text-black hover:bg-[#F5F5F5] appois-glow-on-hover",         fn: () => act("Draft saved — " + record.recordNumber)            },
+    { label: "Save Draft",            icon: Save,        cls: "border border-black/10 text-black hover:bg-[#EAF1F8] appois-glow-on-hover",         fn: () => act("Draft saved — " + record.recordNumber)            },
     { label: "Submit",                icon: Send,        cls: "bg-black text-white hover:bg-black/90 appois-glow-white",                        fn: () => act("Submitted — " + record.recordNumber)              },
     { label: "Approve",               icon: CheckCircle2,cls: "bg-emerald-600 text-white hover:bg-emerald-700 appois-glow-on-hover",               fn: () => act("Approved — " + record.recordNumber)               },
     { label: "Return for Correction", icon: RotateCcw,   cls: "bg-amber-500 text-white hover:bg-amber-600 appois-glow-on-hover",                   fn: () => act("Returned for correction")                         },
@@ -1691,7 +1691,7 @@ function ActionPanel({ record }: { record: WorkbenchRecord }) {
     { label: "Escalate",              icon: ArrowUp,     cls: "border border-amber-200 text-amber-700 hover:bg-amber-50 appois-glow-on-hover",     fn: () => act("Escalated to higher authority")                   },
     { label: "Delegate",              icon: UserPlus,    cls: "border border-violet-200 text-violet-700 hover:bg-violet-50 appois-glow-on-hover",  fn: () => act("Delegated to another user")                       },
     { label: "Hold",                  icon: PauseCircle, cls: "border border-gray-200 text-gray-600 hover:bg-gray-50 appois-glow-on-hover",        fn: () => act("Process placed on hold")                          },
-    { label: "Close",                 icon: X,           cls: "border border-black/10 text-black/50 hover:bg-[#F5F5F5]",      fn: () => act("Task closed")                                     },
+    { label: "Close",                 icon: X,           cls: "border border-black/10 text-black/50 hover:bg-[#EAF1F8]",      fn: () => act("Task closed")                                     },
   ];
 
   return (
@@ -1773,7 +1773,7 @@ function DocumentsPanel() {
           <button onClick={() => act("Document uploaded")} className="h-7 px-2.5 bg-black text-white rounded-lg text-[10px] flex items-center gap-1 hover:opacity-90">
             <Upload className="h-3 w-3" /> Upload
           </button>
-          <button onClick={() => act("All documents downloaded")} className="h-7 px-2.5 border border-black/10 rounded-lg text-[10px] flex items-center gap-1 hover:bg-[#F5F5F5]">
+          <button onClick={() => act("All documents downloaded")} className="h-7 px-2.5 border border-black/10 rounded-lg text-[10px] flex items-center gap-1 hover:bg-[#EAF1F8]">
             <Download className="h-3 w-3" /> All
           </button>
         </div>
@@ -1788,7 +1788,7 @@ function DocumentsPanel() {
             {/* Section header */}
             <button
               onClick={() => toggle(key)}
-              className="w-full flex items-center justify-between px-3 py-2 hover:bg-[#F5F5F5] transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 hover:bg-[#EAF1F8] transition-colors"
             >
               <div className="flex items-center gap-2">
                 <ChevronDown className={`h-3 w-3 text-black/30 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
@@ -1810,7 +1810,7 @@ function DocumentsPanel() {
                   <div className="px-4 py-3 text-[10px] text-black/30 italic">No documents in this category yet.</div>
                 ) : (
                   docs.map(doc => (
-                    <div key={doc.name} className="flex items-center justify-between px-3 py-2 hover:bg-[#F5F5F5] group border-b border-black/5 last:border-b-0">
+                    <div key={doc.name} className="flex items-center justify-between px-3 py-2 hover:bg-[#EAF1F8] group border-b border-black/5 last:border-b-0">
                       <div className="flex items-center gap-2 min-w-0">
                         <FileText className="h-3.5 w-3.5 text-black/25 flex-shrink-0" />
                         <div className="min-w-0">
@@ -1820,8 +1820,8 @@ function DocumentsPanel() {
                       </div>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                         <span className={`text-[9px] px-1 py-0.5 rounded font-semibold ${doc.status === "Final" || doc.status === "Approved" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{doc.status}</span>
-                        <button onClick={() => act(`Viewing ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors"><Eye className="h-3 w-3" /></button>
-                        <button onClick={() => act(`Downloaded ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors"><Download className="h-3 w-3" /></button>
+                        <button onClick={() => act(`Viewing ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors"><Eye className="h-3 w-3" /></button>
+                        <button onClick={() => act(`Downloaded ${doc.name}`)} className="h-6 px-1.5 rounded bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors"><Download className="h-3 w-3" /></button>
                       </div>
                     </div>
                   ))
@@ -2096,7 +2096,7 @@ function SearchPanel() {
             <div className="p-4 text-center text-xs text-black/30">No records match your search</div>
           ) : (
             results.map((r, i) => (
-              <div key={i} className="p-2.5 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors cursor-pointer group">
+              <div key={i} className="p-2.5 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors cursor-pointer group">
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 mb-0.5">
@@ -2127,7 +2127,7 @@ function SearchPanel() {
       {!hasFilters && (
         <div className="flex gap-2 flex-wrap">
           {["Recent Records", "Saved Searches", "Advanced"].map(f => (
-            <button key={f} className="h-7 px-3 border border-black/10 rounded-lg text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1">
+            <button key={f} className="h-7 px-3 border border-black/10 rounded-lg text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1">
               <Filter className="h-3 w-3" /> {f}
             </button>
           ))}
@@ -2153,7 +2153,7 @@ function KnowledgePanel() {
       <div className="text-xs font-semibold text-black/60">Knowledge Centre — Policies, Procedures, Templates</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {items.map(item => (
-          <div key={item.title} className="flex items-center justify-between p-2.5 border border-black/8 rounded-xl hover:bg-[#F5F5F5] group">
+          <div key={item.title} className="flex items-center justify-between p-2.5 border border-black/8 rounded-xl hover:bg-[#EAF1F8] group">
             <div className="flex items-center gap-2 min-w-0">
               <BookOpen className="h-3.5 w-3.5 text-black/30 flex-shrink-0" />
               <div className="min-w-0">
@@ -2161,7 +2161,7 @@ function KnowledgePanel() {
                 <div className="text-[10px] text-black/40">{item.type}</div>
               </div>
             </div>
-            <button onClick={() => act(`${item.title} opened`)} className="h-6 px-2 rounded-lg bg-[#F5F5F5] text-[10px] opacity-0 group-hover:opacity-100 hover:bg-black hover:text-white transition-all flex-shrink-0">{item.action}</button>
+            <button onClick={() => act(`${item.title} opened`)} className="h-6 px-2 rounded-lg bg-[#EAF1F8] text-[10px] opacity-0 group-hover:opacity-100 hover:bg-black hover:text-white transition-all flex-shrink-0">{item.action}</button>
           </div>
         ))}
       </div>
@@ -2374,7 +2374,7 @@ function TenderFilterPanel({
             {(typeF !== "All Types" || dateFrom || dateTo || search) && (
               <button
                 onClick={() => { setSearch(""); setTypeF("All Types"); setDateFrom(""); setDateTo(""); }}
-                className="h-7 px-2 text-[10px] text-black/50 border border-black/10 rounded-lg hover:bg-[#F5F5F5] flex-shrink-0"
+                className="h-7 px-2 text-[10px] text-black/50 border border-black/10 rounded-lg hover:bg-[#EAF1F8] flex-shrink-0"
               >Clear</button>
             )}
           </div>
@@ -2551,13 +2551,13 @@ export default function EnterpriseWorkbench({
         <div className="h-7 w-7 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center flex-shrink-0">
           <Sparkles className="h-3.5 w-3.5 text-white" />
         </div>
-        <div className="hidden lg:flex items-center px-3 py-1 bg-[#F5F5F5] rounded-lg flex-shrink-0">
+        <div className="hidden lg:flex items-center px-3 py-1 bg-[#EAF1F8] rounded-lg flex-shrink-0">
           <HierarchyStrip currentRole={activeRecord.userRole} />
         </div>
         <div className="ml-auto flex items-center gap-2 flex-shrink-0 relative">
           <button
             onClick={() => setShowRecords(v => !v)}
-            className={`h-8 px-3 border text-xs flex items-center gap-1.5 transition-colors appois-glow-on-hover ${showRecords ? "bg-[#0f172a] text-white border-[#0f172a]" : "border-black/10 hover:bg-[#F5F5F5]"}`}
+            className={`h-8 px-3 border text-xs flex items-center gap-1.5 transition-colors appois-glow-on-hover ${showRecords ? "bg-[#0f172a] text-white border-[#0f172a]" : "border-black/10 hover:bg-[#EAF1F8]"}`}
             style={{ borderRadius: 0 }}>
             <Filter className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">{activeRecord.recordNumber}</span>
@@ -2585,7 +2585,7 @@ export default function EnterpriseWorkbench({
         </div>
 
         {/* 4. Main Work Area */}
-        <div className="flex-1 min-w-0 overflow-y-auto bg-[#F5F5F5]">
+        <div className="flex-1 min-w-0 overflow-y-auto bg-[#EAF1F8]">
           <MainWorkArea
             activeTab={activeNav}
             record={activeRecord}
@@ -2604,7 +2604,7 @@ export default function EnterpriseWorkbench({
       {/* ── Drag handle ──────────────────────────────────────────────────── */}
       <div
         onMouseDown={startDrag}
-        className="h-2 flex-shrink-0 bg-[#F5F5F5] border-t border-b border-black/8 cursor-ns-resize flex items-center justify-center hover:bg-black/5 transition-colors group"
+        className="h-2 flex-shrink-0 bg-[#EAF1F8] border-t border-b border-black/8 cursor-ns-resize flex items-center justify-center hover:bg-black/5 transition-colors group"
         title="Drag to resize">
         <div className="w-8 h-0.5 rounded-full bg-black/20 group-hover:bg-black/40 transition-colors" />
       </div>

@@ -163,7 +163,7 @@ function NewTenderModal({ onSave, onClose }: { onSave: (t: TenderPreparation) =>
       <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b border-black/8">
           <div className="text-sm font-bold">New Tender Preparation</div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5]"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8]"><X className="h-4 w-4" /></button>
         </div>
         <div className="overflow-y-auto flex-1 px-6 py-4 space-y-4">
           {error && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">{error}</div>}
@@ -232,7 +232,7 @@ function NewTenderModal({ onSave, onClose }: { onSave: (t: TenderPreparation) =>
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-black/8">
-          <button onClick={onClose} className="h-9 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5]">Cancel</button>
+          <button onClick={onClose} className="h-9 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8]">Cancel</button>
           <button onClick={handleSave} className="h-9 px-4 rounded-xl bg-black text-white text-xs font-medium hover:bg-gray-800 flex items-center gap-1.5"><Plus className="h-3.5 w-3.5" /> Create Tender</button>
         </div>
       </div>
@@ -282,7 +282,7 @@ function TenderDetailPanel({ tender, onClose, onAction }: {
             <div className="text-sm font-bold leading-tight">{tender.tenderTitle}</div>
             <div className="text-xs text-black/50 mt-0.5">{tender.ministry} · {tender.department}</div>
           </div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5] flex-shrink-0"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8] flex-shrink-0"><X className="h-4 w-4" /></button>
         </div>
 
         <div className="flex gap-1 px-6 border-b border-black/8 overflow-x-auto scrollbar-none flex-shrink-0">
@@ -344,7 +344,7 @@ function TenderDetailPanel({ tender, onClose, onAction }: {
               </div>
               <div className="overflow-x-auto rounded-xl border border-black/8">
                 <table className="w-full text-xs">
-                  <thead className="bg-[#F5F5F5]">
+                  <thead className="bg-[#EAF1F8]">
                     <tr>{["#","Description","Unit","Qty","Unit Rate","Total","Notes"].map(h => (
                       <th key={h} className="px-3 py-2 text-left font-medium text-black/60 whitespace-nowrap">{h}</th>
                     ))}</tr>
@@ -362,7 +362,7 @@ function TenderDetailPanel({ tender, onClose, onAction }: {
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-[#F5F5F5]">
+                  <tfoot className="bg-[#EAF1F8]">
                     <tr>
                       <td colSpan={5} className="px-3 py-2 font-bold text-right">Grand Total</td>
                       <td className="px-3 py-2 font-bold text-right">USD {boqTotal.toLocaleString()}</td>
@@ -498,7 +498,7 @@ function TenderDetailPanel({ tender, onClose, onAction }: {
               <Send className="h-3 w-3" /> Submit for Review
             </button>
             <button onClick={() => { onAction(tender.id, "download"); }}
-              className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+              className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
               <Download className="h-3 w-3" /> Download
             </button>
           </div>
@@ -690,7 +690,7 @@ export default function TenderPreparationPage() {
                         <Eye className="h-3 w-3" /> Open Workbench
                       </button>
                       <button onClick={() => handleAction(t.id, "submit")}
-                        className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                        className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                         <Send className="h-3 w-3" /> Submit
                       </button>
                       <button onClick={() => { setAiContext(t); setShowAI(true); }}
@@ -698,7 +698,7 @@ export default function TenderPreparationPage() {
                         <Sparkles className="h-3 w-3" /> AI Review
                       </button>
                       <button onClick={() => handleAction(t.id, "download")}
-                        className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                        className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                         <Download className="h-3 w-3" /> Download
                       </button>
                       <button onClick={() => handleAction(t.id, "approve")}

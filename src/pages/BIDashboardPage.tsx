@@ -22,10 +22,10 @@ import ZimbabweMapTab from "@/components/ZimbabweMapTab";
 
 // ── Colour palette ──────────────────────────────────────────────────────────
 const C = {
-  teal:   "#29b8c5", blue:   "#3b82f6", green:  "#10b981",
+  teal:   "#2563eb", blue:   "#3b82f6", green:  "#10b981",
   amber:  "#f59e0b", red:    "#ef4444", violet: "#8b5cf6",
   orange: "#f97316", pink:   "#ec4899", slate:  "#64748b",
-  dark:   "#1c1f26",
+  dark:   "#0f172a",
 };
 const PIE = [C.teal, C.blue, C.green, C.amber, C.red, C.violet, C.orange, C.pink, C.slate];
 
@@ -55,7 +55,7 @@ function SectionTitle({ children, flag }: { children: React.ReactNode; flag?: st
   );
 }
 
-function StoryCard({ title, value, sub, color = "bg-[#1c1f26]", textColor = "text-white", icon: Icon }:
+function StoryCard({ title, value, sub, color = "bg-[#0f172a]", textColor = "text-white", icon: Icon }:
   { title: string; value: string; sub?: string; color?: string; textColor?: string; icon?: React.ElementType }) {
   return (
     <div className={`${color} rounded-2xl p-4 flex flex-col gap-1`}>
@@ -79,7 +79,7 @@ function RiskPill({ label, level }: { label: string; level: "critical" | "high" 
   </span>;
 }
 
-const tt = { contentStyle: { background: "#1c1f26", border: "1px solid #ffffff15", borderRadius: 8, fontSize: 11, color: "#fff" } };
+const tt = { contentStyle: { background: "#0f172a", border: "1px solid #ffffff15", borderRadius: 8, fontSize: 11, color: "#fff" } };
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DATA — All Zimbabwe-contextual procurement intelligence data
@@ -322,7 +322,7 @@ function NationalSpendTab() {
     <div className="space-y-5">
       {/* Headline KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StoryCard title="Total National Procurement Spend YTD" value="USD 2.84B" sub="+6.2% vs prior year" color="bg-[#1c1f26]" icon={DollarSign} />
+        <StoryCard title="Total National Procurement Spend YTD" value="USD 2.84B" sub="+6.2% vs prior year" color="bg-[#0f172a]" icon={DollarSign} />
         <StoryCard title="Budget Utilisation" value="67.8%" sub="USD 3.4B total approved budget" color="bg-blue-700" icon={Target} />
         <StoryCard title="Procurement Savings" value="USD 184M" sub="6.5% of total spend — below 8% target" color="bg-emerald-700" icon={TrendingDown} />
         <StoryCard title="Budget Overruns (active)" value="USD 498M" sub="Across 3 ministries" color="bg-red-700" icon={AlertTriangle} />
@@ -399,7 +399,7 @@ function NationalSpendTab() {
               {SPEND_BY_SECTOR.map(r => (
                 <tr key={r.sector} className="hover:bg-gray-50">
                   <td className="px-4 py-2.5 font-medium text-black">{r.sector}</td>
-                  <td className="px-4 py-2.5 font-bold text-[#29b8c5]">USD {r.usd}M</td>
+                  <td className="px-4 py-2.5 font-bold text-[#2563eb]">USD {r.usd}M</td>
                   <td className="px-4 py-2.5 text-black/70">{r.pct}%</td>
                   <td className="px-4 py-2.5">
                     <span className={`font-semibold text-xs ${r.change.startsWith("+") ? "text-emerald-600" : "text-red-500"}`}>{r.change}</span>
@@ -421,7 +421,7 @@ function BudgetPerformanceTab() {
         <StoryCard title="Ministries On Track" value="6/10" sub="60% within approved envelope" color="bg-emerald-700" icon={CheckCircle2} />
         <StoryCard title="Ministries with Overrun" value="3" sub="Water 132% | Agri 108% | Home 117%" color="bg-red-700" icon={AlertTriangle} />
         <StoryCard title="Underspent Ministries" value="2" sub="Energy 57% | ICT 54% absorbed" color="bg-amber-600" icon={TrendingDown} />
-        <StoryCard title="Budget Absorption Rate (Q2)" value="38%" sub="Target was 50% by Q2" color="bg-[#1c1f26]" icon={Activity} />
+        <StoryCard title="Budget Absorption Rate (Q2)" value="38%" sub="Target was 50% by Q2" color="bg-[#0f172a]" icon={Activity} />
       </div>
 
       <Card>
@@ -703,7 +703,7 @@ function SupplierContractorTab() {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StoryCard title="Registered Suppliers" value="12,847" sub="+284 new this month" color="bg-[#1c1f26]" icon={Users} />
+        <StoryCard title="Registered Suppliers" value="12,847" sub="+284 new this month" color="bg-[#0f172a]" icon={Users} />
         <StoryCard title="SME Participation Rate" value="37%" sub="Up from 18% in 2021 — target 40%" color="bg-emerald-700" icon={TrendingUp} />
         <StoryCard title="Blacklisted Vendors" value="228" sub="+8 this month — debarment active" color="bg-red-700" icon={XCircle} />
         <StoryCard title="Open Vendor Disputes" value="23" sub="USD 724K in contested value" color="bg-amber-600" icon={AlertTriangle} />
@@ -775,7 +775,7 @@ function ProjectsDevelopmentTab() {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StoryCard title="Total Infrastructure Projects" value="1,487" sub="Valued at USD 14.2B" color="bg-[#1c1f26]" icon={Building2} />
+        <StoryCard title="Total Infrastructure Projects" value="1,487" sub="Valued at USD 14.2B" color="bg-[#0f172a]" icon={Building2} />
         <StoryCard title="On Time & On Budget" value="19%" sub="Only 284 of 1,487 projects — shocking" color="bg-red-700" icon={XCircle} />
         <StoryCard title="Abandoned / Stalled" value="147" sub="Worth USD 418M — sitting idle" color="bg-red-800" icon={AlertTriangle} />
         <StoryCard title="Average Cost Overrun" value="43%" sub="Across overrunning projects" color="bg-orange-700" icon={TrendingUp} />
@@ -974,7 +974,7 @@ function RiskDashboardTab() {
               <ZAxis type="number" dataKey="z" range={[40, 400]} />
               <Tooltip {...tt} cursor={{ strokeDasharray: "3 3" }}
                 content={({ active, payload }) => active && payload?.[0] ? (
-                  <div className="bg-[#1c1f26] text-white text-[11px] p-2 rounded-lg border border-white/10">
+                  <div className="bg-[#0f172a] text-white text-[11px] p-2 rounded-lg border border-white/10">
                     <div className="font-bold">{(payload[0].payload as { name: string }).name}</div>
                     <div>Likelihood: {payload[0].payload.x}/5 · Impact: {payload[0].payload.y}/5</div>
                   </div>
@@ -1059,7 +1059,7 @@ export default function BIDashboardPage() {
             description="The real story behind Zimbabwe's public spending — budgets, overruns, shortages, corruption, risks, prices, quality of life, and what must change. Data that must not stay buried."
             actions={
               <button onClick={() => { pushNotification("BI Report exported — PDF/Excel ready in downloads.", "success"); }}
-                className="h-9 px-4 rounded-xl bg-[#1c1f26] text-white text-sm font-semibold hover:bg-black flex items-center gap-1.5">
+                className="h-9 px-4 rounded-xl bg-[#0f172a] text-white text-sm font-semibold hover:bg-black flex items-center gap-1.5">
                 Export Full Report
               </button>
             }
@@ -1073,7 +1073,7 @@ export default function BIDashboardPage() {
             return (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 -mb-px whitespace-nowrap flex-shrink-0 transition-colors
-                  ${activeTab === tab ? "border-[#29b8c5] text-[#29b8c5]" : "border-transparent text-black/50 hover:text-black hover:border-black/20"}`}>
+                  ${activeTab === tab ? "border-[#2563eb] text-[#2563eb]" : "border-transparent text-black/50 hover:text-black hover:border-black/20"}`}>
                 <Icon className="h-3.5 w-3.5" />
                 {tab}
               </button>
@@ -1098,10 +1098,10 @@ export default function BIDashboardPage() {
           </div>
 
           {/* Sticky live KPI ticker — right rail */}
-          <div className="hidden xl:flex flex-col w-60 flex-shrink-0 sticky top-4 bg-[#1c1f26] rounded-2xl overflow-hidden border border-white/8 shadow-xl" style={{ height: "calc(100vh - 180px)" }}>
+          <div className="hidden xl:flex flex-col w-60 flex-shrink-0 sticky top-4 bg-[#0f172a] rounded-2xl overflow-hidden border border-white/8 shadow-xl" style={{ height: "calc(100vh - 180px)" }}>
             <div className="px-3 py-2.5 border-b border-white/10 flex-shrink-0">
-              <div className="text-[10px] font-bold text-[#29b8c5] uppercase tracking-widest flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#29b8c5] animate-pulse" />
+              <div className="text-[10px] font-bold text-[#2563eb] uppercase tracking-widest flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2563eb] animate-pulse" />
                 Live National KPIs
               </div>
               <div className="text-[9px] text-white/30 mt-0.5">Hover to pause · 50+ indicators</div>

@@ -321,7 +321,13 @@ export const navSections = [
     label: "Briefing",
     icon: "Sparkles",
     items: [
-      { to: "/briefing", label: "AI Briefing", icon: "Sparkles" },
+      { to: "/briefing",              label: "1. Notes & Alerts",       icon: "Bell"          },
+      { to: "/briefing",              label: "2. Visual Dashboard",     icon: "BarChart3"     },
+      { to: "/briefing",              label: "3. AI Briefing Video",    icon: "Sparkles"      },
+      { to: "/briefing",              label: "4. Executive BI",         icon: "Globe2"        },
+      { to: "/briefing",              label: "5. Projects & Tenders",   icon: "MapPin"        },
+      { to: "/briefing",              label: "6. My Briefing",          icon: "Star"          },
+      { to: "/briefing",              label: "7. AI Summary",           icon: "Sparkles"      },
     ],
   },
   {

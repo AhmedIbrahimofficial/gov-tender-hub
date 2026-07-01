@@ -159,13 +159,13 @@ function RiskRegisterTab({
         <div className="flex items-center gap-1.5">
           <button
             onClick={handlePrint}
-            className="h-7 px-2.5 flex items-center gap-1 rounded-lg border border-black/10 text-[10px] font-medium hover:bg-[#F5F5F5] transition-colors"
+            className="h-7 px-2.5 flex items-center gap-1 rounded-lg border border-black/10 text-[10px] font-medium hover:bg-[#EAF1F8] transition-colors"
           >
             <Printer className="h-3 w-3" /> Print Report
           </button>
           <button
             onClick={() => setShowSharePanel((v) => !v)}
-            className="h-7 px-2.5 flex items-center gap-1 rounded-lg border border-black/10 text-[10px] font-medium hover:bg-[#F5F5F5] transition-colors"
+            className="h-7 px-2.5 flex items-center gap-1 rounded-lg border border-black/10 text-[10px] font-medium hover:bg-[#EAF1F8] transition-colors"
           >
             <Share2 className="h-3 w-3" /> Share
             {showSharePanel ? <ChevronUp className="h-3 w-3 ml-0.5" /> : <ChevronDown className="h-3 w-3 ml-0.5" />}
@@ -333,7 +333,7 @@ function RiskRegisterTab({
                 </button>
                 <button
                   onClick={() => update(i, { expanded: false })}
-                  className="h-8 px-3 rounded-lg border border-black/10 text-[10px] text-black/50 hover:bg-[#F5F5F5] transition-colors"
+                  className="h-8 px-3 rounded-lg border border-black/10 text-[10px] text-black/50 hover:bg-[#EAF1F8] transition-colors"
                 >
                   Done
                 </button>
@@ -482,7 +482,7 @@ function ComplianceTab({ stageId, onSubmit }: { stageId: number; onSubmit: () =>
                 className={`flex items-center gap-3 p-3 border rounded-xl transition-colors ${
                   rowComplete
                     ? "border-emerald-200 bg-emerald-50/60"
-                    : "border-black/8 hover:bg-[#F5F5F5]"
+                    : "border-black/8 hover:bg-[#EAF1F8]"
                 }`}
               >
                 <span className="flex-1 text-xs text-black leading-snug">{item}</span>
@@ -553,7 +553,7 @@ function TowerComplianceCheck({ stageId, onAct }: { stageId: number; onAct: (msg
         <div className={`h-full rounded-full transition-all ${pct === 100 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-400" : "bg-red-400"}`} style={{ width: `${pct}%` }} />
       </div>
       {TOWER_COMPLIANCE_ITEMS.map((item, i) => (
-        <label key={i} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer mb-1.5 transition-colors ${checks[i] ? "border-emerald-200 bg-emerald-50/50" : "border-black/8 hover:bg-[#F5F5F5]"}`}>
+        <label key={i} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer mb-1.5 transition-colors ${checks[i] ? "border-emerald-200 bg-emerald-50/50" : "border-black/8 hover:bg-[#EAF1F8]"}`}>
           <input type="checkbox" className="h-4 w-4 rounded accent-black" checked={checks[i]}
             onChange={() => { toggle(i); onAct(`Stage ${stageId} compliance item ${i + 1} ${!checks[i] ? "checked" : "unchecked"}`); }} />
           <span className="text-xs text-black">{item}</span>
@@ -636,7 +636,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
               {context && <div className="text-[10px] font-mono text-black/50 mb-1">{context}</div>}
               <p className="text-xs text-black/50">{stage.description}</p>
             </div>
-            <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black transition-colors flex-shrink-0">
+            <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#EAF1F8] text-black/40 hover:text-black transition-colors flex-shrink-0">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -659,7 +659,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
               <Sparkles className="h-3 w-3 text-violet-500" />
               <span className="text-[11px] text-violet-700 font-medium">{stage.aiRole}</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-full px-2.5 py-1">
+            <div className="flex items-center gap-1.5 bg-[#EAF1F8] rounded-full px-2.5 py-1">
               <Users className="h-3 w-3 text-black/40" />
               <span className="text-[11px] text-black/60">{stage.owner}</span>
             </div>
@@ -682,7 +682,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
 
           {tab === "overview" && (
             <>
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
+              <div className="bg-[#EAF1F8] rounded-xl p-4">
                 <p className="text-sm text-black/70 leading-relaxed">{stage.description}</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -691,13 +691,13 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   <ChevronRight className="h-3.5 w-3.5" /> Advance Stage
                 </button>
                 <button onClick={() => act("Report downloaded")}
-                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-1.5">
+                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#EAF1F8] transition-colors flex items-center justify-center gap-1.5">
                   <Download className="h-3.5 w-3.5" /> Download Report
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={() => { act("Stage report printed"); window.print(); }}
-                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-1.5">
+                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#EAF1F8] transition-colors flex items-center justify-center gap-1.5">
                   <Printer className="h-3.5 w-3.5" /> Print Report
                 </button>
                 <button onClick={() => {
@@ -709,7 +709,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   }
                   act("Stage shared");
                 }}
-                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-1.5">
+                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#EAF1F8] transition-colors flex items-center justify-center gap-1.5">
                   <Share2 className="h-3.5 w-3.5" /> Share
                 </button>
               </div>
@@ -725,14 +725,14 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                 </button>
               </div>
               {stage.documents.map((doc, i) => (
-                <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors group">
+                <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors group">
                   <div className="flex items-center gap-2.5">
                     <FileText className="h-4 w-4 text-black/30" />
                     <span className="text-xs text-black">{doc}</span>
                   </div>
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => act(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
-                    <button onClick={() => act(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
+                    <button onClick={() => act(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                    <button onClick={() => act(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
                   </div>
                 </div>
               ))}
@@ -746,7 +746,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                 <div key={i} className="flex items-start gap-3 p-3 border border-black/8 rounded-xl">
                   <div className="w-5 h-5 rounded-full bg-black text-white text-[9px] font-bold grid place-items-center flex-shrink-0 mt-0.5">{i + 1}</div>
                   <p className="text-xs text-black flex-1">{step}</p>
-                  <button onClick={() => act(`${step} — marked complete`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-emerald-500 hover:text-white transition-colors flex-shrink-0">Done</button>
+                  <button onClick={() => act(`${step} — marked complete`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-emerald-500 hover:text-white transition-colors flex-shrink-0">Done</button>
                 </div>
               ))}
             </div>
@@ -797,7 +797,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                     </div>
                     <span className="text-xs text-black">{a}</span>
                   </div>
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${i === 0 ? "bg-emerald-100 text-emerald-700" : "bg-[#F5F5F5] text-black/40"}`}>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${i === 0 ? "bg-emerald-100 text-emerald-700" : "bg-[#EAF1F8] text-black/40"}`}>
                     {i === 0 ? "Approved" : "Pending"}
                   </span>
                 </div>
@@ -817,7 +817,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                     <MessageSquare className="h-3.5 w-3.5 text-black/30" />
                     <span className="text-xs text-black">{c}</span>
                   </div>
-                  <button onClick={() => act(`${c} sent`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">Send</button>
+                  <button onClick={() => act(`${c} sent`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">Send</button>
                 </div>
               ))}
             </div>
@@ -918,7 +918,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   <span className="text-xs font-bold">{b.value}</span>
                 </div>
               ))}
-              <div className="p-3 bg-[#F5F5F5] rounded-xl text-xs text-black/60 leading-relaxed">
+              <div className="p-3 bg-[#EAF1F8] rounded-xl text-xs text-black/60 leading-relaxed">
                 Budget is tracked per stage. Any commitment or expenditure at this stage is automatically posted to the parent contract/project budget line in IFMIS.
               </div>
             </div>
@@ -1013,7 +1013,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                 { title: "Standard Bidding Document — Goods",      type: "Template", action: "Download" },
                 { title: "Conflict of Interest Declaration Form",  type: "Template", action: "Download" },
               ].map((l, i) => (
-                <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors">
+                <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors">
                   <div className="flex items-center gap-2.5">
                     <BookOpen className="h-3.5 w-3.5 text-black/30" />
                     <div>
@@ -1021,7 +1021,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                       <div className="text-[10px] text-black/30">{l.type}</div>
                     </div>
                   </div>
-                  <button onClick={() => act(`${l.title} ${l.action.toLowerCase()}ed`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">{l.action}</button>
+                  <button onClick={() => act(`${l.title} ${l.action.toLowerCase()}ed`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">{l.action}</button>
                 </div>
               ))}
             </div>
@@ -1034,7 +1034,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
           {tab === "report" && (
             <div className="space-y-3">
               <span className="text-xs font-semibold text-black/60">Stage Report — Auto-Generated</span>
-              <div className="p-4 bg-[#F5F5F5] rounded-xl text-xs text-black/70 leading-relaxed space-y-2">
+              <div className="p-4 bg-[#EAF1F8] rounded-xl text-xs text-black/70 leading-relaxed space-y-2">
                 <div className="font-semibold text-black">Stage {stage.id}: {stage.label}</div>
                 <div><span className="text-black/40">Owner:</span> {stage.owner}</div>
                 <div><span className="text-black/40">AI Role:</span> {stage.aiRole}</div>
@@ -1047,17 +1047,17 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   <BarChart3 className="h-3.5 w-3.5" /> Generate Full Report
                 </button>
                 <button onClick={() => act("All-stages report generated")}
-                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-1.5">
+                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#EAF1F8] transition-colors flex items-center justify-center gap-1.5">
                   <Download className="h-3.5 w-3.5" /> All Stages Report
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={() => { act("Report printed"); window.print(); }}
-                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-1.5">
+                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#EAF1F8] transition-colors flex items-center justify-center gap-1.5">
                   <Printer className="h-3.5 w-3.5" /> Print
                 </button>
                 <button onClick={() => { act("Report shared"); navigator.share?.({ title: `Stage ${stage.id} Report`, text: stage.description }).catch(() => {}); }}
-                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-1.5">
+                  className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#EAF1F8] transition-colors flex items-center justify-center gap-1.5">
                   <Share2 className="h-3.5 w-3.5" /> Share
                 </button>
               </div>
@@ -1090,7 +1090,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                     {c.issued && (
                       <button onClick={() => act(`${c.cert} downloaded`)} className="h-6 px-2 rounded-md bg-emerald-50 text-emerald-700 text-[10px] hover:bg-emerald-500 hover:text-white transition-colors">DL</button>
                     )}
-                    <button onClick={() => act(`${c.cert} ${c.issued ? "re-issued" : "issued"}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">
+                    <button onClick={() => act(`${c.cert} ${c.issued ? "re-issued" : "issued"}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">
                       {c.issued ? "Re-issue" : "Issue"}
                     </button>
                   </div>
@@ -1111,14 +1111,14 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   </button>
                 </div>
                 {stage.documents.map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors group mb-1.5">
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors group mb-1.5">
                     <div className="flex items-center gap-2.5">
                       <FileText className="h-4 w-4 text-black/30" />
                       <span className="text-xs text-black">{doc}</span>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => act(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
-                      <button onClick={() => act(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
+                      <button onClick={() => act(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                      <button onClick={() => act(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
                     </div>
                   </div>
                 ))}
@@ -1137,14 +1137,14 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                   { ref: "RES-001", date: "2026-06-03", title: `Resolution to proceed — Stage ${stage.id}`,  status: "AI Reviewed"   },
                   { ref: "MTG-002", date: "2026-06-10", title: "Committee sitting — review & sign-off",       status: "Pending Review" },
                 ].map((m, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#EAF1F8] transition-colors">
                     <div>
                       <div className="text-xs font-semibold text-black">{m.title}</div>
                       <div className="text-[10px] text-black/40 mt-0.5">{m.ref} · {m.date}</div>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${m.status === "AI Reviewed" ? "bg-violet-100 text-violet-700" : m.status === "Uploaded" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{m.status}</span>
-                      <button onClick={() => act(`Viewed ${m.ref}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                      <button onClick={() => act(`Viewed ${m.ref}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
                     </div>
                   </div>
                 ))}
@@ -1165,7 +1165,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
               <div>
                 <span className="text-xs font-semibold text-black/60 block mb-2">Stage Participants ({PARTICIPANTS.length})</span>
                 {PARTICIPANTS.map((p, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                  <div key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#EAF1F8] transition-colors">
                     <div className="relative flex-shrink-0">
                       <div className="h-8 w-8 rounded-full bg-black text-white text-xs font-bold grid place-items-center">{p.avatar}</div>
                       {p.online && <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-white" />}
@@ -1199,7 +1199,7 @@ function StageDetailPanel({ stage, onClose, context }: { stage: TowerStage; onCl
                       <div className={`h-7 w-7 rounded-full text-white text-[10px] font-bold grid place-items-center flex-shrink-0 ${msg.self ? "bg-violet-600" : "bg-black"}`}>{msg.avatar}</div>
                       <div className={`max-w-[75%] ${msg.self ? "items-end" : "items-start"} flex flex-col`}>
                         {!msg.self && <span className="text-[10px] text-black/40 mb-0.5">{msg.from}</span>}
-                        <div className={`px-3 py-2 rounded-xl text-xs ${msg.self ? "bg-violet-600 text-white rounded-tr-sm" : "bg-[#F5F5F5] text-black rounded-tl-sm"}`}>
+                        <div className={`px-3 py-2 rounded-xl text-xs ${msg.self ? "bg-violet-600 text-white rounded-tr-sm" : "bg-[#EAF1F8] text-black rounded-tl-sm"}`}>
                           {msg.msg}
                         </div>
                         <span className="text-[9px] text-black/25 mt-0.5">{msg.time}</span>
@@ -1241,7 +1241,7 @@ function StageMapGrid({ stages, onSelect }: { stages: TowerStage[]; onSelect: (s
           {row.map((stage, si) => (
             <button key={stage.id} onClick={() => onSelect(stage)}
               title={`${stage.label} — ${stage.status}`}
-              className={`flex-1 min-w-0 group flex flex-col items-center gap-1 px-1 py-2 rounded-lg border transition-all hover:border-black/30 hover:bg-[#F5F5F5]/80 text-center relative
+              className={`flex-1 min-w-0 group flex flex-col items-center gap-1 px-1 py-2 rounded-lg border transition-all hover:border-black/30 hover:bg-[#EAF1F8]/80 text-center relative
                 ${stage.status === "active" ? "border-black bg-black/5" : "border-transparent"}`}>
               <StagePin status={stage.status} index={stage.id} />
               <span className={`text-[9px] font-medium leading-tight w-full truncate

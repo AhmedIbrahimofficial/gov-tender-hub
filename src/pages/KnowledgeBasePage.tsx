@@ -63,7 +63,7 @@ function ArticleModal({ article, onClose }: { article: KBArticle; onClose: () =>
         <div className="border-t border-black/8 px-6 py-3 flex items-center justify-between bg-[#fafafa]">
           <span className="text-xs text-black/40">{article.helpful} people found this helpful</span>
           <div className="flex gap-2">
-            <button onClick={() => pushNotification("Article marked as helpful.", "success")} className="h-8 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">👍 Helpful</button>
+            <button onClick={() => pushNotification("Article marked as helpful.", "success")} className="h-8 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]">👍 Helpful</button>
             <button onClick={() => pushNotification("Article downloaded.", "success")} className="h-8 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1.5"><Download className="h-3 w-3" />Download</button>
           </div>
         </div>

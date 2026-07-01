@@ -545,7 +545,7 @@ function TenderComplianceCheck({ onAction }: { onAction: (msg: string) => void }
         <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${Math.round(done / TENDER_COMPLIANCE_ITEMS.length * 100)}%` }} />
       </div>
       {TENDER_COMPLIANCE_ITEMS.map((item, i) => (
-        <label key={i} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer mb-1.5 transition-colors ${checks[i] ? "border-emerald-200 bg-emerald-50/50" : "border-black/8 hover:bg-[#F5F5F5]"}`}>
+        <label key={i} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer mb-1.5 transition-colors ${checks[i] ? "border-emerald-200 bg-emerald-50/50" : "border-black/8 hover:bg-[#EAF1F8]"}`}>
           <input type="checkbox" className="h-4 w-4 rounded accent-black" checked={checks[i]} onChange={() => { toggle(i); onAction(`Compliance item ${i + 1} ${!checks[i] ? "checked" : "unchecked"}`); }} />
           <span className="text-xs text-black">{item}</span>
           {checks[i] && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 ml-auto flex-shrink-0" />}
@@ -648,7 +648,7 @@ function StageDetailPanel({
               {/* Stage label */}
               <div className="text-xs text-black/50 font-medium">{stage.label}</div>
             </div>
-            <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black transition-colors flex-shrink-0">
+            <button onClick={onClose} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-[#EAF1F8] text-black/40 hover:text-black transition-colors flex-shrink-0">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -687,7 +687,7 @@ function StageDetailPanel({
               <Sparkles className="h-3 w-3 text-violet-500" />
               <span className="text-[11px] text-violet-700 font-medium">{stage.aiRole}</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-[#F5F5F5] rounded-full px-2.5 py-1">
+            <div className="flex items-center gap-1.5 bg-[#EAF1F8] rounded-full px-2.5 py-1">
               <Users className="h-3 w-3 text-black/40" />
               <span className="text-[11px] text-black/60">{stage.owner}</span>
             </div>
@@ -714,7 +714,7 @@ function StageDetailPanel({
 
           {tab === "overview" && (
             <>
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
+              <div className="bg-[#EAF1F8] rounded-xl p-4">
                 <p className="text-sm text-black/70 leading-relaxed">{stage.description}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -757,7 +757,7 @@ function StageDetailPanel({
                 <button onClick={() => handleAction("Stage advanced")} className="h-9 bg-black text-white rounded-lg text-xs font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5">
                   <ChevronRight className="h-3.5 w-3.5" /> Advance Stage
                 </button>
-                <button onClick={() => handleAction("Report downloaded")} className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#F5F5F5] transition-colors flex items-center justify-center gap-1.5">
+                <button onClick={() => handleAction("Report downloaded")} className="h-9 border border-black/10 rounded-lg text-xs font-medium hover:bg-[#EAF1F8] transition-colors flex items-center justify-center gap-1.5">
                   <Download className="h-3.5 w-3.5" /> Download Report
                 </button>
               </div>
@@ -773,14 +773,14 @@ function StageDetailPanel({
                 </button>
               </div>
               {tools.documents.map((doc, i) => (
-                <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors group">
+                <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors group">
                   <div className="flex items-center gap-2.5">
                     <FileText className="h-4 w-4 text-black/30" />
                     <span className="text-xs text-black">{doc}</span>
                   </div>
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => handleAction(`Viewing ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
-                    <button onClick={() => handleAction(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
+                    <button onClick={() => handleAction(`Viewing ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                    <button onClick={() => handleAction(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
                   </div>
                 </div>
               ))}
@@ -796,7 +796,7 @@ function StageDetailPanel({
                   <div className="flex-1">
                     <p className="text-xs text-black">{step}</p>
                   </div>
-                  <button onClick={() => handleAction(`${step} — marked complete`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-emerald-500 hover:text-white transition-colors flex-shrink-0">Done</button>
+                  <button onClick={() => handleAction(`${step} — marked complete`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-emerald-500 hover:text-white transition-colors flex-shrink-0">Done</button>
                 </div>
               ))}
             </div>
@@ -849,7 +849,7 @@ function StageDetailPanel({
                     </div>
                     <span className="text-xs text-black">{a}</span>
                   </div>
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${i === 0 ? "bg-emerald-100 text-emerald-700" : "bg-[#F5F5F5] text-black/40"}`}>
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${i === 0 ? "bg-emerald-100 text-emerald-700" : "bg-[#EAF1F8] text-black/40"}`}>
                     {i === 0 ? "Approved" : "Pending"}
                   </span>
                 </div>
@@ -869,7 +869,7 @@ function StageDetailPanel({
                     <MessageSquare className="h-3.5 w-3.5 text-black/30" />
                     <span className="text-xs text-black">{c}</span>
                   </div>
-                  <button onClick={() => handleAction(`${c} sent`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">
+                  <button onClick={() => handleAction(`${c} sent`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">
                     Send
                   </button>
                 </div>
@@ -919,14 +919,14 @@ function StageDetailPanel({
                   </button>
                 </div>
                 {tools.documents.map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#F5F5F5] transition-colors group mb-1.5">
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl hover:bg-[#EAF1F8] transition-colors group mb-1.5">
                     <div className="flex items-center gap-2.5">
                       <FileText className="h-4 w-4 text-black/30" />
                       <span className="text-xs text-black">{doc}</span>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => handleAction(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
-                      <button onClick={() => handleAction(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
+                      <button onClick={() => handleAction(`Viewed ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                      <button onClick={() => handleAction(`Downloaded ${doc}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">DL</button>
                     </div>
                   </div>
                 ))}
@@ -945,14 +945,14 @@ function StageDetailPanel({
                   { ref: "RES-001", date: "2026-06-03", title: "Resolution to proceed to next stage", status: "AI Reviewed" },
                   { ref: "MTG-002", date: "2026-06-10", title: "Evaluation committee sitting minutes", status: "Pending Review" },
                 ].map((m, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                  <div key={i} className="flex items-center justify-between p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#EAF1F8] transition-colors">
                     <div>
                       <div className="text-xs font-semibold text-black">{m.title}</div>
                       <div className="text-[10px] text-black/40 mt-0.5">{m.ref} · {m.date}</div>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${m.status === "AI Reviewed" ? "bg-violet-100 text-violet-700" : m.status === "Uploaded" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{m.status}</span>
-                      <button onClick={() => handleAction(`Viewed ${m.ref}`)} className="h-6 px-2 rounded-md bg-[#F5F5F5] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
+                      <button onClick={() => handleAction(`Viewed ${m.ref}`)} className="h-6 px-2 rounded-md bg-[#EAF1F8] text-[10px] hover:bg-black hover:text-white transition-colors">View</button>
                     </div>
                   </div>
                 ))}
@@ -972,7 +972,7 @@ function StageDetailPanel({
               <div>
                 <span className="text-xs font-semibold text-black/60 block mb-2">Stage Participants ({PARTICIPANTS.length})</span>
                 {PARTICIPANTS.map((p, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#F5F5F5] transition-colors">
+                  <div key={i} className="flex items-center gap-3 p-3 border border-black/8 rounded-xl mb-1.5 hover:bg-[#EAF1F8] transition-colors">
                     <div className="relative flex-shrink-0">
                       <div className="h-8 w-8 rounded-full bg-black text-white text-xs font-bold grid place-items-center">{p.avatar}</div>
                       {p.online && <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-white" />}
@@ -1006,7 +1006,7 @@ function StageDetailPanel({
                       <div className={`h-7 w-7 rounded-full text-white text-[10px] font-bold grid place-items-center flex-shrink-0 ${msg.self ? "bg-violet-600" : "bg-black"}`}>{msg.avatar}</div>
                       <div className={`max-w-[75%] ${msg.self ? "items-end" : "items-start"} flex flex-col`}>
                         {!msg.self && <span className="text-[10px] text-black/40 mb-0.5">{msg.from}</span>}
-                        <div className={`px-3 py-2 rounded-xl text-xs ${msg.self ? "bg-violet-600 text-white rounded-tr-sm" : "bg-[#F5F5F5] text-black rounded-tl-sm"}`}>
+                        <div className={`px-3 py-2 rounded-xl text-xs ${msg.self ? "bg-violet-600 text-white rounded-tr-sm" : "bg-[#EAF1F8] text-black rounded-tl-sm"}`}>
                           {msg.msg}
                         </div>
                         <span className="text-[9px] text-black/25 mt-0.5">{msg.time}</span>
@@ -1052,7 +1052,7 @@ function LifecycleStageMap({
         <button
           key={stage.id}
           onClick={() => onSelectStage(stage)}
-          className={`flex-1 min-w-0 relative group flex flex-col items-center gap-1 px-1 py-2 rounded-lg border transition-all hover:border-black/30 hover:bg-[#F5F5F5]/80 text-center
+          className={`flex-1 min-w-0 relative group flex flex-col items-center gap-1 px-1 py-2 rounded-lg border transition-all hover:border-black/30 hover:bg-[#EAF1F8]/80 text-center
             ${stage.status === "active" ? "border-black bg-black/5" : "border-transparent"}
           `}
           title={`${stage.label} — ${stage.status}`}
@@ -1107,7 +1107,7 @@ function RecordCard({
     <button
       onClick={onClick}
       className={`w-full text-left p-4 rounded-2xl border transition-all hover:border-black/30
-        ${selected ? "border-black bg-black/5 shadow-sm" : "border-black/8 bg-white hover:bg-[#F5F5F5]/60"}`}
+        ${selected ? "border-black bg-black/5 shadow-sm" : "border-black/8 bg-white hover:bg-[#EAF1F8]/60"}`}
     >
       {/* Type badge + title */}
       <div className="flex items-start gap-2.5 mb-3">
@@ -1223,7 +1223,7 @@ export default function ProcurementLifecyclePage() {
             <div className="flex gap-2">
               <button
                 onClick={() => pushNotification("Lifecycle report exported to PDF.", "success")}
-                className="h-9 px-3 rounded-md border border-black/10 text-sm font-medium flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors"
+                className="h-9 px-3 rounded-md border border-black/10 text-sm font-medium flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors"
               >
                 <Download className="h-4 w-4" /> Export
               </button>
@@ -1274,7 +1274,7 @@ export default function ProcurementLifecyclePage() {
                         key={t}
                         onClick={() => setTypeFilter(t)}
                         className={`h-6 px-2.5 rounded-full text-[10px] font-semibold transition-colors
-                          ${typeFilter === t ? "bg-black text-white" : "bg-[#F5F5F5] text-black/50 hover:bg-black/10"}`}
+                          ${typeFilter === t ? "bg-black text-white" : "bg-[#EAF1F8] text-black/50 hover:bg-black/10"}`}
                       >
                         {t}
                       </button>

@@ -115,7 +115,7 @@ export default function AwardNoticeModal({ tender, vendor, awardedBy, onClose }:
               </div>
 
               {/* Congratulation message preview */}
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
+              <div className="bg-[#EAF1F8] rounded-xl p-4">
                 <div className="text-xs font-semibold text-black/50 uppercase tracking-wider mb-2">Congratulation Message (to be sent to vendor)</div>
                 <div className="text-xs text-black/70 leading-relaxed space-y-2">
                   <p>Dear <strong>{vendor}</strong>,</p>
@@ -132,7 +132,7 @@ export default function AwardNoticeModal({ tender, vendor, awardedBy, onClose }:
                 <label className="text-xs font-semibold text-black/50 uppercase tracking-wider">Vendor Contact Email</label>
                 <input value={vendorEmail} onChange={e => setVendorEmail(e.target.value)}
                   placeholder={`procurement@${vendor.toLowerCase().replace(/\s+/g, "").slice(0,10)}.co.zw`}
-                  className="mt-1.5 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
+                  className="mt-1.5 w-full h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none focus:ring-2 focus:ring-black/10" />
               </div>
 
               {/* AI note */}
@@ -172,7 +172,7 @@ export default function AwardNoticeModal({ tender, vendor, awardedBy, onClose }:
               </div>
 
               {LEGAL_DOCUMENTS.map(doc => (
-                <label key={doc.id} className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${checkedDocs.includes(doc.id) ? "border-black bg-[#F5F5F5]" : "border-black/10 hover:border-black/30"}`}>
+                <label key={doc.id} className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${checkedDocs.includes(doc.id) ? "border-black bg-[#EAF1F8]" : "border-black/10 hover:border-black/30"}`}>
                   <input type="checkbox" checked={checkedDocs.includes(doc.id)} onChange={() => toggleDoc(doc.id)}
                     className="mt-0.5 h-4 w-4 rounded accent-black flex-shrink-0" />
                   <div className="flex-1 min-w-0">
@@ -210,7 +210,7 @@ export default function AwardNoticeModal({ tender, vendor, awardedBy, onClose }:
             <div className="text-lg font-bold text-black mb-2">Award Notice Sent!</div>
             <div className="text-sm text-black/50 mb-4">Congratulation message and document request sent to <strong>{vendor}</strong>.</div>
 
-            <div className="bg-[#F5F5F5] rounded-xl p-4 text-left space-y-2 mb-4 text-xs">
+            <div className="bg-[#EAF1F8] rounded-xl p-4 text-left space-y-2 mb-4 text-xs">
               <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Award notice emailed to vendor</div>
               <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {checkedDocs.length} legal documents requested (14-day deadline)</div>
               <div className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Senior alert sent to CPO &amp; Minister</div>

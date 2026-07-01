@@ -52,11 +52,11 @@ function AIAgentCard({ name, desc, tasks, accuracy, status = "Active", onRun }: 
       <div className="text-sm font-semibold text-black mb-1">{name}</div>
       <div className="text-xs text-black/50 mb-3 leading-relaxed">{desc}</div>
       <div className="grid grid-cols-2 gap-2 mb-2">
-        <div className="text-center bg-[#F5F5F5] rounded-lg p-1.5">
+        <div className="text-center bg-[#EAF1F8] rounded-lg p-1.5">
           <div className="text-sm font-bold text-black">{tasks.toLocaleString()}</div>
           <div className="text-[10px] text-black/40">Tasks</div>
         </div>
-        <div className="text-center bg-[#F5F5F5] rounded-lg p-1.5">
+        <div className="text-center bg-[#EAF1F8] rounded-lg p-1.5">
           <div className="text-sm font-bold text-black">{accuracy}%</div>
           <div className="text-[10px] text-black/40">Accuracy</div>
         </div>
@@ -144,7 +144,7 @@ function CatalogueModule({ onAction }: { onAction:(m:string)=>void }) {
       <div className="flex gap-1 mb-5 border-b border-black/10">
         {(["items","categories","analytics","agents"] as const).map(v => (
           <button key={v} onClick={()=>setActiveView(v)}
-            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#F5F5F5]"}`}>
+            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#EAF1F8]"}`}>
             {v === "agents" ? "AI Agents" : v.charAt(0).toUpperCase()+v.slice(1)}
           </button>
         ))}
@@ -171,18 +171,18 @@ function CatalogueModule({ onAction }: { onAction:(m:string)=>void }) {
           </div>
           <Card className="mb-5">
             <CardHeader title={`Catalogue Repository — ${filtered.length + 8276} items`} action={
-              <button onClick={()=>onAction("Catalogue exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3"/> Export</button>
+              <button onClick={()=>onAction("Catalogue exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3"/> Export</button>
             }/>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-[#F5F5F5] text-xs text-black/40">
+                <thead className="bg-[#EAF1F8] text-xs text-black/40">
                   <tr>{["ID","Item Name","Category","UNSPSC","Unit Price","Supplier","Contract","Status","Actions"].map(h=>(
                     <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
                   ))}</tr>
                 </thead>
                 <tbody className="divide-y divide-black/5">
                   {filtered.map(item=>(
-                    <tr key={item.id} className="hover:bg-[#F5F5F5]/50">
+                    <tr key={item.id} className="hover:bg-[#EAF1F8]/50">
                       <td className="px-4 py-3 font-mono text-[11px] text-black/40">{item.id}</td>
                       <td className="px-4 py-3 text-xs font-semibold text-black max-w-[200px] truncate">{item.name}</td>
                       <td className="px-4 py-3 text-xs text-black/60">{item.category}</td>
@@ -194,7 +194,7 @@ function CatalogueModule({ onAction }: { onAction:(m:string)=>void }) {
                       <td className="px-4 py-3">
                         <div className="flex gap-1.5">
                           <button onClick={()=>onAction(`Viewing: ${item.name}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3"/> View</button>
-                          <button onClick={()=>onAction(`Editing: ${item.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]"><Edit3 className="h-3 w-3"/></button>
+                          <button onClick={()=>onAction(`Editing: ${item.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]"><Edit3 className="h-3 w-3"/></button>
                         </div>
                       </td>
                     </tr>
@@ -327,7 +327,7 @@ function CommunicationsModule({ onAction }:{ onAction:(m:string)=>void }) {
       <div className="flex gap-1 mb-5 border-b border-black/10">
         {(["inbox","campaigns","templates","agents"] as const).map(v=>(
           <button key={v} onClick={()=>setActiveView(v)}
-            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#F5F5F5]"}`}>
+            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#EAF1F8]"}`}>
             {v==="agents"?"AI Agents":v.charAt(0).toUpperCase()+v.slice(1)}
           </button>
         ))}
@@ -337,7 +337,7 @@ function CommunicationsModule({ onAction }:{ onAction:(m:string)=>void }) {
         <>
           <div className="flex gap-2 mb-4">
             <button onClick={()=>onAction("New message composed")} className="h-9 px-4 rounded-xl bg-black text-white text-sm font-medium flex items-center gap-1.5 hover:bg-gray-800"><Plus className="h-4 w-4"/> Compose</button>
-            <button onClick={()=>onAction("Broadcast notification sent to all suppliers")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5"><Megaphone className="h-4 w-4"/> Broadcast</button>
+            <button onClick={()=>onAction("Broadcast notification sent to all suppliers")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5"><Megaphone className="h-4 w-4"/> Broadcast</button>
           </div>
           <Card className="mb-5">
             <CardHeader title="Message Centre" subtitle="All procurement communications" action={
@@ -345,7 +345,7 @@ function CommunicationsModule({ onAction }:{ onAction:(m:string)=>void }) {
             }/>
             <div className="divide-y divide-black/5">
               {COMM_MESSAGES.map(msg=>(
-                <div key={msg.id} className="px-5 py-3 hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={()=>onAction(`Opening: ${msg.subject}`)}>
+                <div key={msg.id} className="px-5 py-3 hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={()=>onAction(`Opening: ${msg.subject}`)}>
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold text-black truncate">{msg.subject}</div>
@@ -403,11 +403,11 @@ function CommunicationsModule({ onAction }:{ onAction:(m:string)=>void }) {
                 </div>
                 <div className="text-[11px] text-black/40 mb-3">{c.target} · {c.date}</div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="text-center bg-[#F5F5F5] rounded-lg p-2">
+                  <div className="text-center bg-[#EAF1F8] rounded-lg p-2">
                     <div className="text-base font-bold text-black">{c.sent.toLocaleString()}</div>
                     <div className="text-[10px] text-black/40">Sent</div>
                   </div>
-                  <div className="text-center bg-[#F5F5F5] rounded-lg p-2">
+                  <div className="text-center bg-[#EAF1F8] rounded-lg p-2">
                     <div className="text-base font-bold text-emerald-600">{Math.round(c.opened/c.sent*100)}%</div>
                     <div className="text-[10px] text-black/40">Open Rate</div>
                   </div>
@@ -436,7 +436,7 @@ function CommunicationsModule({ onAction }:{ onAction:(m:string)=>void }) {
               </div>
               <div className="flex gap-2">
                 <button onClick={()=>onAction(`Using template: ${t.name}`)} className="flex-1 h-7 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center justify-center gap-1"><Send className="h-3 w-3"/> Use</button>
-                <button onClick={()=>onAction(`Editing template: ${t.name}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]"><Edit3 className="h-3 w-3"/></button>
+                <button onClick={()=>onAction(`Editing template: ${t.name}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]"><Edit3 className="h-3 w-3"/></button>
               </div>
             </div>
           ))}
@@ -507,7 +507,7 @@ function GazetteModule({ onAction }:{ onAction:(m:string)=>void }) {
       <div className="flex gap-1 mb-5 border-b border-black/10">
         {(["notices","publish","portal","agents"] as const).map(v=>(
           <button key={v} onClick={()=>setActiveView(v)}
-            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#F5F5F5]"}`}>
+            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#EAF1F8]"}`}>
             {v==="publish"?"Publishing Workflow":v==="agents"?"AI Agents":v.charAt(0).toUpperCase()+v.slice(1)}
           </button>
         ))}
@@ -529,11 +529,11 @@ function GazetteModule({ onAction }:{ onAction:(m:string)=>void }) {
           </div>
           <Card className="mb-5">
             <CardHeader title={`Official Tender Gazette — ${filtered.length + 4276} notices`} action={
-              <button onClick={()=>onAction("Gazette archive downloaded")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Archive className="h-3 w-3"/> Archive</button>
+              <button onClick={()=>onAction("Gazette archive downloaded")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Archive className="h-3 w-3"/> Archive</button>
             }/>
             <div className="divide-y divide-black/5">
               {filtered.map(n=>(
-                <div key={n.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+                <div key={n.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold text-black leading-tight">{n.title}</div>
@@ -554,7 +554,7 @@ function GazetteModule({ onAction }:{ onAction:(m:string)=>void }) {
                   </div>
                   <div className="flex gap-2">
                     <button onClick={()=>onAction(`Viewing gazette: ${n.id}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3"/> View</button>
-                    <button onClick={()=>onAction(`Downloaded: ${n.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3"/> PDF</button>
+                    <button onClick={()=>onAction(`Downloaded: ${n.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3"/> PDF</button>
                     {n.status === "Published" && <button onClick={()=>onAction(`Amendment drafted for: ${n.id}`)} className="h-7 px-2.5 rounded-lg border border-amber-200 text-amber-600 text-xs hover:bg-amber-50">Amend</button>}
                   </div>
                 </div>
@@ -570,7 +570,7 @@ function GazetteModule({ onAction }:{ onAction:(m:string)=>void }) {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-5">
             {["Draft Notice","Legal Review","Approval","Publish","Archive"].map((step,i)=>(
               <div key={step} className={`relative bg-white border rounded-xl p-4 text-center ${i<2?"border-emerald-200 bg-emerald-50":i===2?"border-amber-200 bg-amber-50":"border-black/10"}`}>
-                <div className={`h-8 w-8 rounded-full mx-auto mb-2 grid place-items-center text-sm font-bold ${i<2?"bg-emerald-600 text-white":i===2?"bg-amber-500 text-white":"bg-[#F5F5F5] text-black/40"}`}>{i+1}</div>
+                <div className={`h-8 w-8 rounded-full mx-auto mb-2 grid place-items-center text-sm font-bold ${i<2?"bg-emerald-600 text-white":i===2?"bg-amber-500 text-white":"bg-[#EAF1F8] text-black/40"}`}>{i+1}</div>
                 <div className="text-xs font-semibold text-black">{step}</div>
                 {i<2 && <div className="text-[10px] text-emerald-600 mt-1">✓ Completed</div>}
                 {i===2 && <div className="text-[10px] text-amber-600 mt-1">⏳ Pending</div>}
@@ -692,7 +692,7 @@ function AnnouncementsModule({ onAction }:{ onAction:(m:string)=>void }) {
       <div className="flex gap-1 mb-5 border-b border-black/10">
         {(["announcements","decisions","appeals","agents"] as const).map(v=>(
           <button key={v} onClick={()=>setActiveView(v)}
-            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#F5F5F5]"}`}>
+            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#EAF1F8]"}`}>
             {v==="agents"?"AI Agents":v.charAt(0).toUpperCase()+v.slice(1)}
           </button>
         ))}
@@ -707,7 +707,7 @@ function AnnouncementsModule({ onAction }:{ onAction:(m:string)=>void }) {
             <CardHeader title="Announcements & Decisions Register" subtitle="All official procurement announcements and decisions"/>
             <div className="divide-y divide-black/5">
               {ANNOUNCEMENTS.map(a=>(
-                <div key={a.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+                <div key={a.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold text-black leading-tight">{a.title}</div>
@@ -724,7 +724,7 @@ function AnnouncementsModule({ onAction }:{ onAction:(m:string)=>void }) {
                   {a.appealWindow!=="N/A" && <div className="text-[11px] text-amber-600 mb-2 font-medium">⚖ Appeal Window: {a.appealWindow}</div>}
                   <div className="flex gap-2">
                     <button onClick={()=>onAction(`Viewing: ${a.id}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3"/> View</button>
-                    <button onClick={()=>onAction(`Downloaded: ${a.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3"/> PDF</button>
+                    <button onClick={()=>onAction(`Downloaded: ${a.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3"/> PDF</button>
                     {a.status==="Pending Release" && <button onClick={()=>onAction(`Published: ${a.title}`)} className="h-7 px-2.5 rounded-lg bg-emerald-600 text-white text-xs hover:bg-emerald-700 flex items-center gap-1"><Send className="h-3 w-3"/> Publish</button>}
                   </div>
                 </div>
@@ -751,7 +751,7 @@ function AnnouncementsModule({ onAction }:{ onAction:(m:string)=>void }) {
                   {d.finalScore > 0 && (
                     <div className="grid grid-cols-3 gap-3 mb-3">
                       {[["Technical Score",d.techScore],["Commercial Score",d.commScore],["Final Weighted",d.finalScore]].map(([l,v])=>(
-                        <div key={String(l)} className="bg-[#F5F5F5] rounded-xl p-3 text-center">
+                        <div key={String(l)} className="bg-[#EAF1F8] rounded-xl p-3 text-center">
                           <div className="text-base font-bold text-black">{v}%</div>
                           <div className="text-[10px] text-black/40">{l}</div>
                         </div>
@@ -764,7 +764,7 @@ function AnnouncementsModule({ onAction }:{ onAction:(m:string)=>void }) {
                   <div className="flex gap-2">
                     <button onClick={()=>onAction(`Award approved: ${d.recommended} for ${d.tender}`)} className="h-7 px-3 rounded-lg bg-emerald-600 text-white text-xs hover:bg-emerald-700 flex items-center gap-1"><CheckCircle2 className="h-3 w-3"/> Approve Award</button>
                     <button onClick={()=>onAction(`Decision deferred: ${d.tender}`)} className="h-7 px-3 rounded-lg border border-amber-200 text-amber-600 text-xs hover:bg-amber-50">Defer</button>
-                    <button onClick={()=>onAction(`Evaluation queried: ${d.tender}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">Query</button>
+                    <button onClick={()=>onAction(`Evaluation queried: ${d.tender}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]">Query</button>
                   </div>
                 </div>
               </Card>
@@ -784,7 +784,7 @@ function AnnouncementsModule({ onAction }:{ onAction:(m:string)=>void }) {
               {id:"APL-2026-017",vendor:"Delta Transport Co",against:"Suspension Notice",ground:"Procedural non-compliance",filed:"2026-06-12",deadline:"2026-06-26",status:"Hearing Scheduled"},
               {id:"APL-2026-016",vendor:"ZimTech Consulting",against:"Award Decision GAZ-2026-0280",ground:"Conflict of interest allegation",filed:"2026-06-05",deadline:"2026-06-19",status:"Dismissed"},
             ].map(ap=>(
-              <div key={ap.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+              <div key={ap.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div>
                     <div className="text-sm font-semibold text-black">{ap.vendor}</div>
@@ -860,7 +860,7 @@ function PublicRecordsModule({ onAction }:{ onAction:(m:string)=>void }) {
       <div className="flex gap-1 mb-5 border-b border-black/10">
         {(["records","search","foi","agents"] as const).map(v=>(
           <button key={v} onClick={()=>setActiveView(v)}
-            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#F5F5F5]"}`}>
+            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#EAF1F8]"}`}>
             {v==="foi"?"FOI Requests":v==="agents"?"AI Agents":v.charAt(0).toUpperCase()+v.slice(1)}
           </button>
         ))}
@@ -881,11 +881,11 @@ function PublicRecordsModule({ onAction }:{ onAction:(m:string)=>void }) {
           </div>
           <Card className="mb-5">
             <CardHeader title={`Public Records Archive — ${filtered.length + 42834} records`} action={
-              <button onClick={()=>onAction("Records search indexed")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><RefreshCw className="h-3 w-3"/> Re-Index</button>
+              <button onClick={()=>onAction("Records search indexed")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><RefreshCw className="h-3 w-3"/> Re-Index</button>
             }/>
             <div className="divide-y divide-black/5">
               {filtered.map(r=>(
-                <div key={r.id} className="px-5 py-3 hover:bg-[#F5F5F5]/50">
+                <div key={r.id} className="px-5 py-3 hover:bg-[#EAF1F8]/50">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold text-black leading-tight truncate">{r.title}</div>
@@ -901,7 +901,7 @@ function PublicRecordsModule({ onAction }:{ onAction:(m:string)=>void }) {
                   </div>
                   <div className="flex gap-2">
                     <button onClick={()=>onAction(`Viewing: ${r.id}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3"/> View</button>
-                    {r.sensitivity==="Open" && <button onClick={()=>onAction(`Downloaded: ${r.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3"/> Download</button>}
+                    {r.sensitivity==="Open" && <button onClick={()=>onAction(`Downloaded: ${r.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3"/> Download</button>}
                   </div>
                 </div>
               ))}
@@ -956,7 +956,7 @@ function PublicRecordsModule({ onAction }:{ onAction:(m:string)=>void }) {
               {id:"FOI-2026-040",requester:"University of Zimbabwe",request:"Procurement spend by ministry 2022–2026",filed:"2026-05-28",due:"2026-06-12",status:"Completed"},
               {id:"FOI-2026-039",requester:"Anonymous",request:"Blacklisted vendor details",filed:"2026-06-10",due:"2026-06-24",status:"Partial Disclosure"},
             ].map(f=>(
-              <div key={f.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+              <div key={f.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div>
                     <div className="text-sm font-semibold text-black">{f.requester}</div>
@@ -1023,7 +1023,7 @@ function MediaBriefingModule({ onAction }:{ onAction:(m:string)=>void }) {
       <div className="flex gap-1 mb-5 border-b border-black/10">
         {(["briefings","database","content","analytics","agents"] as const).map(v=>(
           <button key={v} onClick={()=>setActiveView(v)}
-            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#F5F5F5]"}`}>
+            className={`px-3 py-2 text-xs font-medium rounded-t-lg capitalize transition-colors ${activeView===v?"bg-black text-white":"text-black/50 hover:text-black hover:bg-[#EAF1F8]"}`}>
             {v==="database"?"Media Database":v==="agents"?"AI Agents":v.charAt(0).toUpperCase()+v.slice(1)}
           </button>
         ))}
@@ -1033,7 +1033,7 @@ function MediaBriefingModule({ onAction }:{ onAction:(m:string)=>void }) {
         <>
           <div className="flex gap-2 mb-4">
             <button onClick={()=>onAction("New media briefing scheduled")} className="h-9 px-4 rounded-xl bg-black text-white text-sm font-medium flex items-center gap-1.5 hover:bg-gray-800"><Plus className="h-4 w-4"/> Schedule Briefing</button>
-            <button onClick={()=>onAction("Briefing pack generated by AI")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5"><Cpu className="h-4 w-4"/> Generate Pack</button>
+            <button onClick={()=>onAction("Briefing pack generated by AI")} className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5"><Cpu className="h-4 w-4"/> Generate Pack</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
             {MEDIA_BRIEFINGS.map(b=>(
@@ -1054,7 +1054,7 @@ function MediaBriefingModule({ onAction }:{ onAction:(m:string)=>void }) {
                 <div className="flex gap-2">
                   <button onClick={()=>onAction(`Briefing detail: ${b.id}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3"/> View</button>
                   {b.status==="Scheduled" && <>
-                    <button onClick={()=>onAction(`Briefing pack for: ${b.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><FileText className="h-3 w-3"/> Pack</button>
+                    <button onClick={()=>onAction(`Briefing pack for: ${b.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><FileText className="h-3 w-3"/> Pack</button>
                     <button onClick={()=>onAction(`Invitations sent: ${b.id}`)} className="h-7 px-2.5 rounded-lg border border-blue-200 text-blue-600 text-xs hover:bg-blue-50 flex items-center gap-1"><Send className="h-3 w-3"/> Invite</button>
                   </>}
                 </div>
@@ -1228,7 +1228,7 @@ export default function UtilityPage() {
           actions={
             <div className="flex gap-2">
               <button onClick={()=>handleAction("Executive utility dashboard report generated")}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
                 <Download className="h-4 w-4"/> <span className="hidden sm:inline">Export Report</span>
               </button>
               <button onClick={()=>handleAction("All utility AI agents activated")}

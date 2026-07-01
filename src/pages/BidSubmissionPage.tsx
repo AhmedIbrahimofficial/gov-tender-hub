@@ -43,7 +43,7 @@ function WorkflowSteps({ status }: { status: string }) {
       {steps.map((s, i) => (
         <div key={s} className="flex items-center flex-shrink-0">
           <div className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium whitespace-nowrap
-            ${i < idx ? "bg-emerald-50 text-emerald-700" : i === idx ? "bg-black text-white" : "bg-[#F5F5F5] text-black/40"}`}>
+            ${i < idx ? "bg-emerald-50 text-emerald-700" : i === idx ? "bg-black text-white" : "bg-[#EAF1F8] text-black/40"}`}>
             {i < idx && <Check className="h-3 w-3" />}
             {s}
           </div>
@@ -109,7 +109,7 @@ function NewBidModal({ onSave, onClose }: { onSave: (b: BidSubmission) => void; 
             <div className="text-sm font-bold">New Bid Submission</div>
             <div className="text-xs text-black/40 mt-0.5">Step {step} of 3</div>
           </div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5]"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8]"><X className="h-4 w-4" /></button>
         </div>
         <div className="overflow-y-auto flex-1 px-6 py-4">
           {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">{error}</div>}
@@ -225,7 +225,7 @@ function NewBidModal({ onSave, onClose }: { onSave: (b: BidSubmission) => void; 
           )}
         </div>
         <div className="flex items-center justify-between px-6 py-4 border-t border-black/8">
-          <button onClick={() => step > 1 ? setStep(s => s - 1) : onClose()} className="h-9 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5]">{step > 1 ? "Back" : "Cancel"}</button>
+          <button onClick={() => step > 1 ? setStep(s => s - 1) : onClose()} className="h-9 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8]">{step > 1 ? "Back" : "Cancel"}</button>
           {step < 3
             ? <button onClick={() => setStep(s => s + 1)} className="h-9 px-4 rounded-xl bg-black text-white text-xs font-medium hover:bg-gray-800">Next →</button>
             : <button onClick={handleSubmit} className="h-9 px-4 rounded-xl bg-black text-white text-xs font-medium hover:bg-gray-800 flex items-center gap-1.5"><Send className="h-3.5 w-3.5" /> Submit Bid</button>
@@ -264,7 +264,7 @@ function BidDetailPanel({ bid, onClose, onAction }: {
             <div className="text-sm font-bold">{bid.tenderTitle}</div>
             <div className="text-xs text-black/50 mt-0.5">{bid.supplierName} · {bid.tenderNumber}</div>
           </div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5] flex-shrink-0">
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8] flex-shrink-0">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -474,7 +474,7 @@ function BidDetailPanel({ bid, onClose, onAction }: {
             )}
           </div>
           <button onClick={() => onAction(bid.id, "download")}
-            className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+            className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
             <Download className="h-3 w-3" /> Download Receipt
           </button>
         </div>
@@ -817,7 +817,7 @@ export default function BidSubmissionPage() {
                         </button>
                       )}
                       <button onClick={() => handleAction(bid.id, "download")}
-                        className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                        className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                         <Download className="h-3 w-3" /> Receipt
                       </button>
                     </div>

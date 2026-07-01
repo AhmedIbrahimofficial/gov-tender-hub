@@ -113,7 +113,7 @@ function SubTabBar({ tabs, active, onChange }: { tabs: string[]; active: string;
       {tabs.map(t => (
         <button key={t} onClick={() => onChange(t)}
           className={`px-3 py-1.5 rounded-t-lg text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
-            active === t ? "bg-black/90 text-white" : "text-black/50 hover:text-black hover:bg-[#F5F5F5]"
+            active === t ? "bg-black/90 text-white" : "text-black/50 hover:text-black hover:bg-[#EAF1F8]"
           }`}>
           {t}
         </button>
@@ -148,7 +148,7 @@ function ActivityDashboard({ onAction, userName }: { onAction: (m: string) => vo
             <CardHeader title="Daily Priorities" subtitle="AI-ranked tasks for today" />
             <div className="divide-y divide-black/5">
               {[...myTasks, ...TEAM_TASKS.slice(0, 3)].slice(0, 5).map(t => (
-                <div key={t.id} className="px-4 py-3 flex items-center justify-between gap-2 hover:bg-[#F5F5F5]/50">
+                <div key={t.id} className="px-4 py-3 flex items-center justify-between gap-2 hover:bg-[#EAF1F8]/50">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={`h-2 w-2 rounded-full flex-shrink-0 ${t.status === "Overdue" ? "bg-red-500" : t.status === "In Progress" ? "bg-blue-500" : t.status === "Completed" ? "bg-emerald-400" : "bg-gray-300"}`} />
                     <div className="min-w-0">
@@ -273,7 +273,7 @@ function ActivityTasks({ onAction }: { onAction: (m: string) => void }) {
       <div className="flex flex-wrap gap-2 mb-1">
         {["All", "In Progress", "Not Started", "Overdue", "Completed"].map(s => (
           <button key={s} onClick={() => setFilter(s)}
-            className={`h-8 px-3 rounded-xl text-xs font-medium transition-colors ${filter === s ? "bg-black text-white" : "border border-black/10 bg-white text-black/60 hover:text-black hover:bg-[#F5F5F5]"}`}>
+            className={`h-8 px-3 rounded-xl text-xs font-medium transition-colors ${filter === s ? "bg-black text-white" : "border border-black/10 bg-white text-black/60 hover:text-black hover:bg-[#EAF1F8]"}`}>
             {s}
           </button>
         ))}
@@ -289,19 +289,19 @@ function ActivityTasks({ onAction }: { onAction: (m: string) => void }) {
           <div className="p-4 space-y-3">
             <input value={newTask.title} onChange={e => setNewTask(v => ({ ...v, title: e.target.value }))}
               placeholder="Task title…"
-              className="w-full h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-sm focus:outline-none" />
+              className="w-full h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-sm focus:outline-none" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               <select value={newTask.priority} onChange={e => setNewTask(v => ({ ...v, priority: e.target.value }))}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-xs">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-xs">
                 {["Critical", "High", "Medium", "Low"].map(p => <option key={p}>{p}</option>)}
               </select>
               <select value={newTask.category} onChange={e => setNewTask(v => ({ ...v, category: e.target.value }))}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-xs">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-xs">
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
               <input type="date" value={newTask.due} onChange={e => setNewTask(v => ({ ...v, due: e.target.value }))}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-xs" />
-              <label className="flex items-center gap-2 text-xs text-black/60 h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] cursor-pointer">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-xs" />
+              <label className="flex items-center gap-2 text-xs text-black/60 h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] cursor-pointer">
                 <input type="checkbox" checked={newTask.recurring} onChange={e => setNewTask(v => ({ ...v, recurring: e.target.checked }))} />
                 Recurring
               </label>
@@ -309,7 +309,7 @@ function ActivityTasks({ onAction }: { onAction: (m: string) => void }) {
             <div className="flex gap-2">
               <button onClick={() => { onAction(`Task created: ${newTask.title || "Untitled"}`); setShowNew(false); setNewTask({ title: "", priority: "Medium", due: "", category: "General", recurring: false }); }}
                 className="h-8 px-4 rounded-xl bg-black text-white text-xs font-medium hover:bg-gray-800">Create Task</button>
-              <button onClick={() => setShowNew(false)} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5]">Cancel</button>
+              <button onClick={() => setShowNew(false)} className="h-8 px-4 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8]">Cancel</button>
             </div>
           </div>
         </Card>
@@ -317,18 +317,18 @@ function ActivityTasks({ onAction }: { onAction: (m: string) => void }) {
 
       <Card>
         <CardHeader title={`Tasks — ${filtered.length} items`} action={
-          <button onClick={() => onAction("Tasks exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
+          <button onClick={() => onAction("Tasks exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Task", "Priority", "Category", "Due Date", "Status", "Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {filtered.map(t => (
-                <tr key={t.id} className="hover:bg-[#F5F5F5]/50">
+                <tr key={t.id} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black max-w-[240px] truncate">{t.title}</td>
                   <td className="px-4 py-3"><Badge tone={PRIORITY_TONE[t.priority]}>{t.priority}</Badge></td>
                   <td className="px-4 py-3 text-xs text-black/40">Procurement</td>
@@ -337,7 +337,7 @@ function ActivityTasks({ onAction }: { onAction: (m: string) => void }) {
                   <td className="px-4 py-3">
                     <div className="flex gap-1.5">
                       {t.status !== "Completed" && <button onClick={() => onAction(`Completed: ${t.id}`)} className="h-7 px-2.5 rounded-lg bg-emerald-600 text-white text-xs hover:bg-emerald-700 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Done</button>}
-                      <button onClick={() => onAction(`Editing: ${t.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]"><Edit3 className="h-3 w-3" /></button>
+                      <button onClick={() => onAction(`Editing: ${t.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]"><Edit3 className="h-3 w-3" /></button>
                     </div>
                   </td>
                 </tr>
@@ -404,15 +404,15 @@ function ActivityTimeAttendance({ onAction }: { onAction: (m: string) => void })
                 { label: "Break Start", time: "12:00", color: "amber" },
                 { label: "Break End", time: "13:00", color: "amber" },
               ].map(r => (
-                <div key={r.label} className="bg-[#F5F5F5] rounded-xl p-3">
+                <div key={r.label} className="bg-[#EAF1F8] rounded-xl p-3">
                   <div className="text-[10px] text-black/40 mb-0.5">{r.label}</div>
                   <div className="text-sm font-semibold text-black">{r.time}</div>
                 </div>
               ))}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => onAction("Break started")} className="flex-1 h-8 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center justify-center gap-1"><Coffee className="h-3 w-3" /> Break</button>
-              <button onClick={() => onAction("Overtime requested")} className="flex-1 h-8 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center justify-center gap-1"><Clock className="h-3 w-3" /> Overtime</button>
+              <button onClick={() => onAction("Break started")} className="flex-1 h-8 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center justify-center gap-1"><Coffee className="h-3 w-3" /> Break</button>
+              <button onClick={() => onAction("Overtime requested")} className="flex-1 h-8 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center justify-center gap-1"><Clock className="h-3 w-3" /> Overtime</button>
             </div>
           </div>
         </Card>
@@ -439,7 +439,7 @@ function ActivityTimeAttendance({ onAction }: { onAction: (m: string) => void })
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Type", "From", "To", "Days", "Status", "Reason"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5">{h}</th>
               ))}</tr>
@@ -450,7 +450,7 @@ function ActivityTimeAttendance({ onAction }: { onAction: (m: string) => void })
                 { type: "Sick Leave", from: "2026-06-02", to: "2026-06-02", days: 1, status: "Approved", reason: "Medical" },
                 { type: "Study Leave", from: "2026-08-03", to: "2026-08-07", days: 5, status: "Pending", reason: "Professional exam" },
               ].map(l => (
-                <tr key={l.from} className="hover:bg-[#F5F5F5]/50">
+                <tr key={l.from} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{l.type}</td>
                   <td className="px-4 py-3 text-xs text-black/60">{l.from}</td>
                   <td className="px-4 py-3 text-xs text-black/60">{l.to}</td>
@@ -510,11 +510,11 @@ function ActivityCommunication({ onAction }: { onAction: (m: string) => void }) 
         <div className="lg:col-span-1">
           <Card className="h-full">
             <CardHeader title="Channels & DMs" action={
-              <button onClick={() => onAction("New channel created")} className="h-6 w-6 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Plus className="h-3 w-3" /></button>
+              <button onClick={() => onAction("New channel created")} className="h-6 w-6 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Plus className="h-3 w-3" /></button>
             } />
             <div className="divide-y divide-black/5">
               {CHANNELS.map(c => (
-                <button key={c.name} onClick={() => onAction(`Opened: ${c.name}`)} className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-[#F5F5F5]/50 transition-colors text-left">
+                <button key={c.name} onClick={() => onAction(`Opened: ${c.name}`)} className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-[#EAF1F8]/50 transition-colors text-left">
                   <div className="flex items-center gap-2.5 min-w-0">
                     {c.type === "channel" ? <Hash className="h-3.5 w-3.5 text-black/30 flex-shrink-0" /> : <AtSign className="h-3.5 w-3.5 text-black/30 flex-shrink-0" />}
                     <span className="text-xs text-black truncate">{c.name}</span>
@@ -546,7 +546,7 @@ function ActivityCommunication({ onAction }: { onAction: (m: string) => void }) 
                   </div>
                   <div className={`max-w-[75%] ${m.sender === "You" ? "items-end" : "items-start"} flex flex-col`}>
                     <div className={`text-[10px] text-black/40 mb-1 ${m.sender === "You" ? "text-right" : ""}`}>{m.sender} · {m.time}</div>
-                    <div className={`text-xs px-3 py-2 rounded-xl leading-relaxed ${m.sender === "You" ? "bg-black text-white" : "bg-[#F5F5F5] text-black"}`}>
+                    <div className={`text-xs px-3 py-2 rounded-xl leading-relaxed ${m.sender === "You" ? "bg-black text-white" : "bg-[#EAF1F8] text-black"}`}>
                       {m.text}
                     </div>
                   </div>
@@ -557,8 +557,8 @@ function ActivityCommunication({ onAction }: { onAction: (m: string) => void }) 
               <div className="flex gap-2">
                 <input value={message} onChange={e => setMessage(e.target.value)} placeholder="Type a message…"
                   onKeyDown={e => { if (e.key === "Enter" && message.trim()) { onAction(`Message sent: "${message}"`); setMessage(""); } }}
-                  className="flex-1 h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-xs focus:outline-none" />
-                <button onClick={() => onAction("File attached")} className="h-9 w-9 rounded-xl border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Paperclip className="h-3.5 w-3.5 text-black/40" /></button>
+                  className="flex-1 h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-xs focus:outline-none" />
+                <button onClick={() => onAction("File attached")} className="h-9 w-9 rounded-xl border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Paperclip className="h-3.5 w-3.5 text-black/40" /></button>
                 <button onClick={() => { if (message.trim()) { onAction(`Message sent: "${message}"`); setMessage(""); } }} className="h-9 w-9 rounded-xl bg-black text-white grid place-items-center hover:bg-gray-800"><Send className="h-3.5 w-3.5" /></button>
               </div>
             </div>
@@ -615,7 +615,7 @@ function ActivityWorkExecution({ onAction }: { onAction: (m: string) => void }) 
         <CardHeader title="My Assigned Workflows" subtitle="Active workflows requiring your action" />
         <div className="divide-y divide-black/5">
           {WORKFLOWS.map(wf => (
-            <div key={wf.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+            <div key={wf.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div>
                   <div className="text-xs font-semibold text-black">{wf.name}</div>
@@ -625,13 +625,13 @@ function ActivityWorkExecution({ onAction }: { onAction: (m: string) => void }) 
               </div>
               <div className="mb-2">
                 <div className="flex justify-between text-[10px] text-black/40 mb-1"><span>Progress</span><span>{wf.progress}%</span></div>
-                <div className="h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-[#EAF1F8] rounded-full overflow-hidden">
                   <div style={{ width: `${wf.progress}%` }} className="h-full rounded-full bg-blue-500" />
                 </div>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => onAction(`Opened workflow: ${wf.id}`)} className="h-7 px-2.5 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3" /> View</button>
-                <button onClick={() => onAction(`Action taken on: ${wf.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Act</button>
+                <button onClick={() => onAction(`Action taken on: ${wf.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Act</button>
               </div>
             </div>
           ))}
@@ -641,19 +641,19 @@ function ActivityWorkExecution({ onAction }: { onAction: (m: string) => void }) 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader title="My Checklists" action={
-            <button onClick={() => onAction("New checklist created")} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Plus className="h-3 w-3" /> New</button>
+            <button onClick={() => onAction("New checklist created")} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Plus className="h-3 w-3" /> New</button>
           } />
           <div className="divide-y divide-black/5">
             {CHECKLISTS.map(cl => {
               const pct = Math.round(cl.completed / cl.items * 100);
               return (
-                <div key={cl.name} className="px-5 py-3 hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Opened checklist: ${cl.name}`)}>
+                <div key={cl.name} className="px-5 py-3 hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Opened checklist: ${cl.name}`)}>
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="text-xs font-semibold text-black">{cl.name}</div>
                     <Badge tone={cl.status === "Completed" ? "green" : cl.status === "Active" ? "blue" : "amber"}>{cl.status}</Badge>
                   </div>
                   <div className="flex justify-between text-[10px] text-black/40 mb-1"><span>{cl.completed}/{cl.items} items</span><span>{pct}%</span></div>
-                  <div className="h-1 bg-[#F5F5F5] rounded-full overflow-hidden">
+                  <div className="h-1 bg-[#EAF1F8] rounded-full overflow-hidden">
                     <div style={{ width: `${pct}%` }} className={`h-full rounded-full ${pct === 100 ? "bg-emerald-500" : "bg-blue-500"}`} />
                   </div>
                 </div>
@@ -670,7 +670,7 @@ function ActivityWorkExecution({ onAction }: { onAction: (m: string) => void }) 
               { id: "APR-002", title: "Vendor payment — ARV Supplies Ltd", requester: "Finance Dept", type: "Payment", urgent: false },
               { id: "APR-003", title: "RFQ dispatch — Office supplies Q3", requester: "A. Mpofu", type: "Procurement", urgent: false },
             ].map(a => (
-              <div key={a.id} className="px-5 py-3 hover:bg-[#F5F5F5]/50">
+              <div key={a.id} className="px-5 py-3 hover:bg-[#EAF1F8]/50">
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <div className="text-xs font-semibold text-black">{a.title}</div>
                   {a.urgent && <Badge tone="red">Urgent</Badge>}
@@ -679,7 +679,7 @@ function ActivityWorkExecution({ onAction }: { onAction: (m: string) => void }) 
                 <div className="flex gap-2">
                   <button onClick={() => onAction(`Approved: ${a.id}`)} className="h-7 px-2.5 rounded-lg bg-emerald-600 text-white text-xs hover:bg-emerald-700 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Approve</button>
                   <button onClick={() => onAction(`Rejected: ${a.id}`)} className="h-7 px-2.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> Reject</button>
-                  <button onClick={() => onAction(`Viewing: ${a.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]"><Eye className="h-3 w-3" /></button>
+                  <button onClick={() => onAction(`Viewing: ${a.id}`)} className="h-7 px-2 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]"><Eye className="h-3 w-3" /></button>
                 </div>
               </div>
             ))}
@@ -748,7 +748,7 @@ function ActivityReporting({ onAction }: { onAction: (m: string) => void }) {
                 { name: "Task Completion Summary — Q2 2026", date: "2026-06-18", status: "Draft", type: "Summary" },
                 { name: "Attendance & Leave Report — May 2026", date: "2026-05-31", status: "Published", type: "Attendance" },
               ].map(r => (
-                <div key={r.name} className="px-4 py-3 flex items-center justify-between gap-2 hover:bg-[#F5F5F5]/50">
+                <div key={r.name} className="px-4 py-3 flex items-center justify-between gap-2 hover:bg-[#EAF1F8]/50">
                   <div className="flex items-center gap-3 min-w-0">
                     <BarChart3 className="h-4 w-4 text-blue-500 flex-shrink-0" />
                     <div className="min-w-0">
@@ -758,7 +758,7 @@ function ActivityReporting({ onAction }: { onAction: (m: string) => void }) {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge tone={r.status === "Published" ? "green" : "amber"}>{r.status}</Badge>
-                    <button onClick={() => onAction(`Downloaded: ${r.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Download className="h-3 w-3 text-black/40" /></button>
+                    <button onClick={() => onAction(`Downloaded: ${r.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Download className="h-3 w-3 text-black/40" /></button>
                   </div>
                 </div>
               ))}
@@ -792,7 +792,7 @@ function ActivityReporting({ onAction }: { onAction: (m: string) => void }) {
             <div className="p-4 space-y-2">
               {["My Tasks (PDF)", "Attendance Log (CSV)", "Performance Summary (PDF)", "Weekly Report (Excel)"].map(e => (
                 <button key={e} onClick={() => onAction(`Exported: ${e}`)}
-                  className="w-full h-8 px-3 rounded-xl border border-black/10 text-xs text-black/70 hover:bg-[#F5F5F5] flex items-center gap-2 hover:border-black/20 transition-colors">
+                  className="w-full h-8 px-3 rounded-xl border border-black/10 text-xs text-black/70 hover:bg-[#EAF1F8] flex items-center gap-2 hover:border-black/20 transition-colors">
                   <Download className="h-3 w-3" /> {e}
                 </button>
               ))}
@@ -860,7 +860,7 @@ function ActivityAI({ onAction }: { onAction: (m: string) => void }) {
                   <div className={`h-7 w-7 rounded-full grid place-items-center flex-shrink-0 text-[10px] font-bold ${m.role === "user" ? "bg-black text-white" : "bg-violet-100 text-violet-700"}`}>
                     {m.role === "user" ? "ME" : "AI"}
                   </div>
-                  <div className={`max-w-[80%] px-3 py-2 rounded-xl text-xs leading-relaxed ${m.role === "user" ? "bg-black text-white" : "bg-[#F5F5F5] text-black"}`}>
+                  <div className={`max-w-[80%] px-3 py-2 rounded-xl text-xs leading-relaxed ${m.role === "user" ? "bg-black text-white" : "bg-[#EAF1F8] text-black"}`}>
                     {m.text}
                   </div>
                 </div>
@@ -871,7 +871,7 @@ function ActivityAI({ onAction }: { onAction: (m: string) => void }) {
                 <input value={aiInput} onChange={e => setAiInput(e.target.value)}
                   onKeyDown={e => { if (e.key === "Enter") sendAI(""); }}
                   placeholder="Ask the AI assistant…"
-                  className="flex-1 h-9 px-3 rounded-xl border border-black/10 bg-[#F5F5F5] text-xs focus:outline-none" />
+                  className="flex-1 h-9 px-3 rounded-xl border border-black/10 bg-[#EAF1F8] text-xs focus:outline-none" />
                 <button onClick={() => sendAI("")} className="h-9 w-9 rounded-xl bg-black text-white grid place-items-center hover:bg-gray-800">
                   <Send className="h-3.5 w-3.5" />
                 </button>
@@ -902,7 +902,7 @@ function ActivityAI({ onAction }: { onAction: (m: string) => void }) {
                 { icon: RefreshCw, label: "Workflow Automation", color: "text-cyan-600 bg-cyan-50" },
                 { icon: Lightbulb, label: "Smart Suggestions", color: "text-orange-600 bg-orange-50" },
               ].map(c => (
-                <div key={c.label} className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-[#F5F5F5] cursor-pointer" onClick={() => onAction(`AI feature: ${c.label}`)}>
+                <div key={c.label} className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-[#EAF1F8] cursor-pointer" onClick={() => onAction(`AI feature: ${c.label}`)}>
                   <div className={`h-6 w-6 rounded-lg grid place-items-center ${c.color}`}>
                     <c.icon className="h-3 w-3" />
                   </div>
@@ -932,19 +932,19 @@ function ActivityFiles({ onAction }: { onAction: (m: string) => void }) {
         <CardHeader title="My Files" action={
           <div className="flex gap-2">
             <button onClick={() => onAction("File uploaded")} className="h-7 px-3 rounded-lg bg-black text-white text-xs flex items-center gap-1"><Plus className="h-3 w-3" /> Upload</button>
-            <button onClick={() => onAction("New folder created")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Folder className="h-3 w-3" /> New Folder</button>
+            <button onClick={() => onAction("New folder created")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Folder className="h-3 w-3" /> New Folder</button>
           </div>
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Name", "Type", "Size", "Modified", "Status", "Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {TEAM_DOCS.map(d => (
-                <tr key={d.id} className="hover:bg-[#F5F5F5]/50">
+                <tr key={d.id} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />
@@ -957,9 +957,9 @@ function ActivityFiles({ onAction }: { onAction: (m: string) => void }) {
                   <td className="px-4 py-3"><Badge tone={d.status === "Final" || d.status === "Approved" || d.status === "Published" ? "green" : d.status === "Active" ? "blue" : "amber"}>{d.status}</Badge></td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1.5">
-                      <button onClick={() => onAction(`Viewed: ${d.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Eye className="h-3 w-3 text-black/40" /></button>
-                      <button onClick={() => onAction(`Downloaded: ${d.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Download className="h-3 w-3 text-black/40" /></button>
-                      <button onClick={() => onAction(`Shared: ${d.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Link2 className="h-3 w-3 text-black/40" /></button>
+                      <button onClick={() => onAction(`Viewed: ${d.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Eye className="h-3 w-3 text-black/40" /></button>
+                      <button onClick={() => onAction(`Downloaded: ${d.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Download className="h-3 w-3 text-black/40" /></button>
+                      <button onClick={() => onAction(`Shared: ${d.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Link2 className="h-3 w-3 text-black/40" /></button>
                     </div>
                   </td>
                 </tr>
@@ -1018,26 +1018,26 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <Badge tone={team.status === "Active" ? "green" : "muted"}>{team.status}</Badge>
-                      <button onClick={() => onAction(`Opened team: ${team.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Eye className="h-3 w-3" /> View</button>
+                      <button onClick={() => onAction(`Opened team: ${team.id}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Eye className="h-3 w-3" /> View</button>
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-3 mb-3">
-                    <div className="bg-[#F5F5F5] rounded-lg p-2.5 text-center">
+                    <div className="bg-[#EAF1F8] rounded-lg p-2.5 text-center">
                       <div className="text-base font-bold text-black">{team.members}</div>
                       <div className="text-[10px] text-black/40">Members</div>
                     </div>
-                    <div className="bg-[#F5F5F5] rounded-lg p-2.5 text-center">
+                    <div className="bg-[#EAF1F8] rounded-lg p-2.5 text-center">
                       <div className="text-base font-bold text-black">{team.tasks}</div>
                       <div className="text-[10px] text-black/40">Tasks</div>
                     </div>
-                    <div className="bg-[#F5F5F5] rounded-lg p-2.5 text-center">
+                    <div className="bg-[#EAF1F8] rounded-lg p-2.5 text-center">
                       <div className="text-base font-bold text-black">{team.documents}</div>
                       <div className="text-[10px] text-black/40">Documents</div>
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-[10px] text-black/40 mb-1"><span>Task completion</span><span>{team.completed}/{team.tasks} — {pct}%</span></div>
-                    <div className="h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-[#EAF1F8] rounded-full overflow-hidden">
                       <div style={{ width: `${pct}%` }} className={`h-full rounded-full ${pct === 100 ? "bg-emerald-500" : "bg-blue-500"}`} />
                     </div>
                   </div>
@@ -1076,7 +1076,7 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
             } />
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-[#F5F5F5] text-xs text-black/40">
+                <thead className="bg-[#EAF1F8] text-xs text-black/40">
                   <tr>{["Member", "Role", "Teams", "Tasks", "Status", "Actions"].map(h => (
                     <th key={h} className="text-left font-medium px-4 py-2.5">{h}</th>
                   ))}</tr>
@@ -1090,7 +1090,7 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
                     { name: "S. Nkosi", role: "Compliance Officer", teams: 2, tasks: 9, status: "Online" },
                     { name: "J. Banda", role: "Procurement Officer", teams: 1, tasks: 4, status: "Offline" },
                   ].map(m => (
-                    <tr key={m.name} className="hover:bg-[#F5F5F5]/50">
+                    <tr key={m.name} className="hover:bg-[#EAF1F8]/50">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           <div className="h-7 w-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold grid place-items-center flex-shrink-0">
@@ -1107,8 +1107,8 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1.5">
-                          <button onClick={() => onAction(`Message to ${m.name}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><MessageSquare className="h-3 w-3" /> Message</button>
-                          <button onClick={() => onAction(`Profile: ${m.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Eye className="h-3 w-3 text-black/40" /></button>
+                          <button onClick={() => onAction(`Message to ${m.name}`)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><MessageSquare className="h-3 w-3" /> Message</button>
+                          <button onClick={() => onAction(`Profile: ${m.name}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Eye className="h-3 w-3 text-black/40" /></button>
                         </div>
                       </td>
                     </tr>
@@ -1134,14 +1134,14 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
             } />
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-[#F5F5F5] text-xs text-black/40">
+                <thead className="bg-[#EAF1F8] text-xs text-black/40">
                   <tr>{["Task", "Assignee", "Team", "Priority", "Due", "Status"].map(h => (
                     <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
                   ))}</tr>
                 </thead>
                 <tbody className="divide-y divide-black/5">
                   {TEAM_TASKS.map(t => (
-                    <tr key={t.id} className="hover:bg-[#F5F5F5]/50">
+                    <tr key={t.id} className="hover:bg-[#EAF1F8]/50">
                       <td className="px-4 py-3 text-xs font-semibold text-black max-w-[220px] truncate">{t.title}</td>
                       <td className="px-4 py-3 text-xs text-black/60">{t.assignee}</td>
                       <td className="px-4 py-3 text-xs text-black/40">{t.team}</td>
@@ -1171,14 +1171,14 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
             } />
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-[#F5F5F5] text-xs text-black/40">
+                <thead className="bg-[#EAF1F8] text-xs text-black/40">
                   <tr>{["Document", "Team", "Type", "Version", "Uploaded By", "Date", "Status", "Actions"].map(h => (
                     <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
                   ))}</tr>
                 </thead>
                 <tbody className="divide-y divide-black/5">
                   {TEAM_DOCS.map(d => (
-                    <tr key={d.id} className="hover:bg-[#F5F5F5]/50">
+                    <tr key={d.id} className="hover:bg-[#EAF1F8]/50">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2 min-w-0">
                           <FileText className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
@@ -1193,8 +1193,8 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
                       <td className="px-4 py-3"><Badge tone={d.status === "Final" || d.status === "Approved" || d.status === "Published" ? "green" : d.status === "Active" ? "blue" : "amber"}>{d.status}</Badge></td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
-                          <button onClick={() => onAction(`Viewed: ${d.id}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Eye className="h-3 w-3 text-black/40" /></button>
-                          <button onClick={() => onAction(`Downloaded: ${d.id}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#F5F5F5]"><Download className="h-3 w-3 text-black/40" /></button>
+                          <button onClick={() => onAction(`Viewed: ${d.id}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Eye className="h-3 w-3 text-black/40" /></button>
+                          <button onClick={() => onAction(`Downloaded: ${d.id}`)} className="h-7 w-7 rounded-lg border border-black/10 grid place-items-center hover:bg-[#EAF1F8]"><Download className="h-3 w-3 text-black/40" /></button>
                         </div>
                       </td>
                     </tr>
@@ -1225,7 +1225,7 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
                 { id: "D-003", title: "Q3 budget allocation — infrastructure projects", author: "R. Chikwanda", team: "TM-004", replies: 12, views: 52, time: "2 days ago", pinned: false },
                 { id: "D-004", title: "ARV Framework evaluation report sign-off", author: "T. Moyo", team: "TM-002", replies: 3, views: 14, time: "3 days ago", pinned: false },
               ].map(d => (
-                <div key={d.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Opened discussion: ${d.id}`)}>
+                <div key={d.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Opened discussion: ${d.id}`)}>
                   <div className="flex items-start justify-between gap-2 mb-1.5">
                     <div className="flex items-center gap-2 min-w-0">
                       {d.pinned && <Star className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />}
@@ -1264,7 +1264,7 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
                 { milestone: "Q3 Budget — Final Submission", team: "TM-004", date: "2026-06-30", status: "On Track", owner: "R. Chikwanda" },
                 { milestone: "Vendor Compliance — Batch Q2 Complete", team: "TM-005", date: "2026-06-24", status: "On Track", owner: "S. Nkosi" },
               ].map(m => (
-                <div key={m.milestone} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-[#F5F5F5]/50">
+                <div key={m.milestone} className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-[#EAF1F8]/50">
                   <div className="min-w-0 flex-1">
                     <div className="text-xs font-semibold text-black">{m.milestone}</div>
                     <div className="text-[10px] text-black/40 mt-0.5">{m.team} · Due {m.date} · {m.owner}</div>
@@ -1362,7 +1362,7 @@ function MyTeamTab({ onAction }: { onAction: (m: string) => void }) {
                 { label: "Archive Team", icon: Archive },
               ].map(a => (
                 <button key={a.label} onClick={() => onAction(a.label)}
-                  className="h-10 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-2 hover:border-black/20 transition-colors">
+                  className="h-10 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-2 hover:border-black/20 transition-colors">
                   <a.icon className="h-3.5 w-3.5 text-black/40" /> {a.label}
                 </button>
               ))}
@@ -1402,7 +1402,7 @@ export default function TeamsPage() {
           actions={
             <div className="flex gap-2">
               <button
-                className="h-8 px-3 rounded-xl border border-black/10 text-xs font-medium flex items-center gap-1.5 hover:bg-[#F5F5F5] transition-colors text-black/60 hover:text-black"
+                className="h-8 px-3 rounded-xl border border-black/10 text-xs font-medium flex items-center gap-1.5 hover:bg-[#EAF1F8] transition-colors text-black/60 hover:text-black"
                 onClick={() => handleAction("Settings opened")}>
                 <Settings className="h-3.5 w-3.5" /> Settings
               </button>

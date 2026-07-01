@@ -35,7 +35,7 @@ export default function MinisterDashboard() {
           actions={
             <div className="flex gap-2">
               <button onClick={handleBriefing}
-                className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+                className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
                 <Download className="h-4 w-4" /> Briefing Pack PDF
               </button>
               <button onClick={handleBriefing}
@@ -154,7 +154,7 @@ export default function MinisterDashboard() {
                 ].map(b => (
                   <div key={b.cat}>
                     <div className="flex justify-between text-xs mb-1"><span className="font-medium text-black">{b.cat}</span><span className="text-black/40">{b.pct}%</span></div>
-                    <div className="h-2 rounded-full bg-[#F5F5F5] overflow-hidden"><div className="h-full rounded-full bg-black" style={{ width: `${b.pct}%` }} /></div>
+                    <div className="h-2 rounded-full bg-[#EAF1F8] overflow-hidden"><div className="h-full rounded-full bg-black" style={{ width: `${b.pct}%` }} /></div>
                   </div>
                 ))}
               </div>

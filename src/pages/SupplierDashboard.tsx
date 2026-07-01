@@ -56,7 +56,7 @@ export default function SupplierDashboard() {
           description={`Supplier Portal — ${user?.entity}`}
           actions={
             <div className="flex gap-2">
-              <Link to="/tenders" className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+              <Link to="/tenders" className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
                 Browse Tenders <ArrowRight className="h-4 w-4" />
               </Link>
               <button onClick={handleSubmitInvoice}
@@ -96,7 +96,7 @@ export default function SupplierDashboard() {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {b.score && <span className="text-xs font-bold text-black">{b.score}/100</span>}
                         <Badge tone={b.status === "Awarded" ? "green" : b.status === "Unsuccessful" ? "red" : b.status.includes("Passed") ? "blue" : "amber"}>{b.status}</Badge>
-                        <button onClick={() => handleAskClarification(b.id)} className="h-6 px-2 rounded-md border border-black/10 text-[10px] hover:bg-[#F5F5F5] transition-colors">Clarify</button>
+                        <button onClick={() => handleAskClarification(b.id)} className="h-6 px-2 rounded-md border border-black/10 text-[10px] hover:bg-[#EAF1F8] transition-colors">Clarify</button>
                       </div>
                     </div>
                   ))}
@@ -149,7 +149,7 @@ export default function SupplierDashboard() {
                     { label: "Update Company Profile", action: () => { pushNotification("Company profile updated", "success"); toast("Company profile updated successfully.", "success"); } },
                   ].map(q => (
                     <button key={q.label} onClick={q.action}
-                      className="w-full text-left px-3 py-2 rounded-lg border border-black/10 text-xs font-medium text-black hover:bg-[#F5F5F5] hover:border-black/20 transition-all flex items-center justify-between group">
+                      className="w-full text-left px-3 py-2 rounded-lg border border-black/10 text-xs font-medium text-black hover:bg-[#EAF1F8] hover:border-black/20 transition-all flex items-center justify-between group">
                       {q.label}
                       <ArrowRight className="h-3 w-3 text-black/20 group-hover:text-black transition-colors" />
                     </button>
@@ -173,7 +173,7 @@ export default function SupplierDashboard() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {b.score && <span className="text-sm font-bold text-black">{b.score}/100</span>}
                     <Badge tone={b.status === "Awarded" ? "green" : b.status === "Unsuccessful" ? "red" : b.status.includes("Passed") ? "blue" : "amber"}>{b.status}</Badge>
-                    <button onClick={() => handleAskClarification(b.id)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">Clarify</button>
+                    <button onClick={() => handleAskClarification(b.id)} className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]">Clarify</button>
                   </div>
                 </div>
               ))}
@@ -192,7 +192,7 @@ export default function SupplierDashboard() {
                   </div>
                   <Badge tone="blue">On Track</Badge>
                 </div>
-                <div className="h-2 rounded-full bg-[#F5F5F5] overflow-hidden mb-2">
+                <div className="h-2 rounded-full bg-[#EAF1F8] overflow-hidden mb-2">
                   <div className="h-full rounded-full bg-black transition-all" style={{ width: `${c.progress}%` }} />
                 </div>
                 <div className="flex justify-between text-xs text-black/50">
@@ -201,8 +201,8 @@ export default function SupplierDashboard() {
                 </div>
                 <div className="flex gap-2 mt-3">
                   <button onClick={() => { pushNotification(`Deliverable submitted for ${c.title} — awaiting acceptance by client.`, "success"); }} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 transition-colors">Submit Deliverable</button>
-                  <button onClick={() => toast(`${c.id} — ${c.title} | ${c.value} | ${c.progress}% complete | Next: ${c.nextMilestone} · ${c.due}`, "info")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">View Contract</button>
-                  <button onClick={handleSubmitInvoice} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Submit Invoice</button>
+                  <button onClick={() => toast(`${c.id} — ${c.title} | ${c.value} | ${c.progress}% complete | Next: ${c.nextMilestone} · ${c.due}`, "info")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">View Contract</button>
+                  <button onClick={handleSubmitInvoice} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">Submit Invoice</button>
                 </div>
               </div>
             ))}
@@ -224,7 +224,7 @@ export default function SupplierDashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge tone={inv.status === "Approved" ? "green" : "amber"}>{inv.status}</Badge>
-                  <button className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5]">Track Payment</button>
+                  <button className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8]">Track Payment</button>
                 </div>
               </div>
             ))}

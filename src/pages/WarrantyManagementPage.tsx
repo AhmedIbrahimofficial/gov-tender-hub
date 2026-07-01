@@ -97,7 +97,7 @@ export default function WarrantyManagementPage() {
               </select>
               <div className="flex gap-2 pt-2">
                 <button onClick={submitClaim} className="flex-1 h-9 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-800">Submit Claim</button>
-                <button onClick={() => setNewClaimFor(null)} className="h-9 px-4 rounded-lg border border-black/10 text-sm hover:bg-[#F5F5F5]">Cancel</button>
+                <button onClick={() => setNewClaimFor(null)} className="h-9 px-4 rounded-lg border border-black/10 text-sm hover:bg-[#EAF1F8]">Cancel</button>
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function WarrantyManagementPage() {
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
                           <button onClick={() => setSelectedWarranty(w)} className="h-7 px-2 rounded-lg bg-black text-white text-[10px] hover:bg-gray-800">View</button>
-                          {w.status === "Active" && <button onClick={() => setNewClaimFor(w)} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5]">Claim</button>}
+                          {w.status === "Active" && <button onClick={() => setNewClaimFor(w)} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8]">Claim</button>}
                         </div>
                       </td>
                     </tr>

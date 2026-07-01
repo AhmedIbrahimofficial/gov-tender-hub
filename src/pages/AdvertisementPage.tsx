@@ -77,7 +77,7 @@ function AdvertisementDetailPanel({ adv, onClose, onAction }: {
             <div className="text-sm font-bold">{adv.tenderTitle}</div>
             <div className="text-xs text-black/50 mt-0.5">{adv.ministry} · {adv.department}</div>
           </div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5]"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8]"><X className="h-4 w-4" /></button>
         </div>
 
         <div className="flex gap-1 px-6 border-b border-black/8 overflow-x-auto scrollbar-none flex-shrink-0">
@@ -218,7 +218,7 @@ function AdvertisementDetailPanel({ adv, onClose, onAction }: {
                             <button onClick={() => handleReply(cq.id)} className="h-7 px-3 bg-black text-white rounded-lg text-xs hover:bg-gray-800 flex items-center gap-1">
                               <Send className="h-3 w-3" /> Respond
                             </button>
-                            <button className="h-7 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5]">Dismiss</button>
+                            <button className="h-7 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8]">Dismiss</button>
                           </div>
                         </div>
                       )}
@@ -306,12 +306,12 @@ function AdvertisementDetailPanel({ adv, onClose, onAction }: {
               <Send className="h-3 w-3" /> Publish
             </button>
             <button onClick={() => onAction(adv.id, "close")}
-              className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+              className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
               <X className="h-3 w-3" /> Close Advertisement
             </button>
           </div>
           <button onClick={() => onAction(adv.id, "download")}
-            className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+            className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
             <Download className="h-3 w-3" /> Export
           </button>
         </div>
@@ -464,7 +464,7 @@ export default function AdvertisementPage() {
               <div className="text-xs font-semibold mb-3">All Registered Suppliers ({allEngagements.length})</div>
               <div className="overflow-x-auto rounded-2xl border border-black/8">
                 <table className="w-full text-xs">
-                  <thead className="bg-[#F5F5F5]">
+                  <thead className="bg-[#EAF1F8]">
                     <tr>{["Supplier","Tender","Status","Documents","Notified","Last Activity"].map(h => (
                       <th key={h} className="px-4 py-2.5 text-left font-medium text-black/60">{h}</th>
                     ))}</tr>
@@ -553,7 +553,7 @@ export default function AdvertisementPage() {
 
                   <div className="flex flex-wrap gap-2 mt-1">
                     {adv.publicationChannels.map(ch => (
-                      <div key={ch.id} className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] ${ch.status === "Published" ? "bg-emerald-50 border-emerald-100 text-emerald-700" : "bg-[#F5F5F5] border-black/8 text-black/50"}`}>
+                      <div key={ch.id} className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] ${ch.status === "Published" ? "bg-emerald-50 border-emerald-100 text-emerald-700" : "bg-[#EAF1F8] border-black/8 text-black/50"}`}>
                         {CHANNEL_ICON[ch.channel]}
                         <span>{ch.channel}</span>
                       </div>
@@ -566,7 +566,7 @@ export default function AdvertisementPage() {
                       <Eye className="h-3 w-3" /> Open
                     </button>
                     <button onClick={() => handleAction(adv.id, "publish")}
-                      className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                      className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                       <Send className="h-3 w-3" /> Publish
                     </button>
                     <button onClick={() => handleAction(adv.id, "notify")}
@@ -574,7 +574,7 @@ export default function AdvertisementPage() {
                       <Bell className="h-3 w-3" /> Notify Suppliers
                     </button>
                     <button onClick={() => handleAction(adv.id, "download")}
-                      className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+                      className="h-8 px-3 border border-black/10 rounded-lg text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
                       <Download className="h-3 w-3" /> Export
                     </button>
                     <button onClick={() => handleAction(adv.id, "close")}

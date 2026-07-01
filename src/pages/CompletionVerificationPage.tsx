@@ -159,7 +159,7 @@ function VerificationDetailModal({ rec, onClose, onUpdate }: {
           )}
           <button
             onClick={() => pushNotification("Verification report downloaded.", "success")}
-            className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1.5 ml-auto"
+            className="h-8 px-4 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1.5 ml-auto"
           >
             <Download className="h-3.5 w-3.5" />Download Report
           </button>

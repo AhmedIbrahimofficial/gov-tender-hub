@@ -101,7 +101,7 @@ function TenderDetailModal({ tender, onClose, onApply }: {
               { icon: Calendar,    label: "Closing Date",  value: tender.closing },
               { icon: Users,       label: "Bids Received", value: `${tender.bids} bids` },
             ].map(({ icon: Icon, label, value }) => (
-              <div key={label} className="bg-[#F5F5F5] rounded-xl p-3">
+              <div key={label} className="bg-[#EAF1F8] rounded-xl p-3">
                 <div className="flex items-center gap-1.5 mb-1">
                   <Icon className="h-3.5 w-3.5 text-black/40" />
                   <span className="text-[10px] text-black/40 uppercase tracking-wider font-medium">{label}</span>
@@ -553,7 +553,7 @@ export default function SupplierPortalPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] flex flex-col">
+    <div className="min-h-screen bg-[#EAF1F8] flex flex-col">
       {/* Header */}
       <header className="h-14 bg-white border-b border-black/10 flex items-center px-4 gap-3 sticky top-0 z-30 shadow-sm">
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
@@ -588,14 +588,14 @@ export default function SupplierPortalPage() {
             <Send className="h-3 w-3" /> Sign
           </button>
         </div>
-        <button className="relative h-9 w-9 grid place-items-center rounded-lg hover:bg-[#F5F5F5] text-black/40 hover:text-black">
+        <button className="relative h-9 w-9 grid place-items-center rounded-lg hover:bg-[#EAF1F8] text-black/40 hover:text-black">
           <Bell className="h-4 w-4" />
           {notifications.filter(n => !n.read).length > 0 && (
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
           )}
         </button>
         <div className="relative">
-          <button onClick={() => setShowUser(!showUser)} className="flex items-center gap-2 h-9 px-2 rounded-lg hover:bg-[#F5F5F5] transition-colors">
+          <button onClick={() => setShowUser(!showUser)} className="flex items-center gap-2 h-9 px-2 rounded-lg hover:bg-[#EAF1F8] transition-colors">
             <div className="h-7 w-7 rounded-full bg-blue-600 text-white text-xs font-bold grid place-items-center">{user?.avatar ?? "?"}</div>
             <span className="text-xs font-medium text-black hidden sm:block max-w-[100px] truncate">{user?.name}</span>
             <ChevronDown className="h-3.5 w-3.5 text-black/30 hidden sm:block" />
@@ -869,7 +869,7 @@ export default function SupplierPortalPage() {
                   { from: "CPO — Ministry of Health", subject: "Shortlisting Notification — ARV Framework", preview: "We are pleased to inform you that your bid has been shortlisted for financial evaluation.", time: "2026-06-20 09:00", unread: false, type: "Award" },
                   { from: "Procurement Officer — PRAZ", subject: "Bid Amendment Notice — ZW-PRA-2026-00183", preview: "Attention: Addendum 2 has been published. Please review and submit any updated bid documents.", time: "2026-06-19 16:30", unread: false, type: "Amendment" },
                 ].map((m, i) => (
-                  <div key={i} className={`flex items-start gap-3 px-5 py-4 border-b border-black/5 last:border-0 cursor-pointer hover:bg-[#F5F5F5] transition-colors ${m.unread ? "" : "opacity-70"}`}>
+                  <div key={i} className={`flex items-start gap-3 px-5 py-4 border-b border-black/5 last:border-0 cursor-pointer hover:bg-[#EAF1F8] transition-colors ${m.unread ? "" : "opacity-70"}`}>
                     <div className={`h-2.5 w-2.5 rounded-full flex-shrink-0 mt-1.5 ${m.unread ? "bg-blue-500" : "bg-transparent"}`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">

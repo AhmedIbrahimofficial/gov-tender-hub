@@ -57,10 +57,10 @@ const HR_MODULES: HRModule[] = [
 ];
 
 const STATUS_DOT: Record<ModuleStatus, string> = {
-  active: "bg-[#29b8c5] animate-pulse", pending: "bg-gray-300", completed: "bg-emerald-500",
+  active: "bg-[#2563eb] animate-pulse", pending: "bg-gray-300", completed: "bg-emerald-500",
 };
 const STATUS_BADGE: Record<ModuleStatus, string> = {
-  active: "bg-[#29b8c5]/20 text-[#29b8c5]", pending: "bg-gray-100 text-gray-500", completed: "bg-emerald-100 text-emerald-700",
+  active: "bg-[#2563eb]/20 text-[#2563eb]", pending: "bg-gray-100 text-gray-500", completed: "bg-emerald-100 text-emerald-700",
 };
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
@@ -299,7 +299,7 @@ function getHRFormFields(module: HRModule, tab: string): FieldDef[] {
 
 // ─── Form Field Renderer component ───────────────────────────────────────────
 function HRFormField({ f }: { f: FieldDef }) {
-  const base = "w-full border border-black/15 px-3 text-xs text-black focus:outline-none focus:ring-2 focus:ring-[#29b8c5]/30 disabled:bg-[#F5F5F5] disabled:text-black/40";
+  const base = "w-full border border-black/15 px-3 text-xs text-black focus:outline-none focus:ring-2 focus:ring-[#2563eb]/30 disabled:bg-[#EAF1F8] disabled:text-black/40";
   if (f.type === "textarea") return (
     <textarea rows={3} defaultValue={f.defaultValue} placeholder={f.placeholder} disabled={f.system}
       className={`${base} py-2 resize-none`} style={{ borderRadius: 0 }} />
@@ -460,7 +460,7 @@ function HRFormTabContent({ module, tab }: { module: HRModule; tab: string }) {
         <div key={f.label} className={f.fullWidth ? "md:col-span-2" : ""}>
           <label className="block text-[10px] font-semibold text-black/55 uppercase tracking-wider mb-1">
             {f.label}
-            {f.system && <span className="ml-1 text-[9px] text-[#29b8c5] font-normal">(system)</span>}
+            {f.system && <span className="ml-1 text-[9px] text-[#2563eb] font-normal">(system)</span>}
           </label>
           <HRFormField f={f} />
         </div>
@@ -498,7 +498,7 @@ export default function HumanResourcesPage() {
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Badge tone="blue">HR Workbench</Badge>
               <Badge tone="muted">Government of Zimbabwe</Badge>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#29b8c5]/15 text-[#29b8c5]">AI-Powered</span>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#2563eb]/15 text-[#2563eb]">AI-Powered</span>
             </div>
             <PageHeader
               title="Human Resources Management"
@@ -554,7 +554,7 @@ export default function HumanResourcesPage() {
                   return (
                     <button key={m.id} onClick={() => handleModuleSelect(m.id)}
                       className={`w-full flex items-start gap-2.5 px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-black/5 last:border-0
-                        ${activeModuleId === m.id ? "bg-black/5 border-l-2 border-l-[#29b8c5]" : ""}`}>
+                        ${activeModuleId === m.id ? "bg-black/5 border-l-2 border-l-[#2563eb]" : ""}`}>
                       <div className={`h-5 w-5 flex items-center justify-center flex-shrink-0 mt-0.5 ${m.color}`} style={{ borderRadius: 0 }}>
                         <MIcon className="h-3 w-3 text-white" />
                       </div>
@@ -611,7 +611,7 @@ export default function HumanResourcesPage() {
                   {activeModule.formTabs.map((tab, idx) => (
                     <button key={tab} onClick={() => setActiveTab(idx)}
                       className={`px-4 py-3 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors flex-shrink-0
-                        ${activeTab === idx ? "border-[#29b8c5] text-[#29b8c5]" : "border-transparent text-black/60 hover:text-black"}`}>
+                        ${activeTab === idx ? "border-[#2563eb] text-[#2563eb]" : "border-transparent text-black/60 hover:text-black"}`}>
                       {tab}
                     </button>
                   ))}

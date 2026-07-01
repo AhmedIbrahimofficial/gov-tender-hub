@@ -102,11 +102,11 @@ export default function AwardsPage() {
                       </button>
                     )}
                     <button onClick={() => downloadAwardNotice(c)}
-                      className="h-8 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
+                      className="h-8 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors flex items-center gap-1.5">
                       <Download className="h-3.5 w-3.5" /> Download LOA
                     </button>
                     <button onClick={() => toast(`${c.tenderId} — ${c.title} | ${c.vendor} | Score: ${c.score}/100 | QCBS 70/30. AI: No conflict detected. Proceed with award.`, "info")}
-                      className="h-8 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors flex items-center gap-1.5">
+                      className="h-8 px-3 rounded-xl border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors flex items-center gap-1.5">
                       <Eye className="h-3.5 w-3.5" /> View Evaluation
                     </button>
                   </div>
@@ -134,7 +134,7 @@ export default function AwardsPage() {
                     <Badge tone="green">Awarded</Badge>
                     <span className="text-[11px] text-black/40 hidden sm:inline">14d standstill</span>
                     <button onClick={() => toast(`Award Record: ${t.title} | ${t.entity} | ${t.value} | Status: Awarded | 14-day standstill applies.`, "info")}
-                      className="h-6 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] transition-colors">View</button>
+                      className="h-6 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] transition-colors">View</button>
                   </div>
                 </div>
               ))}
@@ -160,7 +160,7 @@ export default function AwardsPage() {
                       <button onClick={() => handleAppealAction(a.ref, "Dismissed")}
                         className="h-7 px-2.5 rounded-lg bg-red-600 text-white text-xs hover:bg-red-700 transition-colors">Dismiss</button>
                       <button onClick={() => toast(`Appeal ${a.ref} — ${a.tender} | ${a.bidder} | Grounds: ${a.grounds} | Filed: ${a.filed} | Status: ${a.status}`, "info")}
-                        className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors">Review</button>
+                        className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors">Review</button>
                     </div>
                   )}
                 </div>

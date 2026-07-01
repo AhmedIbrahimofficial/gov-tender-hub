@@ -97,7 +97,7 @@ function AIExecutionAssistant({ execution, onClose }: { execution: ContractExecu
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {chat.map((m, i) => (
           <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${m.from === "user" ? "bg-black text-white" : "bg-[#F5F5F5] text-black"}`}>{m.text}</div>
+            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${m.from === "user" ? "bg-black text-white" : "bg-[#EAF1F8] text-black"}`}>{m.text}</div>
           </div>
         ))}
       </div>
@@ -153,7 +153,7 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
             </div>
             <div className="text-xs text-black/40 mt-0.5">{ex.contractNumber} · {ex.supplierName} · {ex.ministry}</div>
           </div>
-          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#F5F5F5]"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} className="h-7 w-7 grid place-items-center rounded-lg hover:bg-[#EAF1F8]"><X className="h-4 w-4" /></button>
         </div>
         <div className="px-5 pt-2 border-b border-black/8 flex-shrink-0 overflow-x-auto scrollbar-none">
           <div className="flex gap-1">
@@ -169,20 +169,20 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
           {tab === "Overview" && (
             <div className="space-y-5">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-[#F5F5F5] rounded-xl p-3 flex items-center gap-3">
+                <div className="bg-[#EAF1F8] rounded-xl p-3 flex items-center gap-3">
                   <div className="relative"><ProgressRing value={ex.overallProgress} /><span className="absolute inset-0 flex items-center justify-center text-xs font-bold">{ex.overallProgress}%</span></div>
                   <div><div className="text-[10px] text-black/40">Progress</div><div className="text-xs font-bold text-black">Overall</div></div>
                 </div>
-                <div className="bg-[#F5F5F5] rounded-xl p-3 flex items-center gap-3">
+                <div className="bg-[#EAF1F8] rounded-xl p-3 flex items-center gap-3">
                   <div className="relative"><ProgressRing value={ex.budgetUtilization} size={56} stroke={5} /><span className="absolute inset-0 flex items-center justify-center text-xs font-bold">{ex.budgetUtilization}%</span></div>
                   <div><div className="text-[10px] text-black/40">Budget</div><div className="text-xs font-bold text-black">Utilisation</div></div>
                 </div>
-                <div className="bg-[#F5F5F5] rounded-xl p-3">
+                <div className="bg-[#EAF1F8] rounded-xl p-3">
                   <div className="text-[10px] text-black/40 mb-1">Milestones</div>
                   <div className="text-lg font-bold text-black">{ex.milestones.filter(m => m.status === "Completed").length}<span className="text-xs font-normal text-black/40">/{ex.milestones.length}</span></div>
                   <div className="text-[10px] text-black/40">completed</div>
                 </div>
-                <div className="bg-[#F5F5F5] rounded-xl p-3">
+                <div className="bg-[#EAF1F8] rounded-xl p-3">
                   <div className="text-[10px] text-black/40 mb-1">Compliance</div>
                   <div className={`text-lg font-bold ${ex.complianceScore >= 90 ? "text-emerald-600" : ex.complianceScore >= 70 ? "text-amber-600" : "text-red-600"}`}>{ex.complianceScore}%</div>
                   <div className="text-[10px] text-black/40">score</div>
@@ -200,7 +200,7 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
                   { label: "Risk Level", value: ex.riskLevel },
                   { label: "Total Paid", value: `USD ${totalPaid.toLocaleString()}` },
                 ].map(f => (
-                  <div key={f.label} className="bg-[#F5F5F5] rounded-xl p-3">
+                  <div key={f.label} className="bg-[#EAF1F8] rounded-xl p-3">
                     <div className="text-[10px] text-black/40 uppercase tracking-wide mb-0.5">{f.label}</div>
                     <div className="text-xs font-semibold text-black">{f.value}</div>
                   </div>
@@ -253,7 +253,7 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
                   {ms.status !== "Completed" && (
                     <div className="flex gap-2 mt-3 pt-3 border-t border-black/5">
                       <button onClick={() => completeMilestone(ms.id)} className="h-7 px-3 rounded-lg bg-black text-white text-[10px] flex items-center gap-1"><Check className="h-3 w-3" /> Mark Complete</button>
-                      <button className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><FileText className="h-3 w-3" /> Upload Document</button>
+                      <button className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><FileText className="h-3 w-3" /> Upload Document</button>
                     </div>
                   )}
                 </div>
@@ -284,7 +284,7 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
                       </div>
                     </div>
                     <div className="flex gap-1.5 flex-shrink-0">
-                      <button className="h-7 px-2.5 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Docs ({del.documents.length})</button>
+                      <button className="h-7 px-2.5 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Docs ({del.documents.length})</button>
                     </div>
                   </div>
                 </div>
@@ -324,7 +324,7 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
                       { label: "Retention", value: `USD ${pay.retention}` },
                       { label: "Net Payment", value: `USD ${pay.netPayment}` },
                     ].map(f => (
-                      <div key={f.label} className="bg-[#F5F5F5] rounded-lg p-2">
+                      <div key={f.label} className="bg-[#EAF1F8] rounded-lg p-2">
                         <div className="text-[10px] text-black/40">{f.label}</div>
                         <div className="font-semibold text-black">{f.value}</div>
                       </div>
@@ -385,7 +385,7 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
                       { label: "Innovation", value: ex.performanceScore.innovation },
                       { label: "Overall Rating", value: ex.performanceScore.overallRating },
                     ].map(s => (
-                      <div key={s.label} className="bg-[#F5F5F5] rounded-xl p-3 text-center">
+                      <div key={s.label} className="bg-[#EAF1F8] rounded-xl p-3 text-center">
                         <div className="text-[10px] text-black/40 mb-1">{s.label}</div>
                         <div className={`text-xl font-bold ${s.value >= 4 ? "text-emerald-600" : s.value >= 3 ? "text-amber-600" : "text-red-600"}`}>{s.value.toFixed(1)}</div>
                         <div className="flex justify-center gap-0.5 mt-1">
@@ -394,7 +394,7 @@ function ExecutionDetailPanel({ ex, onClose, onUpdate }: {
                       </div>
                     ))}
                   </div>
-                  <div className="bg-[#F5F5F5] rounded-xl p-4">
+                  <div className="bg-[#EAF1F8] rounded-xl p-4">
                     <div className="text-[10px] text-black/40 mb-1">Evaluator Comments</div>
                     <div className="text-xs text-black">{ex.performanceScore.comments}</div>
                     <div className="text-[10px] text-black/40 mt-1">Evaluated by {ex.performanceScore.evaluatedBy} on {ex.performanceScore.evaluatedAt}</div>
@@ -636,7 +636,7 @@ export default function ContractExecutionWorkbenchPage() {
         {tab === "Reports" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {["Contract Summary", "Progress Report", "Milestone Report", "Performance Report", "Payment Report", "Risk Report", "Compliance Report", "Variation Report", "Financial Summary"].map(rpt => (
-              <div key={rpt} className="border border-black/8 rounded-2xl p-4 hover:bg-[#F5F5F5] transition-colors">
+              <div key={rpt} className="border border-black/8 rounded-2xl p-4 hover:bg-[#EAF1F8] transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="h-10 w-10 bg-black rounded-xl grid place-items-center"><FileText className="h-5 w-5 text-white" /></div>
                   <div>
@@ -660,7 +660,7 @@ export default function ContractExecutionWorkbenchPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-black/30" />
                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search contracts…" className="w-full h-9 pl-9 pr-4 rounded-xl border border-black/10 text-xs focus:outline-none focus:ring-2 focus:ring-black/10" />
               </div>
-              <button onClick={() => setShowAI(true)} className="h-9 px-3 rounded-xl border border-black/10 text-xs flex items-center gap-1.5 hover:bg-[#F5F5F5]"><Sparkles className="h-3.5 w-3.5" /> AI Monitor</button>
+              <button onClick={() => setShowAI(true)} className="h-9 px-3 rounded-xl border border-black/10 text-xs flex items-center gap-1.5 hover:bg-[#EAF1F8]"><Sparkles className="h-3.5 w-3.5" /> AI Monitor</button>
             </div>
 
             {filtered.length === 0 && (
@@ -707,8 +707,8 @@ export default function ContractExecutionWorkbenchPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex gap-2 flex-wrap">
                           <button onClick={() => setSelected(ex)} className="h-7 px-3 rounded-lg bg-black text-white text-[10px] font-medium hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3" /> View Details</button>
-                          <button onClick={() => setSelected(ex)} className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><Layers className="h-3 w-3" /> Milestones ({completedMs}/{totalMs})</button>
-                          <button onClick={() => setSelected(ex)} className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><DollarSign className="h-3 w-3" /> Payments ({paidPayments})</button>
+                          <button onClick={() => setSelected(ex)} className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><Layers className="h-3 w-3" /> Milestones ({completedMs}/{totalMs})</button>
+                          <button onClick={() => setSelected(ex)} className="h-7 px-3 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><DollarSign className="h-3 w-3" /> Payments ({paidPayments})</button>
                           {ex.risks.filter(r => r.monitoringStatus === "Escalated").length > 0 && (
                             <button className="h-7 px-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-[10px] hover:bg-red-100 flex items-center gap-1">
                               <AlertTriangle className="h-3 w-3" /> {ex.risks.filter(r => r.monitoringStatus === "Escalated").length} Risk Alert

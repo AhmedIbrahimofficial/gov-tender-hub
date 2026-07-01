@@ -33,7 +33,7 @@ function NotifRow({ n }: { n: StoredNotification }) {
   const Icon = CATEGORY_ICON[n.category ?? "system"] ?? Bell;
   const color = CATEGORY_COLOR[n.category ?? "system"] ?? "bg-gray-400 text-white";
   return (
-    <div className="flex items-start gap-3 px-5 py-3 hover:bg-[#F5F5F5]/60 transition-colors border-b border-black/5 last:border-0">
+    <div className="flex items-start gap-3 px-5 py-3 hover:bg-[#EAF1F8]/60 transition-colors border-b border-black/5 last:border-0">
       <div className={`h-7 w-7 rounded-lg ${color} grid place-items-center flex-shrink-0 mt-0.5`}>
         <Icon className="h-3.5 w-3.5" />
       </div>
@@ -58,7 +58,7 @@ function AIReportRow({ r }: { r: AIReport }) {
   return (
     <div className="border-b border-black/5 last:border-0">
       <button onClick={() => setOpen(!open)}
-        className="w-full flex items-start gap-3 px-5 py-3 hover:bg-[#F5F5F5]/60 transition-colors text-left">
+        className="w-full flex items-start gap-3 px-5 py-3 hover:bg-[#EAF1F8]/60 transition-colors text-left">
         <div className="h-7 w-7 rounded-lg bg-blue-600 text-white grid place-items-center flex-shrink-0 mt-0.5">
           <Sparkles className="h-3.5 w-3.5" />
         </div>
@@ -93,7 +93,7 @@ function AwardRow({ a }: { a: AwardNotice }) {
   return (
     <div className="border-b border-black/5 last:border-0">
       <button onClick={() => setOpen(!open)}
-        className="w-full flex items-start gap-3 px-5 py-3 hover:bg-[#F5F5F5]/60 transition-colors text-left">
+        className="w-full flex items-start gap-3 px-5 py-3 hover:bg-[#EAF1F8]/60 transition-colors text-left">
         <div className="h-7 w-7 rounded-lg bg-emerald-500 text-white grid place-items-center flex-shrink-0 mt-0.5">
           <Trophy className="h-3.5 w-3.5" />
         </div>

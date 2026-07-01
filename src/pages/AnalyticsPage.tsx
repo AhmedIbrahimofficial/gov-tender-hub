@@ -79,10 +79,10 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Sticky live KPI ticker — right rail */}
-          <div className="hidden xl:flex flex-col w-56 flex-shrink-0 sticky top-4 bg-[#1c1f26] rounded-2xl overflow-hidden border border-white/8 shadow-xl" style={{ height: "calc(100vh - 200px)" }}>
+          <div className="hidden xl:flex flex-col w-56 flex-shrink-0 sticky top-4 bg-[#0f172a] rounded-2xl overflow-hidden border border-white/8 shadow-xl" style={{ height: "calc(100vh - 200px)" }}>
             <div className="px-3 py-2.5 border-b border-white/10 flex-shrink-0">
-              <div className="text-[10px] font-bold text-[#29b8c5] uppercase tracking-widest flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#29b8c5] animate-pulse" />
+              <div className="text-[10px] font-bold text-[#2563eb] uppercase tracking-widest flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2563eb] animate-pulse" />
                 Live KPIs
               </div>
               <div className="text-[9px] text-white/30 mt-0.5">Hover to pause</div>

@@ -99,7 +99,7 @@ export default function SystemAdminPage() {
               <input value={newUser.dept} onChange={e => setNewUser(p => ({ ...p, dept: e.target.value }))} placeholder="Department / Ministry" className="w-full h-9 px-3 rounded-lg border border-black/10 text-sm focus:outline-none" />
               <div className="flex gap-2 pt-2">
                 <button onClick={addUser} className="flex-1 h-9 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-800">Create User</button>
-                <button onClick={() => setShowAddUser(false)} className="h-9 px-4 rounded-lg border border-black/10 text-sm hover:bg-[#F5F5F5]">Cancel</button>
+                <button onClick={() => setShowAddUser(false)} className="h-9 px-4 rounded-lg border border-black/10 text-sm hover:bg-[#EAF1F8]">Cancel</button>
               </div>
             </div>
           </div>
@@ -155,9 +155,9 @@ export default function SystemAdminPage() {
                       <td className="px-4 py-3">{u.mfa ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <X className="h-4 w-4 text-red-400" />}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
-                          <button onClick={() => pushNotification(`Editing user ${u.name}`, "info")} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5] flex items-center gap-1"><Edit className="h-3 w-3" />Edit</button>
+                          <button onClick={() => pushNotification(`Editing user ${u.name}`, "info")} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8] flex items-center gap-1"><Edit className="h-3 w-3" />Edit</button>
                           <button onClick={() => disableUser(u.id, u.name)} className={`h-7 px-2 rounded-lg text-[10px] ${u.status === "Active" ? "bg-red-50 text-red-600 hover:bg-red-100" : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"}`}>{u.status === "Active" ? "Disable" : "Enable"}</button>
-                          <button onClick={() => pushNotification(`Password reset link sent to ${u.email}`, "success")} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#F5F5F5]"><Key className="h-3 w-3" /></button>
+                          <button onClick={() => pushNotification(`Password reset link sent to ${u.email}`, "success")} className="h-7 px-2 rounded-lg border border-black/10 text-[10px] hover:bg-[#EAF1F8]"><Key className="h-3 w-3" /></button>
                         </div>
                       </td>
                     </tr>
@@ -186,7 +186,7 @@ export default function SystemAdminPage() {
                       <div className="text-[10px] text-black/40">users</div>
                     </div>
                     <span className="text-[10px] bg-black/5 text-black/60 px-2 py-1 rounded-lg">{r.access}</span>
-                    <button onClick={() => pushNotification(`Editing role: ${r.role}`, "info")} className="h-8 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Edit className="h-3.5 w-3.5" />Configure</button>
+                    <button onClick={() => pushNotification(`Editing role: ${r.role}`, "info")} className="h-8 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Edit className="h-3.5 w-3.5" />Configure</button>
                   </div>
                 </div>
               </Card>
@@ -247,7 +247,7 @@ export default function SystemAdminPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${wf.active ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"}`}>{wf.active ? "Active" : "Inactive"}</span>
-                    <button onClick={() => pushNotification(`Editing workflow: ${wf.name}`, "info")} className="h-8 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Edit className="h-3.5 w-3.5" />Configure</button>
+                    <button onClick={() => pushNotification(`Editing workflow: ${wf.name}`, "info")} className="h-8 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Edit className="h-3.5 w-3.5" />Configure</button>
                   </div>
                 </div>
               ))}

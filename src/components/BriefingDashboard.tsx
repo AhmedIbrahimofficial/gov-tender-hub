@@ -13,7 +13,7 @@ import { TrendingUp, TrendingDown, AlertTriangle, Activity } from "lucide-react"
 
 // ── Colour palette (matches reference image) ──────────────────────────────
 const C = {
-  green:  "#00e676", red: "#ff1744", teal: "#29b8c5",
+  green:  "#00e676", red: "#ff1744", teal: "#2563eb",
   amber: "#ffa726", blue: "#42a5f5", white: "#e8f0fe",
   bg0: "#050d1a", bg1: "#0a1628", bg2: "#0f1f3d", bg3: "#0d2545",
 };
@@ -249,7 +249,7 @@ export default function BriefingDashboard() {
       {/* ── Top ticker bar ──────────────────────────────────────────── */}
       <div className="flex-shrink-0 bg-[#0a1628] border-b border-white/10 flex items-center overflow-x-auto scrollbar-none">
         <div className="flex-shrink-0 px-3 py-1 flex items-center gap-1.5 border-r border-white/10">
-          <span className="text-[10px] font-bold text-[#29b8c5]">APPOIS</span>
+          <span className="text-[10px] font-bold text-[#2563eb]">APPOIS</span>
           <span className="text-[8px] text-white/55">LIVE</span>
           <span className="h-1.5 w-1.5 rounded-full bg-[#00e676] animate-pulse" />
         </div>

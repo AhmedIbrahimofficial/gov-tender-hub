@@ -27,7 +27,7 @@ delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({ iconRetinaUrl: markerIcon2x, iconUrl: markerIcon, shadowUrl: markerShadow });
 
 // ── Chart colours ─────────────────────────────────────────────────────────
-const CHART_COLORS = ["#29b8c5","#3b82f6","#8b5cf6","#f59e0b","#10b981","#ef4444","#06b6d4","#f97316","#84cc16","#ec4899"];
+const CHART_COLORS = ["#2563eb","#3b82f6","#8b5cf6","#f59e0b","#10b981","#ef4444","#06b6d4","#f97316","#84cc16","#ec4899"];
 
 type MapMode = "pins" | "choropleth" | "heat" | "circles";
 type ChartView = "bar" | "pie" | "none";
@@ -36,10 +36,10 @@ type ChartView = "bar" | "pie" | "none";
 function provincePopupHtml(p: ZWProvince) {
   return `
     <div style="font-family:system-ui,sans-serif;min-width:200px;font-size:13px;">
-      <div style="font-weight:800;font-size:15px;margin-bottom:8px;color:#1c1f26;">${p.name}</div>
+      <div style="font-weight:800;font-size:15px;margin-bottom:8px;color:#0f172a;">${p.name}</div>
       <table style="border-collapse:collapse;width:100%;">
         <tr><td style="color:#64748b;padding:2px 10px 2px 0;">Capital</td><td style="font-weight:600;">${p.capital}</td></tr>
-        <tr><td style="color:#64748b;padding:2px 10px 2px 0;">Tender Spend</td><td style="font-weight:700;color:#29b8c5;">USD ${p.tenderSpendM}M</td></tr>
+        <tr><td style="color:#64748b;padding:2px 10px 2px 0;">Tender Spend</td><td style="font-weight:700;color:#2563eb;">USD ${p.tenderSpendM}M</td></tr>
         <tr><td style="color:#64748b;padding:2px 10px 2px 0;">Active Tenders</td><td style="font-weight:600;">${p.activeTenders}</td></tr>
         <tr><td style="color:#64748b;padding:2px 10px 2px 0;">Projects</td><td style="font-weight:600;">${p.activeProjects}</td></tr>
         <tr><td style="color:#64748b;padding:2px 10px 2px 0;">Awarded</td><td style="font-weight:600;">USD ${p.awardedM}M</td></tr>
@@ -217,7 +217,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
     <div className="flex flex-col h-full min-h-0">
 
       {/* ── Toolbar ───────────────────────────────────────────────── */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#1c1f26] border-b border-white/8 flex-wrap flex-shrink-0 z-10">
+      <div className="flex items-center gap-2 px-3 py-2 bg-[#0f172a] border-b border-white/8 flex-wrap flex-shrink-0 z-10">
 
         {/* Mode selector */}
         <div className="flex items-center bg-white/8 rounded-lg overflow-hidden border border-white/10 text-xs font-medium">
@@ -228,7 +228,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
             ["circles",    <Circle className="h-3.5 w-3.5" />,       "Circles"],
           ] as [MapMode, React.ReactNode, string][]).map(([m, icon, label]) => (
             <button key={m} onClick={() => setMode(m)}
-              className={`flex items-center gap-1.5 px-3 py-2 transition-colors ${mode === m ? "bg-[#29b8c5] text-white" : "text-white/50 hover:text-white hover:bg-white/10"}`}>
+              className={`flex items-center gap-1.5 px-3 py-2 transition-colors ${mode === m ? "bg-[#2563eb] text-white" : "text-white/50 hover:text-white hover:bg-white/10"}`}>
               {icon}{label}
             </button>
           ))}
@@ -238,7 +238,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
         <div className="flex items-center bg-white/8 rounded-lg overflow-hidden border border-white/10 text-xs font-medium">
           {(["street","satellite"] as const).map(b => (
             <button key={b} onClick={() => setBasemap(b)}
-              className={`px-3 py-2 capitalize transition-colors ${basemap === b ? "bg-[#29b8c5] text-white" : "text-white/50 hover:text-white"}`}>
+              className={`px-3 py-2 capitalize transition-colors ${basemap === b ? "bg-[#2563eb] text-white" : "text-white/50 hover:text-white"}`}>
               {b}
             </button>
           ))}
@@ -252,7 +252,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
             ["pie", "pie",  "Pie Chart"],
           ] as [ChartView, string, string][]).map(([v,,label]) => (
             <button key={v} onClick={() => setChartView(v)}
-              className={`flex items-center gap-1.5 px-3 py-2 transition-colors ${chartView === v ? "bg-[#29b8c5] text-white" : "text-white/50 hover:text-white"}`}>
+              className={`flex items-center gap-1.5 px-3 py-2 transition-colors ${chartView === v ? "bg-[#2563eb] text-white" : "text-white/50 hover:text-white"}`}>
               {v === "bar" && <BarChart2 className="h-3.5 w-3.5" />}
               {v === "pie" && <PieIcon className="h-3.5 w-3.5" />}
               {label}
@@ -269,8 +269,8 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
 
         {/* Province detail panel */}
         {selected && (
-          <div className="w-72 flex-shrink-0 bg-[#1c1f26] border-l border-white/8 overflow-y-auto flex flex-col z-10">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/8 sticky top-0 bg-[#1c1f26]">
+          <div className="w-72 flex-shrink-0 bg-[#0f172a] border-l border-white/8 overflow-y-auto flex flex-col z-10">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/8 sticky top-0 bg-[#0f172a]">
               <span className="font-semibold text-sm text-white">{selected.name}</span>
               <button onClick={() => setSelected(null)} className="text-white/40 hover:text-white transition-colors">
                 <X className="h-4 w-4" />
@@ -280,7 +280,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
               {/* KPI chips */}
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: "Tender Spend", value: `USD ${selected.tenderSpendM}M`, color: "text-[#29b8c5]" },
+                  { label: "Tender Spend", value: `USD ${selected.tenderSpendM}M`, color: "text-[#2563eb]" },
                   { label: "Awarded",      value: `USD ${selected.awardedM}M`,     color: "text-emerald-400" },
                   { label: "Active Tenders", value: String(selected.activeTenders), color: "text-blue-400" },
                   { label: "Projects",     value: String(selected.activeProjects), color: "text-violet-400" },
@@ -298,7 +298,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
               <div>
                 <div className="text-xs text-white/50 mb-1.5">Share of National Spend</div>
                 <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                  <div className="h-full bg-[#29b8c5] rounded-full" style={{ width: `${(selected.tenderSpendM / TOTAL_SPEND_M * 100).toFixed(1)}%` }} />
+                  <div className="h-full bg-[#2563eb] rounded-full" style={{ width: `${(selected.tenderSpendM / TOTAL_SPEND_M * 100).toFixed(1)}%` }} />
                 </div>
                 <div className="text-[10px] text-white/40 mt-1">{(selected.tenderSpendM / TOTAL_SPEND_M * 100).toFixed(1)}% of USD {TOTAL_SPEND_M}M national total</div>
               </div>
@@ -317,7 +317,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
 
               <button
                 onClick={() => setSelected(null)}
-                className="w-full h-8 rounded-lg bg-[#29b8c5]/20 text-[#29b8c5] text-xs font-medium border border-[#29b8c5]/30 hover:bg-[#29b8c5]/30 transition-colors"
+                className="w-full h-8 rounded-lg bg-[#2563eb]/20 text-[#2563eb] text-xs font-medium border border-[#2563eb]/30 hover:bg-[#2563eb]/30 transition-colors"
               >
                 Close
               </button>
@@ -327,20 +327,20 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
 
         {/* Pin detail panel */}
         {selectedPin && (
-          <div className="w-72 flex-shrink-0 bg-[#1c1f26] border-l border-white/8 overflow-y-auto flex flex-col z-10">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/8 sticky top-0 bg-[#1c1f26]">
+          <div className="w-72 flex-shrink-0 bg-[#0f172a] border-l border-white/8 overflow-y-auto flex flex-col z-10">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/8 sticky top-0 bg-[#0f172a]">
               <span className="font-semibold text-sm text-white">{selectedPin.type === "tender" ? "Tender" : "Project"}</span>
               <button onClick={() => setSelectedPin(null)} className="text-white/40 hover:text-white transition-colors"><X className="h-4 w-4" /></button>
             </div>
             <div className="p-4 space-y-3">
-              <div className="text-[10px] font-mono text-[#29b8c5]">{selectedPin.id}</div>
+              <div className="text-[10px] font-mono text-[#2563eb]">{selectedPin.id}</div>
               <div className="text-sm font-semibold text-white leading-snug">{selectedPin.title}</div>
               <div className="text-xs text-white/50">{selectedPin.entity}</div>
               <div className="text-xs font-bold text-emerald-400">{selectedPin.value}</div>
               <div className="text-xs text-white/50">{selectedPin.locationLabel}</div>
               {onPinClick && (
                 <button onClick={() => onPinClick(selectedPin)}
-                  className="w-full h-8 rounded-lg bg-[#29b8c5] text-white text-xs font-semibold hover:bg-[#22a0ac] transition-colors flex items-center justify-center gap-1.5">
+                  className="w-full h-8 rounded-lg bg-[#2563eb] text-white text-xs font-semibold hover:bg-[#1d4ed8] transition-colors flex items-center justify-center gap-1.5">
                   <ChevronRight className="h-3.5 w-3.5" /> View Full Details
                 </button>
               )}
@@ -350,7 +350,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
 
         {/* Chart side panel */}
         {chartView !== "none" && !selected && !selectedPin && (
-          <div className="w-80 flex-shrink-0 bg-[#1c1f26] border-l border-white/8 overflow-y-auto flex flex-col z-10">
+          <div className="w-80 flex-shrink-0 bg-[#0f172a] border-l border-white/8 overflow-y-auto flex flex-col z-10">
             <div className="px-4 py-3 border-b border-white/8">
               <div className="text-sm font-semibold text-white">
                 {chartView === "bar" ? "Tender Spend by Province" : "Spend Distribution"}
@@ -363,7 +363,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
                   <BarChart data={barData} layout="vertical" margin={{ left: 8, right: 8 }}>
                     <XAxis type="number" tick={{ fill: "#ffffff60", fontSize: 9 }} />
                     <YAxis type="category" dataKey="name" tick={{ fill: "#ffffff70", fontSize: 9 }} width={60} />
-                    <Tooltip contentStyle={{ background: "#2a2d35", border: "1px solid #ffffff15", borderRadius: 8, fontSize: 11, color: "#fff" }} />
+                    <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #ffffff15", borderRadius: 8, fontSize: 11, color: "#fff" }} />
                     <Bar dataKey="spend" name="Spend" radius={[0,4,4,0]}>
                       {barData.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                     </Bar>
@@ -379,7 +379,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
                       labelLine={{ stroke: "#ffffff30" }}>
                       {pieData.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                     </Pie>
-                    <Tooltip contentStyle={{ background: "#2a2d35", border: "1px solid #ffffff15", borderRadius: 8, fontSize: 11, color: "#fff" }} formatter={(v: number) => `USD ${v}M`} />
+                    <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #ffffff15", borderRadius: 8, fontSize: 11, color: "#fff" }} formatter={(v: number) => `USD ${v}M`} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
@@ -391,7 +391,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/8 transition-colors text-left">
                     <div className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ background: CHART_COLORS[i] }} />
                     <span className="flex-1 text-xs text-white/70 truncate">{p.name}</span>
-                    <span className="text-xs font-bold text-[#29b8c5]">${p.tenderSpendM}M</span>
+                    <span className="text-xs font-bold text-[#2563eb]">${p.tenderSpendM}M</span>
                   </button>
                 ))}
               </div>
@@ -402,7 +402,7 @@ function ZimbabweMap({ onPinClick }: { onPinClick?: (pin: GisPin) => void }) {
 
       {/* ── Legend bar ────────────────────────────────────────────── */}
       {(mode === "choropleth" || mode === "heat" || mode === "circles") && (
-        <div className="flex-shrink-0 bg-[#1c1f26] border-t border-white/8 px-4 py-2 flex items-center gap-4 flex-wrap text-xs">
+        <div className="flex-shrink-0 bg-[#0f172a] border-t border-white/8 px-4 py-2 flex items-center gap-4 flex-wrap text-xs">
           <span className="text-white/50 font-medium uppercase tracking-wider text-[10px]">
             {mode === "choropleth" ? "Spend Intensity" : mode === "heat" ? "Heat Intensity" : "Circle Size = Spend"}
           </span>
@@ -430,12 +430,12 @@ function MapKpiStrip() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
       {[
-        { label: "National Tender Spend",  value: `USD ${TOTAL_SPEND_M}M`, icon: DollarSign,  color: "text-[#29b8c5]" },
+        { label: "National Tender Spend",  value: `USD ${TOTAL_SPEND_M}M`, icon: DollarSign,  color: "text-[#2563eb]" },
         { label: "Active Tenders",          value: String(totalTenders),    icon: FileText,    color: "text-blue-400"   },
         { label: "Active Projects",         value: String(totalProjects),   icon: Briefcase,   color: "text-violet-400" },
         { label: "Avg Compliance",          value: `${avgCompliance}%`,     icon: Activity,    color: "text-emerald-400"},
       ].map(k => (
-        <div key={k.label} className="bg-[#23262e] border border-white/8 rounded-xl p-3 flex items-center gap-3">
+        <div key={k.label} className="bg-[#0f172a] border border-white/8 rounded-xl p-3 flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
             <k.icon className={`h-5 w-5 ${k.color}`} />
           </div>
@@ -465,8 +465,8 @@ function AuthenticatedGisPage() {
             title="GIS Procurement Map — Zimbabwe"
             description="Interactive choropleth, heat map, and proportional circles showing tender spend, projects and compliance per province. Click any region or pin for details."
           />
-          <div className="flex items-center gap-2 text-xs text-white/60 bg-[#23262e] border border-white/8 rounded-lg px-3 py-2">
-            <MapPin className="h-3.5 w-3.5 text-[#29b8c5]" />
+          <div className="flex items-center gap-2 text-xs text-white/60 bg-[#0f172a] border border-white/8 rounded-lg px-3 py-2">
+            <MapPin className="h-3.5 w-3.5 text-[#2563eb]" />
             <span><strong className="text-white">{ALL_GIS_PINS.filter(p => p.type === "tender").length}</strong> Tenders</span>
             <span>·</span>
             <span><strong className="text-white">{ALL_GIS_PINS.filter(p => p.type === "project").length}</strong> Projects</span>
@@ -489,8 +489,8 @@ function AuthenticatedGisPage() {
 function PublicGisPage() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col h-screen bg-[#1c1f26]">
-      <div className="flex items-center justify-between px-4 py-3 bg-[#1c1f26] border-b border-white/8 flex-shrink-0">
+    <div className="flex flex-col h-screen bg-[#0f172a]">
+      <div className="flex items-center justify-between px-4 py-3 bg-[#0f172a] border-b border-white/8 flex-shrink-0">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate("/")}
             className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm transition-colors">
@@ -498,12 +498,12 @@ function PublicGisPage() {
           </button>
           <span className="text-white/20">|</span>
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-[#29b8c5]" />
+            <MapPin className="h-4 w-4 text-[#2563eb]" />
             <span className="font-semibold text-sm text-white">APPOIS — Procurement GIS Map</span>
           </div>
         </div>
         <button onClick={() => navigate("/signin")}
-          className="h-8 px-3 rounded-lg bg-[#29b8c5] text-white text-xs font-semibold hover:bg-[#22a0ac] transition-colors">
+          className="h-8 px-3 rounded-lg bg-[#2563eb] text-white text-xs font-semibold hover:bg-[#1d4ed8] transition-colors">
           Login for Full Access
         </button>
       </div>

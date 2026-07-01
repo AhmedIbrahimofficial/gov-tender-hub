@@ -67,7 +67,7 @@ export default function AuditorDashboard() {
           actions={
             <button
               onClick={() => user && generateDailyReportPDF(user)}
-              className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors"
+              className="h-9 px-4 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors"
             >
               <Download className="h-4 w-4" /> Daily Report
             </button>
@@ -109,7 +109,7 @@ export default function AuditorDashboard() {
                 { event: "Contract variation approved without committee",   user: "T. Moyo",        time: "2026-06-20 14:05", risk: "Med",  resolved: false },
                 { event: "Tax clearance certificate expired — active vendor", user: "System",       time: "2026-06-19 11:18", risk: "Low",  resolved: true  },
               ].map((e, i) => (
-                <div key={i} className="px-5 py-3 flex items-center justify-between gap-4 hover:bg-[#F5F5F5]/60 transition-colors">
+                <div key={i} className="px-5 py-3 flex items-center justify-between gap-4 hover:bg-[#EAF1F8]/60 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${
                       e.risk === "High" ? "bg-red-500" : e.risk === "Med" ? "bg-amber-500" : "bg-emerald-400"
@@ -218,7 +218,7 @@ export default function AuditorDashboard() {
                   }>{a.status}</Badge>
                   <button
                     onClick={() => handleFraudAction(a.id, a.status.includes("Closed") ? "Reopen Case" : "Escalate")}
-                    className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] transition-colors flex items-center gap-1"
+                    className="h-7 px-2.5 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] transition-colors flex items-center gap-1"
                   >
                     <Eye className="h-3 w-3" /> {a.status.includes("Closed") ? "Reopen" : "Escalate"}
                   </button>
@@ -247,7 +247,7 @@ export default function AuditorDashboard() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => toast(`${r.name} — Opening report viewer. FY2026 procurement audit findings compiled from 8,421 audit events.`, "info")}
-                    className="h-7 px-2.5 rounded-lg border border-black/10 bg-white text-xs hover:bg-[#F5F5F5] transition-colors"
+                    className="h-7 px-2.5 rounded-lg border border-black/10 bg-white text-xs hover:bg-[#EAF1F8] transition-colors"
                   >View</button>
                   <button
                     onClick={() => handleReportDownload(r.name)}

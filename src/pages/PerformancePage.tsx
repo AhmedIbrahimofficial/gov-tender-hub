@@ -153,7 +153,7 @@ function ScoreBar({ value, max = 100, color = "#3b82f6" }: { value: number; max?
   const bg = value >= 85 ? "#10b981" : value >= 70 ? "#3b82f6" : value >= 55 ? "#f59e0b" : "#ef4444";
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-[#EAF1F8] rounded-full overflow-hidden">
         <div style={{ width: `${pct}%`, background: bg }} className="h-full rounded-full transition-all" />
       </div>
       <span className="text-xs font-semibold text-black/70 w-8 text-right">{value}%</span>
@@ -362,20 +362,20 @@ function VendorMaster({ onAction }: { onAction: (msg: string) => void }) {
 
       <Card className="mb-6">
         <CardHeader title={`Vendor Master Registry — ${filtered.length + 12837} vendors`} action={
-          <button onClick={() => onAction("Vendor registry exported to CSV")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1">
+          <button onClick={() => onAction("Vendor registry exported to CSV")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1">
             <Download className="h-3 w-3" /> Export
           </button>
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["ID", "Name", "Category", "Status", "Overall", "Delivery", "Quality", "Risk", "Contracts", "Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {filtered.map(v => (
-                <tr key={v.id} className="hover:bg-[#F5F5F5]/50">
+                <tr key={v.id} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 font-mono text-[11px] text-black/40">{v.id}</td>
                   <td className="px-4 py-3 font-semibold text-black text-xs max-w-[180px] truncate">{v.name}</td>
                   <td className="px-4 py-3 text-xs text-black/60 whitespace-nowrap">{v.category}</td>
@@ -447,7 +447,7 @@ function RegistrationOnboarding({ onAction }: { onAction: (msg: string) => void 
         } />
         <div className="divide-y divide-black/5">
           {apps.map(a => (
-            <div key={a.id} className="px-5 py-3 hover:bg-[#F5F5F5]/50">
+            <div key={a.id} className="px-5 py-3 hover:bg-[#EAF1F8]/50">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <div className="text-sm font-semibold text-black">{a.name}</div>
@@ -462,7 +462,7 @@ function RegistrationOnboarding({ onAction }: { onAction: (msg: string) => void 
               {a.stage !== "Rejected" && (
                 <div className="flex gap-2">
                   <button onClick={() => onAction(`Approved application: ${a.name}`)} className="h-7 px-3 rounded-lg bg-emerald-600 text-white text-xs hover:bg-emerald-700 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Approve</button>
-                  <button onClick={() => onAction(`Requested more documents from: ${a.name}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><FileText className="h-3 w-3" /> Request Docs</button>
+                  <button onClick={() => onAction(`Requested more documents from: ${a.name}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><FileText className="h-3 w-3" /> Request Docs</button>
                   <button onClick={() => onAction(`Rejected application: ${a.name}`)} className="h-7 px-3 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 flex items-center gap-1"><XCircle className="h-3 w-3" /> Reject</button>
                 </div>
               )}
@@ -513,14 +513,14 @@ function Prequalification({ onAction }: { onAction: (msg: string) => void }) {
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Vendor", "Technical", "Financial", "Experience", "Equipment", "Safety", "HR", "Score", "Status"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {preqs.map(p => (
-                <tr key={p.vendor} className="hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Reviewing prequalification: ${p.vendor}`)}>
+                <tr key={p.vendor} className="hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Reviewing prequalification: ${p.vendor}`)}>
                   <td className="px-4 py-3 font-semibold text-xs text-black">{p.vendor}</td>
                   {[p.technical, p.financial, p.experience, p.equipment, p.safety, p.hr].map((s, i) => (
                     <td key={i} className="px-4 py-3 w-24"><ScoreBar value={s} /></td>
@@ -592,14 +592,14 @@ function BiddingPerformance({ onAction }: { onAction: (msg: string) => void }) {
           <CardHeader title="Vendor Bidding Scorecard" subtitle="Win rate and bid quality" />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-[#F5F5F5] text-xs text-black/40">
+              <thead className="bg-[#EAF1F8] text-xs text-black/40">
                 <tr>{["Vendor", "Participation", "Win Rate", "Withdrawn", "Rejected", "Avg Score"].map(h => (
                   <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}</tr>
               </thead>
               <tbody className="divide-y divide-black/5">
                 {bidData.map(d => (
-                  <tr key={d.vendor} className="hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Bid analysis: ${d.vendor}`)}>
+                  <tr key={d.vendor} className="hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Bid analysis: ${d.vendor}`)}>
                     <td className="px-4 py-2.5 text-xs font-semibold text-black">{d.vendor.split(" ").slice(0, 2).join(" ")}</td>
                     <td className="px-4 py-2.5 text-xs">{d.participated}/{d.invited}</td>
                     <td className="px-4 py-2.5 w-28"><ScoreBar value={d.winRate} /></td>
@@ -651,7 +651,7 @@ function SelectionAward({ onAction }: { onAction: (msg: string) => void }) {
         <CardHeader title="Active Evaluations & Awards" subtitle="Weighted scoring and recommendation pipeline" />
         <div className="divide-y divide-black/5">
           {evaluations.map(ev => (
-            <div key={ev.tender} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+            <div key={ev.tender} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <div className="text-sm font-semibold text-black">{ev.title}</div>
@@ -718,7 +718,7 @@ function ContractLifecycle({ onAction }: { onAction: (msg: string) => void }) {
         <CardHeader title="Contract Register" subtitle="Active contracts with SLA and obligations tracking" />
         <div className="divide-y divide-black/5">
           {contracts.map(c => (
-            <div key={c.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+            <div key={c.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <div className="text-sm font-semibold text-black">{c.title}</div>
@@ -732,12 +732,12 @@ function ContractLifecycle({ onAction }: { onAction: (msg: string) => void }) {
                 <div><span className="text-black/40">Obligations: </span><span className="font-semibold">{c.fulfilled}/{c.obligations}</span></div>
                 <div><span className="text-black/40">End: </span><span className="font-semibold">{c.end}</span></div>
               </div>
-              <div className="h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden mb-2">
+              <div className="h-1.5 bg-[#EAF1F8] rounded-full overflow-hidden mb-2">
                 <div style={{ width: `${c.progress}%` }} className={`h-full rounded-full ${c.progress >= 80 ? "bg-emerald-500" : c.status === "At Risk" ? "bg-amber-400" : "bg-blue-500"}`} />
               </div>
               <div className="flex gap-2">
                 <button onClick={() => onAction(`Viewing contract: ${c.id}`)} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3" /> View</button>
-                <button onClick={() => onAction(`Milestone updated: ${c.id}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Milestone</button>
+                <button onClick={() => onAction(`Milestone updated: ${c.id}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Milestone</button>
                 {c.status === "At Risk" && <button onClick={() => onAction(`Escalation raised: ${c.id}`)} className="h-7 px-3 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> Escalate</button>}
               </div>
             </div>
@@ -783,18 +783,18 @@ function Scorecards({ onAction }: { onAction: (msg: string) => void }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         <Card className="lg:col-span-2">
           <CardHeader title="Vendor Scorecards — All Dimensions" subtitle="Current month scores across all performance pillars" action={
-            <button onClick={() => onAction("Scorecard report downloaded")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
+            <button onClick={() => onAction("Scorecard report downloaded")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
           } />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-[#F5F5F5] text-xs text-black/40">
+              <thead className="bg-[#EAF1F8] text-xs text-black/40">
                 <tr>{["Vendor", "Delivery", "Quality", "Compliance", "Cost", "Service", "Overall", "Trend"].map(h => (
                   <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}</tr>
               </thead>
               <tbody className="divide-y divide-black/5">
                 {VENDORS.filter(v => v.status !== "Blacklisted").map(v => (
-                  <tr key={v.id} className="hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Scorecard detail: ${v.name}`)}>
+                  <tr key={v.id} className="hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Scorecard detail: ${v.name}`)}>
                     <td className="px-4 py-2.5 text-xs font-semibold text-black max-w-[140px] truncate">{v.name}</td>
                     <td className="px-4 py-2.5 w-24"><ScoreBar value={v.deliveryScore} /></td>
                     <td className="px-4 py-2.5 w-24"><ScoreBar value={v.qualityScore} /></td>
@@ -866,18 +866,18 @@ function QualityManagement({ onAction }: { onAction: (msg: string) => void }) {
 
       <Card className="mb-6">
         <CardHeader title="Non-Conformance & Defect Register" subtitle="Quality issues by vendor and corrective action status" action={
-          <button onClick={() => onAction("NCR report generated")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><FileText className="h-3 w-3" /> NCR Report</button>
+          <button onClick={() => onAction("NCR report generated")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><FileText className="h-3 w-3" /> NCR Report</button>
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Vendor", "Category", "Defects", "Returns", "Rework", "NCRs", "Status", "Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {defects.map(d => (
-                <tr key={d.vendor} className="hover:bg-[#F5F5F5]/50">
+                <tr key={d.vendor} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{d.vendor}</td>
                   <td className="px-4 py-3 text-xs text-black/60">{d.category}</td>
                   <td className="px-4 py-3 text-xs"><span className={d.defects > 15 ? "text-red-600 font-semibold" : d.defects > 8 ? "text-amber-600" : "text-emerald-600"}>{d.defects}</span></td>
@@ -952,7 +952,7 @@ function DeliverySLA({ onAction }: { onAction: (msg: string) => void }) {
           <CardHeader title="Delivery & Milestone Tracker" subtitle="Per vendor milestone completion" />
           <div className="divide-y divide-black/5">
             {slaData.map(d => (
-              <div key={d.vendor} className="px-4 py-2.5 hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`SLA detail: ${d.vendor}`)}>
+              <div key={d.vendor} className="px-4 py-2.5 hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`SLA detail: ${d.vendor}`)}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-black">{d.vendor}</span>
                   <div className="flex items-center gap-2">
@@ -1002,18 +1002,18 @@ function RiskManagement({ onAction }: { onAction: (msg: string) => void }) {
 
       <Card className="mb-6">
         <CardHeader title="Vendor Risk Register" subtitle="Multi-dimensional risk assessment with AI failure probability" action={
-          <button onClick={() => onAction("Risk register exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
+          <button onClick={() => onAction("Risk register exported")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Download className="h-3 w-3" /> Export</button>
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Vendor", "Category", "Financial Risk", "Operational", "Compliance", "Reputation", "Dependency", "Risk Level", "Failure Prob.", "Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {risks.map(r => (
-                <tr key={r.vendor} className="hover:bg-[#F5F5F5]/50">
+                <tr key={r.vendor} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-2.5 text-xs font-semibold text-black max-w-[140px] truncate">{r.vendor}</td>
                   <td className="px-4 py-2.5 text-xs text-black/60 whitespace-nowrap">{r.category.split(" ")[0]}</td>
                   {[r.financial, r.operational, r.compliance, r.reputation, r.dependency].map((v, i) => (
@@ -1091,7 +1091,7 @@ function FinancialPerformance({ onAction }: { onAction: (msg: string) => void })
           <CardHeader title="Spend by Vendor" subtitle="Top vendors by total contract value" />
           <div className="divide-y divide-black/5">
             {VENDORS.filter(v => v.status === "Active").slice(0, 6).map(v => (
-              <div key={v.id} className="px-4 py-2.5 flex items-center gap-3 hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Spend analysis: ${v.name}`)}>
+              <div key={v.id} className="px-4 py-2.5 flex items-center gap-3 hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Spend analysis: ${v.name}`)}>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs font-semibold text-black truncate">{v.name}</div>
                   <div className="text-[10px] text-black/40">{v.contracts} contracts</div>
@@ -1137,14 +1137,14 @@ function ComplianceManagement({ onAction }: { onAction: (msg: string) => void })
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Vendor", "Business Licence", "Insurance", "Tax Clearance", "Safety Cert.", "Status", "Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {COMPLIANCE_RECORDS.map(r => (
-                <tr key={r.vendor} className="hover:bg-[#F5F5F5]/50">
+                <tr key={r.vendor} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{r.vendor}</td>
                   {[r.license, r.insurance, r.tax, r.safety].map((val, i) => (
                     <td key={i} className="px-4 py-3 text-xs">
@@ -1201,18 +1201,18 @@ function VendorRelationships({ onAction }: { onAction: (msg: string) => void }) 
 
       <Card className="mb-6">
         <CardHeader title="Vendor Relationship Register" subtitle="Relationship health and engagement tracking" action={
-          <button onClick={() => onAction("Relationship summary generated")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><FileText className="h-3 w-3" /> Summary</button>
+          <button onClick={() => onAction("Relationship summary generated")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><FileText className="h-3 w-3" /> Summary</button>
         } />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F5F5F5] text-xs text-black/40">
+            <thead className="bg-[#EAF1F8] text-xs text-black/40">
               <tr>{["Vendor", "Type", "Tier", "Meetings (YTD)", "Open Commitments", "Satisfaction", "Relationship Score", "Actions"].map(h => (
                 <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
               ))}</tr>
             </thead>
             <tbody className="divide-y divide-black/5">
               {relationships.map(r => (
-                <tr key={r.vendor} className="hover:bg-[#F5F5F5]/50">
+                <tr key={r.vendor} className="hover:bg-[#EAF1F8]/50">
                   <td className="px-4 py-3 text-xs font-semibold text-black">{r.vendor}</td>
                   <td className="px-4 py-3 text-xs text-black/60">{r.type}</td>
                   <td className="px-4 py-3"><Badge tone={r.tier === "Tier 1" ? "violet" : r.tier === "Tier 2" ? "blue" : "muted"}>{r.tier}</Badge></td>
@@ -1262,7 +1262,7 @@ function CorrectiveActions({ onAction }: { onAction: (msg: string) => void }) {
         } />
         <div className="divide-y divide-black/5">
           {CORRECTIVE_ACTIONS.map(c => (
-            <div key={c.id} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+            <div key={c.id} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <div className="text-sm font-semibold text-black">{c.vendor}</div>
@@ -1314,7 +1314,7 @@ function Disputes({ onAction }: { onAction: (msg: string) => void }) {
         } />
         <div className="divide-y divide-black/5">
           {DISPUTES.map(d => (
-            <div key={d.id} className="px-5 py-3 hover:bg-[#F5F5F5]/50">
+            <div key={d.id} className="px-5 py-3 hover:bg-[#EAF1F8]/50">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1">
                   <div className="text-sm font-semibold text-black">{d.vendor}</div>
@@ -1326,7 +1326,7 @@ function Disputes({ onAction }: { onAction: (msg: string) => void }) {
               <div className="flex gap-2 mt-2">
                 <button onClick={() => onAction(`Dispute detail: ${d.id}`)} className="h-7 px-3 rounded-lg bg-black text-white text-xs hover:bg-gray-800 flex items-center gap-1"><Eye className="h-3 w-3" /> View</button>
                 {d.status !== "Resolved" && <>
-                  <button onClick={() => onAction(`Mediation initiated: ${d.id}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><MessageSquare className="h-3 w-3" /> Mediate</button>
+                  <button onClick={() => onAction(`Mediation initiated: ${d.id}`)} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><MessageSquare className="h-3 w-3" /> Mediate</button>
                   <button onClick={() => onAction(`Dispute resolved: ${d.id}`)} className="h-7 px-3 rounded-lg border border-emerald-200 text-emerald-600 text-xs hover:bg-emerald-50 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Resolve</button>
                 </>}
               </div>
@@ -1373,7 +1373,7 @@ function SuspensionExit({ onAction }: { onAction: (msg: string) => void }) {
         } />
         <div className="divide-y divide-black/5">
           {actions.map(a => (
-            <div key={a.vendor} className="px-5 py-4 hover:bg-[#F5F5F5]/50">
+            <div key={a.vendor} className="px-5 py-4 hover:bg-[#EAF1F8]/50">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <div className="text-sm font-semibold text-black">{a.vendor}</div>
@@ -1507,11 +1507,11 @@ function KnowledgeBase({ onAction }: { onAction: (msg: string) => void }) {
 
       <Card className="mb-6">
         <CardHeader title="Lessons Learned Register" subtitle="Historical vendor performance intelligence" action={
-          <button onClick={() => onAction("Knowledge base searched by AI")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#F5F5F5] flex items-center gap-1"><Search className="h-3 w-3" /> AI Search</button>
+          <button onClick={() => onAction("Knowledge base searched by AI")} className="h-7 px-3 rounded-lg border border-black/10 text-xs hover:bg-[#EAF1F8] flex items-center gap-1"><Search className="h-3 w-3" /> AI Search</button>
         } />
         <div className="divide-y divide-black/5">
           {lessons.map(l => (
-            <div key={l.ref} className="px-5 py-4 hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Knowledge record: ${l.ref}`)}>
+            <div key={l.ref} className="px-5 py-4 hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Knowledge record: ${l.ref}`)}>
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="text-sm font-semibold text-black">{l.vendor}</div>
                 <Badge tone={l.type === "Best Practice" ? "green" : l.type === "Failure Case" ? "red" : "blue"}>{l.type}</Badge>
@@ -1581,14 +1581,14 @@ function MarketIntelligence({ onAction }: { onAction: (msg: string) => void }) {
           <CardHeader title="Category Market Intelligence" subtitle="Benchmark comparison by procurement category" />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-[#F5F5F5] text-xs text-black/40">
+              <thead className="bg-[#EAF1F8] text-xs text-black/40">
                 <tr>{["Category", "Vendors", "Gov Avg Price", "Market Benchmark", "Gap", "Trend"].map(h => (
                   <th key={h} className="text-left font-medium px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}</tr>
               </thead>
               <tbody className="divide-y divide-black/5">
                 {marketData.map(d => (
-                  <tr key={d.category} className="hover:bg-[#F5F5F5]/50 cursor-pointer" onClick={() => onAction(`Market intelligence: ${d.category}`)}>
+                  <tr key={d.category} className="hover:bg-[#EAF1F8]/50 cursor-pointer" onClick={() => onAction(`Market intelligence: ${d.category}`)}>
                     <td className="px-4 py-2.5 text-xs font-semibold text-black">{d.category}</td>
                     <td className="px-4 py-2.5 text-xs text-black/60">{d.vendors.toLocaleString()}</td>
                     <td className="px-4 py-2.5 text-xs text-black/70">{d.avgPrice}</td>
@@ -1639,11 +1639,11 @@ function AIAgents({ onAction }: { onAction: (msg: string) => void }) {
             <div className="text-sm font-semibold text-black mb-1">{agent.name}</div>
             <div className="text-xs text-black/50 mb-3 leading-relaxed">{agent.desc}</div>
             <div className="grid grid-cols-2 gap-2 mb-3">
-              <div className="text-center bg-[#F5F5F5] rounded-lg p-2">
+              <div className="text-center bg-[#EAF1F8] rounded-lg p-2">
                 <div className="text-base font-bold text-black">{agent.tasks.toLocaleString()}</div>
                 <div className="text-[10px] text-black/40">Tasks</div>
               </div>
-              <div className="text-center bg-[#F5F5F5] rounded-lg p-2">
+              <div className="text-center bg-[#EAF1F8] rounded-lg p-2">
                 <div className="text-base font-bold text-black">{agent.accuracy}%</div>
                 <div className="text-[10px] text-black/40">Accuracy</div>
               </div>
@@ -1711,7 +1711,7 @@ export default function PerformancePage() {
           actions={
             <div className="flex gap-2">
               <button onClick={() => handleAction("Global vendor performance report generated")}
-                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#F5F5F5] flex items-center gap-1.5 transition-colors">
+                className="h-9 px-3 rounded-xl border border-black/10 bg-white text-sm font-medium hover:bg-[#EAF1F8] flex items-center gap-1.5 transition-colors">
                 <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export Report</span>
               </button>
               <button onClick={() => handleAction("All AI agents activated for vendor analysis")}
@@ -1731,7 +1731,7 @@ export default function PerformancePage() {
               className={`px-3 py-2 rounded-t-lg text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
                 activeTab === tab
                   ? "bg-black text-white"
-                  : "text-black/50 hover:text-black hover:bg-[#F5F5F5]"
+                  : "text-black/50 hover:text-black hover:bg-[#EAF1F8]"
               }`}
             >
               {tab}
