@@ -153,6 +153,7 @@ function AppRoutes() {
 
       {/* Briefing module */}
       <Route path="/briefing" element={<ProtectedRoute><BriefingPage /></ProtectedRoute>} />
+      <Route path="/briefing/*" element={<ProtectedRoute><BriefingPage /></ProtectedRoute>} />
 
       {/* Supplier self-registration (public — no login required) */}
       <Route path="/vendor-register" element={<VendorSelfRegistrationPage />} />

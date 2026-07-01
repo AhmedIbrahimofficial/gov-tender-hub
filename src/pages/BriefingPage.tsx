@@ -8,6 +8,7 @@ import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth-context";
 import KpiScrollTicker from "@/components/KpiScrollTicker";
 import GisMapView from "@/components/GisMapView";
+import ZimbabweMapTab from "@/components/ZimbabweMapTab";
 import { ALL_GIS_PINS } from "@/lib/gis-data";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip,
@@ -536,55 +537,11 @@ function VideoTab({ name }: { name: string }) {
   );
 }
 
-// ── Tab 4: Executive BI (GIS Map) ─────────────────────────────────────────
+// ── Tab 4: Executive BI (Province Choropleth Map) ────────────────────────
 function ExecutiveBITab() {
-  const provinceSpend = [
-    { province: "Harare",          spend: 720 }, { province: "Bulawayo",      spend: 410 },
-    { province: "Manicaland",      spend: 280 }, { province: "Mash. West",    spend: 245 },
-    { province: "Midlands",        spend: 235 }, { province: "Mash. East",    spend: 220 },
-    { province: "Mash. Central",   spend: 198 }, { province: "Masvingo",      spend: 175 },
-    { province: "Mat. North",      spend: 142 }, { province: "Mat. South",    spend: 125 },
-  ];
   return (
-    <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-shrink-0 bg-[#0f172a] px-4 py-2 flex items-center gap-3 border-b border-white/10">
-        <Globe2 className="h-4 w-4 text-blue-400" />
-        <span className="text-sm font-bold text-white uppercase tracking-wide">APPOIS — Procurement GIS Map</span>
-        <div className="flex items-center gap-1 ml-4 overflow-x-auto">
-          {["Pins", "Choropleth", "Heat Map", "Circles", "Map Only", "Bar Chart", "Pie Chart"].map(t => (
-            <button key={t} className="flex-shrink-0 px-3 py-1 text-[11px] font-medium rounded-full border border-white/20 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-1 min-h-0">
-        <div className="flex-1 min-h-0">
-          <GisMapView pins={ALL_GIS_PINS} height="100%" title="Procurement GIS Map" />
-        </div>
-        <div className="w-64 flex-shrink-0 bg-white border-l border-gray-200 flex flex-col p-3 overflow-y-auto">
-          <div className="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wide">Tender Spend by Province</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={provinceSpend} layout="vertical">
-              <XAxis type="number" tick={{ fontSize: 9 }} />
-              <YAxis type="category" dataKey="province" tick={{ fontSize: 9 }} width={70} />
-              <Tooltip />
-              <Bar dataKey="spend" fill="#2563eb" />
-            </BarChart>
-          </ResponsiveContainer>
-          <div className="mt-4 space-y-1.5">
-            {provinceSpend.slice(0, 5).map((p, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="flex-1 text-[10px] text-gray-600 truncate">{p.province}</div>
-                <div className="text-[10px] font-bold text-blue-700">{p.spend}M</div>
-                <div className="w-16 bg-gray-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(p.spend / 720) * 100}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="flex-1 overflow-y-auto bg-[#0a1628] p-3">
+      <ZimbabweMapTab theme="dark" />
     </div>
   );
 }
@@ -940,5 +897,73 @@ function MeetingBoardPackTab() {
         </ul>
       </div>
     </div>
+  );
+}
+
+// ── Main BriefingPage component ───────────────────────────────────────────
+export default function BriefingPage() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const name = user?.name ?? user?.email ?? "Minister";
+  const greeting = getTimeGreeting(name);
+  const today = new Date().toLocaleDateString("en-GB", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+
+  // Default to first tab if at /briefing with no sub-path
+  const activeTab = TABS.find(t => location.pathname.startsWith(t.path))?.path ?? TABS[0].path;
+
+  // Redirect bare /briefing to first tab
+  useEffect(() => {
+    if (location.pathname === "/briefing" || location.pathname === "/briefing/") {
+      navigate(TABS[0].path, { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
+  function renderTab() {
+    if (location.pathname.startsWith("/briefing/notes"))        return <NotesAlertsTab greeting={greeting} today={today} />;
+    if (location.pathname.startsWith("/briefing/dashboard"))    return <VisualDashboardTab />;
+    if (location.pathname.startsWith("/briefing/video"))        return <VideoTab name={name} />;
+    if (location.pathname.startsWith("/briefing/executive-bi")) return <ExecutiveBITab />;
+    if (location.pathname.startsWith("/briefing/projects"))     return <ProjectsTendersTab />;
+    if (location.pathname.startsWith("/briefing/my-briefing"))  return <MyBriefingTab />;
+    if (location.pathname.startsWith("/briefing/meeting"))      return <MeetingBoardPackTab />;
+    return <NotesAlertsTab greeting={greeting} today={today} />;
+  }
+
+  return (
+    <AppShell>
+      <div className="flex flex-col h-full min-h-0">
+        {/* Tab strip */}
+        <div className="flex-shrink-0 bg-white border-b border-gray-200 overflow-x-auto">
+          <div className="flex">
+            {TABS.map(({ path, label, Icon }) => {
+              const isActive = location.pathname.startsWith(path);
+              return (
+                <button
+                  key={path}
+                  onClick={() => navigate(path)}
+                  className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                    isActive
+                      ? "border-blue-600 text-blue-700 bg-blue-50"
+                      : "border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tab content */}
+        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          {renderTab()}
+        </div>
+      </div>
+    </AppShell>
   );
 }
