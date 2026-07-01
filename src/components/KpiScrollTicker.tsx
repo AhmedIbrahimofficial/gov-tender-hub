@@ -151,10 +151,10 @@ export default function KpiScrollTicker({
 
             {/* Label */}
             <div className="flex-1 min-w-0">
-              <div className={`text-[10px] truncate ${isDark ? "text-white/50" : "text-black/50"}`}>
+              <div className={`text-[10px] truncate ${isDark ? "text-white/75" : "text-black/70"}`}>
                 {kpi.label}
                 {showCategory && kpi.category && (
-                  <span className={`ml-1 text-[9px] px-1 rounded ${isDark ? "bg-white/10 text-white/30" : "bg-black/5 text-black/30"}`}>
+                  <span className={`ml-1 text-[9px] px-1 rounded ${isDark ? "bg-white/10 text-white/55" : "bg-black/5 text-black/50"}`}>
                     {kpi.category}
                   </span>
                 )}
@@ -172,7 +172,7 @@ export default function KpiScrollTicker({
               </div>
               <div className={`text-[9px] flex items-center justify-end gap-0.5 ${
                 kpi.up
-                  ? isDark ? "text-emerald-500" : "text-emerald-600"
+                  ? isDark ? "text-emerald-400" : "text-emerald-600"
                   : isDark ? "text-red-400" : "text-red-500"
               }`}>
                 {kpi.up

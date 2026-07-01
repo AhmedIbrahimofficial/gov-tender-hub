@@ -149,7 +149,7 @@ export default function DepartmentActivitiesPage() {
           {TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-3 sm:px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap flex-shrink-0 transition-colors ${
-                activeTab === tab ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
+                activeTab === tab ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"
               }`}>
               {tab}
             </button>

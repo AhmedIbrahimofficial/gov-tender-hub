@@ -699,8 +699,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                       return (
                         <Link key={item.to} to={item.to} onClick={onLinkClick}
                           className={`flex items-center gap-2.5 px-3 py-2 text-xs transition-colors
-                            ${active ? "bg-[#29b8c5] text-white" : "text-white/55 hover:bg-white/8 hover:text-white"}`}>
-                          <span className="text-[10px] text-white/30 w-4 flex-shrink-0 font-mono">
+                            ${active ? "bg-[#29b8c5] text-white" : "text-white/80 hover:bg-white/8 hover:text-white"}`}>
+                          <span className="text-[10px] text-white/50 w-4 flex-shrink-0 font-mono">
                             {String(idx + 1).padStart(2, "0")}
                           </span>
                           <Icon className="h-3.5 w-3.5 flex-shrink-0" />
@@ -725,7 +725,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     ? "bg-[#29b8c5] text-white"
                     : hasActiveItem
                     ? "bg-[#29b8c5]/20 text-[#29b8c5]"
-                    : "text-white/60 hover:bg-white/8 hover:text-white"}`}
+                    : "text-white/85 hover:bg-white/8 hover:text-white"}`}
               >
                 <DbFolderIcon active={hasActiveItem && isExpanded} size={22} />
                 <span className="flex-1 text-left text-[13px] font-medium tracking-wide truncate">
@@ -735,7 +735,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 transition-colors
                   ${hasActiveItem && isExpanded
                     ? "bg-[#1a8a94] text-white"
-                    : "bg-white/10 text-white/50"}`}>
+                    : "bg-white/10 text-white/75"}`}>
                   {sectionBadge}
                 </span>
               </button>
@@ -754,13 +754,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                         className={`flex items-center gap-2.5 px-4 py-2 transition-colors group/item
                           ${active
                             ? "bg-[#29b8c5]/15 text-[#29b8c5] border-l-2 border-[#29b8c5]"
-                            : "text-white/45 hover:bg-white/6 hover:text-white border-l-2 border-transparent"}`}
+                            : "text-white/75 hover:bg-white/6 hover:text-white border-l-2 border-transparent"}`}
                       >
                         {/* Number */}
-                        <span className="text-[10px] font-mono text-white/25 w-5 flex-shrink-0 select-none">
+                        <span className="text-[10px] font-mono text-white/45 w-5 flex-shrink-0 select-none">
                           {String(idx + 1).padStart(2, "0")}
                         </span>
-                        <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${active ? "text-[#29b8c5]" : "text-white/30 group-hover/item:text-white/60"}`} />
+                        <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${active ? "text-[#29b8c5]" : "text-white/55 group-hover/item:text-white/80"}`} />
                         <span className="flex-1 truncate text-[12px]">{item.label}</span>
                         {/* Pill badge on active */}
                         {active && (
@@ -798,7 +798,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Desktop sidebar toggle */}
         <button
           onClick={toggleCollapsed}
-          className="hidden md:grid h-9 w-9 place-items-center rounded-lg hover:bg-white/10 text-white/40 hover:text-white transition-colors flex-shrink-0"
+          className="hidden md:grid h-9 w-9 place-items-center rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors flex-shrink-0"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed
@@ -813,8 +813,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div className="leading-none hidden sm:block">
             <div className="text-[13px] font-extrabold text-white tracking-wide leading-tight uppercase">APPOIS</div>
-            <div className="text-[10px] font-semibold text-white/50 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
-            <div className="text-[10px] font-semibold text-white/35 tracking-tight leading-snug">Oversight Intelligence System</div>
+            <div className="text-[10px] font-semibold text-white/70 tracking-tight leading-snug">AI-Powered Public Procurement &amp;</div>
+            <div className="text-[10px] font-semibold text-white/55 tracking-tight leading-snug">Oversight Intelligence System</div>
           </div>
           <div className="leading-tight sm:hidden">
             <div className="text-[11px] font-extrabold text-white tracking-wide uppercase">APPOIS</div>

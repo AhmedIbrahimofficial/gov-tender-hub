@@ -153,7 +153,7 @@ function EmailWindow() {
             {(["inbox","compose","sent"] as const).map(t => (
               <button key={t} onClick={() => { setTab(t); setSelected(null); }}
                 className={`flex-1 py-2.5 text-xs font-medium transition-colors border-b-2 -mb-px capitalize
-                  ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+                  ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
                 {t === "inbox" ? `Inbox${unread > 0 ? ` (${unread})` : ""}` : t === "compose" ? "✏️ Compose" : "Sent"}
               </button>
             ))}
@@ -210,7 +210,7 @@ function EmailWindow() {
                   { label: "Subject", key: "subject", placeholder: "Email subject" },
                 ].map(f => (
                   <div key={f.key}>
-                    <label className="text-[10px] font-semibold text-black/40 uppercase tracking-wider">{f.label}</label>
+                    <label className="text-[10px] font-semibold text-black/60 uppercase tracking-wider">{f.label}</label>
                     <input value={(compose as Record<string,string>)[f.key]}
                       onChange={e => setCompose(c => ({...c, [f.key]: e.target.value}))}
                       placeholder={f.placeholder}
@@ -218,7 +218,7 @@ function EmailWindow() {
                   </div>
                 ))}
                 <div>
-                  <label className="text-[10px] font-semibold text-black/40 uppercase tracking-wider">Message</label>
+                  <label className="text-[10px] font-semibold text-black/60 uppercase tracking-wider">Message</label>
                   <textarea value={compose.body} onChange={e => setCompose(c => ({...c, body: e.target.value}))}
                     placeholder="Type your message…" rows={6}
                     className="w-full px-3 py-2 mt-1 rounded-xl border border-black/10 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-black/10" />
@@ -301,11 +301,11 @@ function StageProgressBar({ stages, activeStage, onSelect }: {
                   ${isActive ? "bg-black" : isDone ? "hover:bg-emerald-50" : "hover:bg-gray-50"}`}
               >
                 <div className={`h-6 w-6 rounded-full flex items-center justify-center text-[9px] font-bold mb-0.5 transition-all
-                  ${isActive ? "bg-white text-black" : isDone ? "bg-emerald-500 text-white" : "bg-gray-200 text-gray-500"}`}>
+                  ${isActive ? "bg-white text-black" : isDone ? "bg-emerald-500 text-white" : "bg-gray-200 text-gray-700"}`}>
                   {isDone ? "✓" : stage.id}
                 </div>
                 <span className={`text-[9px] font-medium leading-tight text-center max-w-[60px] truncate
-                  ${isActive ? "text-white" : isDone ? "text-emerald-600" : "text-gray-400"}`}>
+                  ${isActive ? "text-white" : isDone ? "text-emerald-600" : "text-gray-600"}`}>
                   {stage.short}
                 </span>
               </button>
@@ -844,7 +844,7 @@ export default function ProcurementWorkbenchPage() {
                   {activeStage.formTabs.map((tab, idx) => (
                     <button key={tab} onClick={() => setActiveFormTab(idx)}
                       className={`px-4 py-3 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors flex-shrink-0
-                        ${activeFormTab === idx ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+                        ${activeFormTab === idx ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
                       {tab}
                     </button>
                   ))}

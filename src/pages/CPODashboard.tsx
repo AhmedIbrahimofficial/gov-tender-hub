@@ -73,7 +73,7 @@ export default function CPODashboard() {
         <div className="flex gap-1 mb-6 border-b border-black/10 overflow-x-auto">
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex-shrink-0 ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+              className={`px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex-shrink-0 ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
               {t === "Senior Feed" ? (
                 <span className="flex items-center gap-1.5"><Bell className="h-3.5 w-3.5" /> Senior Feed</span>
               ) : t}

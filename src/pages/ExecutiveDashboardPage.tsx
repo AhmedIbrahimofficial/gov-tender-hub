@@ -97,7 +97,7 @@ export default function ExecutiveDashboardPage() {
 
         {visibleAlerts.length > 0 && (
           <div className="mb-6 space-y-2">
-            <div className="text-xs font-semibold text-black/50 uppercase tracking-wider">AI Alerts — {visibleAlerts.length} requiring attention</div>
+            <div className="text-xs font-semibold text-black/65 uppercase tracking-wider">AI Alerts — {visibleAlerts.length} requiring attention</div>
             {visibleAlerts.slice(0, 3).map(alert => (
               <div key={alert.id} className={`flex items-center gap-3 p-3 border rounded-xl ${SEVERITY_COLOR[alert.severity]}`}>
                 <Sparkles className="h-4 w-4 flex-shrink-0" />
@@ -123,7 +123,7 @@ export default function ExecutiveDashboardPage() {
 
         <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto">
           {(["Overview", "Contracts", "Finance", "Suppliers", "AI Insights"] as const).map(t => (
-            <button key={t} onClick={() => setTab(t)} className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap ${tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{t}</button>
+            <button key={t} onClick={() => setTab(t)} className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap ${tab === t ? "border-primary text-primary" : "border-transparent text-foreground/65 hover:text-foreground"}`}>{t}</button>
           ))}
         </div>
 
@@ -192,7 +192,7 @@ export default function ExecutiveDashboardPage() {
                     { label: "Warranty Renewals", count: 2, color: "text-emerald-600" },
                   ].map(item => (
                     <div key={item.label} className="flex items-center justify-between py-1.5 border-b border-black/5">
-                      <span className="text-xs text-black/70">{item.label}</span>
+                      <span className="text-xs text-black/65">{item.label}</span>
                       <span className={`text-sm font-bold ${item.color}`}>{item.count}</span>
                     </div>
                   ))}
@@ -275,11 +275,11 @@ export default function ExecutiveDashboardPage() {
                     <div className="h-8 w-8 rounded-full bg-black text-white text-xs font-bold grid place-items-center flex-shrink-0">#{i + 1}</div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold text-black truncate">{s.name}</div>
-                      <div className="text-xs text-black/50">{s.contracts} contracts · {s.value}</div>
+                      <div className="text-xs text-black/65">{s.contracts} contracts · {s.value}</div>
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-bold text-black">{s.score.toFixed(1)}/5.0</div>
-                      <div className="text-xs text-black/50">Score</div>
+                      <div className="text-xs text-black/55">Score</div>
                     </div>
                     <span className="text-sm font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">{s.grade}</span>
                   </div>
@@ -371,7 +371,7 @@ export default function ExecutiveDashboardPage() {
                 <span className="h-1.5 w-1.5 rounded-full bg-[#29b8c5] animate-pulse" />
                 Live KPIs
               </div>
-              <div className="text-[9px] text-white/30 mt-0.5">Hover to pause</div>
+              <div className="text-[9px] text-white/55 mt-0.5">Hover to pause</div>
             </div>
             <KpiScrollTicker theme="dark" height="100%" speed={0.7} showCategory />
           </div>

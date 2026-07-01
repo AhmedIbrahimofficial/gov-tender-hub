@@ -224,7 +224,7 @@ function PlanFormModal({ plan, onSave, onClose }: {
         <div className="flex gap-0 border-b border-black/10 px-6 pt-3 overflow-x-auto">
           {TABS.map(t => (
             <button key={t.id} onClick={() => setActiveTab(t.id as typeof activeTab)}
-              className={`px-4 py-2 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors ${activeTab === t.id ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+              className={`px-4 py-2 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors ${activeTab === t.id ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
               {t.label}
             </button>
           ))}
@@ -444,7 +444,7 @@ function PlanDetailPanel({ plan, onAction, onClose }: {
       <div className="flex gap-0 border-b border-black/10 px-5 overflow-x-auto">
         {(["details", "compliance", "docs", "audit", "comms"] as const).map(t => (
           <button key={t} onClick={() => setActivePanel(t)}
-            className={`px-3 py-2 text-[11px] font-semibold whitespace-nowrap border-b-2 capitalize transition-colors ${activePanel === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+            className={`px-3 py-2 text-[11px] font-semibold whitespace-nowrap border-b-2 capitalize transition-colors ${activePanel === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
             {t === "comms" ? "Comments" : t}
           </button>
         ))}

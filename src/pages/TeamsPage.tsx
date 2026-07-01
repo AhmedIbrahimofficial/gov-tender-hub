@@ -1422,7 +1422,7 @@ export default function TeamsPage() {
           {MAIN_TABS.map(tab => (
             <button key={tab} onClick={() => setMainTab(tab)}
               className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
-                mainTab === tab ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
+                mainTab === tab ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"
               }`}>
               {tab}
             </button>

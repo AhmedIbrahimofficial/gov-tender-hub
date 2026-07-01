@@ -158,7 +158,7 @@ export default function SeniorFeed({ compact = false }: { compact?: boolean }) {
           ["alerts",     "Alerts",      alerts.length],
         ] as const).map(([k, label, count]) => (
           <button key={k} onClick={() => setTab(k)}
-            className={`px-4 py-2.5 text-xs font-medium border-b-2 -mb-px whitespace-nowrap flex-shrink-0 transition-colors ${tab === k ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+            className={`px-4 py-2.5 text-xs font-medium border-b-2 -mb-px whitespace-nowrap flex-shrink-0 transition-colors ${tab === k ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
             {label} <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${tab === k ? "bg-black text-white" : "bg-black/10 text-black/50"}`}>{count}</span>
           </button>
         ))}

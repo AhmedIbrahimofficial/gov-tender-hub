@@ -87,7 +87,7 @@ export default function AuditorDashboard() {
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
-                tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
+                tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"
               }`}>{t}</button>
           ))}
         </div>

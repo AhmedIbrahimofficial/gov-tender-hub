@@ -1005,7 +1005,7 @@ export default function BudgetManagementPage() {
           {TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex-shrink-0 ${
-                activeTab === tab ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
+                activeTab === tab ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"
               }`}>
               {tab}
             </button>

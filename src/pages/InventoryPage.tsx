@@ -1060,7 +1060,7 @@ export default function InventoryPage() {
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 sm:px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px flex-shrink-0 ${
-                tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
+                tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"
               }`}>{t}</button>
           ))}
         </div>

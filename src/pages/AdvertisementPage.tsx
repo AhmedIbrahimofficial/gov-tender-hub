@@ -84,7 +84,7 @@ function AdvertisementDetailPanel({ adv, onClose, onAction }: {
           {(["Overview","Publication","Clarifications","Suppliers","Documents"] as AdvTab[]).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 py-2 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors relative
-                ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+                ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
               {t}
               {t === "Clarifications" && adv.clarificationRequests.filter(c => c.status === "Pending").length > 0 && (
                 <span className="absolute -top-0.5 -right-1 h-4 w-4 bg-red-500 text-white text-[9px] rounded-full flex items-center justify-center">
@@ -401,7 +401,7 @@ export default function AdvertisementPage() {
           {(["Advertisements", "Supplier Engagement", "Lifecycle Tower", "Capabilities"] as PageTab[]).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors relative
-                ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+                ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
               {t}
               {t === "Supplier Engagement" && pendingClarifications.length > 0 && (
                 <span className="absolute -top-0.5 -right-1 h-4 w-4 bg-red-500 text-white text-[9px] rounded-full flex items-center justify-center">{pendingClarifications.length}</span>

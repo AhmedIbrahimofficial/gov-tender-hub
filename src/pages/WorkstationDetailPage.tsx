@@ -602,7 +602,7 @@ export default function WorkstationDetailPage() {
             return (
               <button key={t} onClick={() => setTab(t)}
                 className={`flex items-center gap-1.5 px-3 py-2.5 text-[11px] font-medium whitespace-nowrap border-b-2 -mb-px transition-colors flex-shrink-0
-                  ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+                  ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
                 <Icon className="h-3 w-3" />
                 {t}
               </button>

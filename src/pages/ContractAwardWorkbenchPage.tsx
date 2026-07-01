@@ -303,7 +303,7 @@ function AwardDetailPanel({ award, onClose, onUpdate }: {
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors
-                  ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>{t}</button>
+                  ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>{t}</button>
             ))}
           </div>
         </div>
@@ -563,7 +563,7 @@ export default function ContractAwardWorkbenchPage() {
           {(["Awards", "Lifecycle Tower", "Reports"] as Tab[]).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors flex-shrink-0
-                ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>{t}</button>
+                ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>{t}</button>
           ))}
         </div>
 

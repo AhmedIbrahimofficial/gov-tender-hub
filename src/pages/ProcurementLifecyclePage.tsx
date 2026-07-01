@@ -701,7 +701,7 @@ function StageDetailPanel({
               key={t.key}
               onClick={() => setTab(t.key)}
               className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors -mb-px flex-shrink-0
-                ${tab === t.key ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}
+                ${tab === t.key ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}
             >
               <t.icon className="h-3.5 w-3.5" />
               {t.label}

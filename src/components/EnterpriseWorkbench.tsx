@@ -554,7 +554,7 @@ function ContextHeader({ record }: { record: WorkbenchRecord }) {
           { label: "Organization", value: record.organization,                          wide: false },
         ].map(({ label, value }) => (
           <div key={label} className="min-w-0 bg-[#F9F9F9] border border-black/5 rounded-lg px-2 py-1">
-            <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-0.5">{label}</div>
+            <div className="text-[9px] font-bold text-black/55 uppercase tracking-wider mb-0.5">{label}</div>
             <div className="text-[11px] font-semibold text-black truncate">{value}</div>
           </div>
         ))}
@@ -568,7 +568,7 @@ function ContextHeader({ record }: { record: WorkbenchRecord }) {
         </div>
         {/* Due Date with age */}
         <div className="min-w-0 bg-[#F9F9F9] border border-black/5 rounded-lg px-2 py-1">
-          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-0.5">Due Date</div>
+          <div className="text-[9px] font-bold text-black/55 uppercase tracking-wider mb-0.5">Due Date</div>
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] font-semibold text-black">{record.dueDate}</span>
             {dueDays && (
@@ -580,7 +580,7 @@ function ContextHeader({ record }: { record: WorkbenchRecord }) {
         </div>
         {/* Age on Stage with days counter */}
         <div className="min-w-0 bg-[#F9F9F9] border border-black/5 rounded-lg px-2 py-1">
-          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-0.5">Age on Stage</div>
+          <div className="text-[9px] font-bold text-black/55 uppercase tracking-wider mb-0.5">Age on Stage</div>
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] font-semibold text-black">{stageAge}</span>
             <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-violet-100 text-violet-700">
@@ -590,18 +590,18 @@ function ContextHeader({ record }: { record: WorkbenchRecord }) {
         </div>
         {/* Owner */}
         <div className="min-w-0 bg-[#F9F9F9] border border-black/5 rounded-lg px-2 py-1">
-          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-0.5">Owner</div>
+          <div className="text-[9px] font-bold text-black/55 uppercase tracking-wider mb-0.5">Owner</div>
           <div className="text-[11px] font-semibold text-black truncate">{record.owner}</div>
         </div>
         {/* User */}
         <div className="min-w-0 bg-[#F9F9F9] border border-black/5 rounded-lg px-2 py-1">
-          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-0.5">User</div>
+          <div className="text-[9px] font-bold text-black/55 uppercase tracking-wider mb-0.5">User</div>
           <div className="text-[11px] font-semibold text-black truncate">{record.userName}</div>
           <div className="text-[9px] text-black/40 truncate">{record.userJobTitle}</div>
         </div>
         {/* Location */}
         <div className="min-w-0 bg-[#F9F9F9] border border-black/5 rounded-lg px-2 py-1">
-          <div className="text-[9px] font-bold text-black/35 uppercase tracking-wider mb-0.5">Location</div>
+          <div className="text-[9px] font-bold text-black/55 uppercase tracking-wider mb-0.5">Location</div>
           <div className="text-[11px] font-semibold text-black truncate">{record.userLocation}</div>
         </div>
       </div>
@@ -650,9 +650,9 @@ function WorkflowTracker({ stages, currentIndex }: { stages: string[]; currentIn
         {visible.map((s, i) => (
           <div key={s.index} className="flex items-center flex-shrink-0">
             <div className={`flex flex-col items-center px-2 py-1 rounded-lg transition-colors
-              ${s.status === "active" ? "bg-indigo-600 text-white" : s.status === "completed" ? "text-emerald-600" : "text-black/30"}`}>
+              ${s.status === "active" ? "bg-indigo-600 text-white" : s.status === "completed" ? "text-emerald-600" : "text-black/65"}`}>
               <div className={`h-5 w-5 rounded-full flex items-center justify-center mb-0.5 text-[9px] font-bold
-                ${s.status === "active" ? "bg-white text-indigo-600" : s.status === "completed" ? "bg-emerald-500 text-white" : "bg-black/10 text-black/40"}`}>
+                ${s.status === "active" ? "bg-white text-indigo-600" : s.status === "completed" ? "bg-emerald-500 text-white" : "bg-black/15 text-black/55"}`}>
                 {s.status === "completed" ? <Check className="h-3 w-3" /> : s.index + 1}
               </div>
               <span className={`text-[9px] font-semibold whitespace-nowrap ${s.status === "active" ? "text-white" : ""}`}>{s.label}</span>
@@ -711,29 +711,29 @@ function NavigationPanel({ activeTab, onTabChange, queueFilter, onQueueFilterCha
   return (
     <div className="flex flex-col h-full border-r border-black/10 bg-white overflow-hidden">
       <div className="px-3 pt-3 pb-1">
-        <span className="text-[9px] font-bold text-black/35 uppercase tracking-wider">Navigation</span>
+        <span className="text-[9px] font-bold text-black/55 uppercase tracking-wider">Navigation</span>
       </div>
       <div className="flex-1 overflow-y-auto px-2 pb-2 min-h-0">
         <div className="space-y-0.5">
           {NAV_TABS.map(t => (
             <button key={t.key} onClick={() => onTabChange(t.key)}
               className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-xs transition-colors
-                ${activeTab === t.key ? "bg-black text-white" : "text-black/55 hover:bg-[#F5F5F5] hover:text-black"}`}>
+                ${activeTab === t.key ? "bg-black text-white" : "text-black/70 hover:bg-[#F5F5F5] hover:text-black"}`}>
               <t.icon className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="truncate">{t.label}</span>
             </button>
           ))}
         </div>
         <div className="mt-3 pt-2 border-t border-black/8">
-          <span className="text-[9px] font-bold text-black/35 uppercase tracking-wider px-2 mb-1 block">Work Queue</span>
+          <span className="text-[9px] font-bold text-black/55 uppercase tracking-wider px-2 mb-1 block">Work Queue</span>
           {QUEUE_FILTERS.map(f => {
             const count = MOCK_QUEUE_ITEMS.filter(q => q.type === f).length;
             return (
               <button key={f} onClick={() => onQueueFilterChange(f)}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors
-                  ${queueFilter === f ? "bg-black text-white" : "text-black/55 hover:bg-[#F5F5F5] hover:text-black"}`}>
+                  ${queueFilter === f ? "bg-black text-white" : "text-black/70 hover:bg-[#F5F5F5] hover:text-black"}`}>
                 <span className="truncate">{f}</span>
-                {count > 0 && <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${queueFilter === f ? "bg-white/20 text-white" : "bg-black/10 text-black/50"}`}>{count}</span>}
+                {count > 0 && <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${queueFilter === f ? "bg-white/20 text-white" : "bg-black/10 text-black/65"}`}>{count}</span>}
               </button>
             );
           })}
@@ -1167,7 +1167,7 @@ function MainWorkArea({ activeTab, record, moduleLabel, children }: {
         {(["form","checklist","instructions"] as const).map(t => (
           <button key={t} onClick={() => setWorkAreaTab(t)}
             className={`px-3 pb-2 text-[10px] font-semibold border-b-2 transition-colors -mb-px mr-1
-              ${workAreaTab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+              ${workAreaTab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
             {t === "form" ? "Work Form" : t === "checklist" ? "Checklist" : "Task Instructions"}
           </button>
         ))}
@@ -1697,7 +1697,7 @@ function ActionPanel({ record }: { record: WorkbenchRecord }) {
   return (
     <div className="flex flex-col h-full border-l border-black/10 bg-white overflow-hidden">
       <div className="px-3 pt-3 pb-1 flex-shrink-0">
-        <span className="text-[9px] font-bold text-black/35 uppercase tracking-wider">Actions</span>
+        <span className="text-[9px] font-bold text-black/55 uppercase tracking-wider">Actions</span>
       </div>
 
       {/* Role badge */}
@@ -2226,7 +2226,7 @@ function BottomSection({ tab, setTab, modules, currentModuleId }: {
         {tabs.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
             className={`px-3 py-2 text-[10px] font-semibold whitespace-nowrap border-b-2 transition-colors -mb-px flex-shrink-0
-              ${tab === t.key ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>
+              ${tab === t.key ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>
             {t.label}
           </button>
         ))}
@@ -2541,7 +2541,7 @@ export default function EnterpriseWorkbench({
       <div className="bg-white border-b border-black/10 px-4 py-2 flex items-center gap-3 flex-shrink-0 relative">
         <div className="min-w-0 flex-1">
           <h1 className="text-sm font-bold text-black leading-tight">
-            {title ?? `Enterprise Workbench — ${module.label}`}
+            {title ?? `E-Procurement — ${module.label}`}
           </h1>
           <p className="text-[10px] text-black/40">
             {subtitle ?? `${activeRecord.ministry} · ${activeRecord.department} · ${module.label}`}

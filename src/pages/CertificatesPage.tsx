@@ -850,7 +850,7 @@ export default function CertificatesPage() {
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
-                tab === t.id ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"
+                tab === t.id ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"
               }`}>
               <t.icon className="h-3.5 w-3.5" /> {t.label}
             </button>

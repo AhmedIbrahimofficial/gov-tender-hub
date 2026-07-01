@@ -289,7 +289,7 @@ function TenderDetailPanel({ tender, onClose, onAction }: {
           {detailTabs.map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 py-2 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors
-                ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>{t}
+                ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>{t}
             </button>
           ))}
         </div>
@@ -589,7 +589,7 @@ export default function TenderPreparationPage() {
           {(["Tender Preparation", "Lifecycle Tower", "Capabilities"] as PageTab[]).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap border-b-2 -mb-px transition-colors
-                ${tab === t ? "border-black text-black" : "border-transparent text-black/40 hover:text-black"}`}>{t}
+                ${tab === t ? "border-black text-black" : "border-transparent text-black/60 hover:text-black"}`}>{t}
             </button>
           ))}
         </div>
