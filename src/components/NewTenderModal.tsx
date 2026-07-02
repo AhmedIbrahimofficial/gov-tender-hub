@@ -355,10 +355,17 @@ export default function NewTenderModal({ open, onClose }: Props) {
             )}
 
             {step === 3 && (
-              <div className="space-y-3">
+              <div className="space-y-4">
+                <div className="bg-violet-50 border border-violet-200 p-3 flex gap-2" style={{ borderRadius: 0 }}>
+                  <Sparkles className="h-4 w-4 text-violet-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-[11px] text-violet-800 leading-relaxed">
+                    <strong>AI Auto-Scoring Enabled.</strong> APPOIS AI reads each bid submission and produces preliminary scores on every sub-criterion below. The evaluation committee then reviews, adjusts, and approves. Final award is auto-computed from Technical × Financial weights.
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Evaluation Method</label>
-                  <select value={form.evalMethod} onChange={e => set("evalMethod", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                  <select value={form.evalMethod} onChange={e => set("evalMethod", e.target.value)} className="mt-1 w-full h-9 px-3 border border-border bg-secondary text-sm" style={{ borderRadius: 0 }}>
                     <option value="QCBS">QCBS — Quality and Cost Based Selection</option>
                     <option value="LRB">LRB — Lowest Responsive Bidder</option>
                     <option value="LERB">LERB — Lowest Evaluated Responsive Bidder</option>
@@ -366,42 +373,90 @@ export default function NewTenderModal({ open, onClose }: Props) {
                     <option value="Fixed">Fixed Budget Selection</option>
                   </select>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Technical Weight (%)</label>
-                    <input type="number" min={0} max={100} value={form.weights.technical}
-                      onChange={e => setForm(f => ({ ...f, weights: { technical: e.target.value, financial: String(100 - Number(e.target.value)) } }))}
-                      className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+
+                {/* Master ratio */}
+                <div className="border-2 border-[#0f172a] p-3" style={{ borderRadius: 0 }}>
+                  <div className="text-[11px] font-bold text-[#0f172a] uppercase tracking-wider mb-2">Master Ratio — Technical vs Financial</div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Technical Weight (%)</label>
+                      <input type="number" min={0} max={100} value={form.weights.technical}
+                        onChange={e => setForm(f => ({ ...f, weights: { technical: e.target.value, financial: String(100 - Number(e.target.value)) } }))}
+                        className="mt-1 w-full h-9 px-3 border border-border bg-white text-sm font-bold" style={{ borderRadius: 0 }} />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Financial Weight (%)</label>
+                      <input type="number" value={form.weights.financial} readOnly className="mt-1 w-full h-9 px-3 border border-border bg-slate-100 text-sm text-slate-600 font-bold cursor-not-allowed" style={{ borderRadius: 0 }} />
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Financial Weight (%)</label>
-                    <input type="number" value={form.weights.financial} readOnly className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-muted text-sm text-muted-foreground cursor-not-allowed" />
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="flex-1 h-2 bg-slate-200" style={{ borderRadius: 0 }}>
+                      <div className="h-full flex">
+                        <div className="bg-[#0f172a]" style={{ width: `${form.weights.technical}%` }} />
+                        <div className="bg-blue-500" style={{ width: `${form.weights.financial}%` }} />
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground">T:{form.weights.technical}% / F:{form.weights.financial}%</span>
+                  </div>
+                  <div className="mt-3">
+                    <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Technical Pass Mark (%)</label>
+                    <input type="number" min={0} max={100} value={form.passmark} onChange={e => set("passmark", e.target.value)}
+                      className="mt-1 w-32 h-8 px-3 border border-border bg-white text-sm" style={{ borderRadius: 0 }} />
                   </div>
                 </div>
-                <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Technical Pass Mark (%)</label>
-                  <input type="number" min={0} max={100} value={form.passmark} onChange={e => set("passmark", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-border bg-secondary text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Evaluation Criteria</label>
-                  <div className="space-y-2">
+
+                {/* Technical sub-matrix */}
+                <div className="border border-[#0f172a]/40 p-3" style={{ borderRadius: 0 }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-[11px] font-bold text-[#0f172a] uppercase tracking-wider">🔧 Technical Matrix — Sub-Criteria</div>
+                    <span className="text-[10px] text-muted-foreground">Total must = 100%</span>
+                  </div>
+                  <div className="space-y-1.5">
                     {[
-                      { name: "Technical Compliance", wt: "60" },
-                      { name: "Delivery Capability", wt: "20" },
-                      { name: "Warranty / After-Sales", wt: "10" },
-                      { name: "Experience", wt: "10" },
+                      { name: "Technical Compliance to Specs", wt: "35" },
+                      { name: "Methodology & Work Plan", wt: "20" },
+                      { name: "Experience on Similar Projects", wt: "15" },
+                      { name: "Key Personnel Qualifications", wt: "15" },
+                      { name: "Delivery Capability & Timeline", wt: "10" },
+                      { name: "Warranty / After-Sales Support", wt: "5" },
                     ].map((c, i) => (
                       <div key={i} className="flex gap-2 items-center">
-                        <input defaultValue={c.name} className="flex-1 h-8 px-3 rounded-md border border-border bg-secondary text-xs focus:outline-none focus:ring-1 focus:ring-ring" />
-                        <input defaultValue={c.wt} type="number" className="w-16 h-8 px-2 text-center rounded-md border border-border bg-secondary text-xs focus:outline-none focus:ring-1 focus:ring-ring" />
-                        <span className="text-xs text-muted-foreground">%</span>
+                        <input defaultValue={c.name} className="flex-1 h-8 px-3 border border-border bg-secondary text-xs" style={{ borderRadius: 0 }} />
+                        <input defaultValue={c.wt} type="number" className="w-14 h-8 px-2 text-center border border-border bg-secondary text-xs" style={{ borderRadius: 0 }} />
+                        <span className="text-[10px] text-muted-foreground">%</span>
+                        <button className="text-[10px] text-red-600 hover:underline px-1">✕</button>
                       </div>
                     ))}
                   </div>
-                  <button className="mt-2 text-xs text-primary hover:underline">+ Add criterion</button>
+                  <button className="mt-2 text-[11px] text-primary hover:underline font-semibold">+ Add technical sub-criterion</button>
+                </div>
+
+                {/* Financial sub-matrix */}
+                <div className="border border-blue-600/40 p-3" style={{ borderRadius: 0 }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-[11px] font-bold text-blue-700 uppercase tracking-wider">💰 Financial Matrix — Sub-Criteria</div>
+                    <span className="text-[10px] text-muted-foreground">Total must = 100%</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {[
+                      { name: "Total Bid Price (lowest = full marks)", wt: "70" },
+                      { name: "Payment Terms Favourability", wt: "10" },
+                      { name: "Life-Cycle / Operating Cost", wt: "10" },
+                      { name: "Local Content / Indigenisation Premium", wt: "10" },
+                    ].map((c, i) => (
+                      <div key={i} className="flex gap-2 items-center">
+                        <input defaultValue={c.name} className="flex-1 h-8 px-3 border border-border bg-secondary text-xs" style={{ borderRadius: 0 }} />
+                        <input defaultValue={c.wt} type="number" className="w-14 h-8 px-2 text-center border border-border bg-secondary text-xs" style={{ borderRadius: 0 }} />
+                        <span className="text-[10px] text-muted-foreground">%</span>
+                        <button className="text-[10px] text-red-600 hover:underline px-1">✕</button>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="mt-2 text-[11px] text-blue-700 hover:underline font-semibold">+ Add financial sub-criterion</button>
                 </div>
               </div>
             )}
+
 
             {step === 4 && (
               <div className="space-y-3">
