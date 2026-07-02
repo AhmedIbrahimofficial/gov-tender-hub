@@ -515,3 +515,17 @@ input:focus, select:focus, textarea:focus {
   font-weight: 800;
 }
 
+/* ── Visible bold scrollbar for hierarchy tree ────────────────────────── */
+.hierarchy-scroll::-webkit-scrollbar { width: 10px; }
+.hierarchy-scroll::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 0;
+}
+.hierarchy-scroll::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 0;
+  border: 2px solid #0f172a;
+}
+.hierarchy-scroll::-webkit-scrollbar-thumb:hover { background: #60a5fa; }
+
+
