@@ -1154,16 +1154,11 @@ export default function SignInPage() {
   const locationState = location.state as { screen?: Screen; mode?: "login" | "register" } | null;
   const [screen, setScreen] = useState<Screen>(locationState?.screen ?? "choice");
 
-  // Reset any font-size override from landing page accessibility controls
-  useState(() => {
-    document.documentElement.style.removeProperty("font-size");
-  });
-
   return (
-    <div className="h-screen flex bg-[#EAF1F8] overflow-hidden">
+    <div className="min-h-screen flex bg-[#EAF1F8]">
 
       {/* ── Left portal-themed panel (desktop only) ──────────────────────── */}
-      <div className="hidden lg:flex lg:w-[50%] flex-col bg-[#0f172a] border-r border-blue-900/50 min-h-0 flex-shrink-0">
+      <div className="hidden lg:flex lg:w-[50%] flex-col bg-[#0f172a] border-r border-blue-900/50">
 
         {/* Government header strip — matches LandingPage */}
         <div className="px-6 py-3 border-b-2 border-blue-600 flex-shrink-0 bg-[#0a1424]">
@@ -1225,7 +1220,7 @@ export default function SignInPage() {
 
 
       {/* ── Right content panel ───────────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 overflow-y-auto min-h-0">
+      <div className="flex-1 flex items-start justify-center p-6 lg:p-12 overflow-y-auto">
         {screen === "choice" && (
           <EntryChoice
             onPublic={() => setScreen("public")}
