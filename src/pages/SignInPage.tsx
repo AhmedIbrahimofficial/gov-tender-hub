@@ -1154,6 +1154,11 @@ export default function SignInPage() {
   const locationState = location.state as { screen?: Screen; mode?: "login" | "register" } | null;
   const [screen, setScreen] = useState<Screen>(locationState?.screen ?? "choice");
 
+  // Reset any font-size override from landing page accessibility controls
+  useState(() => {
+    document.documentElement.style.removeProperty("font-size");
+  });
+
   return (
     <div className="h-screen flex bg-[#EAF1F8] overflow-hidden">
 

@@ -33,9 +33,9 @@ function TopBar() {
             className="hover:underline">Skip to main content</button>
           <span className="hover:underline cursor-default">Screen Reader</span>
           <div className="flex items-center gap-1">
-            <button onClick={() => document.documentElement.style.fontSize = "13px"} className="hover:underline px-0.5">A-</button>
-            <button onClick={() => document.documentElement.style.fontSize = "16px"} className="hover:underline px-0.5">A</button>
-            <button onClick={() => document.documentElement.style.fontSize = "19px"} className="hover:underline px-0.5">A+</button>
+            <button onClick={() => { document.documentElement.style.fontSize = "13px"; }} className="hover:underline px-0.5">A-</button>
+            <button onClick={() => { document.documentElement.style.removeProperty("font-size"); }} className="hover:underline px-0.5">A</button>
+            <button onClick={() => { document.documentElement.style.fontSize = "19px"; }} className="hover:underline px-0.5">A+</button>
           </div>
         </div>
       </div>
