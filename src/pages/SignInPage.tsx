@@ -25,53 +25,53 @@ function GovHierarchyPanel() {
   return (
     <div className="space-y-0.5">
       {/* President node — only Head of State shown at top */}
-      <div className="flex items-center gap-2 px-2 py-2.5 rounded-lg bg-amber-500/15 border border-amber-500/20 mb-2">
-        <span className="h-6 w-6 rounded-md bg-amber-500 grid place-items-center flex-shrink-0">
-          <Crown className="h-3 w-3 text-white" />
+      <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-amber-500/20 border border-amber-500/30 mb-3">
+        <span className="h-8 w-8 rounded-lg bg-amber-500 grid place-items-center flex-shrink-0 shadow-md">
+          <Crown className="h-4 w-4 text-white" />
         </span>
-        <span className="text-[12px] font-semibold text-amber-300">President</span>
-        <span className="ml-auto text-[10px] text-amber-400/60">Head of State</span>
+        <span className="text-[15px] font-bold text-amber-300">President</span>
+        <span className="ml-auto text-[11px] text-amber-400/70 font-medium">Head of State</span>
       </div>
 
-      {ZW_MINISTRIES.slice(0, 8).map(ministry => (
+      {ZW_MINISTRIES.map(ministry => (
         <div key={ministry.id}>
           <button
             onClick={() => setOpenMin(openMin === ministry.id ? null : ministry.id)}
-            className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/8 transition-colors text-left"
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-colors text-left"
           >
-            <span className="h-5 w-5 rounded bg-blue-500/70 grid place-items-center flex-shrink-0">
-              <Landmark className="h-2.5 w-2.5 text-white" />
+            <span className="h-6 w-6 rounded-md bg-blue-500 grid place-items-center flex-shrink-0 shadow">
+              <Landmark className="h-3 w-3 text-white" />
             </span>
-            <span className="flex-1 text-[11px] font-medium text-white/75 truncate">{ministry.name.replace("Ministry of ", "")}</span>
-            <span className="text-[9px] text-white/30 mr-1 flex-shrink-0">{ministry.code}</span>
-            <ChevronRight className={`h-3 w-3 text-white/25 flex-shrink-0 transition-transform ${openMin === ministry.id ? "rotate-90" : ""}`} />
+            <span className="flex-1 text-[13px] font-semibold text-white/90 truncate">{ministry.name.replace("Ministry of ", "")}</span>
+            <span className="text-[10px] text-blue-300/70 mr-1 flex-shrink-0 font-mono">{ministry.code}</span>
+            <ChevronRight className={`h-3.5 w-3.5 text-white/40 flex-shrink-0 transition-transform ${openMin === ministry.id ? "rotate-90" : ""}`} />
           </button>
           {openMin === ministry.id && (
-            <div className="ml-4 pl-2 border-l border-white/10 space-y-0.5 mb-1">
-              {/* CPO row — always visible under each ministry */}
-              <div className="flex items-center gap-1.5 px-2 py-1.5 rounded bg-violet-500/15 border border-violet-500/20 mb-0.5">
+            <div className="ml-5 pl-2.5 border-l border-blue-400/20 space-y-0.5 mb-1">
+              {/* CPO row */}
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-violet-500/15 border border-violet-500/25 mb-1">
                 <Shield className="h-3.5 w-3.5 text-violet-400 flex-shrink-0" />
-                <span className="text-[10px] font-semibold text-violet-300 truncate flex-1">CPO</span>
-                <span className="text-[9px] text-violet-400/60 truncate max-w-[90px]">{ministry.cpo}</span>
+                <span className="text-[11px] font-semibold text-violet-200 truncate flex-1">CPO</span>
+                <span className="text-[10px] text-violet-400/70 truncate max-w-[100px]">{ministry.cpo}</span>
               </div>
               {ministry.departments.map(dept => (
                 <div key={dept.id}>
                   <button
                     onClick={() => setOpenDept(openDept === dept.id ? null : dept.id)}
-                    className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded hover:bg-white/6 transition-colors text-left"
+                    className="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-white/8 transition-colors text-left"
                   >
-                    <span className="h-4 w-4 rounded bg-emerald-500/60 grid place-items-center flex-shrink-0">
-                      <Building2 className="h-2 w-2 text-white" />
+                    <span className="h-4.5 w-4.5 rounded bg-emerald-500/70 grid place-items-center flex-shrink-0">
+                      <Building2 className="h-2.5 w-2.5 text-white" />
                     </span>
-                    <span className="text-[10px] text-white/55 truncate flex-1">{dept.name}</span>
-                    <ChevronRight className={`h-2.5 w-2.5 text-white/20 flex-shrink-0 transition-transform ${openDept === dept.id ? "rotate-90" : ""}`} />
+                    <span className="text-[11px] text-white/70 truncate flex-1">{dept.name}</span>
+                    <ChevronRight className={`h-3 w-3 text-white/30 flex-shrink-0 transition-transform ${openDept === dept.id ? "rotate-90" : ""}`} />
                   </button>
                   {openDept === dept.id && (
-                    <div className="ml-4 pl-2 border-l border-white/8 space-y-0.5">
+                    <div className="ml-4 pl-2 border-l border-white/10 space-y-0.5">
                       {dept.roles.map(r => (
                         <div key={r.title} className="flex items-center gap-1.5 py-0.5 px-1.5">
-                          <span className="h-1 w-1 rounded-full bg-white/15 flex-shrink-0" />
-                          <span className="text-[9px] text-white/35 truncate">{r.title}</span>
+                          <span className="h-1 w-1 rounded-full bg-blue-400/40 flex-shrink-0" />
+                          <span className="text-[10px] text-white/50 truncate">{r.title}</span>
                         </div>
                       ))}
                     </div>
@@ -82,7 +82,6 @@ function GovHierarchyPanel() {
           )}
         </div>
       ))}
-      <div className="px-2 pt-1 text-[9px] text-white/25">+{ZW_MINISTRIES.length - 8} more ministries…</div>
     </div>
   );
 }
@@ -1160,41 +1159,44 @@ export default function SignInPage() {
     <div className="min-h-screen flex" style={{ background: "#f0f4f8" }}>
 
       {/* ── Left portal-themed panel (desktop only) ──────────────────────── */}
-      <div className="hidden lg:flex lg:w-[48%] flex-col bg-[#0f172a] border-r border-blue-900/50">
+      <div className="hidden lg:flex lg:w-[48%] flex-col border-r border-blue-800/40" style={{ background: "#162032" }}>
 
-        {/* Government header strip */}
-        <div className="px-6 py-4 border-b-2 border-blue-600 flex-shrink-0 bg-[#0a1424]">
+        {/* Government header strip — bigger, bolder */}
+        <div className="px-6 py-5 border-b-2 border-blue-500 flex-shrink-0" style={{ background: "#0d1a2d" }}>
           <Link to="/" className="block w-full">
-            <div className="text-[11px] font-bold text-blue-300 uppercase tracking-widest mb-1">AI POWERED ELECTRONIC PUBLIC PROCUREMENT &amp; OVERSIGHT INTELLIGENCE SYSTEM</div>
-            <div className="text-sm font-semibold text-white/80 mt-1">
+            <div className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-2">
+              AI POWERED ELECTRONIC PUBLIC PROCUREMENT &amp; OVERSIGHT INTELLIGENCE SYSTEM
+            </div>
+            <div className="text-lg font-bold text-white leading-snug">
               Integrity · Public Trust · Transparency · Good Governance · Clean Procurement
             </div>
-            <div className="text-xs text-white/40 mt-0.5">
+            <div className="text-sm text-white/55 mt-1.5">
               AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System (APPOIS).
             </div>
           </Link>
         </div>
 
-        {/* Hierarchy panel — TALL scrollable window at top, visible scrollbar */}
+        {/* Hierarchy section header */}
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex items-center justify-between px-5 py-2.5 border-b border-blue-900/40 bg-[#1e293b] flex-shrink-0">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-blue-800/40 flex-shrink-0" style={{ background: "#1a2840" }}>
             <div>
-              <div className="text-xs font-bold text-white uppercase tracking-wider">Government Hierarchy</div>
-              <div className="text-[10px] text-blue-300 mt-0.5">
+              <div className="text-sm font-bold text-white uppercase tracking-wider">Government Hierarchy</div>
+              <div className="text-[11px] text-blue-300 mt-0.5">
                 President · {ZW_MINISTRIES.length} Ministries · {ZW_MINISTRIES.reduce((a, m) => a + m.departments.length, 0)} Depts · {ALL_ROLES.length} Roles
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-emerald-300 font-semibold">LIVE</span>
+              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[11px] text-emerald-300 font-bold">LIVE</span>
             </div>
           </div>
-          {/* Scrollable tree with a bold visible scrollbar */}
+
+          {/* Scrollable ministry list — ALL ministries, visible scrollbar */}
           <div
-            className="flex-1 overflow-y-auto min-h-0 px-3 py-3 hierarchy-scroll"
+            className="flex-1 overflow-y-auto min-h-0 px-4 py-3"
             style={{
-              scrollbarWidth: "auto",
-              scrollbarColor: "#3b82f6 rgba(255,255,255,0.06)",
+              scrollbarWidth: "thin",
+              scrollbarColor: "#3b82f6 #1a2840",
             }}
           >
             <GovHierarchyPanel />
@@ -1202,21 +1204,21 @@ export default function SignInPage() {
         </div>
 
         {/* Stats bar */}
-        <div className="px-5 py-3 border-t border-blue-900/50 flex-shrink-0 grid grid-cols-3 gap-3 bg-[#0a1424]">
+        <div className="px-5 py-3 border-t border-blue-800/40 flex-shrink-0 grid grid-cols-3 divide-x divide-blue-800/40" style={{ background: "#0d1a2d" }}>
           {[
-            { label: "Ministries", val: String(ZW_MINISTRIES.length) },
-            { label: "Departments", val: String(ZW_MINISTRIES.reduce((a, m) => a + m.departments.length, 0)) },
-            { label: "Roles", val: String(ALL_ROLES.length + 10) },
+            { label: "Ministries",   val: String(ZW_MINISTRIES.length) },
+            { label: "Departments",  val: String(ZW_MINISTRIES.reduce((a, m) => a + m.departments.length, 0)) },
+            { label: "Roles",        val: String(ALL_ROLES.length + 10) },
           ].map(s => (
-            <div key={s.label} className="text-center border border-blue-900/50 py-1.5" style={{ borderRadius: 0 }}>
-              <div className="text-base font-bold text-blue-300">{s.val}</div>
-              <div className="text-[9px] text-white/50 mt-0.5 uppercase tracking-wider">{s.label}</div>
+            <div key={s.label} className="text-center py-1">
+              <div className="text-xl font-bold text-blue-300">{s.val}</div>
+              <div className="text-[10px] text-white/40 mt-0.5 uppercase tracking-wider">{s.label}</div>
             </div>
           ))}
         </div>
 
-        <div className="px-5 py-2 border-t border-blue-900/50 flex-shrink-0 bg-[#0a1424]">
-          <p className="text-[9px] text-blue-300/50">© 2026 APPOIS — Government of Zimbabwe</p>
+        <div className="px-5 py-2 border-t border-blue-800/30 flex-shrink-0" style={{ background: "#0d1a2d" }}>
+          <p className="text-[10px] text-blue-300/40">© 2026 APPOIS — Government of Zimbabwe</p>
         </div>
       </div>
 
