@@ -1,5 +1,12 @@
 // Mock data for the National Procurement Platform — Government of Zimbabwe
 
+// ── Monochrome chart palette (black / grey / white) ──
+export const CHART_PALETTE = ["#0f172a", "#334155", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0"];
+export const CHART_INK = "#0f172a";
+export const CHART_GRID = "#e5e7eb";
+export const CHART_AXIS = "#6b7280";
+
+
 export const kpis = {
   totalSpend: { value: "USD 2.84B", delta: "+6.2%", label: "Total Procurement Spend (YTD)" },
   activeTenders: { value: "1,287", delta: "+42", label: "Active Tenders" },
