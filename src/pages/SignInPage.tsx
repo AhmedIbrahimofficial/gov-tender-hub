@@ -1085,62 +1085,64 @@ function GovStaffForm({ onBack }: { onBack: () => void }) {
 // ─── Entry Choice ─────────────────────────────────────────────────────────────
 function EntryChoice({ onPublic, onStaff, onRoleSelect }: { onPublic: () => void; onStaff: () => void; onRoleSelect: () => void }) {
   return (
-    <div className="w-full max-w-md">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-black" style={{ letterSpacing: "-0.02em" }}>
+    <div className="w-full max-w-sm">
+      {/* Title */}
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-bold text-gray-900 leading-tight" style={{ letterSpacing: "-0.02em" }}>
           APPOIS — AI-Powered Public Procurement &amp; Oversight Intelligence System
         </h1>
-        <p className="text-sm text-black/50 mt-2">Integrity · Public Trust · Transparency · Good Governance · Clean Procurement</p>
+        <p className="text-sm text-gray-500 mt-3 leading-relaxed">
+          Integrity · Public Trust · Transparency · Good Governance · Clean Procurement
+        </p>
       </div>
 
       <div className="space-y-3">
-        {/* Government Staff Portal — primary CTA */}
-        <button onClick={onRoleSelect}
-          className="w-full flex items-center gap-4 p-5 bg-[#0f172a] hover:bg-[#1e293b] transition-colors text-left group border border-[#1e3a5f]" style={{ borderRadius: 0 }}>
-          <div className="h-12 w-12 bg-blue-600 grid place-items-center flex-shrink-0" style={{ borderRadius: 0 }}>
-            <Shield className="h-6 w-6 text-white" />
+        {/* Supplier Portal — light blue card */}
+        <button onClick={onPublic}
+          className="w-full flex items-center gap-4 p-5 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 hover:border-blue-400 rounded-2xl transition-all text-left group shadow-sm hover:shadow-md">
+          <div className="h-12 w-12 rounded-xl bg-blue-100 border border-blue-300 grid place-items-center flex-shrink-0">
+            <Building2 className="h-6 w-6 text-blue-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-base font-semibold text-white">Government Staff Portal</div>
-            <div className="text-sm text-blue-300">Ministry · Department · Role access</div>
-            <div className="text-xs text-white/50 mt-0.5">
+            <div className="text-base font-bold text-blue-700">Supplier Portal</div>
+            <div className="text-sm text-blue-600/80 mt-0.5">Browse tenders · Bid · Submit applications</div>
+            <div className="text-xs text-blue-500/70 mt-0.5">Sign in or register with company details</div>
+          </div>
+          <ArrowRight className="h-5 w-5 text-blue-400 group-hover:text-blue-600 flex-shrink-0 transition-colors" />
+        </button>
+
+        {/* Government Staff Portal — dark card */}
+        <button onClick={onRoleSelect}
+          className="w-full flex items-center gap-4 p-5 bg-[#0f172a] hover:bg-[#1e293b] border-2 border-[#1e3a5f] hover:border-blue-500 rounded-2xl transition-all text-left group shadow-sm hover:shadow-lg">
+          <div className="h-12 w-12 rounded-xl bg-blue-600/20 border border-blue-500/30 grid place-items-center flex-shrink-0">
+            <Shield className="h-6 w-6 text-blue-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-base font-bold text-white">Government Staff Portal</div>
+            <div className="text-sm text-blue-300 mt-0.5">Ministry · Department · Role access</div>
+            <div className="text-xs text-white/40 mt-0.5">
               {ALL_ROLES.length} roles · {ZW_MINISTRIES.length} ministries
             </div>
           </div>
-          <ArrowRight className="h-5 w-5 text-white/40 group-hover:text-white flex-shrink-0" />
+          <ArrowRight className="h-5 w-5 text-white/30 group-hover:text-white flex-shrink-0 transition-colors" />
         </button>
 
-        {/* Registered Vendor / Supplier Sign-In (no registration here — vendors register from public portal) */}
-        <button onClick={onPublic}
-          className="w-full flex items-center gap-4 p-5 bg-white hover:bg-blue-50 transition-colors text-left group border-2 border-[#1e3a5f]/30 hover:border-blue-600" style={{ borderRadius: 0 }}>
-          <div className="h-12 w-12 bg-blue-100 border border-blue-300 grid place-items-center flex-shrink-0" style={{ borderRadius: 0 }}>
-            <Building2 className="h-6 w-6 text-[#0f172a]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-base font-semibold text-[#0f172a]">Registered Vendor Sign-In</div>
-            <div className="text-sm text-[#0f172a]/70">Browse tenders · Submit bids · Track invoices</div>
-            <div className="text-xs text-[#0f172a]/50 mt-0.5">New vendor? Register from the public portal — admin approves.</div>
-          </div>
-          <ArrowRight className="h-5 w-5 text-[#0f172a]/30 group-hover:text-blue-600 flex-shrink-0" />
-        </button>
-
-        {/* Sign in with credentials */}
+        {/* Sign in with credentials — subtle outlined card */}
         <button onClick={onStaff}
-          className="w-full flex items-center gap-3 p-3.5 bg-white hover:bg-slate-50 transition-colors text-left group border border-[#1e3a5f]/30" style={{ borderRadius: 0 }}>
-          <div className="h-9 w-9 bg-slate-100 border border-slate-200 grid place-items-center flex-shrink-0" style={{ borderRadius: 0 }}>
-            <Users className="h-4 w-4 text-slate-600" />
+          className="w-full flex items-center gap-3 p-4 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-2xl transition-all text-left group shadow-sm">
+          <div className="h-10 w-10 rounded-xl bg-gray-100 border border-gray-200 grid place-items-center flex-shrink-0">
+            <Users className="h-4.5 w-4.5 text-gray-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-slate-800">Direct sign-in with email &amp; password</div>
-            <div className="text-xs text-slate-500">For pre-registered accounts</div>
+            <div className="text-sm font-semibold text-gray-800">Sign in with credentials</div>
+            <div className="text-xs text-gray-500 mt-0.5">Use email &amp; password</div>
           </div>
-          <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-[#0f172a] flex-shrink-0" />
+          <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-gray-600 flex-shrink-0 transition-colors" />
         </button>
       </div>
 
-
       <div className="mt-8 text-center">
-        <Link to="/" className="text-sm text-black/40 hover:text-black transition-colors">← Back to home</Link>
+        <Link to="/" className="text-sm text-gray-400 hover:text-gray-700 transition-colors">← Back to home</Link>
       </div>
     </div>
   );
@@ -1155,20 +1157,20 @@ export default function SignInPage() {
   const [screen, setScreen] = useState<Screen>(locationState?.screen ?? "choice");
 
   return (
-    <div className="min-h-screen flex bg-[#EAF1F8]">
+    <div className="min-h-screen flex" style={{ background: "#f0f4f8" }}>
 
       {/* ── Left portal-themed panel (desktop only) ──────────────────────── */}
-      <div className="hidden lg:flex lg:w-[50%] flex-col bg-[#0f172a] border-r border-blue-900/50">
+      <div className="hidden lg:flex lg:w-[48%] flex-col bg-[#0f172a] border-r border-blue-900/50">
 
-        {/* Government header strip — matches LandingPage */}
-        <div className="px-6 py-3 border-b-2 border-blue-600 flex-shrink-0 bg-[#0a1424]">
+        {/* Government header strip */}
+        <div className="px-6 py-4 border-b-2 border-blue-600 flex-shrink-0 bg-[#0a1424]">
           <Link to="/" className="block w-full">
-            <div className="text-[10px] font-bold text-blue-300 uppercase tracking-widest mb-1">GOVERNMENT OF THE REPUBLIC OF ZIMBABWE</div>
-            <div className="text-sm font-extrabold text-white leading-snug uppercase">
-              APPOIS — Central Public Procurement Portal
+            <div className="text-[11px] font-bold text-blue-300 uppercase tracking-widest mb-1">AI POWERED ELECTRONIC PUBLIC PROCUREMENT &amp; OVERSIGHT INTELLIGENCE SYSTEM</div>
+            <div className="text-sm font-semibold text-white/80 mt-1">
+              Integrity · Public Trust · Transparency · Good Governance · Clean Procurement
             </div>
-            <div className="text-[11px] text-white/60 mt-0.5">
-              AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System
+            <div className="text-xs text-white/40 mt-0.5">
+              AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System (APPOIS).
             </div>
           </Link>
         </div>
@@ -1220,7 +1222,7 @@ export default function SignInPage() {
 
 
       {/* ── Right content panel ───────────────────────────────────────────── */}
-      <div className="flex-1 flex items-start justify-center p-6 lg:p-12 overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-8 lg:p-14 overflow-y-auto" style={{ background: "#f0f4f8" }}>
         {screen === "choice" && (
           <EntryChoice
             onPublic={() => setScreen("public")}
