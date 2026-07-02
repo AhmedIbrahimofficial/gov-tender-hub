@@ -3,6 +3,7 @@
  * Each tab has its own route; tab strip uses URL-based active state.
  */
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth-context";
 import KpiScrollTicker from "@/components/KpiScrollTicker";
