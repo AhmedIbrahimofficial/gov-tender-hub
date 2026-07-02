@@ -216,7 +216,7 @@ function CandleChart({ baseData, height = 100 }: { baseData: ReturnType<typeof g
         <YAxis domain={["auto","auto"]} hide width={0} />
         <Tooltip contentStyle={{ background: "#0a1628", border: "1px solid #ffffff15", fontSize: 10, color: "#fff" }}
           labelFormatter={() => ""} formatter={(v: number, n) => [v.toFixed(4), n]} />
-        <Bar dataKey="close" shape={(props: Record<string,unknown>) => <CandleBar {...props as { x:number;y:number;width:number;height:number }} up={!!(props as { up?: boolean }).up} />} isAnimationActive={false}>
+        <Bar dataKey="close" shape={(props: unknown) => { const p = props as { x:number;y:number;width:number;height:number;up?:boolean }; return <CandleBar {...p} up={!!p.up} />; }} isAnimationActive={false}>
           {data.map((d,i) => <Cell key={i} fill={d.up ? C.green : C.red} />)}
         </Bar>
       </ComposedChart>
