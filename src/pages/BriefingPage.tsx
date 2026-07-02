@@ -318,64 +318,143 @@ function AiBriefingVideoPanel({
   );
 }
 
-// ── Tab 1: Notes & Alerts ─────────────────────────────────────────────────
+// ── Tab 1: Notes & Alerts — Auto-scrolling hazard feed with topic rotation ──
+const HAZARD_TOPICS: {
+  topic: string;
+  alerts: { level: "critical" | "warning" | "caution" | "info"; msg: string; source: string }[];
+}[] = [
+  {
+    topic: "Fraud & Integrity Watch",
+    alerts: [
+      { level: "critical", msg: "Ghost vendor pattern detected — VEN-00476 & VEN-00481 alternating wins", source: "/vendors" },
+      { level: "critical", msg: "Asset wastage of USD 2.1M flagged in Transport Department", source: "/audit" },
+      { level: "critical", msg: "Bid rotation scheme suspected in MOTID roads tenders", source: "/ai-analytics" },
+      { level: "warning",  msg: "4 ghost vendor transactions detected this week", source: "/vendors" },
+      { level: "warning",  msg: "Collusion signals — 3 vendors sharing directors", source: "/vendors" },
+    ],
+  },
+  {
+    topic: "Budget & Financial Pressure",
+    alerts: [
+      { level: "critical", msg: "Infrastructure Division at 88% budget utilisation — Q3 still ahead", source: "/budget" },
+      { level: "warning",  msg: "Ministry of Health commitments exceed cash releases by USD 4.2M", source: "/finance" },
+      { level: "caution",  msg: "Foreign currency exposure on 3 pending contracts", source: "/contracts" },
+      { level: "info",     msg: "Q3 Budget submission due in 3 days", source: "/budget" },
+    ],
+  },
+  {
+    topic: "Tender Deadlines",
+    alerts: [
+      { level: "critical", msg: "Solar Mini-Grid tender closing in 48 hours — no award yet", source: "/tenders" },
+      { level: "warning",  msg: "Highway Rehab Lot 3 evaluation running 6 days late", source: "/evaluations" },
+      { level: "caution",  msg: "ARV framework technical scoring pending sign-off", source: "/evaluations" },
+      { level: "info",     msg: "12 overdue procurement tasks require attention", source: "/tenders" },
+    ],
+  },
+  {
+    topic: "Service Delivery",
+    alerts: [
+      { level: "critical", msg: "3 ARV medicines at critically low stock levels — MOHCC", source: "/inventory" },
+      { level: "warning",  msg: "Ambulance shortages: 74% shortfall (184/248)", source: "/analytics" },
+      { level: "caution",  msg: "Hospital bed occupancy 15% above capacity", source: "/analytics" },
+      { level: "info",     msg: "Fuel availability at 94% nationally", source: "/analytics" },
+    ],
+  },
+];
+
+const HAZARD_STYLE = {
+  critical: { border: "border-red-600",    bg: "bg-red-50",    text: "text-red-800",    dot: "bg-red-600",    icon: "🛑" },
+  warning:  { border: "border-amber-500",  bg: "bg-amber-50",  text: "text-amber-800",  dot: "bg-amber-500",  icon: "⚠️" },
+  caution:  { border: "border-emerald-500",bg: "bg-emerald-50",text: "text-emerald-800",dot: "bg-emerald-500",icon: "🟢" },
+  info:     { border: "border-blue-500",   bg: "bg-blue-50",   text: "text-blue-800",   dot: "bg-blue-500",   icon: "🔵" },
+} as const;
+
 function NotesAlertsTab({ greeting, today }: { greeting: string; today: string }) {
-  const todayAlerts = [
-    { level: "critical", msg: "Ghost vendor pattern detected — VEN-00476 & VEN-00481 alternating wins", time: "08:14", Icon: AlertTriangle },
-    { level: "critical", msg: "Solar Mini-Grid tender closing in 48 hours — no award yet", time: "08:42", Icon: AlertTriangle },
-    { level: "critical", msg: "Asset wastage of USD 2.1M flagged in Transport Department", time: "09:01", Icon: AlertTriangle },
-    { level: "warning",  msg: "Budget ceiling approaching — Infrastructure Division at 88%", time: "09:15", Icon: Bell },
-    { level: "warning",  msg: "3 ARV medicines at critically low stock levels — MOHCC", time: "09:22", Icon: Bell },
-    { level: "warning",  msg: "4 ghost vendor transactions detected this week", time: "09:30", Icon: Bell },
-    { level: "info",     msg: "12 overdue tasks require immediate attention", time: "09:35", Icon: Clock },
-    { level: "info",     msg: "Q3 Budget submission due in 3 days", time: "09:40", Icon: Clock },
-  ];
-  const notes = [
-    { title: "National Procurement Overview", body: "YTD spend stands at USD 2.84B (+6.2% YoY). Procurement savings of USD 184M (+11.4%) achieved through framework agreements and consolidated buying. 1,287 active tenders, 412 in active bidding." },
-    { title: "Budget Performance", body: "67.8% budget utilisation — on track nationally. Infrastructure Division is at 88% with Q3 still ahead. Primary Education (71%) and Irrigation (51%) are well within envelope." },
-    { title: "Risk & Integrity Watch", body: "Open fraud alerts: 23. ZACC referrals YTD: 48. Case split: 4 ghost vendor patterns, 3 bid rotation schemes, 2 collusion flags. Asset wastage: USD 2.1M flagged." },
-    { title: "Service Delivery Pressure", body: "Ambulance shortages: 74% (184/248). Hospital bed occupancy: 15% above capacity. Fuel availability: 94%. Building shortages: 14 units. Medicine stockouts: 3 critical items." },
-  ];
-  const levelBorder = { critical: "border-red-500",  warning: "border-amber-500", info: "border-blue-400" };
-  const levelBg     = { critical: "bg-red-50",       warning: "bg-amber-50",      info: "bg-blue-50" };
-  const levelText   = { critical: "text-red-700",    warning: "text-amber-700",   info: "text-blue-700" };
-  const levelIcon   = { critical: "text-red-500",    warning: "text-amber-500",   info: "text-blue-400" };
+  const navigate = useNavigate();
+  const [topicIdx, setTopicIdx] = useState(0);
+  const [playCount, setPlayCount] = useState(0);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const [scrollDone, setScrollDone] = useState(false);
+
+  const currentTopic = HAZARD_TOPICS[topicIdx];
+
+  // When CSS animation ends (one full scroll of duplicated content), advance
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const handler = () => {
+      setScrollDone(true);
+      if (playCount >= 1) {
+        // Advance to next topic after replay
+        setPlayCount(0);
+        setTopicIdx(i => (i + 1) % HAZARD_TOPICS.length);
+      } else {
+        setPlayCount(c => c + 1);
+      }
+      // Reset animation
+      el.style.animation = "none";
+      void el.offsetHeight;
+      el.style.animation = "";
+    };
+    el.addEventListener("animationiteration", handler);
+    return () => el.removeEventListener("animationiteration", handler);
+  }, [topicIdx, playCount]);
+
+  const doubled = [...currentTopic.alerts, ...currentTopic.alerts];
+
   return (
-    <div className="flex-1 overflow-y-auto bg-white p-6 space-y-6">
-      <div>
-        <p className="text-[11px] font-bold tracking-widest text-gray-400 uppercase mb-1">AI Executive Briefing · Notes &amp; Alerts</p>
-        <h1 className="text-2xl font-black text-gray-900">{greeting}</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{today}</p>
+    <div className="flex-1 overflow-hidden bg-[#f5f7fb] p-4 flex flex-col">
+      {/* Header banner */}
+      <div className="flex-shrink-0 bg-[#0f172a] text-white px-5 py-3 border-b-2 border-blue-600 flex items-center justify-between">
+        <div>
+          <p className="text-[10px] font-bold tracking-widest text-blue-300 uppercase mb-0.5">AI Executive Briefing — Hazard Feed</p>
+          <h1 className="text-lg font-bold">{greeting}</h1>
+          <p className="text-xs text-white/60">{today}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-[9px] uppercase tracking-widest text-blue-300 font-bold">Now Presenting</div>
+          <div className="text-sm font-bold text-white mt-0.5">{currentTopic.topic}</div>
+          <div className="text-[10px] text-white/50 mt-0.5">Topic {topicIdx + 1} of {HAZARD_TOPICS.length} · Pass {playCount + 1}/2</div>
+        </div>
       </div>
-      <div>
-        <h2 className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-3">Today's Alerts ({todayAlerts.length} items)</h2>
-        <div className="space-y-2">
-          {todayAlerts.map((a, i) => {
-            const lv = a.level as keyof typeof levelBorder;
+
+      {/* Scroll-up hazards feed */}
+      <div className="flex-1 mt-3 overflow-hidden bg-white border border-slate-300 relative" style={{ minHeight: 0 }}>
+        <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none" />
+        <div ref={trackRef} className="tender-scroll-track" style={{ animationDuration: "24s" }}>
+          {doubled.map((a, i) => {
+            const s = HAZARD_STYLE[a.level];
+            const isCritical = a.level === "critical";
             return (
-              <div key={i} className={`flex items-center gap-3 border-l-4 px-3 py-2.5 rounded-r ${levelBorder[lv]} ${levelBg[lv]}`}>
-                <a.Icon className={`h-4 w-4 flex-shrink-0 ${levelIcon[lv]}`} />
-                <span className={`text-xs font-medium flex-1 ${levelText[lv]}`}>{a.msg}</span>
-                <span className="text-[11px] text-gray-400 flex-shrink-0 font-mono">{a.time}</span>
+              <div key={i}
+                className={`flex items-center gap-3 border-l-4 ${s.border} ${s.bg} px-4 py-3 mx-3 my-2 ${isCritical ? "hazard-critical-glow" : ""}`}>
+                <span className="text-lg flex-shrink-0">{s.icon}</span>
+                <span className={`h-2 w-2 rounded-full ${s.dot} flex-shrink-0 ${isCritical ? "animate-pulse" : ""}`} />
+                <span className={`text-xs font-semibold flex-1 ${s.text} ${isCritical ? "hazard-critical-text" : ""}`}>{a.msg}</span>
+                <button
+                  onClick={() => navigate(a.source)}
+                  className="flex-shrink-0 h-7 px-3 bg-[#0f172a] text-white text-[10px] font-bold uppercase tracking-wider hover:bg-blue-700 transition-colors">
+                  View →
+                </button>
               </div>
             );
           })}
         </div>
       </div>
-      <div>
-        <h2 className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-3">Briefing Notes</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {notes.map((n, i) => (
-            <div key={i} className="border border-gray-200 rounded-lg p-4 bg-gray-50 hover:shadow-sm transition-shadow">
-              <h3 className="text-sm font-bold text-gray-800 mb-2">{n.title}</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">{n.body}</p>
-            </div>
-          ))}
-        </div>
+
+      {/* Topic navigator dots */}
+      <div className="flex-shrink-0 flex items-center justify-center gap-2 py-3">
+        {HAZARD_TOPICS.map((t, i) => (
+          <button key={i} onClick={() => { setTopicIdx(i); setPlayCount(0); }}
+            className={`h-1.5 rounded-full transition-all ${i === topicIdx ? "w-8 bg-[#0f172a]" : "w-2 bg-slate-300 hover:bg-slate-500"}`}
+            title={t.topic} />
+        ))}
       </div>
     </div>
   );
 }
+
 
 // ── Tab 2: Visual Dashboard ────────────────────────────────────────────────
 function VisualDashboardTab() {
