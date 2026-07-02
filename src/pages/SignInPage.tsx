@@ -1157,48 +1157,42 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen flex bg-[#EAF1F8]">
 
-      {/* ── Left dark panel (desktop only) ───────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[50%] flex-col bg-gray-950 border-r border-white/5">
+      {/* ── Left portal-themed panel (desktop only) ──────────────────────── */}
+      <div className="hidden lg:flex lg:w-[50%] flex-col bg-[#0f172a] border-r border-blue-900/50">
 
-        {/* Header — full-width title, no logo icon */}
-        <div className="px-8 py-5 border-b border-white/8 flex-shrink-0">
+        {/* Government header strip — matches LandingPage */}
+        <div className="px-6 py-3 border-b-2 border-blue-600 flex-shrink-0 bg-[#0a1424]">
           <Link to="/" className="block w-full">
-            <div className="text-[13px] font-extrabold text-white tracking-widest leading-snug uppercase w-full">
-              AI POWERED ELECTRONIC PUBLIC PROCUREMENT &amp; OVERSIGHT INTELLIGENCE SYSTEM
+            <div className="text-[10px] font-bold text-blue-300 uppercase tracking-widest mb-1">GOVERNMENT OF THE REPUBLIC OF ZIMBABWE</div>
+            <div className="text-sm font-extrabold text-white leading-snug uppercase">
+              APPOIS — Central Public Procurement Portal
+            </div>
+            <div className="text-[11px] text-white/60 mt-0.5">
+              AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System
             </div>
           </Link>
         </div>
 
-        {/* Tag line — compact */}
-        <div className="px-8 py-3 flex-shrink-0 border-b border-white/8">
-          <h2 className="text-sm font-semibold text-white leading-snug mb-1" style={{ letterSpacing: "-0.01em" }}>
-            Integrity · Public Trust · Transparency · Good Governance · Clean Procurement
-          </h2>
-          <p className="text-xs text-white/40">
-            AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System (APPOIS).
-          </p>
-        </div>
-
-        {/* Government hierarchy panel — tall scrollable window */}
-        <div className="flex-1 px-4 py-4 overflow-hidden flex flex-col min-h-0">
-          <div className="flex items-center justify-between mb-3 px-2 flex-shrink-0">
+        {/* Hierarchy panel — TALL scrollable window at top, visible scrollbar */}
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex items-center justify-between px-5 py-2.5 border-b border-blue-900/40 bg-[#1e293b] flex-shrink-0">
             <div>
-              <div className="text-sm font-semibold text-white/80">Government Hierarchy</div>
-              <div className="text-[11px] text-white/40 mt-0.5">
-                President · {ZW_MINISTRIES.length} Ministries · {ZW_MINISTRIES.reduce((acc, m) => acc + m.departments.length, 0)} Departments · {ALL_ROLES.length} Roles
+              <div className="text-xs font-bold text-white uppercase tracking-wider">Government Hierarchy</div>
+              <div className="text-[10px] text-blue-300 mt-0.5">
+                President · {ZW_MINISTRIES.length} Ministries · {ZW_MINISTRIES.reduce((a, m) => a + m.departments.length, 0)} Depts · {ALL_ROLES.length} Roles
               </div>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-white/30">Live</span>
+              <span className="text-[10px] text-emerald-300 font-semibold">LIVE</span>
             </div>
           </div>
-          {/* Scrollable list — visible thin scrollbar on the right */}
+          {/* Scrollable tree with a bold visible scrollbar */}
           <div
-            className="flex-1 overflow-y-auto min-h-0 pr-1"
+            className="flex-1 overflow-y-auto min-h-0 px-3 py-3 hierarchy-scroll"
             style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "rgba(148,163,184,0.4) rgba(255,255,255,0.05)",
+              scrollbarWidth: "auto",
+              scrollbarColor: "#3b82f6 rgba(255,255,255,0.06)",
             }}
           >
             <GovHierarchyPanel />
@@ -1206,23 +1200,24 @@ export default function SignInPage() {
         </div>
 
         {/* Stats bar */}
-        <div className="px-6 py-4 border-t border-white/8 flex-shrink-0 grid grid-cols-3 gap-3">
+        <div className="px-5 py-3 border-t border-blue-900/50 flex-shrink-0 grid grid-cols-3 gap-3 bg-[#0a1424]">
           {[
-            { label: "Ministries", val: String(ZW_MINISTRIES.length), color: "text-blue-400" },
-            { label: "Departments", val: String(ZW_MINISTRIES.reduce((acc, m) => acc + m.departments.length, 0)), color: "text-emerald-400" },
-            { label: "Roles", val: String(ALL_ROLES.length + 10), color: "text-violet-400" },
+            { label: "Ministries", val: String(ZW_MINISTRIES.length) },
+            { label: "Departments", val: String(ZW_MINISTRIES.reduce((a, m) => a + m.departments.length, 0)) },
+            { label: "Roles", val: String(ALL_ROLES.length + 10) },
           ].map(s => (
-            <div key={s.label} className="text-center">
-              <div className={`text-base font-bold ${s.color}`}>{s.val}</div>
-              <div className="text-[9px] text-white/30 mt-0.5">{s.label}</div>
+            <div key={s.label} className="text-center border border-blue-900/50 py-1.5" style={{ borderRadius: 0 }}>
+              <div className="text-base font-bold text-blue-300">{s.val}</div>
+              <div className="text-[9px] text-white/50 mt-0.5 uppercase tracking-wider">{s.label}</div>
             </div>
           ))}
         </div>
 
-        <div className="px-6 py-3 border-t border-white/8 flex-shrink-0">
-          <p className="text-[10px] text-white/20">© 2026 APPOIS — AI-Powered Electronic Public Procurement &amp; Oversight Intelligence System</p>
+        <div className="px-5 py-2 border-t border-blue-900/50 flex-shrink-0 bg-[#0a1424]">
+          <p className="text-[9px] text-blue-300/50">© 2026 APPOIS — Government of Zimbabwe</p>
         </div>
       </div>
+
 
       {/* ── Right content panel ───────────────────────────────────────────── */}
       <div className="flex-1 flex items-start justify-center p-6 lg:p-12 overflow-y-auto">
