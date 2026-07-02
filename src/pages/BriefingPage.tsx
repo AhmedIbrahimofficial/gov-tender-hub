@@ -567,54 +567,66 @@ function VideoTab({ name }: { name: string }) {
   const handlePrev  = () => { handleStop(); setTimeout(() => setCurrentTopic(p => Math.max(0, p - 1)), 50); };
   const handleNext  = () => { handleStop(); setTimeout(() => setCurrentTopic(p => Math.min(BRIEFING_TOPICS.length - 1, p + 1)), 50); };
 
+  // AI chatbox state
+  const [chatInput, setChatInput] = useState("");
+  const [chatMsgs, setChatMsgs] = useState<{ role: "user" | "ai"; text: string }[]>([
+    { role: "ai", text: "I'm your APPOIS AI briefing assistant. Ask me anything about today's briefing — KPIs, alerts, tenders, budgets, or vendor risk." },
+  ]);
+  const sendChat = () => {
+    const q = chatInput.trim();
+    if (!q) return;
+    setChatMsgs(m => [...m, { role: "user", text: q }]);
+    setChatInput("");
+    setTimeout(() => {
+      const reply = `Based on today's briefing: ${q.toLowerCase().includes("spend") ? "YTD national spend is USD 2.84B (+6.2% YoY), driven mainly by Infrastructure (38%) and Health (22%)." : q.toLowerCase().includes("risk") || q.toLowerCase().includes("fraud") ? "23 open fraud alerts. Priority: ghost-vendor pattern VEN-00476 / VEN-00481 and bid rotation in MOTID roads." : q.toLowerCase().includes("budget") ? "Utilisation is 67.8% nationally. Infrastructure Division is running hot at 88% with Q3 ahead — recommend reallocation review." : "I've cross-checked your query against active tenders, contracts, and audit logs. Recommend opening the relevant workbench for a deeper drill-down."}`;
+      setChatMsgs(m => [...m, { role: "ai", text: reply }]);
+    }, 700);
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-[#050d1a]">
-      <div className="flex flex-1 min-h-0">
-        <div className="flex-1 flex flex-col min-h-0">
-          <AiBriefingVideoPanel
-            playing={playing} paused={paused} currentTopic={currentTopic}
-            onPlay={handlePlay} onPause={handlePause} onStop={handleStop}
-            onPrev={handlePrev} onNext={handleNext}
-            muted={muted} onMuteToggle={() => setMuted(m => !m)} name={name}
-          />
+      {/* Full-height video */}
+      <div className="flex-1 flex flex-col min-h-0" style={{ minHeight: "60%" }}>
+        <AiBriefingVideoPanel
+          playing={playing} paused={paused} currentTopic={currentTopic}
+          onPlay={handlePlay} onPause={handlePause} onStop={handleStop}
+          onPrev={handlePrev} onNext={handleNext}
+          muted={muted} onMuteToggle={() => setMuted(m => !m)} name={name}
+        />
+      </div>
+
+      {/* AI chatbox underneath */}
+      <div className="flex-shrink-0 bg-[#0a1628] border-t-2 border-blue-600 flex flex-col" style={{ height: 220 }}>
+        <div className="flex-shrink-0 px-4 py-2 border-b border-white/10 flex items-center gap-2">
+          <div className="h-6 w-6 rounded-full ai-logo-gradient ai-logo-glow flex items-center justify-center">
+            <Sparkles className="h-3 w-3 text-white" />
+          </div>
+          <span className="text-xs font-bold text-white uppercase tracking-widest">Ask APPOIS AI — About This Briefing</span>
         </div>
-        {/* Transcript sidebar */}
-        <div className="w-64 flex-shrink-0 bg-[#0a1628] border-l border-white/10 flex flex-col overflow-hidden">
-          <div className="px-3 py-2 border-b border-white/10 text-xs font-bold text-white/70 uppercase tracking-widest">Topics</div>
-          <div className="flex-1 overflow-y-auto">
-            {BRIEFING_TOPICS.map((t, i) => (
-              <div key={t.id}
-                className={`px-3 py-2.5 border-b border-white/5 flex items-center gap-2 cursor-pointer hover:bg-white/5 transition-colors ${i === currentTopic ? "bg-[#2563eb]/20" : ""}`}
-                onClick={() => { handleStop(); setTimeout(() => setCurrentTopic(i), 50); }}>
-                <span className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${i === currentTopic ? "bg-[#2563eb] text-white" : "bg-white/10 text-white/60"}`}>{i + 1}</span>
-                <div className="flex-1 min-w-0">
-                  <div className={`text-[11px] truncate ${i === currentTopic ? "text-white font-semibold" : "text-white/70"}`}>{t.title}</div>
-                  <div className="text-[9px] text-white/40">{t.duration}</div>
-                </div>
+        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
+          {chatMsgs.map((m, i) => (
+            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[80%] text-xs px-3 py-2 rounded ${m.role === "user" ? "bg-blue-600 text-white" : "bg-white/10 text-white/90 border border-white/10"}`}>
+                {m.text}
               </div>
-            ))}
-          </div>
-          <div className="border-t border-white/10">
-            <div className="px-3 py-2 text-xs font-bold text-white/70 uppercase tracking-widest border-b border-white/10">Transcript</div>
-            <div className="overflow-y-auto" style={{ maxHeight: 220 }}>
-              {NARRATION_SCRIPTS[currentTopic]?.split(". ").map((sentence, i) => (
-                <div key={i} className="px-3 py-1.5 border-b border-white/5 flex items-start gap-2">
-                  <span className="text-[9px] font-mono text-[#2563eb]/70 flex-shrink-0 mt-0.5">
-                    {String(Math.floor(i * 8 / 60)).padStart(2, "0")}:{String((i * 8) % 60).padStart(2, "0")}
-                  </span>
-                  <span className="text-[10px] text-white/70 leading-tight">{sentence}.</span>
-                </div>
-              ))}
             </div>
-          </div>
-          <div className="border-t border-white/10" style={{ height: 160 }}>
-            <KpiScrollTicker height={160} theme="dark" speed={0.8} showCategory={false} />
-          </div>
+          ))}
+        </div>
+        <div className="flex-shrink-0 border-t border-white/10 p-2 flex gap-2">
+          <input value={chatInput} onChange={e => setChatInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && sendChat()}
+            placeholder="Ask about today's KPIs, alerts, tenders, budgets…"
+            className="flex-1 h-9 px-3 bg-[#050d1a] border border-white/15 text-white text-xs placeholder-white/30 focus:outline-none focus:border-blue-500" />
+          <button onClick={sendChat} disabled={!chatInput.trim()}
+            className="h-9 px-4 bg-blue-600 text-white text-xs font-bold hover:bg-blue-500 disabled:opacity-40 uppercase tracking-wider">
+            Send
+          </button>
         </div>
       </div>
     </div>
   );
 }
+
 
 // ── Tab 4: Executive BI (Province Choropleth Map) ────────────────────────
 function ExecutiveBITab() {
