@@ -3,13 +3,10 @@
  * Each tab has its own route; tab strip uses URL-based active state.
  */
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth-context";
 import KpiScrollTicker from "@/components/KpiScrollTicker";
-import GisMapView from "@/components/GisMapView";
 import ZimbabweMapTab from "@/components/ZimbabweMapTab";
-import { ALL_GIS_PINS } from "@/lib/gis-data";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
@@ -18,7 +15,9 @@ import {
   Sparkles, Play, Pause, SkipBack, SkipForward, Square,
   TrendingUp, TrendingDown, AlertTriangle,
   Bell, BarChart3, Globe2, MapPin, LayoutDashboard, FileText,
-  Clock, Volume2, VolumeX, Mic, Radio, Cpu, Calendar, Mail,
+  Clock, Volume2, VolumeX, Radio, Cpu, Calendar, Mail,
+  X, ChevronRight, Users, Building2, Download, Printer,
+  Edit3, CheckCircle, AlertCircle, Plus, Save,
 } from "lucide-react";
 
 // ── Utilities ─────────────────────────────────────────────────────────────
@@ -31,13 +30,13 @@ function getTimeGreeting(name: string) {
 
 // ── Tab definitions ────────────────────────────────────────────────────────
 const TABS = [
-  { path: "/briefing/notes",        label: "1. Notes & Alerts",        Icon: Bell            },
-  { path: "/briefing/dashboard",    label: "2. Visual Dashboard",      Icon: BarChart3       },
-  { path: "/briefing/video",        label: "3. AI Briefing Video",     Icon: Sparkles        },
-  { path: "/briefing/executive-bi", label: "4. Executive BI",          Icon: Globe2          },
-  { path: "/briefing/projects",     label: "5. Projects & Tenders Map",Icon: MapPin          },
-  { path: "/briefing/my-briefing",  label: "6. My Briefing",           Icon: LayoutDashboard },
-  { path: "/briefing/meeting",      label: "7. Meeting Board Pack",    Icon: FileText        },
+  { id: "notes",       label: "Notes & Alerts",         Icon: Bell            },
+  { id: "dashboard",   label: "Visual Dashboard",        Icon: BarChart3       },
+  { id: "video",       label: "AI Briefing Video",       Icon: Sparkles        },
+  { id: "executive",   label: "Executive BI",            Icon: Globe2          },
+  { id: "projects",    label: "Projects & Tenders",      Icon: MapPin          },
+  { id: "mybriefing",  label: "My Briefing",             Icon: LayoutDashboard },
+  { id: "meeting",     label: "Meeting Board Pack",      Icon: FileText        },
 ];
 
 // ── Video tab data ─────────────────────────────────────────────────────────
@@ -873,119 +872,207 @@ function MyBriefingTab() {
 }
 
 // ── Tab 7: Meeting Board Pack ─────────────────────────────────────────────
+type BoardMeeting = {
+  name: string; date: string; time: string; venue: string;
+  members: number; scope: string; owner: string; status: string;
+  agenda: string[];
+  documents: { title: string; type: string; size: string }[];
+};
+const BOARD_MEETINGS: BoardMeeting[] = [
+  { name: "Annual Board Meeting", date: "2026-05-07", time: "09:00", venue: "The Country Club", members: 12, scope: "Governance", owner: "Board Chair", status: "SCHEDULED",
+    agenda: ["Call to order & quorum confirmation","Adoption of previous minutes","Chairperson's report","CEO / Accounting Officer report","Financial performance — Q1 2026","Procurement performance overview","Audit & risk updates","Any other business","Close"],
+    documents: [{ title:"Board Pack Cover Letter",type:"PDF",size:"124 KB"},{ title:"Previous Minutes — Dec 2025",type:"PDF",size:"312 KB"},{ title:"Q1 Financial Statements",type:"XLSX",size:"890 KB"},{ title:"Procurement Performance Report",type:"PDF",size:"1.2 MB"},{ title:"Risk Register Q1",type:"PDF",size:"445 KB"}] },
+  { name: "Audit & Risk Committee", date: "2026-05-09", time: "10:30", venue: "Boardroom A, Kaguvi Building", members: 7, scope: "Audit", owner: "Auditor-General", status: "SCHEDULED",
+    agenda: ["Opening & quorum","Review of internal audit findings","Ghost vendor alerts — update","External audit status","Risk register review","Fraud & forensic updates","Close"],
+    documents: [{ title:"Internal Audit Report Q1",type:"PDF",size:"2.1 MB"},{ title:"Risk Register Updated",type:"XLSX",size:"560 KB"},{ title:"Ghost Vendor Investigation Report",type:"PDF",size:"780 KB"}] },
+  { name: "Monthly Sales & Ops Review", date: "2026-05-12", time: "14:00", venue: "Virtual (Teams)", members: 18, scope: "Operations", owner: "COO", status: "SCHEDULED",
+    agenda: ["KPI dashboard review","Operational bottlenecks","Procurement pipeline update","HR & staffing","IT systems status","AOB"],
+    documents: [{ title:"Monthly KPI Dashboard",type:"PPTX",size:"3.4 MB"},{ title:"Procurement Pipeline",type:"XLSX",size:"440 KB"}] },
+  { name: "Procurement Committee", date: "2026-04-28", time: "11:00", venue: "Boardroom B", members: 9, scope: "Procurement", owner: "CPO", status: "CONCLUDED",
+    agenda: ["Review of tender awards above USD 1M","Framework contract renewals","Supplier performance scores","Blacklist review","Minutes & close"],
+    documents: [{ title:"Tender Awards Summary Apr 2026",type:"PDF",size:"670 KB"},{ title:"Supplier Scorecards",type:"XLSX",size:"1.1 MB"},{ title:"Signed Minutes",type:"PDF",size:"290 KB"}] },
+  { name: "Strategic Priorities Retreat", date: "2026-06-02", time: "08:30", venue: "Nyanga Conference Centre", members: 24, scope: "Strategy", owner: "PS Cabinet", status: "SCHEDULED",
+    agenda: ["National Development Strategy review","Ministry priority alignment","Budget envelope 2027","Procurement reform agenda","Workshop — digital transformation","Communiqué drafting","Close"],
+    documents: [{ title:"NDS Progress Report",type:"PDF",size:"4.2 MB"},{ title:"Budget Framework 2027",type:"PDF",size:"1.8 MB"},{ title:"Digital Transformation Roadmap",type:"PPTX",size:"5.1 MB"}] },
+];
+
 function MeetingBoardPackTab() {
-  const meetings = [
-    {
-      name: "Annual Board Meeting",
-      date: "2026-05-07", time: "09:00",
-      venue: "The Country Club",
-      members: 12, scope: "Governance",
-      owner: "Board Chair",
-      status: "SCHEDULED",
-    },
-    {
-      name: "Audit & Risk Committee",
-      date: "2026-05-09", time: "10:30",
-      venue: "Boardroom A, Kaguvi Building",
-      members: 7, scope: "Audit",
-      owner: "Auditor-General",
-      status: "SCHEDULED",
-    },
-    {
-      name: "Monthly Sales & Ops Review",
-      date: "2026-05-12", time: "14:00",
-      venue: "Virtual (Teams)",
-      members: 18, scope: "Operations",
-      owner: "COO",
-      status: "SCHEDULED",
-    },
-    {
-      name: "Procurement Committee",
-      date: "2026-04-28", time: "11:00",
-      venue: "Boardroom B",
-      members: 9, scope: "Procurement",
-      owner: "CPO",
-      status: "CONCLUDED",
-    },
-    {
-      name: "Strategic Priorities Retreat",
-      date: "2026-06-02", time: "08:30",
-      venue: "Nyanga Conference Centre",
-      members: 24, scope: "Strategy",
-      owner: "PS Cabinet",
-      status: "SCHEDULED",
-    },
-  ];
+  const [openMeeting, setOpenMeeting] = useState<BoardMeeting | null>(null);
+  const [editorContent, setEditorContent] = useState("");
+  const [editorTab, setEditorTab] = useState<"agenda"|"minutes"|"documents"|"actions">("agenda");
+  const [savedToast, setSavedToast] = useState(false);
+  function handleSave() { setSavedToast(true); setTimeout(() => setSavedToast(false), 2500); }
 
-  const statusStyle: Record<string, string> = {
-    SCHEDULED: "bg-blue-100 text-blue-700",
-    CONCLUDED: "bg-gray-100 text-gray-600",
-    CANCELLED: "bg-red-100 text-red-600",
-  };
+  const statusStyle: Record<string,string> = { SCHEDULED:"bg-blue-100 text-blue-700", CONCLUDED:"bg-green-100 text-green-700", CANCELLED:"bg-red-100 text-red-600" };
 
-  return (
-    <div className="flex-1 overflow-y-auto bg-white p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-start gap-3">
-        <FileText className="h-8 w-8 text-blue-600 flex-shrink-0 mt-0.5" />
-        <div>
-          <h1 className="text-xl font-black text-gray-900">Meeting Board Pack</h1>
-          <p className="text-xs text-gray-500 mt-1">Scheduled meetings with linked briefing packs. Materials issued at least 7 days before each meeting.</p>
+  // Board pack editor modal
+  if (openMeeting) {
+    const docTypeColor: Record<string,string> = { PDF:"bg-red-500", XLSX:"bg-green-600", PPTX:"bg-orange-500", DOCX:"bg-blue-600" };
+    return (
+      <div className="flex-1 flex flex-col min-h-0 bg-gray-50">
+        {/* Modal top bar */}
+        <div className="flex-shrink-0 bg-white border-b border-gray-200 px-5 py-2.5 flex items-center gap-2 flex-wrap">
+          <button onClick={() => setOpenMeeting(null)} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 px-2 py-1 rounded hover:bg-gray-100 font-medium">
+            <X className="h-3.5 w-3.5" /> Back
+          </button>
+          <ChevronRight className="h-3.5 w-3.5 text-gray-300" />
+          <span className="text-sm font-bold text-gray-900">{openMeeting.name}</span>
+          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusStyle[openMeeting.status] ?? "bg-gray-100 text-gray-600"}`}>{openMeeting.status}</span>
+          <div className="flex-1" />
+          {savedToast && <span className="text-xs text-green-600 font-semibold flex items-center gap-1"><CheckCircle className="h-3.5 w-3.5" /> Saved</span>}
+          <button onClick={handleSave} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"><Save className="h-3.5 w-3.5" /> Save</button>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors"><Download className="h-3.5 w-3.5" /> PDF</button>
+          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors"><Printer className="h-3.5 w-3.5" /> Print</button>
+        </div>
+        {/* Blue meta strip */}
+        <div className="flex-shrink-0 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 text-white flex items-center gap-6 flex-wrap">
+          <div><div className="text-[10px] text-blue-200 uppercase">Date & Time</div><div className="text-xs font-bold">{openMeeting.date} · {openMeeting.time}</div></div>
+          <div><div className="text-[10px] text-blue-200 uppercase">Venue</div><div className="text-xs font-bold">{openMeeting.venue}</div></div>
+          <div><div className="text-[10px] text-blue-200 uppercase">Members</div><div className="text-xs font-bold">{openMeeting.members}</div></div>
+          <div><div className="text-[10px] text-blue-200 uppercase">Scope</div><div className="text-xs font-bold">{openMeeting.scope}</div></div>
+          <div><div className="text-[10px] text-blue-200 uppercase">Owner</div><div className="text-xs font-bold">{openMeeting.owner}</div></div>
+        </div>
+        {/* Inner sub-tabs */}
+        <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 flex">
+          {(["agenda","minutes","documents","actions"] as const).map(t => (
+            <button key={t} onClick={() => setEditorTab(t)}
+              className={`px-4 py-2.5 text-xs font-semibold capitalize border-b-2 transition-colors ${editorTab === t ? "border-blue-600 text-blue-700" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
+              {t === "agenda" ? "📋 Agenda" : t === "minutes" ? "✍️ Minutes" : t === "documents" ? "📁 Documents" : "✅ Actions"}
+            </button>
+          ))}
+        </div>
+        {/* Editor body */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {editorTab === "agenda" && (
+            <div className="max-w-2xl space-y-3">
+              <h2 className="text-base font-bold text-gray-900">Meeting Agenda</h2>
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                {openMeeting.agenda.map((item, i) => (
+                  <div key={i} className="flex items-start gap-3 px-4 py-3 border-b border-gray-100 last:border-0 hover:bg-blue-50/40 group">
+                    <span className="h-5 w-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i+1}</span>
+                    <span className="text-sm text-gray-700 flex-1">{item}</span>
+                    <Edit3 className="h-3.5 w-3.5 text-gray-300 group-hover:text-blue-400 flex-shrink-0 mt-0.5" />
+                  </div>
+                ))}
+              </div>
+              <button className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-medium px-3 py-2 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 w-full justify-center"><Plus className="h-3.5 w-3.5" /> Add Agenda Item</button>
+            </div>
+          )}
+          {editorTab === "minutes" && (
+            <div className="max-w-2xl space-y-3">
+              <h2 className="text-base font-bold text-gray-900">Meeting Minutes</h2>
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-gray-100 bg-gray-50">
+                  <Edit3 className="h-3.5 w-3.5 text-blue-600" />
+                  <span className="text-xs font-semibold text-gray-600">Minutes Editor</span>
+                  {openMeeting.status === "CONCLUDED" && <span className="ml-auto text-[10px] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">Signed & Approved</span>}
+                </div>
+                <textarea
+                  className="w-full min-h-[300px] p-4 text-sm text-gray-700 resize-none focus:outline-none leading-relaxed placeholder:text-gray-400"
+                  placeholder={`Minutes for: ${openMeeting.name}\nDate: ${openMeeting.date} · ${openMeeting.time}\nVenue: ${openMeeting.venue}\n\nPresent:\n\nApologies:\n\nProceedings:\n`}
+                  value={editorContent} onChange={e => setEditorContent(e.target.value)} />
+              </div>
+              <div className="flex gap-2">
+                <button onClick={handleSave} className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"><Save className="h-3.5 w-3.5" /> Save Minutes</button>
+                <button className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200"><Download className="h-3.5 w-3.5" /> Export DOCX</button>
+              </div>
+            </div>
+          )}
+          {editorTab === "documents" && (
+            <div className="max-w-2xl space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-gray-900">Board Pack Documents</h2>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"><Plus className="h-3.5 w-3.5" /> Upload</button>
+              </div>
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                {openMeeting.documents.map((doc, i) => (
+                  <div key={i} className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0 ${docTypeColor[doc.type] ?? "bg-blue-600"}`}>{doc.type}</div>
+                    <div className="flex-1 min-w-0"><div className="text-sm font-semibold text-gray-800 truncate">{doc.title}</div><div className="text-[11px] text-gray-400">{doc.size}</div></div>
+                    <button className="px-3 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded-lg font-medium">View</button>
+                    <button className="px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-100 rounded-lg font-medium flex items-center gap-1"><Download className="h-3 w-3" /> Download</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {editorTab === "actions" && (
+            <div className="max-w-2xl space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-gray-900">Action Items</h2>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"><Plus className="h-3.5 w-3.5" /> Add Action</button>
+              </div>
+              {openMeeting.status === "SCHEDULED" ? (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
+                  <AlertCircle className="h-8 w-8 text-amber-400 mx-auto mb-2" />
+                  <p className="text-sm font-semibold text-amber-800">Meeting not yet held</p>
+                  <p className="text-xs text-amber-600 mt-1">Action items will be captured during or after the meeting.</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  {["Review ghost vendor report and escalate to ZACC","Submit Q1 audit findings to Board Secretary","Update risk register by 15 May 2026"].map((action, i) => (
+                    <div key={i} className="flex items-start gap-3 px-4 py-3 border-b border-gray-100 last:border-0">
+                      <input type="checkbox" className="mt-0.5 h-4 w-4 accent-blue-600 flex-shrink-0" />
+                      <span className="text-sm text-gray-700 flex-1">{action}</span>
+                      <span className="text-[10px] text-gray-400 whitespace-nowrap">Due: 2026-05-20</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
+    );
+  }
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-xs">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              {["Meeting Name", "Date", "Time", "Venue", "Members", "Scope", "Owner", "Status", "Pack"].map(h => (
-                <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wide text-gray-500 whitespace-nowrap">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {meetings.map((m, i) => (
-              <tr key={i} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3 font-semibold text-gray-800 whitespace-nowrap">{m.name}</td>
-                <td className="px-4 py-3 font-mono text-gray-600">{m.date}</td>
-                <td className="px-4 py-3 font-mono text-gray-600">{m.time}</td>
-                <td className="px-4 py-3 text-gray-500">{m.venue}</td>
-                <td className="px-4 py-3 text-gray-600">
-                  <span className="inline-flex items-center gap-1">👤 {m.members}</span>
-                </td>
-                <td className="px-4 py-3 text-gray-600">{m.scope}</td>
-                <td className="px-4 py-3 text-gray-600">{m.owner}</td>
-                <td className="px-4 py-3">
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${statusStyle[m.status] ?? "bg-gray-100 text-gray-600"}`}>{m.status}</span>
-                </td>
-                <td className="px-4 py-3">
-                  <button className="text-blue-600 hover:text-blue-800 font-semibold text-[11px] whitespace-nowrap transition-colors hover:underline">
-                    Open Pack &rsaquo;
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  // List view
+  return (
+    <div className="flex-1 overflow-y-auto bg-gray-50 p-6 space-y-5">
+      <div className="flex items-start gap-3">
+        <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0"><FileText className="h-5 w-5 text-white" /></div>
+        <div>
+          <h1 className="text-xl font-black text-gray-900">Meeting Board Pack</h1>
+          <p className="text-xs text-gray-500 mt-0.5">Click <strong>Open Board Pack</strong> to view agenda, edit minutes, manage documents and track action items.</p>
+        </div>
       </div>
-
-      {/* Board Pack Best Practices */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        {BOARD_MEETINGS.map((m, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div className={`h-1.5 w-full ${m.status==="SCHEDULED"?"bg-blue-500":m.status==="CONCLUDED"?"bg-green-500":"bg-red-500"}`} />
+            <div className="p-5">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <h3 className="text-sm font-bold text-gray-900 leading-tight">{m.name}</h3>
+                <span className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold ${statusStyle[m.status]}`}>{m.status}</span>
+              </div>
+              <div className="space-y-1.5 text-[11px] text-gray-500 mb-4">
+                <div className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {m.date} · {m.time}</div>
+                <div className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {m.venue}</div>
+                <div className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> {m.members} members · {m.scope}</div>
+                <div className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5" /> {m.owner}</div>
+              </div>
+              <div className="flex items-center gap-1.5 mb-4 flex-wrap">
+                {m.documents.map((d, j) => (
+                  <span key={j} className={`px-2 py-0.5 rounded text-[10px] font-bold text-white ${d.type==="PDF"?"bg-red-400":d.type==="XLSX"?"bg-green-500":d.type==="PPTX"?"bg-orange-400":"bg-blue-500"}`}>{d.type}</span>
+                ))}
+              </div>
+              <button onClick={() => { setOpenMeeting(m); setEditorTab("agenda"); setEditorContent(""); }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors">
+                <FileText className="h-3.5 w-3.5" /> Open Board Pack
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
         <h3 className="text-sm font-bold text-blue-800 mb-3">Board Pack Best Practices</h3>
-        <ul className="space-y-1.5">
-          {[
-            "Issue board packs at least 7 days before the meeting to allow adequate preparation time.",
-            "Include an executive summary, agenda, and all supporting documents with version control.",
-            "Use a standardised format across all committees to ensure consistency and ease of review.",
-            "Ensure all sensitive annexures are access-controlled and watermarked before distribution.",
-          ].map((tip, i) => (
-            <li key={i} className="flex items-start gap-2 text-xs text-blue-700">
-              <span className="mt-0.5 h-4 w-4 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center text-[9px] font-bold flex-shrink-0">{i + 1}</span>
-              {tip}
-            </li>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {["Issue board packs at least 7 days before the meeting.","Include executive summary, agenda, and all supporting documents.","Use a standardised format across all committees.","Access-control and watermark all sensitive annexures."].map((tip,i) => (
+            <div key={i} className="flex items-start gap-2 text-xs text-blue-700">
+              <span className="mt-0.5 h-4 w-4 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center text-[9px] font-bold flex-shrink-0">{i+1}</span>{tip}
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
@@ -994,8 +1081,7 @@ function MeetingBoardPackTab() {
 // ── Main BriefingPage component ───────────────────────────────────────────
 export default function BriefingPage() {
   const { user } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(0);
 
   const name = user?.name ?? user?.email ?? "Minister";
   const greeting = getTimeGreeting(name);
@@ -1003,47 +1089,42 @@ export default function BriefingPage() {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
 
-  // Default to first tab if at /briefing with no sub-path
-  const activeTab = TABS.find(t => location.pathname.startsWith(t.path))?.path ?? TABS[0].path;
-
-  // Redirect bare /briefing to first tab
-  useEffect(() => {
-    if (location.pathname === "/briefing" || location.pathname === "/briefing/") {
-      navigate(TABS[0].path, { replace: true });
-    }
-  }, [location.pathname, navigate]);
-
   function renderTab() {
-    if (location.pathname.startsWith("/briefing/notes"))        return <NotesAlertsTab greeting={greeting} today={today} />;
-    if (location.pathname.startsWith("/briefing/dashboard"))    return <VisualDashboardTab />;
-    if (location.pathname.startsWith("/briefing/video"))        return <VideoTab name={name} />;
-    if (location.pathname.startsWith("/briefing/executive-bi")) return <ExecutiveBITab />;
-    if (location.pathname.startsWith("/briefing/projects"))     return <ProjectsTendersTab />;
-    if (location.pathname.startsWith("/briefing/my-briefing"))  return <MyBriefingTab />;
-    if (location.pathname.startsWith("/briefing/meeting"))      return <MeetingBoardPackTab />;
-    return <NotesAlertsTab greeting={greeting} today={today} />;
+    switch (activeTab) {
+      case 0: return <NotesAlertsTab greeting={greeting} today={today} />;
+      case 1: return <VisualDashboardTab />;
+      case 2: return <VideoTab name={name} />;
+      case 3: return <ExecutiveBITab />;
+      case 4: return <ProjectsTendersTab />;
+      case 5: return <MyBriefingTab />;
+      case 6: return <MeetingBoardPackTab />;
+      default: return <NotesAlertsTab greeting={greeting} today={today} />;
+    }
   }
 
   return (
     <AppShell>
-      <div className="flex flex-col h-full min-h-0">
-        {/* Tab strip */}
-        <div className="flex-shrink-0 bg-white border-b border-gray-200 overflow-x-auto">
-          <div className="flex">
-            {TABS.map(({ path, label, Icon }) => {
-              const isActive = location.pathname.startsWith(path);
+      <div className="flex flex-col h-full min-h-0 bg-white">
+        {/* ── Tab strip — light, clean, attractive ── */}
+        <div className="flex-shrink-0 bg-white border-b border-gray-100 overflow-x-auto shadow-sm">
+          <div className="flex px-2 gap-0.5 pt-1">
+            {TABS.map(({ id, label, Icon }, i) => {
+              const isActive = activeTab === i;
               return (
                 <button
-                  key={path}
-                  onClick={() => navigate(path)}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                  key={id}
+                  onClick={() => setActiveTab(i)}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap rounded-t-xl border border-b-0 transition-all duration-150 ${
                     isActive
-                      ? "border-blue-600 text-blue-700 bg-blue-50"
-                      : "border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50"
+                      ? "bg-white border-gray-200 text-blue-700 shadow-sm -mb-px pb-3 z-10 relative"
+                      : "bg-gray-50 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100 mb-0"
                   }`}
                 >
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
+                  <Icon className={`h-3.5 w-3.5 ${isActive ? "text-blue-600" : "text-gray-400"}`} />
+                  <span>{i + 1}. {label}</span>
+                  {isActive && (
+                    <span className="h-1 w-1 rounded-full bg-blue-600 ml-0.5" />
+                  )}
                 </button>
               );
             })}
